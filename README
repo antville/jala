@@ -25,19 +25,19 @@ Move the Jala folder into the ``modules'' directory of your Helma installation.
 To include a certain Jala module simply add the following line to your Helma 
 application's source code (replace [jalaModule] with the desired module name):
 
-app.addRepository("./modules/jala/[jalaModule].js");
+app.addRepository("./modules/jala/code/[jalaModule].js");
 
 If you want to include the whole Jala package at once, you can use the ``all'' 
 module for convenience:
 
-app.addRepository("./modules/jala/all.js");
+app.addRepository("./modules/jala/code/all.js");
 
 Alternatively, you can import the Jala module from within Helma's 
 apps.properties file (replace [appName] with the name of your Helma application, 
 [X] with a number between 0 and 9 and [jalaModule] with the desired module 
 name):
 
-[appName].respository.[X] = ./modules/jala/[jalaModule].js
+[appName].respository.[X] = ./modules/jala/code/[jalaModule].js
 
 More information about the addRepository method and generally including 
 repositories in a Helma application is available at 

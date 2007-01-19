@@ -51,7 +51,7 @@ if (!global.jala) {
       "XmlRpcRequest",
       "XmlWriter"
    ];
-   var jalaDir = getProperty("jala.dir", "modules/jala/");
+   var jalaDir = getProperty("jala.dir", "modules/jala/code/");
    for (var i in packages) {
       app.addRepository(jalaDir + packages[i] + ".js");
    }

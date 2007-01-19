@@ -37,7 +37,7 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/ErrorTracker.js");
+app.addRepository("modules/jala/code/ErrorTracker.js");
 
 /**
   * @class A class that renders and parses forms
