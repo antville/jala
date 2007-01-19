@@ -1,0 +1,516 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="ImageFilter.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>ImageFilter.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the jala.ImageFilter class.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.ImageFilter.html">jala.ImageFilter</a></b></td>
+    <td>This class provides several image manipulating
+ methods.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the jala.ImageFilter class.
+ */</span>
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * Constructs a new ImageFilter object
+ * <span class="attrib">@class</span>  This class provides several image manipulating
+ * methods. Most of this filter library is based on filters created
+ * by Janne Kipinä for JAlbum. For more information have a look
+ * at http://www.ratol.fi/~jakipina/java/
+ * <span class="attrib">@param</span> {Object} arg Either
+ &lt;ul&gt;
+ &lt;li&gt;an instance of helma.image.ImageWrapper&lt;/li&gt;
+ &lt;li&gt;the path to the image file as String&lt;/li&gt;
+ &lt;li&gt;an instance of helma.File representing the image file&lt;/li&gt;
+ &lt;li&gt;an instance of java.io.File representing the image file&lt;/li&gt;
+ &lt;/ul&gt;
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.ImageFilter = <span class="reserved">function</span>(arg) {
+   <span class="comment">// private variable containing the buffered image to work on</span>
+   var bi;
+
+   <span class="comment">/**
+    * Transforms an image into a bigger one while mirroring the edges
+    * This method is used to apply the filtering up to the edges
+    * of an image (otherwise the image would keep an unmodified
+    * border).
+    * <span class="attrib">@private</span>
+    */</span>
+   var getEnlargedImageWithMirroring = <span class="reserved">function</span>(bi, size) {
+
+      var doFlip = <span class="reserved">function</span>(bi, sx, sy, dist) {
+         var out = new java.awt.image.BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
+         var transform = java.awt.geom.AffineTransform.getScaleInstance(sx, sy);
+         (sx &lt; sy) ? transform.translate(-dist, 0) :  transform.translate(0, -dist);
+         var atop = new java.awt.image.AffineTransformOp(transform,
+             java.awt.image.AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+         out = atop[<span class="literal">"filter(java.awt.image.BufferedImage,java.awt.image.BufferedImage)"</span>](bi, null);
+         <span class="reserved">return</span> out;
+      }
+
+      var doHorizontalFlip = <span class="reserved">function</span>(bi) {
+         <span class="reserved">return</span> doFlip(bi, -1, 1, bi.getWidth());
+      }
+
+      var doVerticalFlip = <span class="reserved">function</span>(bi) {
+         <span class="reserved">return</span> doFlip(bi, 1, -1, bi.getHeight());
+      }
+
+      var width = bi.getWidth() + 2 * size;
+      var height = bi.getHeight() + 2 * size;
+      var out = new java.awt.image.BufferedImage(width, height, bi.getType());
+      var g = out.createGraphics();
+      <span class="comment">// due to method overloading exactly define the method to be called</span>
+      var func = <span class="literal">"drawImage(java.awt.Image,int,int,java.awt.image.ImageObserver)"</span>;
+      g[func](bi, size, size, null);
+      
+      var part;
+      <span class="comment">//top-left corner</span>
+      part = bi.getSubimage(0, 0, size, size);
+      part = doHorizontalFlip(part);
+      part = doVerticalFlip(part);
+      g[func](part, 0, 0, null);
+      <span class="comment">//top-right corner</span>
+      part = bi.getSubimage(bi.getWidth()-size, 0, size, size);
+      part = doHorizontalFlip(part);
+      part = doVerticalFlip(part);
+      g[func](part, width-size, 0, null);
+      <span class="comment">//bottom-left corner</span>
+      part = bi.getSubimage(0, bi.getHeight()-size, size, size);
+      part = doHorizontalFlip(part);
+      part = doVerticalFlip(part);
+      g[func](part, 0, height-size, null);
+      <span class="comment">//bottom-right corner</span>
+      part = bi.getSubimage(bi.getWidth()-size, bi.getHeight()-size, size, size);
+      part = doHorizontalFlip(part);
+      part = doVerticalFlip(part);
+      g[func](part, width-size, height-size, null);
+      <span class="comment">//left border</span>
+      part = bi.getSubimage(0, 0, size, bi.getHeight());
+      part = doHorizontalFlip(part);
+      g[func](part, 0, size, null);
+      <span class="comment">//right border</span>
+      part = bi.getSubimage(bi.getWidth()-size, 0, size, bi.getHeight());
+      part = doHorizontalFlip(part);
+      g[func](part, width-size, size, null);
+      <span class="comment">//top border</span>
+      part = bi.getSubimage(0, 0, bi.getWidth(), size);
+      part = doVerticalFlip(part);
+      g[func](part, size, 0, null);
+      <span class="comment">//bottom border</span>
+      part = bi.getSubimage(0, bi.getHeight()-size, bi.getWidth(), size);
+      part = doVerticalFlip(part);
+      g[func](part, size, height-size, null);
+      <span class="reserved">return</span> out;
+   }
+   
+   <span class="comment">/**
+    * Factory method for a gaussian blur kernel
+    * <span class="attrib">@return</span> {Object} gaussian blur kernel
+    * <span class="attrib">@type</span> Array
+    * <span class="attrib">@private</span>
+    */</span>
+   var getGaussianBlurKernel = <span class="reserved">function</span>(size, standard_deviation) {
+      var nominator = 2 * standard_deviation * standard_deviation;
+      var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, size*size);
+      var center = (size - 1) / 2;
+      var limit = size - 1;
+      var xx, yy;
+      var sum = 0;
+      var value = 0;
+      <span class="reserved">for</span> (var y=0; y&lt;size; y++) {
+         <span class="reserved">for</span> (var x=0; x&lt;size; x++) {
+            <span class="reserved">if</span> ((y &lt;= center) &amp;&amp; (x &lt;= center)) {
+               <span class="reserved">if</span> (x &gt;= y) {
+                  <span class="comment">//calculate new value</span>
+                  xx = center - x;
+                  yy = center - y;
+                  value = Math.exp(-(xx*xx + yy*yy) / nominator);
+                  kernel[(y*size)+x] = value;
+                  sum += value;
+               } <span class="reserved">else</span> {
+                  <span class="comment">//copy existing value</span>
+                  value = kernel[(x*size)+y];
+                  kernel[(y*size)+x] = value;
+                  sum += value;
+               }
+            } <span class="reserved">else</span> {
+               xx = x;
+               yy = y;
+               <span class="reserved">if</span> (yy &gt; center)
+                  yy = limit - yy;
+               <span class="reserved">if</span> (xx &gt; center)
+                  xx = limit - xx;
+               value = kernel[(yy*size)+xx];
+               kernel[(y*size)+x] = value;
+               sum += value;
+            }
+         }
+      }
+      <span class="reserved">for</span> (var i=0; i&lt;kernel.length; i++) {
+         kernel[i] = kernel[i] / sum;
+      }
+      <span class="reserved">return</span> kernel;
+   }
+
+   <span class="comment">/**
+    * Factory method for an unsharp mask kernel
+    * <span class="attrib">@return</span> {Object} Unsharp mask kernel
+    * <span class="attrib">@type</span> Array
+    * <span class="attrib">@private</span>
+    */</span>
+   var getUnsharpMaskKernel = <span class="reserved">function</span>(size, standard_deviation) {
+      var elements = getGaussianBlurKernel(size, standard_deviation);
+      var center = ((size * size) - 1) / 2;
+      elements[center] = 0;
+      var sum = 0;
+      <span class="reserved">for</span> (var i=0; i&lt;elements.length; i++) {
+         sum += elements[i];
+         elements[i] = -elements[i];
+      }
+      elements[center] = sum + 1;
+      <span class="reserved">return</span> elements;
+   }
+   
+
+   <span class="comment">/**
+    * Factory method for a mean kernel
+    * <span class="attrib">@return</span> {Object} Mean kernel
+    * <span class="attrib">@type</span> Array
+    * <span class="attrib">@private</span>
+    */</span>
+   var getMeanKernel = <span class="reserved">function</span>(size) {
+      var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, size);
+      <span class="reserved">for</span> (var i=0;i&lt;size;i++)
+         kernel[i] = 1/size;
+      <span class="reserved">return</span> kernel;
+   };
+
+   <span class="comment">/**
+    * Factory method for a sharpening kernel
+    * <span class="attrib">@return</span> {Object} Sharpening kernel
+    * <span class="attrib">@type</span> Array
+    * <span class="attrib">@private</span>
+    */</span>
+   var getSharpeningKernel = <span class="reserved">function</span>(amount) {
+      var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, 9);
+      var corner = 0;
+      var side = amount / -50;
+      var center = (side * -4.0) + (corner * -4.0) + 1.0;
+      kernel[0] = kernel[2] = kernel[6] = kernel[8] = corner;
+      kernel[1] = kernel[3] = kernel[5] = kernel[7] = side;
+      kernel[4] = center;
+      <span class="reserved">return</span> kernel;
+   };
+
+   <span class="comment">/**
+    * Sharpens the image using a plain sharpening kernel.
+    * <span class="attrib">@param</span> {Number} amount The amount of sharpening to apply
+    */</span>
+   <span class="reserved">this</span>.sharpen = <span class="reserved">function</span>(amount) {
+      var DEFAULT = 20;
+      var MINIMUM = 1;
+      var MAXIMUM = 100;
+      <span class="comment">// correct argument if necessary</span>
+      <span class="reserved">if</span> (isNaN(Math.min(Math.max(amount, MINIMUM), MAXIMUM)))
+         amount = DEFAULT;
+      var sharpened = new java.awt.image.BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
+      var kernel = new java.awt.image.Kernel(3, 3, getSharpeningKernel(amount));
+      var cop = new java.awt.image.ConvolveOp(kernel, java.awt.image.ConvolveOp.EDGE_NO_OP, null);
+      cop.filter(bi, sharpened);
+      bi = sharpened;
+      <span class="reserved">return</span>;
+   }
+   
+   <span class="comment">/**
+    * Perfoms a gaussian operation (unsharp masking or blurring)
+    * on the image using the kernelFactory passed as argument
+    * <span class="attrib">@param</span> {Number} r Radius
+    * <span class="attrib">@param</span> {Number} a Amount
+    * <span class="attrib">@param</span> {Function} kernelFactory Factory method to call for building the kernel
+    * <span class="attrib">@private</span>
+    */</span>
+   var gaussianOp = <span class="reserved">function</span>(r, a, kernelFactory) {
+      var DEFAULT_RADIUS = 2;
+      var MINIMUM_RADIUS = 1;
+      var MAXIMUM_RADIUS = 10;
+      var DEFAULT_AMOUNT = 15;
+      var MINIMUM_AMOUNT = 1;
+      var MAXIMUM_AMOUNT = 100;
+   
+      <span class="comment">// correct arguments if necessary</span>
+      var radius, amount;
+      <span class="reserved">if</span> (isNaN(radius = Math.min(Math.max(r, MINIMUM_RADIUS), MAXIMUM_RADIUS)))
+         radius = DEFAULT_RADIUS;
+      <span class="reserved">if</span> (isNaN(amount = Math.min(Math.max(a, MINIMUM_AMOUNT), MAXIMUM_AMOUNT)))
+         amount = DEFAULT_AMOUNT;
+
+      <span class="reserved">if</span> ((bi.getWidth() &lt; bi.getHeight()) &amp;&amp; (radius &gt; bi.getWidth())) {
+         radius = bi.getWidth();
+      } <span class="reserved">else</span> <span class="reserved">if</span> ((bi.getHeight() &lt; bi.getWidth()) &amp;&amp; (radius &gt; bi.getHeight())) {
+         radius = bi.getHeight();
+      }
+      
+      var size = (radius * 2) + 1;
+      var standard_deviation = amount / 20;
+      var elements = kernelFactory(size, standard_deviation);
+      var large = getEnlargedImageWithMirroring(bi, radius);
+      var resultImg = new java.awt.image.BufferedImage(large.getWidth(), large.getHeight(), large.getType());
+      
+      var kernel = new java.awt.image.Kernel(size, size, elements);
+      var cop = new java.awt.image.ConvolveOp(kernel, java.awt.image.ConvolveOp.EDGE_NO_OP, null);
+      cop.filter(large, resultImg);
+      <span class="comment">// replace the buffered image with the sharpened one</span>
+      bi = resultImg.getSubimage(radius, radius, bi.getWidth(), bi.getHeight());
+      <span class="reserved">return</span>;
+   }
+   
+   <span class="comment">/**
+    * Performs an unsharp mask operation on the image
+    * <span class="attrib">@param</span> {Number} r Radius
+    * <span class="attrib">@param</span> {Number} a Amount
+    */</span>
+   <span class="reserved">this</span>.unsharpMask = <span class="reserved">function</span>(r, a) {
+      gaussianOp(r, a, getUnsharpMaskKernel);
+      <span class="reserved">return</span>;
+   }
+
+   <span class="comment">/**
+    * Performs a gaussian blur operation on the image
+    * <span class="attrib">@param</span> {Number} r Radius
+    * <span class="attrib">@param</span> {Number} a Amount
+    */</span>
+   <span class="reserved">this</span>.gaussianBlur = <span class="reserved">function</span>(r, a) {
+      gaussianOp(r, a, getGaussianBlurKernel);
+      <span class="reserved">return</span>;
+   }
+   
+
+   <span class="comment">/**
+    * Returns the image that has been worked on
+    * <span class="attrib">@return</span> An instance of helma.image.ImageWrapper
+    * <span class="attrib">@type</span> helma.image.ImageWrapper
+    */</span>
+   <span class="reserved">this</span>.getImage = <span class="reserved">function</span>() {
+      var generator = Packages.helma.image.ImageGenerator.getInstance();
+      <span class="reserved">return</span> new Packages.helma.image.ImageWrapper(bi,
+                    bi.getWidth(),
+                    bi.getHeight(),
+                    generator);
+   }
+
+   <span class="comment">/**
+    * constructor body
+    * <span class="attrib">@ignore</span>
+    */</span>
+   <span class="reserved">if</span> (arg instanceof Packages.helma.image.ImageWrapper) {
+      bi = arg.getBufferedImage();
+   } <span class="reserved">else</span> {
+      <span class="reserved">if</span> (arg instanceof String) {
+         var instream = new java.io.FileInputStream(new java.io.File(arg));
+      } <span class="reserved">else</span> <span class="reserved">if</span> (arg instanceof helma.File) {
+         var instream = new java.io.FileInputStream(new java.io.File(arg.getAbsolutePath()));
+      } <span class="reserved">else</span> <span class="reserved">if</span> (arg instanceof java.io.File) {
+         var instream = new java.io.FileInputStream(arg);
+      }
+      decoder =  Packages.com.sun.image.codec.jpeg.JPEGCodec.createJPEGDecoder(instream);
+      bi = decoder.decodeAsBufferedImage();
+   }
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+}
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+</body>
+</html>

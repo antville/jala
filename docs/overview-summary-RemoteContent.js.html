@@ -1,0 +1,475 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="RemoteContent.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>RemoteContent.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the jala.RemoteContent class.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.RemoteContent.html">jala.RemoteContent</a></b></td>
+    <td>API to define, fetch and update content
+ from a remote site.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the jala.RemoteContent class.
+ */</span>
+
+
+<span class="comment">// HelmaLib dependencies</span>
+app.addRepository(<span class="literal">"modules/core/String.js"</span>);
+app.addRepository(<span class="literal">"modules/core/Object.js"</span>);
+app.addRepository(<span class="literal">"modules/core/Date.js"</span>);
+app.addRepository(<span class="literal">"modules/helma/Http.js"</span>);
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * Construct a new remote content handler.
+ * <span class="attrib">@class</span> API to define, fetch and update content
+ * from a remote site.
+ * <span class="attrib">@param</span> {String} url The URL string of the remote site.
+ * <span class="attrib">@param</span> {Integer} method The method to retrieve the remote content.
+ * <span class="attrib">@param</span> {File} storage The cache directory.
+ * <span class="attrib">@returns</span> A new remote content handler.
+ * <span class="attrib">@extends</span> helma.Http
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.RemoteContent = <span class="reserved">function</span>(url, method, storage) {
+   <span class="reserved">if</span> (typeof PropertyMgr == <span class="literal">"undefined"</span>)
+      var PropertyMgr = {};
+
+   var NULLSTR = <span class="literal">""</span>;
+   var key = url.md5();
+   var fname = key + jala.RemoteContent.SUFFIX;
+   var cache;
+   method = (method != null ? method.toLowerCase() : null);
+
+   <span class="comment">// depending on the method argument the instance </span>
+   <span class="comment">// becomes extent of the appropriate remote client</span>
+   switch (method) {
+      case jala.RemoteContent.XMLRPC:
+         break;
+      default:
+         helma.Http.call(<span class="reserved">this</span>);
+         break;
+   }
+
+   <span class="reserved">if</span> (!storage) {
+      storage = jala.RemoteContent.CACHEDIR;
+      <span class="reserved">if</span> (!storage.exists() || !storage.isDirectory())
+         storage.mkdir(storage.getAbsolutePath());
+   }
+
+   var getCache = <span class="reserved">function</span>() {
+      switch (storage.constructor) {
+         case HopObject:
+            cache = storage;
+            break;
+
+         case PropertyMgr:
+            cache = storage.getAll();
+            break;
+
+         default:
+            var f = new File(storage, fname);
+            cache = f.exists() ? Xml.read(f) : new HopObject();
+      }
+      <span class="reserved">return</span> cache;
+   };
+
+   var setCache = <span class="reserved">function</span>() {
+      cache.url = url;
+      cache.method = method;
+      <span class="reserved">if</span> (!cache.interval) {
+         cache.interval = Date.ONEHOUR;
+      }
+      cache.lastUpdate = new Date();
+      cache = cache.clone(new HopObject());
+
+      switch (storage.constructor) {
+         case HopObject:
+            <span class="reserved">for</span> (var i in cache)
+               storage[i] = cache[i];
+            break;
+
+         case PropertyMgr:
+            storage.setAll(cache);
+            break;
+
+         default:
+            var f = new File(storage, fname);
+            Xml.write(cache, f);
+      }
+      <span class="reserved">return</span>;
+   };
+
+   cache = getCache();
+
+   <span class="comment">/**
+    * Set the interval the remote content's
+    * cache is bound to be updated.
+    * <span class="attrib">@param</span> {Number} interval The interval value in milliseconds.
+    */</span>
+   <span class="reserved">this</span>.setInterval = <span class="reserved">function</span>(interval) {
+      cache.interval = parseInt(interval, 10);
+      <span class="reserved">return</span>;
+   };
+   
+   <span class="comment">/**
+    * Get an arbitrary property of the remote content.
+    * <span class="attrib">@param</span> {String} key The name of the property.
+    * <span class="attrib">@returns</span> The value of the property.
+    */</span>
+   <span class="reserved">this</span>.get = <span class="reserved">function</span>(key) {
+      <span class="reserved">return</span> cache[key];
+   }
+
+   <span class="comment">/**
+    * Get all available property names.
+    * <span class="attrib">@returns</span> The list of property names.
+    * <span class="attrib">@type</span> Array
+    */</span>
+   <span class="reserved">this</span>.getKeys = <span class="reserved">function</span>() {
+      var keys = [];
+      <span class="reserved">for</span> (var i in cache) {
+         keys.push(i);
+      }
+      <span class="reserved">return</span> keys.sort();
+   };
+
+   <span class="comment">/**
+    * Tests whether the remote content needs to be updated.
+    * <span class="attrib">@returns</span> True if the remote content needs to be updated.
+    * <span class="attrib">@type</span> Boolean
+    */</span>
+   <span class="reserved">this</span>.needsUpdate = <span class="reserved">function</span>() {
+      <span class="reserved">if</span> (!cache.lastUpdate) {
+         <span class="reserved">return</span> true;
+      } <span class="reserved">else</span> {
+         var max = new Date() - cache.interval;
+         <span class="reserved">if</span> (max - cache.lastUpdate &gt; 0) {
+            <span class="reserved">return</span> true;
+         }
+      }
+      <span class="reserved">return</span> false;
+   };
+
+   <span class="comment">/**
+    * Get the updated and cached remote content.
+    * <span class="attrib">@returns</span> The content as retrieved from the remote site.
+    * <span class="attrib">@type</span> String
+    */</span>
+   <span class="reserved">this</span>.update = <span class="reserved">function</span>() {
+      app.debug(<span class="literal">"[jala.RemoteContent] Retrieving "</span> + url);
+      var result;
+      switch (method) {
+         case jala.RemoteContent.XMLRPC:
+            break;
+         default:
+            result = <span class="reserved">this</span>.getUrl(url, cache.lastModified || cache.eTag);
+            <span class="reserved">if</span> (result.code != 200 &amp;&amp; cache.content) {
+               <span class="comment">// preserve the content received before</span>
+               result.content = cache.content;
+            }
+            result.interval = cache.interval;
+            cache = result;
+      }
+      setCache();
+      <span class="reserved">return</span> cache.content;
+   };
+
+   <span class="comment">/**
+    * Flushes (empties) the cached remote content.
+    */</span>
+   <span class="reserved">this</span>.clear = <span class="reserved">function</span>() {
+      switch (storage.constructor) {
+         case HopObject:
+            <span class="reserved">for</span> (var i in storage)
+               delete storage[i];
+            break;
+
+         case PropertyMgr:
+            storage.reset();
+            break;
+
+         default:
+            var f = new File(storage, fname);
+            f.remove();
+      }
+      <span class="reserved">return</span>;
+   };
+   
+   <span class="comment">/**
+    * Get a string representation of the remote content.
+    * <span class="attrib">@returns</span> The remote content as string.
+    * <span class="attrib">@type</span> String
+    */</span>
+   <span class="reserved">this</span>.toString = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> cache.content || NULLSTR;
+   };
+
+   <span class="comment">/**
+    * Get the value of the remote content.
+    * <span class="attrib">@returns</span> The remote content including response header data.
+    * <span class="attrib">@type</span> Object
+    */</span>
+   <span class="reserved">this</span>.valueOf = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> cache;
+   };
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+
+<span class="comment">/**
+ * A constant representing the HTTP retrieval method.
+ * <span class="attrib">@type</span> int
+ * <span class="attrib">@final</span>
+ */</span>
+jala.RemoteContent.HTTP = 1;
+
+<span class="comment">/**
+ * A constant representing the XML-RPC retrieval method.
+ * <span class="attrib">@type</span> int
+ * <span class="attrib">@final</span>
+ */</span>
+jala.RemoteContent.XMLRPC = 2;
+
+<span class="comment">/**
+ * The default name of the cache directory.
+ * <span class="attrib">@type</span> String
+ * <span class="attrib">@final</span>
+ */</span>
+jala.RemoteContent.SUFFIX = <span class="literal">".cache"</span>;
+
+<span class="comment">/**
+ * The default cache directory.
+ * <span class="attrib">@type</span> File
+ * <span class="attrib">@final</span>
+ */</span>
+jala.RemoteContent.CACHEDIR = new File(app.dir, jala.RemoteContent.SUFFIX);
+
+
+<span class="comment">/**
+ * Remove all remote content from a file-based cache.
+ * <span class="attrib">@param</span> {File} cache An optional target directory.
+ */</span>
+jala.RemoteContent.flush = <span class="reserved">function</span>(cache) {
+   jala.RemoteContent.exec(<span class="reserved">function</span>(rc) {
+      rc.clear();
+      <span class="reserved">return</span>;
+   });
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Apply a custom method on all remote content in a file-based cache.
+ * <span class="attrib">@param</span> {Function} callback The callback method to be executed
+ * for each remote content file.
+ * <span class="attrib">@param</span> {File} cache An optional target directory.
+ */</span>
+jala.RemoteContent.exec = <span class="reserved">function</span>(callback, cache) {
+   <span class="reserved">if</span> (!cache)
+      cache = jala.RemoteContent.CACHEDIR;
+   var f, rc;
+   var files = cache.list();
+   <span class="reserved">for</span> (var i in files) {
+      f = new File(cache, files[i]);
+      <span class="reserved">if</span> (!files[i].endsWith(jala.RemoteContent.SUFFIX))
+         continue;
+      rc = new jala.RemoteContent(Xml.read(f).url);
+      <span class="reserved">if</span> (callback &amp;&amp; callback.constructor == Function)
+         callback(rc);
+   }
+   <span class="reserved">return</span>;
+};
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+</body>
+</html>

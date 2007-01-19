@@ -1,0 +1,1176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN""http://www.w3.org/TR/REC-html40/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+jala.IndexManager
+</TITLE>
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+</HEAD>
+<SCRIPT>
+function asd()
+{
+parent.document.title="jala.IndexManager";
+}
+</SCRIPT>
+<BODY BGCOLOR="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=3 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-IndexManager.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index-all.html"--><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<B>Jala</B>
+</EM>
+</TD
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="jala.ImageFilter.html"><B>PREV CLASS</B></A><!-- 
+   NEXT CLASS 
+-->
+&nbsp;<A HREF="jala.IndexManager.Queue.html"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.IndexManager.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;
+<SCRIPT>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>
+</NOSCRIPT>
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<!-- =========== END OF NAVBAR =========== -->
+<HR>
+
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>Class jala.IndexManager</H2>
+<PRE>Object
+   |
+   +--<b>jala.IndexManager</b>
+</PRE>
+
+
+<HR>
+<DL>
+   <!-- Class definition -->
+   <DT>class 
+   <B>jala.IndexManager</B>
+   
+
+</DL>
+   
+   <P>
+   <BR/>This class basically sits on top of a helma.Search.Index instance
+ and provides methods for adding, removing, optimizing and rebuilding
+ the underlying index. All methods except rebuilding are executed
+ asynchronously using an internal queue that contains jobs created
+ for each call of add/remove/optimize. Rebuilding is somehow different
+ as it puts this manager into rebuilding mode where all following
+ calls of add/remove/optimize are queued, but the queue is not flushed
+ until rebuilding has finished. This ensures that objects that have been
+ modified during a rebuilding process are re-indexed properly afterwards.
+ <BR/><I>Defined in <a href='overview-summary-IndexManager.js.html'>IndexManager.js</a></I><BR/><BR/>
+   </P>
+   
+   <HR>
+
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="inner_classes"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TD>
+</TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.IndexManager.Queue.html">jala.IndexManager.Queue</A></B></CODE></TD>
+   </TR>
+
+</TABLE>
+&nbsp;
+
+<!-- ======== END NESTED CLASS SUMMARY ======== -->
+
+
+<!-- =========== FIELD SUMMARY =========== -->
+
+   <A NAME="field_summary"><!-- --></A>
+      <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+         <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+            <TD COLSPAN=2><FONT SIZE="+2">
+               <B>Field Summary</B></FONT></TD>
+         </TR>
+
+   <!-- This is one instance field summary -->
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&nbsp;String</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#name">name</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the index this queue is responsible for,
+ which equals the name of the directory the underlying
+ index resides in.</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;&lt;final&gt;&nbsp;Number</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#!s!MAXTRIES">MAXTRIES</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constant defining the maximum number of tries to add/remove
+ an object to/from the underlying index.</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;&lt;final&gt;&nbsp;Number</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#!s!NORMAL">NORMAL</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constant defining normal mode of this index manager.</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;&lt;final&gt;&nbsp;Number</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#!s!OPTIMIZE_INTERVAL">OPTIMIZE_INTERVAL</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constant defining the number of changes in the underlying
+ index before it should be optimized.</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;&lt;final&gt;&nbsp;Number</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#!s!REBUILDING">REBUILDING</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constant defining rebuilding mode of this index manager.</TD>
+   </TR>
+   
+
+   </TABLE>
+   &nbsp;
+   
+
+   
+
+<!-- =========== END FIELD SUMMARY =========== -->
+
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD>
+      <CODE>
+	 <B>
+	    <A HREF="jala.IndexManager.html#jala.IndexManager()">jala.IndexManager</A> 
+	 </B>
+	 (&lt;String&gt; name, &lt;helma.File&gt; dir, &lt;String&gt; lang)
+      </CODE>
+      <BR>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Constructs a new IndexManager object.
+      </TD>
+</TR>
+</TABLE>
+
+<!-- ======== END CONSTRUCTOR SUMMARY ======== -->
+
+&nbsp;
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#add">add</A></B>(&lt;HopObject&gt; obj, &lt;Boolean&gt; force)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Adds a HopObject to the underlying index.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#addJob">addJob</A></B>(&lt;String&gt; action, &lt;Object&gt; param)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Adds a new job to the queue.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#flush">flush</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Flushes the underlying queue.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getCurrentIndexVersion">getCurrentIndexVersion</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the version number of the underlying index.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;helma.Search.Index</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getIndex">getIndex</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the underlying index.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;<a href="jala.IndexManager.Queue.html">jala.IndexManager.Queue</a></CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getQueue">getQueue</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the underlying queue.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Array</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getSegmentInfos">getSegmentInfos</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns an Array containing objects, where each one
+ contains information about an index segment in two
+ properties: "name" is the file name of the segment,
+ and "docCount" contains the number of documents in
+ this segment.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getStatus">getStatus</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the status of this manager.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#hasOptimizingJob">hasOptimizingJob</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns true if the underlying index is currently optimized.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#hasWorker">hasWorker</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns true if a worker has been initialized and it's still alive.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#isRebuilding">isRebuilding</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns true if the underlying index is currently rebuilding.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Object</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#needsOptimize">needsOptimize</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns true if the index should be optimized.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#optimize">optimize</A></B>(&lt;Boolean&gt; force)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Optimizes the underlying index.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#remove">remove</A></B>(obj, &lt;Boolean&gt; force)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Removes the object passed as argument from the underlying
+ index.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setStatus">setStatus</A></B>(&lt;Number&gt; s)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Modifies the status of this manager, which has implications
+ on how objects are indexed (a/synchronous or queued).
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#startWorker">startWorker</A></B>(&lt;Boolean&gt; force)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Starts a new worker thread if there isn't already one
+ processing the queue.
+      </TD>
+   </TR>
+
+
+</TABLE>
+
+
+
+<P>
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+<!-- ============ FIELD DETAIL START =========== -->
+
+   <A NAME="field_detail"><!-- --></A>
+   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+      <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+         <TD COLSPAN=1><FONT SIZE="+2"><B>Field Detail</B></FONT></TD>
+      </TR>
+   </TABLE>
+
+   
+   <A NAME="name"><!-- --></A>
+   <H3>name</H3>
+   <PRE>String&nbsp;<B>name</B></PRE>
+   <UL>
+   The name of the index this queue is responsible for,
+ which equals the name of the directory the underlying
+ index resides in.
+   
+   </UL>
+   <HR>
+   
+   <A NAME="!s!MAXTRIES"><!-- --></A>
+   <H3>MAXTRIES</H3>
+   <PRE>&lt;static&gt;&nbsp;&lt;final&gt;&nbsp;Number&nbsp;<B>MAXTRIES</B></PRE>
+   <UL>
+   Constant defining the maximum number of tries to add/remove
+ an object to/from the underlying index.
+   
+    <P>
+    <DL>
+    <DT><B>See Also:</B><DD><A HREF="constant-values.html#java.awt.AWTEvent.COMPONENT_EVENT_MASK">Constant Field Values</A></DL>
+    </DL>
+
+   
+   </UL>
+   <HR>
+   
+   <A NAME="!s!NORMAL"><!-- --></A>
+   <H3>NORMAL</H3>
+   <PRE>&lt;static&gt;&nbsp;&lt;final&gt;&nbsp;Number&nbsp;<B>NORMAL</B></PRE>
+   <UL>
+   Constant defining normal mode of this index manager.
+   
+    <P>
+    <DL>
+    <DT><B>See Also:</B><DD><A HREF="constant-values.html#java.awt.AWTEvent.COMPONENT_EVENT_MASK">Constant Field Values</A></DL>
+    </DL>
+
+   
+   </UL>
+   <HR>
+   
+   <A NAME="!s!OPTIMIZE_INTERVAL"><!-- --></A>
+   <H3>OPTIMIZE_INTERVAL</H3>
+   <PRE>&lt;static&gt;&nbsp;&lt;final&gt;&nbsp;Number&nbsp;<B>OPTIMIZE_INTERVAL</B></PRE>
+   <UL>
+   Constant defining the number of changes in the underlying
+ index before it should be optimized.
+   
+    <P>
+    <DL>
+    <DT><B>See Also:</B><DD><A HREF="constant-values.html#java.awt.AWTEvent.COMPONENT_EVENT_MASK">Constant Field Values</A></DL>
+    </DL>
+
+   
+   </UL>
+   <HR>
+   
+   <A NAME="!s!REBUILDING"><!-- --></A>
+   <H3>REBUILDING</H3>
+   <PRE>&lt;static&gt;&nbsp;&lt;final&gt;&nbsp;Number&nbsp;<B>REBUILDING</B></PRE>
+   <UL>
+   Constant defining rebuilding mode of this index manager.
+   
+    <P>
+    <DL>
+    <DT><B>See Also:</B><DD><A HREF="constant-values.html#java.awt.AWTEvent.COMPONENT_EVENT_MASK">Constant Field Values</A></DL>
+    </DL>
+
+   
+   </UL>
+   <HR>
+   
+
+
+<!-- ============ FIELD DETAIL END =========== -->
+
+    <!-- ========= CONSTRUCTOR DETAIL START ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+   <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+      <TD COLSPAN=1>
+      <FONT SIZE="+2"><B>Constructor Detail</B></FONT>
+      </TD>
+   </TR>
+</TABLE>
+
+<A NAME="jala.IndexManager()"><!-- --></A><H3>
+jala.IndexManager</H3>
+<PRE><B>jala.IndexManager</B>(&lt;String&gt; name, &lt;helma.File&gt; dir, &lt;String&gt; lang)</PRE>
+
+
+<UL>
+   Constructs a new IndexManager object.
+</UL>
+
+
+
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>name</CODE> -  The name of the index, which is the name of the directory  the index already resides or will be created in.  
+     </UL>
+   
+     <UL><CODE>dir</CODE> -  The base directory where this index's directory  is already existing or will be created in.  
+     </UL>
+   
+     <UL><CODE>lang</CODE> -  The language of the documents in this index. This leads  to the proper Lucene analyzer being used for indexing documents.  
+     </UL>
+   
+   
+   </UL>
+
+
+<!-- Constructor return value(s) -->
+
+<!-- End constructor return value(s) -->
+
+<!-- ADDITIONAL ATTRIBUTES -->
+
+<HR/>
+<!-- END ADDITIONAL ATTRIBUTES  -->
+
+<!-- ========= CONSTRUCTOR DETAIL END ======== -->
+
+
+<!-- ============ METHOD DETAIL START ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+   <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+      <TD COLSPAN=1><FONT SIZE="+2">
+         <B>Method Detail</B></FONT>
+      </TD>
+   </TR>
+</TABLE>
+
+<!-- One single method detail entry -->
+
+   <A NAME="add"><!-- --></A>
+   <H3>add</H3>
+   <PRE>void <B>add</B>(&lt;HopObject&gt; obj, &lt;Boolean&gt; force)</PRE>
+   
+      <UL>Adds a HopObject to the underlying index. This is done
+ by adding a new job to the internal queue and starting
+ a new worker thread to process it (if there isn't already
+ a worker being busy processing the queue). Adding an object
+ to the index also means that all documents with the same Id will
+ be removed before. The HopObject must implement a method
+ <code>getIndexDocument</code> that is expected to return
+ a ready-to-index instance of helma.Search.Document.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>obj</CODE> -  The HopObject that should be indexed.  
+      </UL> 
+   
+     <UL><CODE>force</CODE> -  (optional) If true the object will be added  instantly to the index without any check if the index is  locked or not, so use this option with caution. Normally this  option should never be set manually.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- helma.Search.Document</UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="addJob"><!-- --></A>
+   <H3>addJob</H3>
+   <PRE>void <B>addJob</B>(&lt;String&gt; action, &lt;Object&gt; param)</PRE>
+   
+      <UL>Adds a new job to the queue.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>action</CODE> -  The action to perform. Currently  supported values are "add", "remove" and "optimize".  
+      </UL> 
+   
+     <UL><CODE>param</CODE> -  An optional parameter object needed to  process the job.       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="flush"><!-- --></A>
+   <H3>flush</H3>
+   <PRE>void <B>flush</B>()</PRE>
+   
+      <UL>Flushes the underlying queue. This method should not be called
+ directly as it might run for a long time (depends on the length
+ of the queue). Instead this method will be executed asynchronously
+ after calling add(), remove() or optimize(). For safety reasons
+ every flush() will only run for a maximum time of 5 minutes, if
+ after that any objects are left in the queue a new asynchronous
+ thread will be started to continue processing the queue.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getCurrentIndexVersion"><!-- --></A>
+   <H3>getCurrentIndexVersion</H3>
+   <PRE>Number <B>getCurrentIndexVersion</B>()</PRE>
+   
+      <UL>Returns the version number of the underlying index.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current version number of the underlying index.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getIndex"><!-- --></A>
+   <H3>getIndex</H3>
+   <PRE>helma.Search.Index <B>getIndex</B>()</PRE>
+   
+      <UL>Returns the underlying index.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The index this queue is working on.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getQueue"><!-- --></A>
+   <H3>getQueue</H3>
+   <PRE><a href="jala.IndexManager.Queue.html">jala.IndexManager.Queue</a> <B>getQueue</B>()</PRE>
+   
+      <UL>Returns the underlying queue.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The underlying queue.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getSegmentInfos"><!-- --></A>
+   <H3>getSegmentInfos</H3>
+   <PRE>Array <B>getSegmentInfos</B>()</PRE>
+   
+      <UL>Returns an Array containing objects, where each one
+ contains information about an index segment in two
+ properties: "name" is the file name of the segment,
+ and "docCount" contains the number of documents in
+ this segment.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        An Array containing segment informations.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getStatus"><!-- --></A>
+   <H3>getStatus</H3>
+   <PRE>Number <B>getStatus</B>()</PRE>
+   
+      <UL>Returns the status of this manager.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The status of this index manager.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="hasOptimizingJob"><!-- --></A>
+   <H3>hasOptimizingJob</H3>
+   <PRE>Boolean <B>hasOptimizingJob</B>()</PRE>
+   
+      <UL>Returns true if the underlying index is currently optimized.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True in case the index is optimized, false otherwise.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="hasWorker"><!-- --></A>
+   <H3>hasWorker</H3>
+   <PRE>Boolean <B>hasWorker</B>()</PRE>
+   
+      <UL>Returns true if a worker has been initialized and it's still alive.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True if a worker is running, false otherwise.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="isRebuilding"><!-- --></A>
+   <H3>isRebuilding</H3>
+   <PRE>Boolean <B>isRebuilding</B>()</PRE>
+   
+      <UL>Returns true if the underlying index is currently rebuilding.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True in case the index is rebuilding, false otherwise.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="needsOptimize"><!-- --></A>
+   <H3>needsOptimize</H3>
+   <PRE>Object <B>needsOptimize</B>()</PRE>
+   
+      <UL>Returns true if the index should be optimized. This is done by
+ comparing the version number of this IndexManager with the one of
+ the underlying index. If it exceeds IndexManager.OPTIMIZE_INTERVAL
+ the index needs to be optimized.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="optimize"><!-- --></A>
+   <H3>optimize</H3>
+   <PRE>void <B>optimize</B>(&lt;Boolean&gt; force)</PRE>
+   
+      <UL>Optimizes the underlying index. Optimizing is done asynchronously,
+ so this method returns immediately, but the job itself will be
+ processed as soon as possible. Calling this method multiple times
+ doesn not lead to multiple optimization, as the job cannot be
+ added to the queue if there is already one.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>force</CODE> -  If true the index is optimized  immediately, without any check whether the index is locked  or not, so use this option with caution.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#isOptimized">()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="remove"><!-- --></A>
+   <H3>remove</H3>
+   <PRE>void <B>remove</B>(obj, &lt;Boolean&gt; force)</PRE>
+   
+      <UL>Removes the object passed as argument from the underlying
+ index. The argument can be either a HopObject or a JavaScript
+ object, but this method expects the property <code>_id</code>
+ to be set. Removing is done by adding a new job to the internal
+ queue, which in turn is processed asynchronously by a worker
+ thread.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>force</CODE> -  (optional) If true the removal is done instantly.  In this case no checking is done if the index is locked, so use  this option with caution as it might lead to index corruption.       
+      </UL> 
+   
+     <UL><CODE>HopObject</CODE> -  | Object} obj The HopObject or JavaScript object  whose property <code>_id</code> contains the Id of the index record.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setStatus"><!-- --></A>
+   <H3>setStatus</H3>
+   <PRE>void <B>setStatus</B>(&lt;Number&gt; s)</PRE>
+   
+      <UL>Modifies the status of this manager, which has implications
+ on how objects are indexed (a/synchronous or queued).</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>s</CODE> -  The new status of this manager.       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="startWorker"><!-- --></A>
+   <H3>startWorker</H3>
+   <PRE>void <B>startWorker</B>(&lt;Boolean&gt; force)</PRE>
+   
+      <UL>Starts a new worker thread if there isn't already one
+ processing the queue. This method also checks if the
+ thread is actually dead.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>force</CODE> -  If true the worker is created regardless  whether there is one already or not. Use this option with caution  as it might lead to index corruption when two workers are processing  the same queue on the same index.       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+
+
+<!-- ============ METHOD DETAIL END ========== -->
+
+<!-- ========= END OF CLASS DATA ========= -->
+
+<!-- ========== START OF NAVBAR ========== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=3 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-IndexManager.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
+  <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<B>Jala</B>
+</EM>
+</TD
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="jala.ImageFilter.html"><B>PREV CLASS</B></A><!-- 
+   NEXT CLASS 
+-->
+&nbsp;<A HREF="jala.IndexManager.Queue.html"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.IndexManager.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;
+<SCRIPT>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>
+</NOSCRIPT>
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+
+<!-- =========== END OF NAVBAR =========== -->
+
+<HR>
+<FONT SIZE="-1">
+
+</FONT>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+</BODY>
+</HTML>

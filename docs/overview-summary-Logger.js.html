@@ -1,0 +1,318 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="Logger.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>Logger.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the jala.Logger class.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Logger.html">jala.Logger</a></b></td>
+    <td>This class provides some convenience methods
+ for logging
+ </td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the jala.Logger class.
+ */</span>
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * Constructs a new Logger object
+ * <span class="attrib">@class</span> This class provides some convenience methods
+ * for logging
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Logger = <span class="reserved">function</span>() {
+
+   <span class="comment">/** <span class="attrib">@private</span> */</span>
+   var constructMessage = <span class="reserved">function</span>(msg, userName, reqPath) {
+      res.push();
+      res.write(<span class="literal">"&gt;&gt;&gt; "</span>);
+      <span class="reserved">if</span> (userName) {
+         res.write(<span class="literal">"["</span>)
+         res.write(userName);
+         res.write(<span class="literal">"] "</span>);
+      }
+      <span class="reserved">if</span> (msg)
+         res.write(msg);
+      <span class="reserved">if</span> (reqPath) {
+         res.write(<span class="literal">" (path: "</span>);
+         res.write(reqPath);
+         res.write(<span class="literal">")"</span>);
+      }
+      res.write(<span class="literal">" &lt;&lt;&lt;"</span>);
+      <span class="reserved">return</span> res.pop();
+   };
+
+   <span class="comment">/**
+    * Writes the message passed as argument to application log
+    * if the application is in debug mode.
+    * FIXME: with recent Helma snapshots the req object also
+    * exists for XmlRpc requests, so it shouldn't be necessary
+    * anymore to pass the request path as argument, we could
+    * simply use req.path instead.
+    * <span class="attrib">@param</span> {String} msg Message to write to log
+    * <span class="attrib">@param</span> {String} userName The name of the user that issued the request (optional)
+    * <span class="attrib">@param</span> {String} reqPath The request path (optional)
+    */</span>
+   <span class="reserved">this</span>.debug = <span class="reserved">function</span>(msg, userName, reqPath) {
+      app.debug(constructMessage(msg, userName, reqPath));
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Writes the message passed as argument to application log.
+    * <span class="attrib">@param</span> {String} msg Message to write to log
+    * <span class="attrib">@param</span> {String} userName The name of the user that issued the request (optional)
+    * <span class="attrib">@param</span> {String} reqPath The request path (optional)
+    */</span>
+   <span class="reserved">this</span>.log = <span class="reserved">function</span>(msg, userName, reqPath) {
+      app.log(constructMessage(msg, userName, reqPath));
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Writes an exception to application log. This method
+    * accepts both Java exceptions and Javascript objects
+    * thrown as Exception.
+    * <span class="attrib">@param</span> {Object} ex The exception object
+    * <span class="attrib">@param</span> {String} func The name of the function in which the exception was thrown (optional)
+    * <span class="attrib">@param</span> {String} userName The name of the user that issued the request (optional)
+    * <span class="attrib">@param</span> {String} reqPath The request path (optional)
+    */</span>
+   <span class="reserved">this</span>.logException = <span class="reserved">function</span>(ex, funcName, userName, reqPath) {
+      res.push();
+      res.write(<span class="literal">"Exception"</span>);
+      <span class="reserved">if</span> (funcName) {
+         res.write(<span class="literal">" in "</span>);
+         res.write(funcName);
+      }
+      res.write(<span class="literal">": "</span>);
+      <span class="reserved">if</span> (ex.fileName || ex.lineNumber) {
+         res.write(ex.message);
+         res.write(<span class="literal">" ("</span>);
+         <span class="reserved">if</span> (ex.fileName)
+            res.write(ex.fileName);
+         <span class="reserved">if</span> (ex.lineNumber) {
+            res.write(<span class="literal">", line "</span>);
+            res.write(ex.lineNumber);
+         }
+         res.write(<span class="literal">")"</span>);
+      } <span class="reserved">else</span> {
+         res.write(ex.toString());
+      }
+      app.log(constructMessage(res.pop(), (userName ? userName : <span class="literal">"system"</span>), reqPath));
+      <span class="reserved">return</span>;
+   };
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Logger.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.Logger]"</span>;
+};
+
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Logger.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.Logger Object]"</span>;
+};
+
+
+<span class="comment">/**
+ * Default logger class instance.
+ * <span class="attrib">@type</span> jala.Logger
+ * <span class="attrib">@final</span>
+ */</span>
+jala.logger = new jala.Logger();
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+</body>
+</html>

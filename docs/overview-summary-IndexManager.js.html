@@ -1,0 +1,800 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="IndexManager.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>IndexManager.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the jala.IndexManager class.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.IndexManager.html">jala.IndexManager</a></b></td>
+    <td>This class basically sits on top of a helma.Search.Index instance
+ and provides methods for adding, removing, optimizing and rebuilding
+ the underlying index.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.IndexManager.Queue.html">jala.IndexManager.Queue</a></b></td>
+    <td>Instances of this class are a mixture between a
+ first-in-first-out (FIFO) queue and a map, which means objects
+ are added using a string key and the value that should be associated
+ with it at the beginning of the queue, while maintaining the
+ order of insertion.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the jala.IndexManager class.
+ */</span>
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * HelmaLib dependencies
+ */</span>
+app.addRepository(<span class="literal">"modules/helma/Search.js"</span>);
+
+<span class="comment">/**
+ * Constructs a new IndexManager object.
+ * <span class="attrib">@class</span> This class basically sits on top of a helma.Search.Index instance
+ * and provides methods for adding, removing, optimizing and rebuilding
+ * the underlying index. All methods except rebuilding are executed
+ * asynchronously using an internal queue that contains jobs created
+ * for each call of add/remove/optimize. Rebuilding is somehow different
+ * as it puts this manager into rebuilding mode where all following
+ * calls of add/remove/optimize are queued, but the queue is not flushed
+ * until rebuilding has finished. This ensures that objects that have been
+ * modified during a rebuilding process are re-indexed properly afterwards.
+ * <span class="attrib">@param</span> {String} name The name of the index, which is the name of the directory
+ * the index already resides or will be created in.
+ * <span class="attrib">@param</span> {helma.File} dir The base directory where this index's directory
+ * is already existing or will be created in.
+ * <span class="attrib">@param</span> {String} lang The language of the documents in this index. This leads
+ * to the proper Lucene analyzer being used for indexing documents.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.IndexManager = <span class="reserved">function</span>(name, dir, lang) {
+   <span class="comment">/**
+    * Private variable containing the index managed by
+    * this IndexManager instance.
+    * <span class="attrib">@private</span> 
+    */</span>
+   var index = null;
+
+   <span class="comment">/**
+    * Private variable containing a status indicator.
+    * <span class="attrib">@type</span> Number
+    * <span class="attrib">@private</span>
+    */</span>
+   var status = jala.IndexManager.NORMAL;
+
+   <span class="comment">/**
+    * Hashtable containing queued objects to add/remove from the
+    * underlying index.
+    * <span class="attrib">@private</span>
+    */</span>
+   var queue = new jala.IndexManager.Queue();
+
+   <span class="comment">/**
+    * Private variable containing the worker flushing the queue
+    * <span class="attrib">@type</span> jala.AsyncRequest
+    * <span class="attrib">@private</span>
+    */</span>
+   var worker = null;
+
+   <span class="comment">/**
+    * Private method that prepends the name of this index queue
+    * to the message passed as argument, and calls the application
+    * logger.
+    * <span class="attrib">@param</span> {String} msg The message to log.
+    * <span class="attrib">@private</span>
+    */</span>
+   var log = <span class="reserved">function</span>(msg) {
+      app.logger.info(<span class="literal">"["</span> + name + <span class="literal">"] "</span> + msg);
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Private method holding the version number of the underlying index
+    * (see org.apache.lucene.index.IndexReader.getCurrentVersion()).
+    * This is used to determine if the index should be optimized.
+    * <span class="attrib">@type</span> Number
+    * <span class="attrib">@private</span>
+    */</span>
+   var version = 0;
+
+   <span class="comment">/**
+    * Returns the milliseconds elapsed between the current timestamp
+    * and the one passed as argument.
+    * <span class="attrib">@returns</span> The elapsed time in millis.
+    * <span class="attrib">@type</span> Number
+    * <span class="attrib">@private</span>
+    */</span>
+   var getRuntime = <span class="reserved">function</span>(d) {
+      <span class="reserved">return</span> (new Date()) - d;
+   };
+
+
+
+   <span class="comment">/********************************************************************
+    ************************** Public methods **************************
+    ********************************************************************/</span>
+
+
+   <span class="comment">/**
+    * Returns the underlying index.
+    * <span class="attrib">@returns</span> The index this queue is working on.
+    * <span class="attrib">@type</span> helma.Search.Index
+    */</span>
+   <span class="reserved">this</span>.getIndex = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> index;
+   };
+
+   <span class="comment">/**
+    * Returns the status of this manager.
+    * <span class="attrib">@returns</span> The status of this index manager.
+    * <span class="attrib">@type</span> Number
+    */</span>
+   <span class="reserved">this</span>.getStatus = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> status;
+   };
+
+   <span class="comment">/**
+    * Modifies the status of this manager, which has implications
+    * on how objects are indexed (a/synchronous or queued).
+    * <span class="attrib">@param</span> {Number} s The new status of this manager.
+    */</span>
+   <span class="reserved">this</span>.setStatus = <span class="reserved">function</span>(s) {
+      status = s;
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Returns the underlying queue.
+    * <span class="attrib">@returns</span> The underlying queue.
+    * <span class="attrib">@type</span> jala.IndexManager.Queue
+    */</span>
+   <span class="reserved">this</span>.getQueue = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> queue;
+   };
+
+   <span class="comment">/**
+    * Returns the version number of the underlying index.
+    * <span class="attrib">@returns</span> The current version number of the underlying index.
+    * <span class="attrib">@type</span> Number
+    */</span>
+   <span class="reserved">this</span>.getCurrentIndexVersion = <span class="reserved">function</span>() {
+       try {
+           <span class="reserved">return</span> Packages.org.apache.lucene.index.IndexReader.getCurrentVersion(index.getDirectory());
+       } catch (e) {
+           app.logger.debug(<span class="literal">"Unable to determine the index version, reason: "</span> + e);
+       }
+       <span class="reserved">return</span> null;
+   };
+
+   <span class="comment">/**
+    * Returns true if the underlying index is currently optimized.
+    * <span class="attrib">@returns</span> True in case the index is optimized, false otherwise.
+    * <span class="attrib">@type</span> Boolean
+    */</span>
+   <span class="reserved">this</span>.hasOptimizingJob = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> queue.contains(<span class="literal">"optimize"</span>);
+   };
+
+   <span class="comment">/**
+    * Returns true if the index should be optimized. This is done by
+    * comparing the version number of this IndexManager with the one of
+    * the underlying index. If it exceeds IndexManager.OPTIMIZE_INTERVAL
+    * the index needs to be optimized.
+    */</span>
+   <span class="reserved">this</span>.needsOptimize = <span class="reserved">function</span>() {
+       var indexVersion = <span class="reserved">this</span>.getCurrentIndexVersion();
+       <span class="reserved">if</span> (indexVersion != null &amp;&amp; (indexVersion - version) &gt;= jala.IndexManager.OPTIMIZE_INTERVAL) {
+           <span class="reserved">return</span> true;
+       }
+       <span class="reserved">return</span> false;
+   };
+
+   <span class="comment">/**
+    * Returns true if a worker has been initialized and it's still alive.
+    * <span class="attrib">@returns</span> True if a worker is running, false otherwise.
+    * <span class="attrib">@type</span> Boolean
+    */</span>
+   <span class="reserved">this</span>.hasWorker = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> (worker != null) ? worker.isAlive() : false;
+   };
+   
+   <span class="comment">/**
+    * Returns true if the underlying index is currently rebuilding.
+    * <span class="attrib">@returns</span> True in case the index is rebuilding, false otherwise.
+    * <span class="attrib">@type</span> Boolean
+    */</span>
+   <span class="reserved">this</span>.isRebuilding = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> status == jala.IndexManager.REBUILDING;
+   };
+
+   <span class="comment">/**
+    * Flushes the underlying queue. This method should not be called
+    * directly as it might run for a long time (depends on the length
+    * of the queue). Instead this method will be executed asynchronously
+    * after calling add(), remove() or optimize(). For safety reasons
+    * every flush() will only run for a maximum time of 5 minutes, if
+    * after that any objects are left in the queue a new asynchronous
+    * thread will be started to continue processing the queue.
+    */</span>
+   <span class="reserved">this</span>.flush = <span class="reserved">function</span>() {
+      var start = new Date();
+      var job;
+      <span class="reserved">while</span> ((job = queue.remove()) != null &amp;&amp; getRuntime(start) &lt; 300000) {
+         app.logger.debug(<span class="literal">"IndexMgr.flush(): Job '"</span> + job.action + <span class="literal">"' has been in queue for "</span>
+                          + getRuntime(job.createtime) + <span class="literal">" ms, processing now... (Thread "</span>
+                          + java.lang.Thread.currentThread().getId() + <span class="literal">", remaining jobs: "</span>
+                          + queue.size() + <span class="literal">")"</span>);
+         try {
+            switch (job.action) {
+               case <span class="literal">"add"</span>:
+                  var proto = getGlobal(job._prototype);
+                  var hopObj = proto.getById(job._id);
+                  <span class="reserved">if</span> (hopObj != null) {
+                     <span class="reserved">this</span>.add(hopObj, true);
+                  } <span class="reserved">else</span> {
+                     log(<span class="literal">"Error during queue flush: "</span> + job._prototype
+                         + <span class="literal">" with Id "</span> + job._id + <span class="literal">" doesn't exist."</span>);
+                  }
+                  break;
+
+               case <span class="literal">"remove"</span>:
+                  <span class="reserved">this</span>.remove(job, true);
+                  break;
+
+               case <span class="literal">"optimize"</span>:
+                  <span class="reserved">this</span>.optimize(true);
+                  break;
+
+               default:
+                  log(<span class="literal">"Error during queue flush: unknown action "</span> + job.action);
+                  break;
+            }
+         } catch (e) {
+            app.logger.debug(<span class="literal">"Exception during flush: "</span> + e);
+            <span class="reserved">if</span> (job.errors &lt; jala.IndexManager.MAXTRIES) {
+               <span class="comment">// got an error, so increment error counter and put back into queue</span>
+               job.errors += 1;
+               <span class="reserved">this</span>.addJob(<span class="literal">"add"</span>, job);
+            } <span class="reserved">else</span> {
+               log(<span class="literal">"Error during queue flush: tried "</span> + jala.IndexManager.MAXTRIES
+                   + <span class="literal">" times to handle "</span> + job.action + <span class="literal">" (job: "</span> + job.toSource()
+                   + <span class="literal">", giving up. Last error: "</span> + e);
+            }
+         }
+      }
+      <span class="reserved">if</span> (queue.size() &gt; 0) {
+         <span class="comment">// there are still objects in the queue, so spawn a new worker</span>
+         <span class="reserved">this</span>.startWorker(true);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.needsOptimize()) {
+         <span class="comment">// we're finished with flushing, but index needs an optimize</span>
+         <span class="comment">// so add an optimizing job and start a new worker, but before</span>
+         <span class="comment">// remove the reference to the worker to ensure that a new worker</span>
+         <span class="comment">// is started (otherwise this worker would prevent the next</span>
+         <span class="comment">// from starting).</span>
+         worker = null;
+         <span class="reserved">this</span>.optimize();
+      }
+      <span class="reserved">return</span>;
+   };
+   
+   
+   <span class="comment">/**
+    * Adds a new job to the queue.
+    * <span class="attrib">@param</span> {String} action The action to perform. Currently
+    * supported values are "add", "remove" and "optimize".
+    * <span class="attrib">@param</span> {Object} param An optional parameter object needed to
+    * process the job.
+    */</span>
+   <span class="reserved">this</span>.addJob = <span class="reserved">function</span>(action, param) {
+      var key;
+      <span class="reserved">if</span> (param != null) {
+         key = action + <span class="literal">":"</span> + param._id;
+         <span class="comment">// add standard properties</span>
+         param.action = action;
+         <span class="reserved">if</span> (param.errors == undefined)
+            param.errors = 0;
+      } <span class="reserved">else</span> {
+         key = action;
+         param = {action: action};
+      }
+      param.createtime = new Date();
+      <span class="comment">// add job to internal queue</span>
+      queue.add(key, param);
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Starts a new worker thread if there isn't already one
+    * processing the queue. This method also checks if the
+    * thread is actually dead.
+    * <span class="attrib">@param</span> {Boolean} force If true the worker is created regardless
+    * whether there is one already or not. Use this option with caution
+    * as it might lead to index corruption when two workers are processing
+    * the same queue on the same index.
+    */</span>
+   <span class="reserved">this</span>.startWorker = <span class="reserved">function</span>(force) {
+      <span class="reserved">if</span> (!<span class="reserved">this</span>.hasWorker() || force === true) {
+         worker = new jala.AsyncRequest(<span class="reserved">this</span>, <span class="literal">"flush"</span>);
+         worker.evaluate();
+      }
+      <span class="reserved">return</span>;
+   };
+   
+   <span class="comment">/**
+    * Adds a HopObject to the underlying index. This is done
+    * by adding a new job to the internal queue and starting
+    * a new worker thread to process it (if there isn't already
+    * a worker being busy processing the queue). Adding an object
+    * to the index also means that all documents with the same Id will
+    * be removed before. The HopObject must implement a method
+    * &lt;code&gt;getIndexDocument&lt;/code&gt; that is expected to return
+    * a ready-to-index instance of helma.Search.Document.
+    * <span class="attrib">@param</span> {HopObject} obj The HopObject that should be indexed.
+    * <span class="attrib">@param</span> {Boolean} force (optional) If true the object will be added
+    * instantly to the index without any check if the index is
+    * locked or not, so use this option with caution. Normally this
+    * option should never be set manually.
+    * <span class="attrib">@see</span> helma.Search.Document
+    */</span>
+   <span class="reserved">this</span>.add = <span class="reserved">function</span>(obj, force) {
+      <span class="reserved">if</span> (force === true) {
+         var start = new Date();
+         var docObj;
+         <span class="reserved">if</span> (!(obj.getIndexDocument instanceof Function)) {
+            log(<span class="literal">"Error during queue flush: "</span> + param._prototype
+                + <span class="literal">" doesn't implement method getIndexDocument."</span>);
+         } <span class="reserved">else</span> <span class="reserved">if</span> (!(docObj = obj.getIndexDocument())) {
+            log(<span class="literal">"Error during queue flush: coulnt't get index document for"</span> 
+                + param._prototype + <span class="literal">" with Id "</span> + param._id);
+         } <span class="reserved">else</span> {
+            index.updateDocument(docObj, <span class="literal">"id"</span>);
+            log(<span class="literal">"Added "</span> + obj._prototype + <span class="literal">" with Id "</span> + obj._id
+                + <span class="literal">" in "</span> + getRuntime(start) + <span class="literal">" ms"</span>);
+         }
+      } <span class="reserved">else</span> {
+         <span class="reserved">this</span>.addJob(<span class="literal">"add"</span>, {
+               _prototype: obj._prototype,
+               _id: obj._id
+            });
+         log(<span class="literal">"Queued adding of "</span> + obj._prototype + <span class="literal">" with Id "</span> + obj._id);
+         <span class="reserved">if</span> (!<span class="reserved">this</span>.isRebuilding()) {
+            <span class="reserved">this</span>.startWorker();
+         }
+      }
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Removes the object passed as argument from the underlying
+    * index. The argument can be either a HopObject or a JavaScript
+    * object, but this method expects the property &lt;code&gt;_id&lt;/code&gt;
+    * to be set. Removing is done by adding a new job to the internal
+    * queue, which in turn is processed asynchronously by a worker
+    * thread.
+    * <span class="attrib">@param</span> {HopObject | Object} obj The HopObject or JavaScript object
+    * whose property &lt;code&gt;_id&lt;/code&gt; contains the Id of the index record.
+    * <span class="attrib">@param</span> {Boolean} force (optional) If true the removal is done instantly.
+    * In this case no checking is done if the index is locked, so use
+    * this option with caution as it might lead to index corruption.
+    */</span>
+   <span class="reserved">this</span>.remove = <span class="reserved">function</span>(obj, force) {
+      <span class="reserved">if</span> (force === true) {
+         var start = new Date();
+         index.removeDocument(<span class="literal">"id"</span>, obj._id);
+         log(<span class="literal">"Removed Id "</span> + obj._id + <span class="literal">" from index in "</span>
+             + getRuntime(start) + <span class="literal">" ms"</span>);
+      } <span class="reserved">else</span> {
+         <span class="reserved">this</span>.addJob(<span class="literal">"remove"</span>, {
+            _prototype: obj._prototype,
+            _id: obj._id
+         });
+         log(<span class="literal">"Queued removal of "</span> + obj._prototype + <span class="literal">" with Id "</span> + obj._id);
+         <span class="reserved">if</span> (!<span class="reserved">this</span>.isRebuilding()) {
+            <span class="reserved">this</span>.startWorker();
+         }
+      }
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Optimizes the underlying index. Optimizing is done asynchronously,
+    * so this method returns immediately, but the job itself will be
+    * processed as soon as possible. Calling this method multiple times
+    * doesn not lead to multiple optimization, as the job cannot be
+    * added to the queue if there is already one.
+    * <span class="attrib">@param</span> {Boolean} force If true the index is optimized
+    * immediately, without any check whether the index is locked
+    * or not, so use this option with caution.
+    * <span class="attrib">@see</span> #isOptimized()
+    */</span>
+   <span class="reserved">this</span>.optimize = <span class="reserved">function</span>(force) {
+      <span class="reserved">if</span> (force === true) {
+         var start = new Date();
+         index.optimize();
+         <span class="comment">// update version number to current index version</span>
+         version = <span class="reserved">this</span>.getCurrentIndexVersion();
+         log(<span class="literal">"Optimized index in "</span> + getRuntime(start) + <span class="literal">" ms"</span>);
+      } <span class="reserved">else</span> {
+         <span class="reserved">this</span>.addJob(<span class="literal">"optimize"</span>);
+         log(<span class="literal">"Queued index optimizing"</span>);
+         <span class="reserved">if</span> (!<span class="reserved">this</span>.isRebuilding()) {
+            <span class="reserved">this</span>.startWorker();
+         }
+      }
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Returns an Array containing objects, where each one
+    * contains information about an index segment in two
+    * properties: "name" is the file name of the segment,
+    * and "docCount" contains the number of documents in
+    * this segment.
+    * <span class="attrib">@returns</span> An Array containing segment informations.
+    * <span class="attrib">@type</span> Array
+    */</span>
+   <span class="reserved">this</span>.getSegmentInfos = <span class="reserved">function</span>() {
+      var FORMAT = -1;
+      var infos = [];
+      var directory = index.getDirectory();
+      var input = directory.openInput(<span class="literal">"segments"</span>);
+      var format, version, counter;
+
+      try {
+         format = input.readInt();
+         <span class="reserved">if</span> (format &lt; 0){     <span class="comment">// file contains explicit format info</span>
+            <span class="comment">// check that it is a format we can understand</span>
+            <span class="reserved">if</span> (format &lt; FORMAT)
+               throw (<span class="literal">"Unknown format version: "</span> + format);
+            version = input.readLong(); <span class="comment">// read version</span>
+            counter = input.readInt(); <span class="comment">// read counter</span>
+         } <span class="reserved">else</span> {     <span class="comment">// file is in old format without explicit format info</span>
+            counter = format;
+         }
+      
+         <span class="reserved">for</span> (var i=input.readInt(); i&gt;0; i--) { <span class="comment">// read segmentInfos</span>
+            infos.push({name: input.readString(),
+                        docCount: input.readInt()});
+         }
+      
+         <span class="reserved">if</span> (format &gt;= 0) {    <span class="comment">// in old format the version number may be at the end of the file</span>
+            <span class="reserved">if</span> (input.getFilePointer() &gt;= input.length())
+               version = 0; <span class="comment">// old file format without version number</span>
+            <span class="reserved">else</span>
+               version = input.readLong(); <span class="comment">// read version</span>
+         }
+      } catch (e) {
+         app.logger.debug(<span class="literal">"Unable to retrieve segment infos, reason: "</span> + e);
+      } finally {
+         input.close();
+      }
+      <span class="reserved">return</span> infos;
+   };
+   
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
+   <span class="reserved">this</span>.toString = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> <span class="literal">"[Index Manager '"</span> + <span class="reserved">this</span>.name + <span class="literal">"' ("</span>
+             + queue.size() + <span class="literal">" objects queued)]"</span>;
+   };
+
+   <span class="comment">/**
+    * The name of the index this queue is responsible for,
+    * which equals the name of the directory the underlying
+    * index resides in.
+    * <span class="attrib">@type</span> String
+    */</span>
+   <span class="reserved">this</span>.name = name;
+
+   <span class="comment">/**
+    * Main constructor body. Initializes the underlying index.
+    */</span>
+   var search = new helma.Search();
+   var analyzer = helma.Search.getAnalyzer(lang);
+   var fsDir = search.getDirectory(new helma.File(dir, name));
+   index = search.createIndex(fsDir, analyzer);
+   log(<span class="literal">"Created/mounted "</span> + index);
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+<span class="comment">/**
+ * Constant defining the maximum number of tries to add/remove
+ * an object to/from the underlying index.
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@final</span>
+ */</span>
+jala.IndexManager.MAXTRIES = 3;
+
+<span class="comment">/**
+ * Constant defining the number of changes in the underlying
+ * index before it should be optimized.
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@final</span>
+ */</span>
+jala.IndexManager.OPTIMIZE_INTERVAL = 1000;
+
+<span class="comment">/**
+ * Constant defining normal mode of this index manager.
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@final</span>
+ */</span>
+jala.IndexManager.NORMAL = 1;
+
+<span class="comment">/**
+ * Constant defining rebuilding mode of this index manager.
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@final</span>
+ */</span>
+jala.IndexManager.REBUILDING = 2;
+
+
+<span class="comment">/**
+ * Creates new Queue instances.
+ * <span class="attrib">@class</span> Instances of this class are a mixture between a
+ * first-in-first-out (FIFO) queue and a map, which means objects
+ * are added using a string key and the value that should be associated
+ * with it at the beginning of the queue, while maintaining the
+ * order of insertion. Calling remove on the other hand removes the
+ * last element in the queue, removes the key and returns the
+ * value associated with it.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.IndexManager.Queue = <span class="reserved">function</span>() {
+   var values = [];
+   var keys = {};
+
+   <span class="comment">/**
+    * Adds the object passed as argument to the queue,
+    * using the given key.
+    * <span class="attrib">@param</span> {String} key The key to use for storing the object.
+    * <span class="attrib">@param</span> {Object} obj The object to store in the queue
+    * <span class="attrib">@returns</span> The length of the queue after the insertion.
+    * <span class="attrib">@type</span> Number
+    */</span>
+   <span class="reserved">this</span>.add = <span class="reserved">function</span>(key, obj) {
+      <span class="reserved">if</span> (!<span class="reserved">this</span>.contains(key)) {
+         keys[key] = values.unshift({key: key, obj: obj});
+      }
+      <span class="reserved">return</span> values.length;
+   };
+   
+   <span class="comment">/**
+    * Returns true if the key is used in this queue.
+    * <span class="attrib">@param</span> {String} key The key to check.
+    * <span class="attrib">@returns</span> True in case there is an object in this
+    * queue using this key, false otherwise.
+    * <span class="attrib">@type</span> Boolean
+    */</span>
+   <span class="reserved">this</span>.contains = <span class="reserved">function</span>(key) {
+      <span class="reserved">return</span> keys[key] != null;
+   };
+   
+   <span class="comment">/**
+    * Removes the last element in the queue and returns it.
+    * <span class="attrib">@returns</span> The last element in the queue.
+    */</span>
+   <span class="reserved">this</span>.remove = <span class="reserved">function</span>() {
+      <span class="reserved">if</span> (values.length &gt; 0) {
+         var result = values.pop();
+         delete keys[result.key];
+         <span class="reserved">return</span> result.obj;
+      }
+      <span class="reserved">return</span> null;
+   };
+   
+   <span class="comment">/**
+    * Returns the last element in the queue without removing
+    * it, so in contrast to remove() this method does not
+    * change the length of the queue.
+    * <span class="attrib">@returns</span> The last element in the queue.
+    */</span>
+   <span class="reserved">this</span>.peek = <span class="reserved">function</span>() {
+      <span class="reserved">if</span> (values.length &gt; 0) {
+         <span class="reserved">return</span> values[0].obj;
+      }
+      <span class="reserved">return</span> null;
+   };
+   
+   <span class="comment">/**
+    * Returns the current length of the queue.
+    * <span class="attrib">@returns</span> The length of the queue.
+    * <span class="attrib">@type</span> Number
+    */</span>
+   <span class="reserved">this</span>.size = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> values.length;
+   };
+   
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+</body>
+</html>
