@@ -299,7 +299,19 @@ jala.i18n = new jala.I18n();
  * For convenience reasons the public methods and macros are
  * put into global scope too
  */
-var gettext = jala.i18n.gettext;
-var ngettext = jala.i18n.ngettext;
-var markgettext = jala.i18n.gettext;
-var message_macro = jala.i18n.message_macro;
+/**
+ * For convenience reasons the public methods and macros are
+ * put into global scope too
+ */
+var gettext = function() {
+   return jala.i18n.gettext.apply(jala.i18n, arguments);
+};
+var ngettext = function() {
+   return jala.i18n.ngettext.apply(jala.i18n, arguments);
+};
+var markgettext = function() {
+   return jala.i18n.markgettext.apply(jala.i18n, arguments);
+};
+var message_macro = function() {
+   return jala.i18n.message_macro.apply(jala.i18n, arguments);
+};
