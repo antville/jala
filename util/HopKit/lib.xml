@@ -25,7 +25,7 @@
       <echo message=" helmadoc -> run jsdoc on a helma application in the current directory" />
       <echo message=" pot      -> parse i18n methods out of function files and skins and" />
       <echo message="             creates a gettext template file." />
-      <echo message=" messages -> compile gettext message files into a single messages.jar" />
+      <echo message=" messages -> compile gnu gettext .po files into javascript message files" />
       <echo message="" />
       <echo message=" macro definitions that can be used in other build files:" />
       <echo message=" - jslint" />
@@ -90,52 +90,24 @@
    </target>
 
    <!-- =================================================================== -->
-   <!-- Compile the .po files in a given directory into a ResourceBundle    -->
-   <!-- and jar them into one messages.jar file                             -->
+   <!-- Generates JavaScript message files out of the .po files in a given  -->
+   <!-- directory                                                           -->
    <!-- =================================================================== -->
    <target name="messages">
       <input message="Directory containing .po files:"
              addproperty="i18n.poDirectory" />
-      <input message="Destination directory for resulting .jar file:"
+      <input message="Destination directory for generated message files:"
              addproperty="i18n.destination" />
-      <echo message="Compiling .po files in '${i18n.poDirectory}'..." />
-      <property environment="env." />
-      <property name="gettext" value="${env.ProgramFiles}" />
-      <property name="gettext.msgfmt" value="${gettext}/GnuWin32/bin/msgfmt.exe" />
-      <property name="classDir" value="${work}/classes" />
-      <!-- create working directory -->
-      <mkdir dir="${classDir}" />
-
-      <!-- extract the filename (== locale) of all .po files -->
-      <fileset id="po.files" dir="${i18n.poDirectory}" includes="*.po" />
-      <pathconvert property="locales" refid="po.files" pathsep=",">
-         <chainedmapper>
-            <flattenmapper/>
-            <mapper type="glob" from="*.po" to="*" />
-         </chainedmapper>
-      </pathconvert>
-
-      <for list="${locales}" delimiter="," param="currentLocale">
-         <sequential>
-            <echo message="Compiling language '@{currentLocale}'" />
-            <exec executable="${gettext.msgfmt}">
-               <arg value="--statistics"/>
-               <arg value="--java2"/>
-               <arg value="-l"/>
-               <arg value="@{currentLocale}"/>
-               <arg value="-d"/>
-               <arg value="${classDir}" />
-               <arg value="--resource=jala.Messages" />
-               <arg value="${i18n.poDirectory}${file.separator}@{currentLocale}.po"/>
-            </exec>
-         </sequential>
-      </for>
-      <!-- jar the message classes -->
-      <jar destfile="${i18n.destination}/messages.jar"
-           basedir="${classDir}"
-           excludes="**/*$*.class" />
-      <!-- clean up -->
-      <delete dir="${work}" />
+      <input message="Namespace to use for generated messages (optional):"
+             addproperty="i18n.namespace" />
+      <echo message="Generating message files from .po files in '${i18n.poDirectory}'..." />
+      <echo message="Using '${i18n.destination}' as output directory" />
+      <java classname="org.mozilla.javascript.tools.shell.Main">
+         <arg value="${env.BUILD_HOME}/scripts/PoParser.js" />
+         <arg value="${i18n.poDirectory}" />
+         <arg value="${i18n.destination}" />
+         <arg line="${i18n.namespace}" />
+      </java>
    </target>
 
    <!-- =================================================================== -->
