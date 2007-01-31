@@ -21,18 +21,15 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Methods and macros for internationalization
  * of Helma applications based on GNU gettext.
  */
 
-
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
-
 
 /**
  * Jala dependencies
@@ -50,9 +47,25 @@ jala.I18n = function() {
    return this;
 };
 
+/**
+ * The default handler containing the messages.
+ * @ignore
+ */
+jala.I18n.HANDLER = global;
+
 /** @ignore */
 jala.I18n.prototype.toString = function() {
    return "[Jala i18n]";
+};
+
+/**
+ * Set (overwrite) the default handler containing
+ * the messages (ie. a vanilla EcmaScript object).
+ * @param {Object} handler
+ */
+jala.I18n.prototype.setHandler = function(handler) {
+   jala.I18n.HANDLER = handler;
+   return;
 };
 
 /**
@@ -79,10 +92,7 @@ jala.I18n.prototype.getLocale = function(localeId) {
 
 /**
  * Tries to "translate" the given message key into a localized
- * message. Requires the files gettext.jar and messages.jar
- * in the application directory (the latter is expected to contain
- * the containing a ResourceBundle "jala.Messages" containing the
- * messages in different languages.
+ * message.
  * @param {String} key The message to translate (required)
  * @param {String} plural The plural form of the message to translate
  * @param {Number} amount A number to determine whether to use the
@@ -91,26 +101,25 @@ jala.I18n.prototype.getLocale = function(localeId) {
  * localized message was found
  */
 jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
-   var translation = null;
+   var translation;
    if (singularKey) {
       // use either the locale defined in res.meta.locale or the jvm default
       var locale = res.meta.locale || java.util.Locale.getDefault();
-      var loader = app.getClassLoader();
-      try {
-         var bundle = java.util.ResourceBundle.getBundle("jala.Messages", locale, loader);
-         if (arguments.length == 3) {
-            translation = Packages.gnu.gettext.GettextResource.ngettext(bundle,
-                                singularKey, pluralKey, amount);
+      var catalog;
+      if ((catalog = jala.i18n.getCatalog(locale))) {
+         if (arguments.length == 3 && amount != 1) { // is plural
+            if (!(translation = catalog[pluralKey])) {
+               app.logger.debug("jala.i18n.translate(): Can't find message '" + 
+                                singularKey + "' for locale '" + locale + "'");                
+            }
          } else {
-            translation = Packages.gnu.gettext.GettextResource.gettext(bundle, singularKey);
+            if (!(translation = catalog[singularKey])) {
+               app.logger.debug("jala.i18n.translate(): Can't find message '" + 
+                                pluralKey + "' for locale '" + locale + "'");                
+            }
          }
-      } catch(e) {
-         if (e.javaException && e.javaException instanceof java.util.MissingResourceException) {
-            app.logger.debug("jala.i18n.translate(): Can't find messages for locale '"
-                             + locale + "'");
-         } else {
-            app.logger.error("jala.i18n.translate(): " + e, e.javaException);
-         }
+      } else {
+         app.logger.debug("jala.i18n.translate(): Can't find message catalog for locale '" + locale + "'");
          if (!pluralKey || amount == 1) {
             translation = singularKey;
          } else {
@@ -119,6 +128,28 @@ jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
       }
    }
    return translation;
+};
+
+/**
+ * Helper method to get the message catalog  
+ * corresponding to the actual locale.
+ * @params {java.util.Locale} locale
+ * @returns The message catalog.
+ */
+jala.I18n.prototype.getCatalog = function(locale) {
+   if (!jala.I18n.catalogs) {
+      jala.I18n.catalogs = {};
+   }
+   var cache = jala.I18n.catalogs;
+   var catalog;
+   if (!cache[locale]) {
+      var arr = [locale.getLanguage(), locale.getCountry(), locale.getVariant()];
+      while (arr.length > 0 && !(catalog = jala.I18n.HANDLER.messages[arr.join("_")])) {
+         arr.pop();
+      }
+      cache[locale] = catalog;
+   }
+   return cache[locale];
 };
 
 /**
@@ -295,10 +326,6 @@ jala.I18n.prototype.message_macro = function(param) {
 // default instantiation of I18n
 jala.i18n = new jala.I18n();
 
-/**
- * For convenience reasons the public methods and macros are
- * put into global scope too
- */
 /**
  * For convenience reasons the public methods and macros are
  * put into global scope too
