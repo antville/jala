@@ -105,18 +105,17 @@ jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
    if (singularKey) {
       // use either the locale defined in res.meta.locale or the jvm default
       var locale = res.meta.locale || java.util.Locale.getDefault();
-      var catalog;
+      var catalog, key;
       if ((catalog = jala.i18n.getCatalog(locale))) {
          if (arguments.length == 3 && amount != 1) { // is plural
-            if (!(translation = catalog[pluralKey])) {
-               app.logger.debug("jala.i18n.translate(): Can't find message '" + 
-                                singularKey + "' for locale '" + locale + "'");                
-            }
+            key = pluralKey;
          } else {
-            if (!(translation = catalog[singularKey])) {
-               app.logger.debug("jala.i18n.translate(): Can't find message '" + 
-                                pluralKey + "' for locale '" + locale + "'");                
-            }
+            key = singularKey;
+         }
+         if (!(translation = catalog[key])) {
+            translation = key;
+            app.logger.debug("jala.i18n.translate(): Can't find message '" + 
+                             key + "' for locale '" + locale + "'");          
          }
       } else {
          app.logger.debug("jala.i18n.translate(): Can't find message catalog for locale '" + locale + "'");
@@ -206,12 +205,8 @@ jala.I18n.prototype.formatMessage = function(message, values) {
  * @see #formatMessage
  */
 jala.I18n.prototype.gettext = function(key /** [value 0][, value 1][, ...] */) {
-   var translation = this.translate(key);
-   if (translation) {
-      return this.formatMessage(translation,
-                                Array.prototype.splice.call(arguments, 1));
-   }
-   return null;
+   return this.formatMessage(this.translate(key),
+                             Array.prototype.splice.call(arguments, 1));
 };
 
 /**
@@ -232,12 +227,8 @@ jala.I18n.prototype.gettext = function(key /** [value 0][, value 1][, ...] */) {
  * @see #formatMessage
  */
 jala.I18n.prototype.ngettext = function(singularKey, pluralKey, amount /** [value 0][, value 1][, ...] */) {
-   var translation = this.translate(singularKey, pluralKey, amount || 0);
-   if (translation) {
-      return this.formatMessage(translation,
-                                Array.prototype.splice.call(arguments, 2));
-   }
-   return null;
+   return this.formatMessage(this.translate(singularKey, pluralKey, amount || 0),
+                             Array.prototype.splice.call(arguments, 2));
 };
 
 /**
