@@ -43,7 +43,6 @@ if (!global.jala) {
       "ImageFilter",
       "IndexManager",
       "ListRenderer",
-      "Logger",
       "Mp3Info",
       "PodCastWriter",
       "RemoteContent",
