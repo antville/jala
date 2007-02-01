@@ -54,9 +54,14 @@
    <!-- Create documentation with jsdoc.pl                                  -->
    <!-- =================================================================== -->
    <target name="jsdoc">
-      <echo message="Creating javascript docs with jsdoc on ${basedir}" />
-      <jsdoc name="" destdir="${user.dir}/docs">
-         <fileset dir="${user.dir}" includes="**/*.js" />
+      <echo message="Creating javascript docs with jsdoc on ${user.dir}" />
+      <property name="jsdoc.projectName" value="" />
+      <input message="Destination directory (docs):"
+               addproperty="jsdoc.destination" defaultvalue="docs" />
+      <property name="src" value="${user.dir}" />
+      <property name="dest" value="${user.dir}/${jsdoc.destination}" />
+      <jsdoc name="${jsdoc.projectName}" srcdir="${src}" destdir="${dest}">
+         <fileset dir="${src}" includes="**/*.js" />
       </jsdoc>
    </target>
 
@@ -116,6 +121,7 @@
    <macrodef name="jsdoc">
       <attribute name="destdir" />
       <attribute name="name" />
+      <attribute name="srcdir" />
       <element name="filesetEl" implicit="true" />
       <sequential>
          <path id="filepath">
@@ -129,7 +135,8 @@
             <arg value="--template-dir=${env.BUILD_HOME}/JSDoc/templates" />
             <arg value="-d=@{destdir}" />
             <arg value="--project-name=@{name}" />
-            <arg line="${sourceFiles}" />
+            <arg value="--project-summary=@{srcdir}/.jsdoc/summary.html" />
+         	<arg line="${sourceFiles}" />
          </exec>
       </sequential>
    </macrodef>
