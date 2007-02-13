@@ -26,6 +26,7 @@
  * Module dependencies
  */
 app.addRepository("modules/core/HopObject.js");
+app.addRepository("modules/core/Array.js");
 app.addRepository("modules/helma/File.js");
 
 /**
