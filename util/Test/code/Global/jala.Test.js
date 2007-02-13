@@ -134,14 +134,14 @@ jala.Test.valueToString = function(val) {
 /**
  * Returns the directory containing the test files.
  * The location of the directory is either defined by the
- * application property "tests" or expected to be one level
+ * application property "jala.testDir" or expected to be one level
  * above the application directory (and named "tests")
  * @returns The directory containing the test files
  * @type helma.File
  */
 jala.Test.getTestsDirectory = function() {
    var dir;
-   if (getProperty("tests") != null) {
+   if (getProperty("jala.testDir") != null) {
       dir = new helma.File(getProperty("tests"));
    }
    if (!dir || !dir.exists()) {
