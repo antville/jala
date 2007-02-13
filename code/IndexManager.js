@@ -39,6 +39,11 @@ if (!global.jala) {
 app.addRepository("modules/helma/Search.js");
 
 /**
+ * Jala dependencies
+ */
+app.addRepository("modules/jala/code/AsyncRequest.js");
+
+/**
  * Constructs a new IndexManager object.
  * @class This class basically sits on top of a helma.Search.Index instance
  * and provides methods for adding, removing, optimizing and rebuilding

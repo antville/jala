@@ -58,6 +58,6 @@ fi
 
 CP="${CLASSPATH}:${BUILD_HOME}/lib/ant-launcher.jar"
 
-"${JAVA_HOME}/bin/java" -classpath "${CP}" -Dant.home="${BUILD_HOME}" org.apache.tools.ant.launch.Launcher -propertyfile "${PWD}/build.properties" -file "${BUILD_XML}" ${ANT_CMD_LINE_ARGS}
+"${JAVA_HOME}/bin/java" -classpath "${CP}" -Dant.home="${BUILD_HOME}" -Dbasedir="${PWD}" org.apache.tools.ant.launch.Launcher -propertyfile "${PWD}/build.properties" -file "${BUILD_XML}" ${ANT_CMD_LINE_ARGS}
 
 exit

@@ -34,6 +34,11 @@ if (!global.jala) {
 
 
 /**
+ * Jala dependencies
+ */
+app.addRepository("modules/jala/code/XmlWriter.js");
+
+/**
  * @class Class to create, modify and render standard-compliant
  * RSS 2.0 feeds.
  * @constructor

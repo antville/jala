@@ -34,7 +34,7 @@
  * @type XmlRpcCall
  */
 var XmlRpcCall = function(url, methodName) {
-   this.request =  new XmlRpcRequest(url, methodName);
+   this.request =  new jala.XmlRpcRequest(url, methodName);
    this.result = null;
    return this;
 };
@@ -44,7 +44,7 @@ var XmlRpcCall = function(url, methodName) {
  */
 XmlRpcCall.prototype.execute = function() {
    this.args = arguments;
-   this.response = XmlRpcRequest.prototype.execute.apply(this.request, arguments);
+   this.response = jala.XmlRpcRequest.prototype.execute.apply(this.request, arguments);
    return;
 };
 

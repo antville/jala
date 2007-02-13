@@ -48,7 +48,6 @@ if (!global.jala) {
  */
 jala.XmlWriter = function(header) {
    var self = this;
-   var DEBUG = false;
    var XMLHEADER = header || 
                    '<?xml version="1.0" encoding="iso-8859-15"?>';
    var LOCALE = java.util.Locale.ENGLISH;
@@ -185,21 +184,19 @@ jala.XmlWriter = function(header) {
             }
             if (value && attr.type && attr.type != value.constructor) {
                throw Error('Type mismatch in attribute "' + 
-                      this.name + ":" + attr.name + '"');
+                           this.name + ":" + attr.name + '"');
             }
-
-            if (DEBUG && value) {
-               res.debug("populating attribute " + attr.name + 
-                         " with " + value.constructor + ": " + value.toSource());
+            if (value) {
+               app.debug("populating attribute " + attr.name + 
+                         " with " + value.constructor.name + ": " + value.toSource());
             }
-
             if (!attr.readonly) {
                attr.value = getString(value, attr.format) || attr.value ;
             }
          }
       }
 
-      if (data && data.value)// && data.value.constructor == Object)
+      if (data && data.value) // && data.value.constructor == Object)
          data = data.value;
 
       if (this.value && data) {
@@ -213,12 +210,10 @@ jala.XmlWriter = function(header) {
          if (data && this.type && this.type != data.constructor) {
             throw Error('Type mismatch in element "' + this.name + '"');
          }
-
-         if (DEBUG && data) {
-            res.debug("populating element &lt;" + this.name + 
-                      "&gt; with " + (this.type || Object).name + ": " + data.toSource());
+         if (data) {
+            app.debug("populating element &lt;" + this.name +  "&gt; with " + 
+                      (this.type || Object).name + ": " + data.toSource());
          }
-
          if (!this.readonly)
             this.value = getString(data, this.format) || this.value;
       }
@@ -364,20 +359,6 @@ jala.XmlWriter = function(header) {
             copy[i] = obj[i];
       }
       return copy;
-   };
-
-   /** @private */
-   this.source = function(obj) {
-      if (obj)
-         this.debug(obj.toSource());
-      return;
-   }
-
-   /** @private */
-   this.debug = function(str) {
-      if (DEBUG)
-         res.write("## " + str + "\n");
-      return;
    };
 
    return this;

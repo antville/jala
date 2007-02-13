@@ -39,17 +39,25 @@ if (!global.jala) {
  * for issueing XmlRpc requests to a remote service.
  * @param {String} url The url of the XmlRpc entry point
  * @param {String} methodName The name of the method to call
+ * @returns A newly created jala.XmlRpcRequest instance
+ * @constructor
  */
 jala.XmlRpcRequest = function(url, methodName) {
+   /** @ignore */
    var proxy = null;
+   /** @ignore */
    var timeout = {
       "connect": 0,
       "socket": 0
    };
+   /** @ignore */
    var debug = false;
+   /** @ignore */
    var credentials = null;
    // default input and output encoding
+   /** @ignore */
    var inputEncoding = "UTF-8";
+   /** @ignore */
    var outputEncoding = "UTF-8";
 
    /**
@@ -72,21 +80,25 @@ jala.XmlRpcRequest = function(url, methodName) {
    this.setProxy = function(proxyString) {
       if (proxyString && proxyString.trim()) {
          var idx = proxyString.indexOf(":");
-         var host = proxyString.substring(0, idx);
-         var port = proxyString.substring(idx+1);
-         if (java.lang.Class.forName("java.net.Proxy") != null) {
-            // construct a proxy instance
-            var socket = new java.net.InetSocketAddress(host, port);
-            proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, socket);
-         } else {
-            // the pre jdk1.5 way: set the system properties
-            var sys = java.lang.System.getProperties();
-            if (host) {
-               app.log("[Helma XmlRpc Client] WARNING: setting system http proxy to "
-                       + host + ":" + port);
-               sys.put("http.proxySet", "true");
-               sys.put("http.proxyHost", host);
-               sys.put("http.proxyPort", port);
+         if (idx > 0) {
+            var host = proxyString.substring(0, idx);
+            var port = proxyString.substring(idx+1);
+            if (host != null && port != null) {
+               if (java.lang.Class.forName("java.net.Proxy") != null) {
+                  // construct a proxy instance
+                  var socket = new java.net.InetSocketAddress(host, port);
+                  proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, socket);
+               } else {
+                  // the pre jdk1.5 way: set the system properties
+                  var sys = java.lang.System.getProperties();
+                  if (host) {
+                     app.log("[Jala XmlRpc Client] WARNING: setting system http proxy to "
+                             + host + ":" + port);
+                     sys.put("http.proxySet", "true");
+                     sys.put("http.proxyHost", host);
+                     sys.put("http.proxyPort", port);
+                  }
+               }
             }
          }
       }
@@ -246,7 +258,7 @@ jala.XmlRpcRequest = function(url, methodName) {
 
 /** @ignore */
 jala.XmlRpcRequest.prototype.toString = function() {
-   return "[Helma XmlRpc Client]";
+   return "[Jala XmlRpc Request]";
 };
 
 /**
@@ -274,7 +286,7 @@ jala.XmlRpcRequest.prototype.execute = function(/** [arg1][, arg2][, ...] */) {
    // convert arguments into their appropriate java representations
    var params = new java.util.Vector();
    for (var i=0;i<arguments.length;i++) {
-      params.add(XmlRpcRequest.convertArgument(arguments[i]));
+      params.add(jala.XmlRpcRequest.convertArgument(arguments[i]));
    }
 
    var r = new Packages.org.apache.xmlrpc.XmlRpcRequest(this.getMethodName(), params);
@@ -288,7 +300,7 @@ jala.XmlRpcRequest.prototype.execute = function(/** [arg1][, arg2][, ...] */) {
    var conn = proxy ? url.openConnection(proxy) : url.openConnection();
    conn.setAllowUserInteraction(false);
    conn.setRequestMethod("POST");
-   conn.setRequestProperty("User-Agent", "Helma XmlRpc Client");
+   conn.setRequestProperty("User-Agent", "Jala XmlRpc Client");
    conn.setRequestProperty("Content-Type", "text/xml");
    conn.setRequestProperty("Content-Length", requestBytes.length);
    // set timeouts if defined and possible
@@ -331,18 +343,18 @@ jala.XmlRpcRequest.prototype.execute = function(/** [arg1][, arg2][, ...] */) {
          if (parsedResult instanceof java.lang.Exception) {
             result.error = parsedResult;
          } else {
-            result.result = XmlRpcRequest.convertResult(parsedResult);
+            result.result = jala.XmlRpcRequest.convertResult(parsedResult);
          }
       }
    } catch (e) {
-      result.error = "[Helma XmlRpc Client] Error executing " + this.getMethodName()
-                     + " with arguments " + XmlRpcRequest.argumentsToString(arguments)
+      result.error = "[Jala XmlRpc Request] Error executing " + this.getMethodName()
+                     + " with arguments " + jala.XmlRpcRequest.argumentsToString(arguments)
                      + ", the error is: " + e.toString();
    }
    if (app.__app__.debug() == true) {
-      app.logger.debug("XmlRpcRequest (" + ((new Date()) - start) + " ms): executed '"
+      app.logger.debug("[Jala XmlRpc Request] (" + ((new Date()) - start) + " ms): executed '"
                        + this.getMethodName() + "' with arguments: "
-                       + XmlRpcRequest.argumentsToString(arguments));
+                       + jala.XmlRpcRequest.argumentsToString(arguments));
    }
    return result;
 };
@@ -360,7 +372,7 @@ jala.XmlRpcRequest.convertArgument = function(obj) {
       // convert into Vector
       result = new java.util.Vector(obj.length);
       for (var i=0;i<obj.length;i++) {
-         result.add(i, XmlRpcRequest.convertArgument(obj[i]));
+         result.add(i, jala.XmlRpcRequest.convertArgument(obj[i]));
       }
    } else if (obj instanceof Date) {
       // convert into java.util.Date
@@ -380,7 +392,7 @@ jala.XmlRpcRequest.convertArgument = function(obj) {
       // convert into Hashtable
       result = new java.util.Hashtable();
       for (var key in obj) {
-         result.put(key, XmlRpcRequest.convertArgument(obj[key]));
+         result.put(key, jala.XmlRpcRequest.convertArgument(obj[key]));
       }
    } else {
       result = obj;
@@ -401,7 +413,7 @@ jala.XmlRpcRequest.convertResult = function(obj) {
       result = [];
       var e = obj.elements();
       while (e.hasMoreElements()) {
-         result.push(XmlRpcRequest.convertResult(e.nextElement()));
+         result.push(jala.XmlRpcRequest.convertResult(e.nextElement()));
       }
    } else if (obj instanceof java.util.Hashtable) {
       // convert into Object
@@ -410,7 +422,7 @@ jala.XmlRpcRequest.convertResult = function(obj) {
       var key;
       while (e.hasMoreElements()) {
          key = e.nextElement();
-         result[key] = XmlRpcRequest.convertResult(obj.get(key));
+         result[key] = jala.XmlRpcRequest.convertResult(obj.get(key));
       }
    } else if (obj instanceof java.lang.String) {
       result = String(obj);

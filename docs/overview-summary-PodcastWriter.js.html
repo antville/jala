@@ -2,13 +2,13 @@
 <html>
 <head>
 <title>
-Jala Overview
+Jala 1.0 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
 function asd() {
 	
-		parent.document.title="Logger.js Overview";
+		parent.document.title="PodcastWriter.js Overview";
 	
 }
 </script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -68,7 +68,7 @@ function asd() {
 <hr>
 <center>
 	
-	   <h2>Logger.js</h2>
+	   <h2>PodcastWriter.js</h2>
 	
 </center>
 
@@ -78,7 +78,7 @@ function asd() {
 <h4>Summary</h4>
 <p>
 	
-		Fields and methods of the jala.Logger class.<BR/><BR/>
+		Fields and methods of the jala.PodcastWriter class.<BR/><BR/>
 	
 </p>
 
@@ -95,10 +95,9 @@ function asd() {
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="jala.Logger.html">jala.Logger</a></b></td>
-    <td>This class provides some convenience methods
- for logging
- </td>
+    <td width="15%"><b><a href="jala.PodcastWriter.html">jala.PodcastWriter</a></b></td>
+    <td>Class to create, modify and render standard-compliant
+ RSS 2.0 feeds including support for Apple's Podcast specification.</td>
     </tr>
     
     </table>
@@ -133,8 +132,9 @@ function asd() {
 <span class="comment">// $HeadURL$</span>
 <span class="comment">//</span>
 
+
 <span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the jala.Logger class.
+ * <span class="attrib">@fileoverview</span> Fields and methods of the jala.PodcastWriter class.
  */</span>
 
 
@@ -145,91 +145,86 @@ function asd() {
 
 
 <span class="comment">/**
- * Constructs a new Logger object
- * <span class="attrib">@class</span> This class provides some convenience methods
- * for logging
- * <span class="attrib">@constructor</span>
+ * Jala dependencies
  */</span>
-jala.Logger = <span class="reserved">function</span>() {
+app.addRepository(<span class="literal">"modules/jala/code/Rss20Writer.js"</span>);
 
-   <span class="comment">/** <span class="attrib">@private</span> */</span>
-   var constructMessage = <span class="reserved">function</span>(msg, userName, reqPath) {
-      res.push();
-      res.write(<span class="literal">"&gt;&gt;&gt; "</span>);
-      <span class="reserved">if</span> (userName) {
-         res.write(<span class="literal">"["</span>)
-         res.write(userName);
-         res.write(<span class="literal">"] "</span>);
+<span class="comment">/**
+ * <span class="attrib">@class</span> Class to create, modify and render standard-compliant
+ * RSS 2.0 feeds including support for Apple's Podcast specification.
+ * <span class="attrib">@constructor</span>
+ * <span class="attrib">@extends</span> jala.Rss20Writer
+ * <span class="attrib">@param</span> {String} header Optional XML header.
+ */</span>
+jala.PodcastWriter = <span class="reserved">function</span>(header) {
+   jala.Rss20Writer.apply(<span class="reserved">this</span>, arguments);
+
+   var CATEGORY = {
+      name: <span class="literal">"itunes:category"</span>,
+      attributes: {
+         name: <span class="literal">"text"</span>
       }
-      <span class="reserved">if</span> (msg)
-         res.write(msg);
-      <span class="reserved">if</span> (reqPath) {
-         res.write(<span class="literal">" (path: "</span>);
-         res.write(reqPath);
-         res.write(<span class="literal">")"</span>);
-      }
-      res.write(<span class="literal">" &lt;&lt;&lt;"</span>);
-      <span class="reserved">return</span> res.pop();
+   };
+   
+   var OWNER = {
+      name: <span class="literal">"itunes:owner"</span>,
+      value: [{
+         name: <span class="literal">"itunes:name"</span> 
+      }, {
+         name: <span class="literal">"itunes:email"</span>
+      }]
    };
 
-   <span class="comment">/**
-    * Writes the message passed as argument to application log
-    * if the application is in debug mode.
-    * FIXME: with recent Helma snapshots the req object also
-    * exists for XmlRpc requests, so it shouldn't be necessary
-    * anymore to pass the request path as argument, we could
-    * simply use req.path instead.
-    * <span class="attrib">@param</span> {String} msg Message to write to log
-    * <span class="attrib">@param</span> {String} userName The name of the user that issued the request (optional)
-    * <span class="attrib">@param</span> {String} reqPath The request path (optional)
-    */</span>
-   <span class="reserved">this</span>.debug = <span class="reserved">function</span>(msg, userName, reqPath) {
-      app.debug(constructMessage(msg, userName, reqPath));
-      <span class="reserved">return</span>;
-   };
+   <span class="reserved">this</span>.addNamespace(<span class="literal">"itunes"</span>, <span class="literal">"http://www.itunes.com/dtds/podcast-1.0.dtd"</span>);
+
+   <span class="reserved">this</span>.extendChannel([{
+      name: <span class="literal">"itunes:author"</span>
+   }, {
+      name: <span class="literal">"itunes:subtitle"</span>
+   }, {
+      name: <span class="literal">"itunes:summary"</span>
+   }, {
+      name: <span class="literal">"itunes:image"</span>,
+      attributes: [{
+         name: <span class="literal">"href"</span>
+      }]
+   }, {
+      name: <span class="literal">"itunes:link"</span>,
+      attributes: [{
+         name: <span class="literal">"rel"</span>
+      }, {
+         name: <span class="literal">"type"</span>
+      }, {
+         name: <span class="literal">"href"</span>
+      }]
+   }]);
+
+   <span class="reserved">this</span>.getChannel().setValue(<span class="reserved">this</span>.createElement(OWNER));
+
+   <span class="reserved">this</span>.extendItem([{
+      name: <span class="literal">"itunes:duration"</span>
+   }, {
+      name: <span class="literal">"itunes:subtitle"</span>
+   }]);
 
    <span class="comment">/**
-    * Writes the message passed as argument to application log.
-    * <span class="attrib">@param</span> {String} msg Message to write to log
-    * <span class="attrib">@param</span> {String} userName The name of the user that issued the request (optional)
-    * <span class="attrib">@param</span> {String} reqPath The request path (optional)
+    * Add an iTunes Podcast category.
+    * <span class="attrib">@param</span> {String} name The category's name.
+    * <span class="attrib">@param</span> {String} subName The (optional) sub-category's name.
+    * <span class="attrib">@param</span> {jala.XmlWriter.XmlElement} parent Optional parent 
+    * element to add the category to.
     */</span>
-   <span class="reserved">this</span>.log = <span class="reserved">function</span>(msg, userName, reqPath) {
-      app.log(constructMessage(msg, userName, reqPath));
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Writes an exception to application log. This method
-    * accepts both Java exceptions and Javascript objects
-    * thrown as Exception.
-    * <span class="attrib">@param</span> {Object} ex The exception object
-    * <span class="attrib">@param</span> {String} func The name of the function in which the exception was thrown (optional)
-    * <span class="attrib">@param</span> {String} userName The name of the user that issued the request (optional)
-    * <span class="attrib">@param</span> {String} reqPath The request path (optional)
-    */</span>
-   <span class="reserved">this</span>.logException = <span class="reserved">function</span>(ex, funcName, userName, reqPath) {
-      res.push();
-      res.write(<span class="literal">"Exception"</span>);
-      <span class="reserved">if</span> (funcName) {
-         res.write(<span class="literal">" in "</span>);
-         res.write(funcName);
+   <span class="reserved">this</span>.addItunesCategory = <span class="reserved">function</span>(name, subName, parent) {
+      <span class="reserved">if</span> (!parent)
+         parent = <span class="reserved">this</span>.getChannel();
+      var cat = <span class="reserved">this</span>.createElement(CATEGORY);
+      cat.populate({attributes: {text: name}});
+      <span class="reserved">if</span> (subName) {
+         var subCat = <span class="reserved">this</span>.createElement(CATEGORY);
+         subCat.populate({attributes: {text: subName}});
+         cat.addValue(subCat);
       }
-      res.write(<span class="literal">": "</span>);
-      <span class="reserved">if</span> (ex.fileName || ex.lineNumber) {
-         res.write(ex.message);
-         res.write(<span class="literal">" ("</span>);
-         <span class="reserved">if</span> (ex.fileName)
-            res.write(ex.fileName);
-         <span class="reserved">if</span> (ex.lineNumber) {
-            res.write(<span class="literal">", line "</span>);
-            res.write(ex.lineNumber);
-         }
-         res.write(<span class="literal">")"</span>);
-      } <span class="reserved">else</span> {
-         res.write(ex.toString());
-      }
-      app.log(constructMessage(res.pop(), (userName ? userName : <span class="literal">"system"</span>), reqPath));
+      parent.addValue(cat);
       <span class="reserved">return</span>;
    };
 
@@ -237,24 +232,9 @@ jala.Logger = <span class="reserved">function</span>() {
 };
 
 
-<span class="comment">/** <span class="attrib">@ignore</span> */</span>
-jala.Logger.toString = <span class="reserved">function</span>() {
-   <span class="reserved">return</span> <span class="literal">"[jala.Logger]"</span>;
-};
-
-
-<span class="comment">/** <span class="attrib">@ignore</span> */</span>
-jala.Logger.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
-   <span class="reserved">return</span> <span class="literal">"[jala.Logger Object]"</span>;
-};
-
-
-<span class="comment">/**
- * Default logger class instance.
- * <span class="attrib">@type</span> jala.Logger
- * <span class="attrib">@final</span>
- */</span>
-jala.logger = new jala.Logger();
+<span class="comment">/** A typical XML header as default.
+    <span class="attrib">@type</span> String <span class="attrib">@final</span> */</span>
+jala.PodcastWriter.XMLHEADER = <span class="literal">'&lt;?xml version="1.0" encoding="UTF-8"?&gt;'</span>;
 </pre>
 	<hr>
 
@@ -282,7 +262,7 @@ jala.logger = new jala.Logger();
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -313,6 +293,6 @@ jala.logger = new jala.Logger();
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </body>
 </html>

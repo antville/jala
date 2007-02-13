@@ -68,7 +68,7 @@ set CP=%CLASSPATH%;%BUILD_HOME%lib/ant-launcher.jar
 echo CLASSPATH: "%CP%"
 echo JAVA_HOME: "%JAVA_HOME%"
 
-"%JAVA_HOME%\bin\java.exe" -classpath "%CP%" %APPNAME% "-Dant.home=." org.apache.tools.ant.launch.Launcher -propertyfile "%CD%\build.properties" %ANT_CMD_LINE_ARGS%
+"%JAVA_HOME%\bin\java.exe" -classpath "%CP%" %APPNAME% "-Dant.home=." "-Dbasedir=." org.apache.tools.ant.launch.Launcher -propertyfile "%CD%\build.properties" %ANT_CMD_LINE_ARGS%
 
 goto end
 

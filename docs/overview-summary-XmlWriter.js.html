@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala Overview
+Jala 1.0 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -159,7 +159,6 @@ function asd() {
  */</span>
 jala.XmlWriter = <span class="reserved">function</span>(header) {
    var self = <span class="reserved">this</span>;
-   var DEBUG = false;
    var XMLHEADER = header || 
                    <span class="literal">'&lt;?xml version="1.0" encoding="iso-8859-15"?&gt;'</span>;
    var LOCALE = java.util.Locale.ENGLISH;
@@ -296,21 +295,19 @@ jala.XmlWriter = <span class="reserved">function</span>(header) {
             }
             <span class="reserved">if</span> (value &amp;&amp; attr.type &amp;&amp; attr.type != value.constructor) {
                throw Error(<span class="literal">'Type mismatch in attribute "'</span> + 
-                      <span class="reserved">this</span>.name + <span class="literal">":"</span> + attr.name + <span class="literal">'"'</span>);
+                           <span class="reserved">this</span>.name + <span class="literal">":"</span> + attr.name + <span class="literal">'"'</span>);
             }
-
-            <span class="reserved">if</span> (DEBUG &amp;&amp; value) {
-               res.debug(<span class="literal">"populating attribute "</span> + attr.name + 
-                         <span class="literal">" with "</span> + value.constructor + <span class="literal">": "</span> + value.toSource());
+            <span class="reserved">if</span> (value) {
+               app.debug(<span class="literal">"populating attribute "</span> + attr.name + 
+                         <span class="literal">" with "</span> + value.constructor.name + <span class="literal">": "</span> + value.toSource());
             }
-
             <span class="reserved">if</span> (!attr.readonly) {
                attr.value = getString(value, attr.format) || attr.value ;
             }
          }
       }
 
-      <span class="reserved">if</span> (data &amp;&amp; data.value)<span class="comment">// &amp;&amp; data.value.constructor == Object)</span>
+      <span class="reserved">if</span> (data &amp;&amp; data.value) <span class="comment">// &amp;&amp; data.value.constructor == Object)</span>
          data = data.value;
 
       <span class="reserved">if</span> (<span class="reserved">this</span>.value &amp;&amp; data) {
@@ -324,12 +321,10 @@ jala.XmlWriter = <span class="reserved">function</span>(header) {
          <span class="reserved">if</span> (data &amp;&amp; <span class="reserved">this</span>.type &amp;&amp; <span class="reserved">this</span>.type != data.constructor) {
             throw Error(<span class="literal">'Type mismatch in element "'</span> + <span class="reserved">this</span>.name + <span class="literal">'"'</span>);
          }
-
-         <span class="reserved">if</span> (DEBUG &amp;&amp; data) {
-            res.debug(<span class="literal">"populating element &amp;lt;"</span> + <span class="reserved">this</span>.name + 
-                      <span class="literal">"&amp;gt; with "</span> + (<span class="reserved">this</span>.type || Object).name + <span class="literal">": "</span> + data.toSource());
+         <span class="reserved">if</span> (data) {
+            app.debug(<span class="literal">"populating element &amp;lt;"</span> + <span class="reserved">this</span>.name +  <span class="literal">"&amp;gt; with "</span> + 
+                      (<span class="reserved">this</span>.type || Object).name + <span class="literal">": "</span> + data.toSource());
          }
-
          <span class="reserved">if</span> (!<span class="reserved">this</span>.readonly)
             <span class="reserved">this</span>.value = getString(data, <span class="reserved">this</span>.format) || <span class="reserved">this</span>.value;
       }
@@ -477,20 +472,6 @@ jala.XmlWriter = <span class="reserved">function</span>(header) {
       <span class="reserved">return</span> copy;
    };
 
-   <span class="comment">/** <span class="attrib">@private</span> */</span>
-   <span class="reserved">this</span>.source = <span class="reserved">function</span>(obj) {
-      <span class="reserved">if</span> (obj)
-         <span class="reserved">this</span>.debug(obj.toSource());
-      <span class="reserved">return</span>;
-   }
-
-   <span class="comment">/** <span class="attrib">@private</span> */</span>
-   <span class="reserved">this</span>.debug = <span class="reserved">function</span>(str) {
-      <span class="reserved">if</span> (DEBUG)
-         res.write(<span class="literal">"## "</span> + str + <span class="literal">"\n"</span>);
-      <span class="reserved">return</span>;
-   };
-
    <span class="reserved">return</span> <span class="reserved">this</span>;
 };
 
@@ -521,7 +502,7 @@ jala.XmlWriter = <span class="reserved">function</span>(header) {
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -552,6 +533,6 @@ jala.XmlWriter = <span class="reserved">function</span>(header) {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </body>
 </html>

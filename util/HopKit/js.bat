@@ -69,11 +69,11 @@ rem -- D O C S --
 :docs
 
 if "%3"=="" (
-echo "%3"
    set DOCDIR=docs
 ) else (
    set DOCDIR=%3
 )
+
 "%HOPKIT%\JSDoc\jsdoc.pl" -q -r -d "%DOCDIR%" --template-dir "%HOPKIT%/JSDoc/templates" --package-naming --globals-name Global --project-name "%2" --project-summary "./.jsdoc/summary.html" .
 
 goto end

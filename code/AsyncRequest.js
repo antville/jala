@@ -101,7 +101,7 @@ jala.AsyncRequest = function(obj, funcName, args) {
    };
 
    /**
-    * Sets the timeout variable.
+    * Sets the timeout of this asynchronous request.
     * @param {Number} seconds Thread-timeout.
     */
    this.setTimeout = function(seconds) {
@@ -110,8 +110,8 @@ jala.AsyncRequest = function(obj, funcName, args) {
    };
    
    /**
-    * Sets the private timeout variable.
-    * @param {Number} millis Milliseconds to wait before evaluating the request
+    * Defines the delay to wait before evaluating this asynchronous request.
+    * @param {Number} millis Milliseconds to wait
     */
    this.setDelay = function(millis) {
       delay = millis;
@@ -119,7 +119,7 @@ jala.AsyncRequest = function(obj, funcName, args) {
    };
 
    /**
-    * Creates a new java.lang.Thread that processes this Request
+    * Starts this asynchronous request.
     */
    this.evaluate  = function() {
       thread = (new java.lang.Thread(new java.lang.Runnable(this)));

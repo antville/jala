@@ -77,7 +77,7 @@ jala.ListRenderer = function(listParam, renderers) {
       pageNavigation: null,
       prevLink: null,
       nextLink: null
-   }
+   };
 
    var setTotalPages = function() {
       if (maxPages)
@@ -85,7 +85,7 @@ jala.ListRenderer = function(listParam, renderers) {
       else
          totalPages = Math.ceil(collectionSize / itemsPerPage);
       return;
-   }
+   };
 
    var getRenderFunction = function(handlerName, fName) {
       if (!fName)
@@ -101,7 +101,7 @@ jala.ListRenderer = function(listParam, renderers) {
          return handler[fName];
       }
       return null;
-   }
+   };
 
    var getHref = function(page) {
       if (urlParams) {
@@ -115,7 +115,7 @@ jala.ListRenderer = function(listParam, renderers) {
          else
             return href;
       }
-   }
+   };
 
    /**
     * Returns true if this ListRenderer instance
@@ -140,7 +140,7 @@ jala.ListRenderer = function(listParam, renderers) {
       // correct currentPage if necessary
       currentPage = Math.min(Math.max(1, currentPage), totalPages);
       return;
-   }
+   };
    
    /**
     * Set the current Page.
@@ -148,7 +148,7 @@ jala.ListRenderer = function(listParam, renderers) {
     */
    this.setCurrentPage = function (page) {
       currentPage = page;
-   }
+   };
    
    /**
     * Returns the current Page.
@@ -156,11 +156,11 @@ jala.ListRenderer = function(listParam, renderers) {
     */
    this.getCurrentPage = function () {
       return currentPage;
-   }
+   };
    
    this.getSize = function () {
       return collectionSize;
-   }
+   };
 
    /**
     * Render the list.
@@ -204,7 +204,7 @@ jala.ListRenderer = function(listParam, renderers) {
          param.index += 1;
       }
       return;
-   }
+   };
 
    /**
     * Render the list as string.
@@ -218,7 +218,7 @@ jala.ListRenderer = function(listParam, renderers) {
       res.push();
       this.renderList(param);
       return res.pop();
-   }
+   };
 
    /**
     * Render a link to the previous page as string.
@@ -241,7 +241,7 @@ jala.ListRenderer = function(listParam, renderers) {
          cache.prevLink = res.pop();
       }
       return cache.prevLink;
-   }   
+   };
 
    /**
     * Render a link to the previous page.
@@ -252,7 +252,7 @@ jala.ListRenderer = function(listParam, renderers) {
    this.renderPrevLink = function(param) {
       res.write(this.renderPrevLinkAsString(param));
       return;
-   }
+   };
 
    /**
     * Render a link to the next page as string.
@@ -275,7 +275,7 @@ jala.ListRenderer = function(listParam, renderers) {
          cache.nextLink = res.pop();
       }
       return cache.nextLink;
-   }
+   };
 
    /**
     * Render a link to the next page.
@@ -286,7 +286,7 @@ jala.ListRenderer = function(listParam, renderers) {
    this.renderNextLink = function(param) {
       res.write(this.renderNextLinkAsString(param));
       return;
-   }
+   };
 
    /**
     * Render a page navigation bar.
@@ -297,7 +297,7 @@ jala.ListRenderer = function(listParam, renderers) {
    this.renderPageNavigation = function(param) {
       res.write(this.renderPageNavigationAsString(param));
       return;
-   }
+   };
 
    /**
     * Render a page navigation bar as string.
@@ -358,7 +358,7 @@ jala.ListRenderer = function(listParam, renderers) {
          cache.pageNavigation = res.pop();
       }
       return cache.pageNavigation;
-   }
+   };
 
    // object initialization
    // FIXME: this is for backwards compatibility only
@@ -374,18 +374,6 @@ jala.ListRenderer = function(listParam, renderers) {
    urlParamName = listParam.urlParamName || "page";
    currentPage = (!listParam.currentPage || isNaN(listParam.currentPage)) ? 1 : parseInt(listParam.currentPage, 10);
    itemsPerPage = !listParam.itemsPerPage ? collectionSize : parseInt(listParam.itemsPerPage, 10);
-
-   // throw exception if an ArrayList containing a subset of a bigger array has too less elements.
-   // FIXME: shouldn't we move this into ArrayList, as it doesn't have anything to do
-   // with the ListRenderer itself?
-   // 
-   // if (collection instanceof jala.ArrayList
-   //       && collection.isSubset()
-   //       && collection.subsetSize() < Math.min(itemsPerPage, collection.size()-collection.getOffset())) {
-   //    throw new Exception("ArrayList too small. ListRenderer called with ArrayList containing a subset which should have " + 
-   //             Math.min(itemsPerPage, collection.size()-collection.getOffset()) + 
-   //             " elements, but had " + collection.subsetSize() + " elements.");
-   // }
    maxPages = listParam.maxPages;
    listItemSkin = listParam.itemSkin;
    // calculate the number of pages
@@ -401,9 +389,11 @@ jala.ListRenderer = function(listParam, renderers) {
 jala.ListRenderer.html = new helma.Html();
 
 
-//
-// macros
-//
+
+/*********************************
+ ********** M A C R O S **********
+ *********************************/
+
 
 /**
  * Render the maximum number of items per page.
@@ -492,10 +482,17 @@ jala.ListRenderer.prototype.render_macro = function(param) {
    return;
 };
 
+
+
+/*****************************************************
+ ********** D E F A U L T   R E N D E R E R **********
+ *****************************************************/
+
+
 /**
  * Default Renderer object containing functions
  * used for rendering different list items (eg. page navigation,
- * prev/next links and list items.
+ * prev/next links and list items).
  * @final
  */
 jala.ListRenderer.defaultRenderer = {

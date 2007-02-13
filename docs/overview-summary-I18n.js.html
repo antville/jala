@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala Overview
+Jala 1.0 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -79,7 +79,7 @@ function asd() {
 <p>
 	
 		Methods and macros for internationalization
- of Helma applications based on GNU gettext.<BR/><BR/>
+ of Helma applications.<BR/><BR/>
 	
 </p>
 
@@ -133,23 +133,15 @@ function asd() {
 <span class="comment">// $HeadURL$</span>
 <span class="comment">//</span>
 
-
 <span class="comment">/**
  * <span class="attrib">@fileoverview</span> Methods and macros for internationalization
- * of Helma applications based on GNU gettext.
+ * of Helma applications.
  */</span>
-
 
 <span class="comment">// Define the global namespace for Jala modules</span>
 <span class="reserved">if</span> (!global.jala) {
    global.jala = {};
 }
-
-
-<span class="comment">/**
- * Jala dependencies
- */</span>
-app.addRepository(<span class="literal">"modules/jala/lib/gettext.jar"</span>);
 
 <span class="comment">/**
  * Constructs a new instance of jala.I18n
@@ -159,6 +151,30 @@ app.addRepository(<span class="literal">"modules/jala/lib/gettext.jar"</span>);
  * <span class="attrib">@type</span> jala.I18n
  */</span>
 jala.I18n = <span class="reserved">function</span>() {
+   <span class="comment">/**
+    * The default object containing the messages.
+    * <span class="attrib">@ignore</span>
+    */</span>
+   var messages = global.messages;
+   
+   <span class="comment">/**
+    * Overwrite the default object containing
+    * the messages (ie. a vanilla EcmaScript object).
+    * <span class="attrib">@param</span> {Object} msgObject The object containing the messages
+    */</span>
+   <span class="reserved">this</span>.setMessages = <span class="reserved">function</span>(msgObject) {
+      messages = msgObject;
+   };
+   
+   <span class="comment">/**
+    * Get the message object.
+    * <span class="attrib">@returns</span> The object containing the messages
+    * <span class="attrib">@type</span> Object
+    */</span>
+   <span class="reserved">this</span>.getMessages = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> messages;
+   };
+   
    <span class="reserved">return</span> <span class="reserved">this</span>;
 };
 
@@ -168,10 +184,23 @@ jala.I18n.<span class="reserved">prototype</span>.toString = <span class="reserv
 };
 
 <span class="comment">/**
+ * Set (overwrite) the default handler containing
+ * the messages (ie. a vanilla EcmaScript object).
+ * <span class="attrib">@param</span> {Object} handler The handler containing the message object
+ * <span class="attrib">@deprecated</span> Use {<span class="attrib">@link</span> #setMessages} instead
+ */</span>
+jala.I18n.<span class="reserved">prototype</span>.setHandler = <span class="reserved">function</span>(handler) {
+   <span class="reserved">this</span>.setMessages(handler.messages);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
  * Returns the locale for the given id, which is expected to follow
  * the form &lt;code&gt;language[_COUNTRY][_variant]&lt;/code&gt;, where &lt;code&gt;language&lt;/code&gt;
  * is a valid ISO Language Code (eg. "de"), &lt;code&gt;COUNTRY&lt;/code&gt; a valid ISO
  * Country Code (eg. "AT"), and variant an identifier for the variant to use.
+ * <span class="attrib">@returns</span> The locale for the given id
+ * <span class="attrib">@type</span> java.util.Locale
  */</span>
 jala.I18n.<span class="reserved">prototype</span>.getLocale = <span class="reserved">function</span>(localeId) {
    <span class="reserved">if</span> (localeId) {
@@ -191,38 +220,34 @@ jala.I18n.<span class="reserved">prototype</span>.getLocale = <span class="reser
 
 <span class="comment">/**
  * Tries to "translate" the given message key into a localized
- * message. Requires the files gettext.jar and messages.jar
- * in the application directory (the latter is expected to contain
- * the containing a ResourceBundle "jala.Messages" containing the
- * messages in different languages.
+ * message.
  * <span class="attrib">@param</span> {String} key The message to translate (required)
  * <span class="attrib">@param</span> {String} plural The plural form of the message to translate
  * <span class="attrib">@param</span> {Number} amount A number to determine whether to use the
  * singular or plural form of the message
  * <span class="attrib">@returns</span> The localized message or the appropriate key if no
  * localized message was found
+ * <span class="attrib">@type</span> String
  */</span>
 jala.I18n.<span class="reserved">prototype</span>.translate = <span class="reserved">function</span>(singularKey, pluralKey, amount) {
-   var translation = null;
+   var translation;
    <span class="reserved">if</span> (singularKey) {
       <span class="comment">// use either the locale defined in res.meta.locale or the jvm default</span>
       var locale = res.meta.locale || java.util.Locale.getDefault();
-      var loader = app.getClassLoader();
-      try {
-         var bundle = java.util.ResourceBundle.getBundle(<span class="literal">"jala.Messages"</span>, locale, loader);
-         <span class="reserved">if</span> (arguments.length == 3) {
-            translation = Packages.gnu.gettext.GettextResource.ngettext(bundle,
-                                singularKey, pluralKey, amount);
+      var catalog, key;
+      <span class="reserved">if</span> ((catalog = jala.i18n.getCatalog(locale))) {
+         <span class="reserved">if</span> (arguments.length == 3 &amp;&amp; amount != 1) { <span class="comment">// is plural</span>
+            key = pluralKey;
          } <span class="reserved">else</span> {
-            translation = Packages.gnu.gettext.GettextResource.gettext(bundle, singularKey);
+            key = singularKey;
          }
-      } catch(e) {
-         <span class="reserved">if</span> (e.javaException &amp;&amp; e.javaException instanceof java.util.MissingResourceException) {
-            app.logger.debug(<span class="literal">"jala.i18n.translate(): Can't find messages for locale '"</span>
-                             + locale + <span class="literal">"'"</span>);
-         } <span class="reserved">else</span> {
-            app.logger.error(<span class="literal">"jala.i18n.translate(): "</span> + e, e.javaException);
+         <span class="reserved">if</span> (!(translation = catalog[key])) {
+            translation = key;
+            app.logger.debug(<span class="literal">"jala.i18n.translate(): Can't find message '"</span> + 
+                             key + <span class="literal">"' for locale '"</span> + locale + <span class="literal">"'"</span>);          
          }
+      } <span class="reserved">else</span> {
+         app.logger.debug(<span class="literal">"jala.i18n.translate(): Can't find message catalog for locale '"</span> + locale + <span class="literal">"'"</span>);
          <span class="reserved">if</span> (!pluralKey || amount == 1) {
             translation = singularKey;
          } <span class="reserved">else</span> {
@@ -231,6 +256,29 @@ jala.I18n.<span class="reserved">prototype</span>.translate = <span class="reser
       }
    }
    <span class="reserved">return</span> translation;
+};
+
+<span class="comment">/**
+ * Helper method to get the message catalog  
+ * corresponding to the actual locale.
+ * <span class="attrib">@params</span> {java.util.Locale} locale
+ * <span class="attrib">@returns</span> The message catalog.
+ */</span>
+jala.I18n.<span class="reserved">prototype</span>.getCatalog = <span class="reserved">function</span>(locale) {
+   <span class="reserved">if</span> (!jala.I18n.catalogs) {
+      jala.I18n.catalogs = {};
+   }
+   var cache = jala.I18n.catalogs;
+   var catalog;
+   <span class="reserved">if</span> (!cache[locale]) {
+      var messages = <span class="reserved">this</span>.getMessages();
+      var arr = [locale.getLanguage(), locale.getCountry(), locale.getVariant()];
+      <span class="reserved">while</span> (arr.length &gt; 0 &amp;&amp; !(catalog = messages[arr.join(<span class="literal">"_"</span>)])) {
+         arr.pop();
+      }
+      cache[locale] = catalog;
+   }
+   <span class="reserved">return</span> cache[locale];
 };
 
 <span class="comment">/**
@@ -283,16 +331,14 @@ jala.I18n.<span class="reserved">prototype</span>.formatMessage = <span class="r
  * following "{number}" notation, where &lt;code&gt;number&lt;/code&gt; must
  * match the number of the additional argument (starting with zero).
  * <span class="attrib">@param</span> {String} key The message to localize
+ * <span class="attrib">@returns</span> The translated message
+ * <span class="attrib">@type</span> String
  * <span class="attrib">@see</span> #translate
  * <span class="attrib">@see</span> #formatMessage
  */</span>
 jala.I18n.<span class="reserved">prototype</span>.gettext = <span class="reserved">function</span>(key <span class="comment">/** [value 0][, value 1][, ...] */</span>) {
-   var translation = <span class="reserved">this</span>.translate(key);
-   <span class="reserved">if</span> (translation) {
-      <span class="reserved">return</span> <span class="reserved">this</span>.formatMessage(translation,
-                                Array.<span class="reserved">prototype</span>.splice.call(arguments, 1));
-   }
-   <span class="reserved">return</span> null;
+   <span class="reserved">return</span> <span class="reserved">this</span>.formatMessage(<span class="reserved">this</span>.translate(key),
+                             Array.<span class="reserved">prototype</span>.splice.call(arguments, 1));
 };
 
 <span class="comment">/**
@@ -309,16 +355,14 @@ jala.I18n.<span class="reserved">prototype</span>.gettext = <span class="reserve
  * <span class="attrib">@param</span> {String} pluralKey The plural form of the message to localize
  * <span class="attrib">@param</span> {Number} amount The amount which is used to determine
  * whether the singular or plural form of the message should be returned.
+ * <span class="attrib">@returns</span> The translated message
+ * <span class="attrib">@type</span> String
  * <span class="attrib">@see</span> #translate
  * <span class="attrib">@see</span> #formatMessage
  */</span>
 jala.I18n.<span class="reserved">prototype</span>.ngettext = <span class="reserved">function</span>(singularKey, pluralKey, amount <span class="comment">/** [value 0][, value 1][, ...] */</span>) {
-   var translation = <span class="reserved">this</span>.translate(singularKey, pluralKey, amount || 0);
-   <span class="reserved">if</span> (translation) {
-      <span class="reserved">return</span> <span class="reserved">this</span>.formatMessage(translation,
-                                Array.<span class="reserved">prototype</span>.splice.call(arguments, 2));
-   }
-   <span class="reserved">return</span> null;
+   <span class="reserved">return</span> <span class="reserved">this</span>.formatMessage(<span class="reserved">this</span>.translate(singularKey, pluralKey, amount || 0),
+                             Array.<span class="reserved">prototype</span>.splice.call(arguments, 2));
 };
 
 <span class="comment">/**
@@ -346,7 +390,7 @@ jala.I18n.<span class="reserved">prototype</span>.markgettext = <span class="res
  * HopObject or an Array this macro uses the size() resp. length of the
  * object, otherwise the string representation of the object will be used.&lt;/li&gt;
  * &lt;/ul&gt;
- *  * <span class="attrib">@returns</span> The translated message
+ * <span class="attrib">@returns</span> The translated message
  * <span class="attrib">@type</span> String
  * <span class="attrib">@see</span> #gettext
  * <span class="attrib">@see</span> #ngettext
@@ -354,6 +398,9 @@ jala.I18n.<span class="reserved">prototype</span>.markgettext = <span class="res
 jala.I18n.<span class="reserved">prototype</span>.message_macro = <span class="reserved">function</span>(param) {
    <span class="reserved">if</span> (param.text) {
       var args = [param.text];
+      <span class="reserved">if</span> (param.plural) {
+         args[args.length] = param.plural;
+      }
       <span class="reserved">if</span> (param.values != null) {
          var arr = param.values.split(/\s*,\s*/g);
          <span class="comment">// convert replacement values: if the value name doesn't contain</span>
@@ -379,7 +426,6 @@ jala.I18n.<span class="reserved">prototype</span>.message_macro = <span class="r
                      value = handler[propName];
                   }
                } <span class="reserved">else</span> {
-                  <span class="comment">// FIXME: i doubt if that really makes sense</span>
                   value = global[propName];
                }
                <span class="reserved">if</span> (value != null) {
@@ -391,7 +437,7 @@ jala.I18n.<span class="reserved">prototype</span>.message_macro = <span class="r
                      value = value.length;
                   }
                }
-               args[i + 1] = value;
+               args[args.length] = value;
             }
          }
       }
@@ -411,10 +457,18 @@ jala.i18n = new jala.I18n();
  * For convenience reasons the public methods and macros are
  * put into global scope too
  */</span>
-var gettext = jala.i18n.gettext;
-var ngettext = jala.i18n.ngettext;
-var markgettext = jala.i18n.gettext;
-var message_macro = jala.i18n.message_macro;
+var gettext = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> jala.i18n.gettext.apply(jala.i18n, arguments);
+};
+var ngettext = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> jala.i18n.ngettext.apply(jala.i18n, arguments);
+};
+var markgettext = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> jala.i18n.markgettext.apply(jala.i18n, arguments);
+};
+var message_macro = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> jala.i18n.message_macro.apply(jala.i18n, arguments);
+};
 </pre>
 	<hr>
 
@@ -442,7 +496,7 @@ var message_macro = jala.i18n.message_macro;
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -473,6 +527,6 @@ var message_macro = jala.i18n.message_macro;
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </body>
 </html>

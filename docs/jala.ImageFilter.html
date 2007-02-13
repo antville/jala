@@ -34,7 +34,7 @@ parent.document.title="jala.ImageFilter";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala</B>
+<B>Jala 1.0</B>
 </EM>
 </TD
 </TR>
@@ -125,7 +125,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="jala.ImageFilter.html#jala.ImageFilter()">jala.ImageFilter</A> 
 	 </B>
-	 (&lt;Object&gt; arg)
+	 (&lt;Object&gt; img)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -157,11 +157,28 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#gaussianBlur">gaussianBlur</A></B>(&lt;Number&gt; r, &lt;Number&gt; a)
+	       <A HREF="#gaussianBlur">gaussianBlur</A></B>(&lt;Number&gt; radius, &lt;Number&gt; amount)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Performs a gaussian blur operation on the image
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;byte[]</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getBytes">getBytes</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the wrapped image as byte array, to use eg.
       </TD>
    </TR>
 
@@ -208,7 +225,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#unsharpMask">unsharpMask</A></B>(&lt;Number&gt; r, &lt;Number&gt; a)
+	       <A HREF="#unsharpMask">unsharpMask</A></B>(&lt;Number&gt; radius, &lt;Number&gt; amount)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -243,7 +260,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="jala.ImageFilter()"><!-- --></A><H3>
 jala.ImageFilter</H3>
-<PRE><B>jala.ImageFilter</B>(&lt;Object&gt; arg)</PRE>
+<PRE><B>jala.ImageFilter</B>(&lt;Object&gt; img)</PRE>
 
 
 <UL>
@@ -255,7 +272,7 @@ jala.ImageFilter</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>arg</CODE> -  Either  <ul>  <li>an instance of helma.image.ImageWrapper</li>  <li>the path to the image file as String</li>  <li>an instance of helma.File representing the image file</li>  <li>an instance of java.io.File representing the image file</li>  </ul>  
+     <UL><CODE>img</CODE> -  Either  <ul>  <li>an instance of helma.image.ImageWrapper</li>  <li>the path to the image file as String</li>  <li>an instance of helma.File representing the image file</li>  <li>an instance of java.io.File representing the image file</li>  </ul>  
      </UL>
    
    
@@ -289,7 +306,7 @@ jala.ImageFilter</H3>
 
    <A NAME="gaussianBlur"><!-- --></A>
    <H3>gaussianBlur</H3>
-   <PRE>void <B>gaussianBlur</B>(&lt;Number&gt; r, &lt;Number&gt; a)</PRE>
+   <PRE>void <B>gaussianBlur</B>(&lt;Number&gt; radius, &lt;Number&gt; amount)</PRE>
    
       <UL>Performs a gaussian blur operation on the image</UL>
    
@@ -299,16 +316,42 @@ jala.ImageFilter</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>r</CODE> -  Radius  
+     <UL><CODE>radius</CODE> -  The radius  
       </UL> 
    
-     <UL><CODE>a</CODE> -  Amount       
+     <UL><CODE>amount</CODE> -  The amount       
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getBytes"><!-- --></A>
+   <H3>getBytes</H3>
+   <PRE>byte[] <B>getBytes</B>()</PRE>
+   
+      <UL>Returns the wrapped image as byte array, to use eg. in conjunction
+ with res.writeBinary()</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The wrapped image as byte array   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -369,7 +412,7 @@ jala.ImageFilter</H3>
 
    <A NAME="unsharpMask"><!-- --></A>
    <H3>unsharpMask</H3>
-   <PRE>void <B>unsharpMask</B>(&lt;Number&gt; r, &lt;Number&gt; a)</PRE>
+   <PRE>void <B>unsharpMask</B>(&lt;Number&gt; radius, &lt;Number&gt; amount)</PRE>
    
       <UL>Performs an unsharp mask operation on the image</UL>
    
@@ -379,10 +422,10 @@ jala.ImageFilter</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>r</CODE> -  Radius  
+     <UL><CODE>radius</CODE> -  The radius  
       </UL> 
    
-     <UL><CODE>a</CODE> -  Amount       
+     <UL><CODE>amount</CODE> -  The amount       
       </UL> 
    
    </UL>
@@ -421,7 +464,7 @@ jala.ImageFilter</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala</B>
+<B>Jala 1.0</B>
 </EM>
 </TD
 </TR>
@@ -462,6 +505,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </BODY>
 </HTML>

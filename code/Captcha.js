@@ -36,7 +36,7 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/lib/jcaptcha.jar");
+app.addRepository("modules/jala/lib/jcaptcha-all-1.0-RC3.jar");
 
 /** 
  * Construct a new captcha.

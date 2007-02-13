@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala Overview
+Jala 1.0 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -150,17 +150,25 @@ function asd() {
  * for issueing XmlRpc requests to a remote service.
  * <span class="attrib">@param</span> {String} url The url of the XmlRpc entry point
  * <span class="attrib">@param</span> {String} methodName The name of the method to call
+ * <span class="attrib">@returns</span> A newly created jala.XmlRpcRequest instance
+ * <span class="attrib">@constructor</span>
  */</span>
 jala.XmlRpcRequest = <span class="reserved">function</span>(url, methodName) {
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
    var proxy = null;
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
    var timeout = {
       <span class="literal">"connect"</span>: 0,
       <span class="literal">"socket"</span>: 0
    };
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
    var debug = false;
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
    var credentials = null;
    <span class="comment">// default input and output encoding</span>
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
    var inputEncoding = <span class="literal">"UTF-8"</span>;
+   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
    var outputEncoding = <span class="literal">"UTF-8"</span>;
 
    <span class="comment">/**
@@ -183,21 +191,25 @@ jala.XmlRpcRequest = <span class="reserved">function</span>(url, methodName) {
    <span class="reserved">this</span>.setProxy = <span class="reserved">function</span>(proxyString) {
       <span class="reserved">if</span> (proxyString &amp;&amp; proxyString.trim()) {
          var idx = proxyString.indexOf(<span class="literal">":"</span>);
-         var host = proxyString.substring(0, idx);
-         var port = proxyString.substring(idx+1);
-         <span class="reserved">if</span> (java.lang.Class.forName(<span class="literal">"java.net.Proxy"</span>) != null) {
-            <span class="comment">// construct a proxy instance</span>
-            var socket = new java.net.InetSocketAddress(host, port);
-            proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, socket);
-         } <span class="reserved">else</span> {
-            <span class="comment">// the pre jdk1.5 way: set the system properties</span>
-            var sys = java.lang.System.getProperties();
-            <span class="reserved">if</span> (host) {
-               app.log(<span class="literal">"[Helma XmlRpc Client] WARNING: setting system http proxy to "</span>
-                       + host + <span class="literal">":"</span> + port);
-               sys.put(<span class="literal">"http.proxySet"</span>, <span class="literal">"true"</span>);
-               sys.put(<span class="literal">"http.proxyHost"</span>, host);
-               sys.put(<span class="literal">"http.proxyPort"</span>, port);
+         <span class="reserved">if</span> (idx &gt; 0) {
+            var host = proxyString.substring(0, idx);
+            var port = proxyString.substring(idx+1);
+            <span class="reserved">if</span> (host != null &amp;&amp; port != null) {
+               <span class="reserved">if</span> (java.lang.Class.forName(<span class="literal">"java.net.Proxy"</span>) != null) {
+                  <span class="comment">// construct a proxy instance</span>
+                  var socket = new java.net.InetSocketAddress(host, port);
+                  proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, socket);
+               } <span class="reserved">else</span> {
+                  <span class="comment">// the pre jdk1.5 way: set the system properties</span>
+                  var sys = java.lang.System.getProperties();
+                  <span class="reserved">if</span> (host) {
+                     app.log(<span class="literal">"[Jala XmlRpc Client] WARNING: setting system http proxy to "</span>
+                             + host + <span class="literal">":"</span> + port);
+                     sys.put(<span class="literal">"http.proxySet"</span>, <span class="literal">"true"</span>);
+                     sys.put(<span class="literal">"http.proxyHost"</span>, host);
+                     sys.put(<span class="literal">"http.proxyPort"</span>, port);
+                  }
+               }
             }
          }
       }
@@ -357,7 +369,7 @@ jala.XmlRpcRequest = <span class="reserved">function</span>(url, methodName) {
 
 <span class="comment">/** <span class="attrib">@ignore</span> */</span>
 jala.XmlRpcRequest.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
-   <span class="reserved">return</span> <span class="literal">"[Helma XmlRpc Client]"</span>;
+   <span class="reserved">return</span> <span class="literal">"[Jala XmlRpc Request]"</span>;
 };
 
 <span class="comment">/**
@@ -385,7 +397,7 @@ jala.XmlRpcRequest.<span class="reserved">prototype</span>.execute = <span class
    <span class="comment">// convert arguments into their appropriate java representations</span>
    var params = new java.util.Vector();
    <span class="reserved">for</span> (var i=0;i&lt;arguments.length;i++) {
-      params.add(XmlRpcRequest.convertArgument(arguments[i]));
+      params.add(jala.XmlRpcRequest.convertArgument(arguments[i]));
    }
 
    var r = new Packages.org.apache.xmlrpc.XmlRpcRequest(<span class="reserved">this</span>.getMethodName(), params);
@@ -399,7 +411,7 @@ jala.XmlRpcRequest.<span class="reserved">prototype</span>.execute = <span class
    var conn = proxy ? url.openConnection(proxy) : url.openConnection();
    conn.setAllowUserInteraction(false);
    conn.setRequestMethod(<span class="literal">"POST"</span>);
-   conn.setRequestProperty(<span class="literal">"User-Agent"</span>, <span class="literal">"Helma XmlRpc Client"</span>);
+   conn.setRequestProperty(<span class="literal">"User-Agent"</span>, <span class="literal">"Jala XmlRpc Client"</span>);
    conn.setRequestProperty(<span class="literal">"Content-Type"</span>, <span class="literal">"text/xml"</span>);
    conn.setRequestProperty(<span class="literal">"Content-Length"</span>, requestBytes.length);
    <span class="comment">// set timeouts if defined and possible</span>
@@ -442,18 +454,18 @@ jala.XmlRpcRequest.<span class="reserved">prototype</span>.execute = <span class
          <span class="reserved">if</span> (parsedResult instanceof java.lang.Exception) {
             result.error = parsedResult;
          } <span class="reserved">else</span> {
-            result.result = XmlRpcRequest.convertResult(parsedResult);
+            result.result = jala.XmlRpcRequest.convertResult(parsedResult);
          }
       }
    } catch (e) {
-      result.error = <span class="literal">"[Helma XmlRpc Client] Error executing "</span> + <span class="reserved">this</span>.getMethodName()
-                     + <span class="literal">" with arguments "</span> + XmlRpcRequest.argumentsToString(arguments)
+      result.error = <span class="literal">"[Jala XmlRpc Request] Error executing "</span> + <span class="reserved">this</span>.getMethodName()
+                     + <span class="literal">" with arguments "</span> + jala.XmlRpcRequest.argumentsToString(arguments)
                      + <span class="literal">", the error is: "</span> + e.toString();
    }
    <span class="reserved">if</span> (app.__app__.debug() == true) {
-      app.logger.debug(<span class="literal">"XmlRpcRequest ("</span> + ((new Date()) - start) + <span class="literal">" ms): executed '"</span>
+      app.logger.debug(<span class="literal">"[Jala XmlRpc Request] ("</span> + ((new Date()) - start) + <span class="literal">" ms): executed '"</span>
                        + <span class="reserved">this</span>.getMethodName() + <span class="literal">"' with arguments: "</span>
-                       + XmlRpcRequest.argumentsToString(arguments));
+                       + jala.XmlRpcRequest.argumentsToString(arguments));
    }
    <span class="reserved">return</span> result;
 };
@@ -471,7 +483,7 @@ jala.XmlRpcRequest.convertArgument = <span class="reserved">function</span>(obj)
       <span class="comment">// convert into Vector</span>
       result = new java.util.Vector(obj.length);
       <span class="reserved">for</span> (var i=0;i&lt;obj.length;i++) {
-         result.add(i, XmlRpcRequest.convertArgument(obj[i]));
+         result.add(i, jala.XmlRpcRequest.convertArgument(obj[i]));
       }
    } <span class="reserved">else</span> <span class="reserved">if</span> (obj instanceof Date) {
       <span class="comment">// convert into java.util.Date</span>
@@ -491,7 +503,7 @@ jala.XmlRpcRequest.convertArgument = <span class="reserved">function</span>(obj)
       <span class="comment">// convert into Hashtable</span>
       result = new java.util.Hashtable();
       <span class="reserved">for</span> (var key in obj) {
-         result.put(key, XmlRpcRequest.convertArgument(obj[key]));
+         result.put(key, jala.XmlRpcRequest.convertArgument(obj[key]));
       }
    } <span class="reserved">else</span> {
       result = obj;
@@ -512,7 +524,7 @@ jala.XmlRpcRequest.convertResult = <span class="reserved">function</span>(obj) {
       result = [];
       var e = obj.elements();
       <span class="reserved">while</span> (e.hasMoreElements()) {
-         result.push(XmlRpcRequest.convertResult(e.nextElement()));
+         result.push(jala.XmlRpcRequest.convertResult(e.nextElement()));
       }
    } <span class="reserved">else</span> <span class="reserved">if</span> (obj instanceof java.util.Hashtable) {
       <span class="comment">// convert into Object</span>
@@ -521,7 +533,7 @@ jala.XmlRpcRequest.convertResult = <span class="reserved">function</span>(obj) {
       var key;
       <span class="reserved">while</span> (e.hasMoreElements()) {
          key = e.nextElement();
-         result[key] = XmlRpcRequest.convertResult(obj.get(key));
+         result[key] = jala.XmlRpcRequest.convertResult(obj.get(key));
       }
    } <span class="reserved">else</span> <span class="reserved">if</span> (obj instanceof java.lang.String) {
       result = String(obj);
@@ -582,7 +594,7 @@ jala.XmlRpcRequest.argumentsToString = <span class="reserved">function</span>(ar
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -613,6 +625,6 @@ jala.XmlRpcRequest.argumentsToString = <span class="reserved">function</span>(ar
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </body>
 </html>

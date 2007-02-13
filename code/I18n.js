@@ -23,18 +23,13 @@
 
 /**
  * @fileoverview Methods and macros for internationalization
- * of Helma applications based on GNU gettext.
+ * of Helma applications.
  */
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
-
-/**
- * Jala dependencies
- */
-app.addRepository("modules/jala/lib/gettext.jar");
 
 /**
  * Constructs a new instance of jala.I18n
@@ -44,6 +39,30 @@ app.addRepository("modules/jala/lib/gettext.jar");
  * @type jala.I18n
  */
 jala.I18n = function() {
+   /**
+    * The default object containing the messages.
+    * @ignore
+    */
+   var messages = global.messages;
+   
+   /**
+    * Overwrite the default object containing
+    * the messages (ie. a vanilla EcmaScript object).
+    * @param {Object} msgObject The object containing the messages
+    */
+   this.setMessages = function(msgObject) {
+      messages = msgObject;
+   };
+   
+   /**
+    * Get the message object.
+    * @returns The object containing the messages
+    * @type Object
+    */
+   this.getMessages = function() {
+      return messages;
+   };
+   
    return this;
 };
 
@@ -61,10 +80,11 @@ jala.I18n.prototype.toString = function() {
 /**
  * Set (overwrite) the default handler containing
  * the messages (ie. a vanilla EcmaScript object).
- * @param {Object} handler
+ * @param {Object} handler The handler containing the message object
+ * @deprecated Use {@link #setMessages} instead
  */
 jala.I18n.prototype.setHandler = function(handler) {
-   jala.I18n.HANDLER = handler;
+   this.setMessages(handler.messages);
    return;
 };
 
@@ -73,6 +93,8 @@ jala.I18n.prototype.setHandler = function(handler) {
  * the form <code>language[_COUNTRY][_variant]</code>, where <code>language</code>
  * is a valid ISO Language Code (eg. "de"), <code>COUNTRY</code> a valid ISO
  * Country Code (eg. "AT"), and variant an identifier for the variant to use.
+ * @returns The locale for the given id
+ * @type java.util.Locale
  */
 jala.I18n.prototype.getLocale = function(localeId) {
    if (localeId) {
@@ -99,6 +121,7 @@ jala.I18n.prototype.getLocale = function(localeId) {
  * singular or plural form of the message
  * @returns The localized message or the appropriate key if no
  * localized message was found
+ * @type String
  */
 jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
    var translation;
@@ -142,8 +165,9 @@ jala.I18n.prototype.getCatalog = function(locale) {
    var cache = jala.I18n.catalogs;
    var catalog;
    if (!cache[locale]) {
+      var messages = this.getMessages();
       var arr = [locale.getLanguage(), locale.getCountry(), locale.getVariant()];
-      while (arr.length > 0 && !(catalog = jala.I18n.HANDLER.messages[arr.join("_")])) {
+      while (arr.length > 0 && !(catalog = messages[arr.join("_")])) {
          arr.pop();
       }
       cache[locale] = catalog;
@@ -201,6 +225,8 @@ jala.I18n.prototype.formatMessage = function(message, values) {
  * following "{number}" notation, where <code>number</code> must
  * match the number of the additional argument (starting with zero).
  * @param {String} key The message to localize
+ * @returns The translated message
+ * @type String
  * @see #translate
  * @see #formatMessage
  */
@@ -223,6 +249,8 @@ jala.I18n.prototype.gettext = function(key /** [value 0][, value 1][, ...] */) {
  * @param {String} pluralKey The plural form of the message to localize
  * @param {Number} amount The amount which is used to determine
  * whether the singular or plural form of the message should be returned.
+ * @returns The translated message
+ * @type String
  * @see #translate
  * @see #formatMessage
  */
@@ -256,7 +284,7 @@ jala.I18n.prototype.markgettext = function(key) {
  * HopObject or an Array this macro uses the size() resp. length of the
  * object, otherwise the string representation of the object will be used.</li>
  * </ul>
- *  * @returns The translated message
+ * @returns The translated message
  * @type String
  * @see #gettext
  * @see #ngettext
@@ -264,6 +292,9 @@ jala.I18n.prototype.markgettext = function(key) {
 jala.I18n.prototype.message_macro = function(param) {
    if (param.text) {
       var args = [param.text];
+      if (param.plural) {
+         args[args.length] = param.plural;
+      }
       if (param.values != null) {
          var arr = param.values.split(/\s*,\s*/g);
          // convert replacement values: if the value name doesn't contain
@@ -289,7 +320,6 @@ jala.I18n.prototype.message_macro = function(param) {
                      value = handler[propName];
                   }
                } else {
-                  // FIXME: i doubt if that really makes sense
                   value = global[propName];
                }
                if (value != null) {
@@ -301,7 +331,7 @@ jala.I18n.prototype.message_macro = function(param) {
                      value = value.length;
                   }
                }
-               args[i + 1] = value;
+               args[args.length] = value;
             }
          }
       }

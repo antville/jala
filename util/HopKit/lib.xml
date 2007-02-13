@@ -3,10 +3,9 @@
 <project name="jala-utils" default="usage">
 
    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
-   <taskdef resource="svntask.properties"/>
 
    <property environment="env"/>
-   <property name="work" value="${env.BUILD_HOME}/work" />
+	<property name="work" value="${env.BUILD_HOME}/work" />
    
    <!-- load javascript libraries -->
    <loadfile property="file_jsmin" srcFile="${env.BUILD_HOME}/scripts/jsmin.js" />
@@ -21,8 +20,7 @@
       <echo message="" />
       <echo message=" available targets are:" />
       <echo message=" jslint   -> run jslint on the current directory (validation)" />
-      <echo message=" jsdoc    -> run jsdoc on the current directory (documentation)" />
-      <echo message=" helmadoc -> run jsdoc on a helma application in the current directory" />
+      <echo message=" docs 	 -> run jsdoc on a helma application" />
       <echo message=" pot      -> parse i18n methods out of function files and skins and" />
       <echo message="             creates a gettext template file." />
       <echo message=" messages -> compile gnu gettext .po files into javascript message files" />
@@ -69,9 +67,20 @@
    <!-- =================================================================== -->
    <!-- Create documentation for a Helma application with jsdoc.pl          -->
    <!-- =================================================================== -->
-   <target name="helmadoc">
-      <mkdir dir="${work}" />
-      <helmadoc srcdir="${user.dir}" destdir="${user.dir}/docs" />
+   <target name="docs">
+      <input message="Directory containing the application code (./code):"
+               addproperty="docs.source" defaultvalue="./code" />
+      <input message="Destination directory for the documentation (./docs):"
+               addproperty="docs.destination" defaultvalue="./docs" />
+      <input message="Name of the project:"
+               addproperty="docs.projectName" defaultvalue="" />
+   	<!-- convert inputs to absolute paths -->
+   	<property name="srcdir" location="${docs.source}" />
+   	<property name="destdir" location="${docs.destination}" />
+   	<mkdir dir="${work}" />
+      <helmadoc srcdir="${srcdir}"
+      			 destdir="${destdir}"
+      			 projectName="${docs.projectName}" />
       <delete dir="${work}" />
    </target>
 
@@ -86,11 +95,14 @@
       <echo message="Using '${i18n.template}' as output" />
       <input message="Directories containing code/skins (separate with spaces):"
              addproperty="i18n.scan" />
+   	<!-- convert inputs to absolute paths -->
+   	<property name="dest" location="${i18n.template}" />
+     	<property name="src" location="${i18n.scan}" />
       <java classname="org.mozilla.javascript.tools.shell.Main">
          <arg value="${env.BUILD_HOME}/scripts/MessageParser.js" />
          <arg value="-o" />
-         <arg value="${i18n.template}" />
-         <arg line="${i18n.scan}" />
+         <arg value="${dest}" />
+         <arg line="${src}" />
       </java>
    </target>
 
@@ -105,12 +117,15 @@
              addproperty="i18n.destination" />
       <input message="Namespace to use for generated messages (optional):"
              addproperty="i18n.namespace" />
-      <echo message="Generating message files from .po files in '${i18n.poDirectory}'..." />
-      <echo message="Using '${i18n.destination}' as output directory" />
+   	<!-- convert inputs to absolute paths -->
+     	<property name="src" location="${i18n.poDirectory}" />
+   	<property name="dest" location="${i18n.destination}" />
+      <echo message="Generating message files from .po files in '${src}'..." />
+      <echo message="Using '${dest}' as output directory" />
       <java classname="org.mozilla.javascript.tools.shell.Main">
          <arg value="${env.BUILD_HOME}/scripts/PoParser.js" />
-         <arg value="${i18n.poDirectory}" />
-         <arg value="${i18n.destination}" />
+         <arg value="${src}" />
+         <arg value="${dest}" />
          <arg line="${i18n.namespace}" />
       </java>
    </target>
@@ -121,7 +136,7 @@
    <macrodef name="jsdoc">
       <attribute name="destdir" />
       <attribute name="name" />
-      <attribute name="srcdir" />
+   	<attribute name="srcdir" />
       <element name="filesetEl" implicit="true" />
       <sequential>
          <path id="filepath">
@@ -151,14 +166,16 @@
    <macrodef name="helmadoc">
       <attribute name="srcdir" />
       <attribute name="destdir" />
-      <attribute name="pageFooter" default= "" />
+   	<attribute name="projectName" />
       <sequential>
          <echo message="Generating API docs for Helma application in @{srcdir}" />
          <property name="workHelmadoc" value="${work}/helmadocs-worker" />
          <mkdir dir="${workHelmadoc}" />
          <copy todir="${workHelmadoc}">
             <fileset dir="@{srcdir}">
-               <exclude name=".apidocs/**" />
+               <exclude name=".svn/**" />
+               <exclude name="docs/**" />
+               <exclude name="*/*.html" />
             </fileset>
          </copy>
          <echo message="Preparing files for JSDoc ..." />
@@ -184,7 +201,7 @@
             var fileNameReg = /([^\\\/]+)[\\\/]([^\\\/]+)\.(.*)$/i;
       
             // find plain function definitions
-            var functionReg = /(\s*)function (.*)\(/gi;
+            var functionReg = /^(\s*)function (.*)\(/gi;
       
             // find constructor functions (after replacing plain function definitions
             var ctorReg = /.prototype.constructor/gi;
@@ -264,10 +281,13 @@
             <arg value="--template-dir=${env.BUILD_HOME}/JSDoc/templates" />
             <arg value="-d=@{destdir}" />
             <arg value="--extensions=js,hac,properties" />
-            <arg value="--page-footer=${pageFooter}" />
             <arg value="--recursive" />
+         	<arg value="--quiet" />
             <arg value="--package-naming" />
-            <arg value="${workHelmadoc}" />
+            <arg value="--project-name=@{projectName}" />
+            <arg value="--project-summary=@{srcdir}/.jsdoc/summary.html" />
+				<arg value="--globals-name=Global" />
+         	<arg value="${workHelmadoc}" />
          </exec>
          <delete dir="${workHelmadoc}" />
       </sequential>

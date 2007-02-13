@@ -34,6 +34,11 @@ if (!global.jala) {
 
 
 /**
+ * Jala dependencies
+ */
+app.addRepository("modules/jala/code/Rss20Writer.js");
+
+/**
  * @class Class to create, modify and render standard-compliant
  * RSS 2.0 feeds including support for Apple's Podcast specification.
  * @constructor
@@ -45,6 +50,9 @@ jala.PodcastWriter = function(header) {
 
    var CATEGORY = {
       name: "itunes:category",
+      attributes: {
+         name: "text"
+      }
    };
    
    var OWNER = {

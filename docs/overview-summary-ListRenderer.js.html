@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala Overview
+Jala 1.0 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -187,7 +187,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
       pageNavigation: null,
       prevLink: null,
       nextLink: null
-   }
+   };
 
    var setTotalPages = <span class="reserved">function</span>() {
       <span class="reserved">if</span> (maxPages)
@@ -195,7 +195,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
       <span class="reserved">else</span>
          totalPages = Math.ceil(collectionSize / itemsPerPage);
       <span class="reserved">return</span>;
-   }
+   };
 
    var getRenderFunction = <span class="reserved">function</span>(handlerName, fName) {
       <span class="reserved">if</span> (!fName)
@@ -211,7 +211,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
          <span class="reserved">return</span> handler[fName];
       }
       <span class="reserved">return</span> null;
-   }
+   };
 
    var getHref = <span class="reserved">function</span>(page) {
       <span class="reserved">if</span> (urlParams) {
@@ -225,7 +225,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
          <span class="reserved">else</span>
             <span class="reserved">return</span> href;
       }
-   }
+   };
 
    <span class="comment">/**
     * Returns true if this ListRenderer instance
@@ -250,7 +250,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
       <span class="comment">// correct currentPage if necessary</span>
       currentPage = Math.min(Math.max(1, currentPage), totalPages);
       <span class="reserved">return</span>;
-   }
+   };
    
    <span class="comment">/**
     * Set the current Page.
@@ -258,7 +258,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
     */</span>
    <span class="reserved">this</span>.setCurrentPage = <span class="reserved">function</span> (page) {
       currentPage = page;
-   }
+   };
    
    <span class="comment">/**
     * Returns the current Page.
@@ -266,11 +266,11 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
     */</span>
    <span class="reserved">this</span>.getCurrentPage = <span class="reserved">function</span> () {
       <span class="reserved">return</span> currentPage;
-   }
+   };
    
    <span class="reserved">this</span>.getSize = <span class="reserved">function</span> () {
       <span class="reserved">return</span> collectionSize;
-   }
+   };
 
    <span class="comment">/**
     * Render the list.
@@ -314,7 +314,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
          param.index += 1;
       }
       <span class="reserved">return</span>;
-   }
+   };
 
    <span class="comment">/**
     * Render the list as string.
@@ -328,7 +328,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
       res.push();
       <span class="reserved">this</span>.renderList(param);
       <span class="reserved">return</span> res.pop();
-   }
+   };
 
    <span class="comment">/**
     * Render a link to the previous page as string.
@@ -351,7 +351,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
          cache.prevLink = res.pop();
       }
       <span class="reserved">return</span> cache.prevLink;
-   }   
+   };
 
    <span class="comment">/**
     * Render a link to the previous page.
@@ -362,7 +362,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
    <span class="reserved">this</span>.renderPrevLink = <span class="reserved">function</span>(param) {
       res.write(<span class="reserved">this</span>.renderPrevLinkAsString(param));
       <span class="reserved">return</span>;
-   }
+   };
 
    <span class="comment">/**
     * Render a link to the next page as string.
@@ -385,7 +385,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
          cache.nextLink = res.pop();
       }
       <span class="reserved">return</span> cache.nextLink;
-   }
+   };
 
    <span class="comment">/**
     * Render a link to the next page.
@@ -396,7 +396,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
    <span class="reserved">this</span>.renderNextLink = <span class="reserved">function</span>(param) {
       res.write(<span class="reserved">this</span>.renderNextLinkAsString(param));
       <span class="reserved">return</span>;
-   }
+   };
 
    <span class="comment">/**
     * Render a page navigation bar.
@@ -407,7 +407,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
    <span class="reserved">this</span>.renderPageNavigation = <span class="reserved">function</span>(param) {
       res.write(<span class="reserved">this</span>.renderPageNavigationAsString(param));
       <span class="reserved">return</span>;
-   }
+   };
 
    <span class="comment">/**
     * Render a page navigation bar as string.
@@ -468,7 +468,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
          cache.pageNavigation = res.pop();
       }
       <span class="reserved">return</span> cache.pageNavigation;
-   }
+   };
 
    <span class="comment">// object initialization</span>
    <span class="comment">// FIXME: this is for backwards compatibility only</span>
@@ -484,18 +484,6 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
    urlParamName = listParam.urlParamName || <span class="literal">"page"</span>;
    currentPage = (!listParam.currentPage || isNaN(listParam.currentPage)) ? 1 : parseInt(listParam.currentPage, 10);
    itemsPerPage = !listParam.itemsPerPage ? collectionSize : parseInt(listParam.itemsPerPage, 10);
-
-   <span class="comment">// throw exception if an ArrayList containing a subset of a bigger array has too less elements.</span>
-   <span class="comment">// FIXME: shouldn't we move this into ArrayList, as it doesn't have anything to do</span>
-   <span class="comment">// with the ListRenderer itself?</span>
-   <span class="comment">// </span>
-   <span class="comment">// if (collection instanceof jala.ArrayList</span>
-   <span class="comment">//       &amp;&amp; collection.isSubset()</span>
-   <span class="comment">//       &amp;&amp; collection.subsetSize() &lt; Math.min(itemsPerPage, collection.size()-collection.getOffset())) {</span>
-   <span class="comment">//    throw new Exception("ArrayList too small. ListRenderer called with ArrayList containing a subset which should have " + </span>
-   <span class="comment">//             Math.min(itemsPerPage, collection.size()-collection.getOffset()) + </span>
-   <span class="comment">//             " elements, but had " + collection.subsetSize() + " elements.");</span>
-   <span class="comment">// }</span>
    maxPages = listParam.maxPages;
    listItemSkin = listParam.itemSkin;
    <span class="comment">// calculate the number of pages</span>
@@ -511,9 +499,11 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
 jala.ListRenderer.html = new helma.Html();
 
 
-<span class="comment">//</span>
-<span class="comment">// macros</span>
-<span class="comment">//</span>
+
+<span class="comment">/*********************************
+ ********** M A C R O S **********
+ *********************************/</span>
+
 
 <span class="comment">/**
  * Render the maximum number of items per page.
@@ -602,10 +592,17 @@ jala.ListRenderer.<span class="reserved">prototype</span>.render_macro = <span c
    <span class="reserved">return</span>;
 };
 
+
+
+<span class="comment">/*****************************************************
+ ********** D E F A U L T   R E N D E R E R **********
+ *****************************************************/</span>
+
+
 <span class="comment">/**
  * Default Renderer object containing functions
  * used for rendering different list items (eg. page navigation,
- * prev/next links and list items.
+ * prev/next links and list items).
  * <span class="attrib">@final</span>
  */</span>
 jala.ListRenderer.defaultRenderer = {
@@ -737,7 +734,7 @@ jala.ListRenderer.defaultRenderer = {
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -768,6 +765,6 @@ jala.ListRenderer.defaultRenderer = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </body>
 </html>

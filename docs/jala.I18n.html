@@ -34,7 +34,7 @@ parent.document.title="jala.I18n";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala</B>
+<B>Jala 1.0</B>
 </EM>
 </TD
 </TR>
@@ -174,6 +174,24 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
+	       <A HREF="#getCatalog">getCatalog</A></B>(locale)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Helper method to get the message catalog  
+ corresponding to the actual locale.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;java.util.Locale</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
 	       <A HREF="#getLocale">getLocale</A></B>(localeId)
 	 </CODE>
 	 <BR>
@@ -188,6 +206,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
 	    <CODE>&nbsp;Object</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getMessages">getMessages</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Get the message object.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -240,7 +275,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -258,7 +293,43 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setHandler">setHandler</A></B>(&lt;Object&gt; handler)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Set (overwrite) the default handler containing
+ the messages (ie.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setMessages">setMessages</A></B>(&lt;Object&gt; msgObject)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Overwrite the default object containing
+ the messages (ie.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -379,9 +450,35 @@ jala.I18n</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="getCatalog"><!-- --></A>
+   <H3>getCatalog</H3>
+   <PRE>Object <B>getCatalog</B>(locale)</PRE>
+   
+      <UL>Helper method to get the message catalog  
+ corresponding to the actual locale.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The message catalog. 
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="getLocale"><!-- --></A>
    <H3>getLocale</H3>
-   <PRE>Object <B>getLocale</B>(localeId)</PRE>
+   <PRE>java.util.Locale <B>getLocale</B>(localeId)</PRE>
    
       <UL>Returns the locale for the given id, which is expected to follow
  the form <code>language[_COUNTRY][_variant]</code>, where <code>language</code>
@@ -394,6 +491,38 @@ jala.I18n</H3>
    <!-- METHOD PARAMETERS END -->
 
    
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The locale for the given id   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getMessages"><!-- --></A>
+   <H3>getMessages</H3>
+   <PRE>Object <B>getMessages</B>()</PRE>
+   
+      <UL>Get the message object.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The object containing the messages   
+        </UL>
+   </UL>
+   
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
@@ -402,7 +531,7 @@ jala.I18n</H3>
 
    <A NAME="gettext"><!-- --></A>
    <H3>gettext</H3>
-   <PRE>Object <B>gettext</B>(&lt;String&gt; key )</PRE>
+   <PRE>String <B>gettext</B>(&lt;String&gt; key )</PRE>
    
       <UL>Returns a localized message for the message key passed as
  argument. If no localization is found, the message key
@@ -425,6 +554,13 @@ jala.I18n</H3>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The translated message   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -485,8 +621,7 @@ jala.I18n</H3>
  handler object (eg. "user.name"). If the value of the property is a
  HopObject or an Array this macro uses the size() resp. length of the
  object, otherwise the string representation of the object will be used.</li>
- </ul>
-  *</UL>
+ </ul></UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -513,7 +648,7 @@ jala.I18n</H3>
 
    <A NAME="ngettext"><!-- --></A>
    <H3>ngettext</H3>
-   <PRE>Object <B>ngettext</B>(&lt;String&gt; singularKey, &lt;String&gt; pluralKey, &lt;Number&gt; amount )</PRE>
+   <PRE>String <B>ngettext</B>(&lt;String&gt; singularKey, &lt;String&gt; pluralKey, &lt;Number&gt; amount )</PRE>
    
       <UL>Returns a localized message for the message key passed as
  argument. In contrast to gettext() this method
@@ -545,6 +680,13 @@ jala.I18n</H3>
    <!-- METHOD PARAMETERS END -->
 
    
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The translated message   
+        </UL>
+   </UL>
+   
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
@@ -555,15 +697,70 @@ jala.I18n</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="setHandler"><!-- --></A>
+   <H3>setHandler</H3>
+   <PRE>void <B>setHandler</B>(&lt;Object&gt; handler)</PRE>
+   
+      <UL>Set (overwrite) the default handler containing
+ the messages (ie. a vanilla EcmaScript object).</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>handler</CODE> -  The handler containing the message object  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>Deprecated</B> <I>Use <a href="#setMessages">setMessages()</a> instead    </I><BR/><BR/>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setMessages"><!-- --></A>
+   <H3>setMessages</H3>
+   <PRE>void <B>setMessages</B>(&lt;Object&gt; msgObject)</PRE>
+   
+      <UL>Overwrite the default object containing
+ the messages (ie. a vanilla EcmaScript object).</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>msgObject</CODE> -  The object containing the messages       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="translate"><!-- --></A>
    <H3>translate</H3>
-   <PRE>Object <B>translate</B>(singularKey, pluralKey, &lt;Number&gt; amount)</PRE>
+   <PRE>String <B>translate</B>(singularKey, pluralKey, &lt;Number&gt; amount)</PRE>
    
       <UL>Tries to "translate" the given message key into a localized
- message. Requires the files gettext.jar and messages.jar
- in the application directory (the latter is expected to contain
- the containing a ResourceBundle "jala.Messages" containing the
- messages in different languages.</UL>
+ message.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -588,7 +785,7 @@ jala.I18n</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The localized message or the appropriate key if no  localized message was found 
+        The localized message or the appropriate key if no  localized message was found   
         </UL>
    </UL>
    
@@ -623,7 +820,7 @@ jala.I18n</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala</B>
+<B>Jala 1.0</B>
 </EM>
 </TD
 </TR>
@@ -664,6 +861,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </BODY>
 </HTML>

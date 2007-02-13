@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala Overview
+Jala 1.0 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -150,7 +150,7 @@ function asd() {
  * methods. Most of this filter library is based on filters created
  * by Janne Kipinä for JAlbum. For more information have a look
  * at http://www.ratol.fi/~jakipina/java/
- * <span class="attrib">@param</span> {Object} arg Either
+ * <span class="attrib">@param</span> {Object} img Either
  &lt;ul&gt;
  &lt;li&gt;an instance of helma.image.ImageWrapper&lt;/li&gt;
  &lt;li&gt;the path to the image file as String&lt;/li&gt;
@@ -159,184 +159,55 @@ function asd() {
  &lt;/ul&gt;
  * <span class="attrib">@constructor</span>
  */</span>
-jala.ImageFilter = <span class="reserved">function</span>(arg) {
-   <span class="comment">// private variable containing the buffered image to work on</span>
+jala.ImageFilter = <span class="reserved">function</span>(img) {
+   <span class="comment">/**
+    * The buffered image to work on
+    * <span class="attrib">@type</span> java.awt.image.BufferedImage
+    * <span class="attrib">@private</span>
+    */</span>
    var bi;
 
    <span class="comment">/**
-    * Transforms an image into a bigger one while mirroring the edges
-    * This method is used to apply the filtering up to the edges
-    * of an image (otherwise the image would keep an unmodified
-    * border).
+    * Perfoms a gaussian operation (unsharp masking or blurring)
+    * on the image using the kernelFactory passed as argument
+    * <span class="attrib">@param</span> {Number} radius The radius
+    * <span class="attrib">@param</span> {Number} amount The amount
+    * <span class="attrib">@param</span> {Function} kernelFactory Factory method to call for building the kernel
     * <span class="attrib">@private</span>
     */</span>
-   var getEnlargedImageWithMirroring = <span class="reserved">function</span>(bi, size) {
+   var gaussianOp = <span class="reserved">function</span>(radius, amount, kernelFactory) {
+      var DEFAULT_RADIUS = 2;
+      var MINIMUM_RADIUS = 1;
+      var MAXIMUM_RADIUS = 10;
+      var DEFAULT_AMOUNT = 15;
+      var MINIMUM_AMOUNT = 1;
+      var MAXIMUM_AMOUNT = 100;
+   
+      <span class="comment">// correct arguments if necessary</span>
+      <span class="reserved">if</span> (isNaN(radius = Math.min(Math.max(radius, MINIMUM_RADIUS), MAXIMUM_RADIUS)))
+         radius = DEFAULT_RADIUS;
+      <span class="reserved">if</span> (isNaN(amount = Math.min(Math.max(amount, MINIMUM_AMOUNT), MAXIMUM_AMOUNT)))
+         amount = DEFAULT_AMOUNT;
 
-      var doFlip = <span class="reserved">function</span>(bi, sx, sy, dist) {
-         var out = new java.awt.image.BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
-         var transform = java.awt.geom.AffineTransform.getScaleInstance(sx, sy);
-         (sx &lt; sy) ? transform.translate(-dist, 0) :  transform.translate(0, -dist);
-         var atop = new java.awt.image.AffineTransformOp(transform,
-             java.awt.image.AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-         out = atop[<span class="literal">"filter(java.awt.image.BufferedImage,java.awt.image.BufferedImage)"</span>](bi, null);
-         <span class="reserved">return</span> out;
+      <span class="reserved">if</span> ((bi.getWidth() &lt; bi.getHeight()) &amp;&amp; (radius &gt; bi.getWidth())) {
+         radius = bi.getWidth();
+      } <span class="reserved">else</span> <span class="reserved">if</span> ((bi.getHeight() &lt; bi.getWidth()) &amp;&amp; (radius &gt; bi.getHeight())) {
+         radius = bi.getHeight();
       }
-
-      var doHorizontalFlip = <span class="reserved">function</span>(bi) {
-         <span class="reserved">return</span> doFlip(bi, -1, 1, bi.getWidth());
-      }
-
-      var doVerticalFlip = <span class="reserved">function</span>(bi) {
-         <span class="reserved">return</span> doFlip(bi, 1, -1, bi.getHeight());
-      }
-
-      var width = bi.getWidth() + 2 * size;
-      var height = bi.getHeight() + 2 * size;
-      var out = new java.awt.image.BufferedImage(width, height, bi.getType());
-      var g = out.createGraphics();
-      <span class="comment">// due to method overloading exactly define the method to be called</span>
-      var func = <span class="literal">"drawImage(java.awt.Image,int,int,java.awt.image.ImageObserver)"</span>;
-      g[func](bi, size, size, null);
       
-      var part;
-      <span class="comment">//top-left corner</span>
-      part = bi.getSubimage(0, 0, size, size);
-      part = doHorizontalFlip(part);
-      part = doVerticalFlip(part);
-      g[func](part, 0, 0, null);
-      <span class="comment">//top-right corner</span>
-      part = bi.getSubimage(bi.getWidth()-size, 0, size, size);
-      part = doHorizontalFlip(part);
-      part = doVerticalFlip(part);
-      g[func](part, width-size, 0, null);
-      <span class="comment">//bottom-left corner</span>
-      part = bi.getSubimage(0, bi.getHeight()-size, size, size);
-      part = doHorizontalFlip(part);
-      part = doVerticalFlip(part);
-      g[func](part, 0, height-size, null);
-      <span class="comment">//bottom-right corner</span>
-      part = bi.getSubimage(bi.getWidth()-size, bi.getHeight()-size, size, size);
-      part = doHorizontalFlip(part);
-      part = doVerticalFlip(part);
-      g[func](part, width-size, height-size, null);
-      <span class="comment">//left border</span>
-      part = bi.getSubimage(0, 0, size, bi.getHeight());
-      part = doHorizontalFlip(part);
-      g[func](part, 0, size, null);
-      <span class="comment">//right border</span>
-      part = bi.getSubimage(bi.getWidth()-size, 0, size, bi.getHeight());
-      part = doHorizontalFlip(part);
-      g[func](part, width-size, size, null);
-      <span class="comment">//top border</span>
-      part = bi.getSubimage(0, 0, bi.getWidth(), size);
-      part = doVerticalFlip(part);
-      g[func](part, size, 0, null);
-      <span class="comment">//bottom border</span>
-      part = bi.getSubimage(0, bi.getHeight()-size, bi.getWidth(), size);
-      part = doVerticalFlip(part);
-      g[func](part, size, height-size, null);
-      <span class="reserved">return</span> out;
-   }
-   
-   <span class="comment">/**
-    * Factory method for a gaussian blur kernel
-    * <span class="attrib">@return</span> {Object} gaussian blur kernel
-    * <span class="attrib">@type</span> Array
-    * <span class="attrib">@private</span>
-    */</span>
-   var getGaussianBlurKernel = <span class="reserved">function</span>(size, standard_deviation) {
-      var nominator = 2 * standard_deviation * standard_deviation;
-      var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, size*size);
-      var center = (size - 1) / 2;
-      var limit = size - 1;
-      var xx, yy;
-      var sum = 0;
-      var value = 0;
-      <span class="reserved">for</span> (var y=0; y&lt;size; y++) {
-         <span class="reserved">for</span> (var x=0; x&lt;size; x++) {
-            <span class="reserved">if</span> ((y &lt;= center) &amp;&amp; (x &lt;= center)) {
-               <span class="reserved">if</span> (x &gt;= y) {
-                  <span class="comment">//calculate new value</span>
-                  xx = center - x;
-                  yy = center - y;
-                  value = Math.exp(-(xx*xx + yy*yy) / nominator);
-                  kernel[(y*size)+x] = value;
-                  sum += value;
-               } <span class="reserved">else</span> {
-                  <span class="comment">//copy existing value</span>
-                  value = kernel[(x*size)+y];
-                  kernel[(y*size)+x] = value;
-                  sum += value;
-               }
-            } <span class="reserved">else</span> {
-               xx = x;
-               yy = y;
-               <span class="reserved">if</span> (yy &gt; center)
-                  yy = limit - yy;
-               <span class="reserved">if</span> (xx &gt; center)
-                  xx = limit - xx;
-               value = kernel[(yy*size)+xx];
-               kernel[(y*size)+x] = value;
-               sum += value;
-            }
-         }
-      }
-      <span class="reserved">for</span> (var i=0; i&lt;kernel.length; i++) {
-         kernel[i] = kernel[i] / sum;
-      }
-      <span class="reserved">return</span> kernel;
-   }
-
-   <span class="comment">/**
-    * Factory method for an unsharp mask kernel
-    * <span class="attrib">@return</span> {Object} Unsharp mask kernel
-    * <span class="attrib">@type</span> Array
-    * <span class="attrib">@private</span>
-    */</span>
-   var getUnsharpMaskKernel = <span class="reserved">function</span>(size, standard_deviation) {
-      var elements = getGaussianBlurKernel(size, standard_deviation);
-      var center = ((size * size) - 1) / 2;
-      elements[center] = 0;
-      var sum = 0;
-      <span class="reserved">for</span> (var i=0; i&lt;elements.length; i++) {
-         sum += elements[i];
-         elements[i] = -elements[i];
-      }
-      elements[center] = sum + 1;
-      <span class="reserved">return</span> elements;
-   }
-   
-
-   <span class="comment">/**
-    * Factory method for a mean kernel
-    * <span class="attrib">@return</span> {Object} Mean kernel
-    * <span class="attrib">@type</span> Array
-    * <span class="attrib">@private</span>
-    */</span>
-   var getMeanKernel = <span class="reserved">function</span>(size) {
-      var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, size);
-      <span class="reserved">for</span> (var i=0;i&lt;size;i++)
-         kernel[i] = 1/size;
-      <span class="reserved">return</span> kernel;
+      var size = (radius * 2) + 1;
+      var deviation = amount / 20;
+      var elements = kernelFactory(size, deviation);
+      var large = jala.ImageFilter.getEnlargedImageWithMirroring(bi, radius);
+      var resultImg = new java.awt.image.BufferedImage(large.getWidth(), large.getHeight(), large.getType());
+      var kernel = new java.awt.image.Kernel(size, size, elements);
+      var cop = new java.awt.image.ConvolveOp(kernel, java.awt.image.ConvolveOp.EDGE_NO_OP, null);
+      cop.filter(large, resultImg);
+      <span class="comment">// replace the wrapped buffered image with the modified one</span>
+      bi = resultImg.getSubimage(radius, radius, bi.getWidth(), bi.getHeight());
+      <span class="reserved">return</span>;
    };
-
-   <span class="comment">/**
-    * Factory method for a sharpening kernel
-    * <span class="attrib">@return</span> {Object} Sharpening kernel
-    * <span class="attrib">@type</span> Array
-    * <span class="attrib">@private</span>
-    */</span>
-   var getSharpeningKernel = <span class="reserved">function</span>(amount) {
-      var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, 9);
-      var corner = 0;
-      var side = amount / -50;
-      var center = (side * -4.0) + (corner * -4.0) + 1.0;
-      kernel[0] = kernel[2] = kernel[6] = kernel[8] = corner;
-      kernel[1] = kernel[3] = kernel[5] = kernel[7] = side;
-      kernel[4] = center;
-      <span class="reserved">return</span> kernel;
-   };
-
+   
    <span class="comment">/**
     * Sharpens the image using a plain sharpening kernel.
     * <span class="attrib">@param</span> {Number} amount The amount of sharpening to apply
@@ -349,75 +220,32 @@ jala.ImageFilter = <span class="reserved">function</span>(arg) {
       <span class="reserved">if</span> (isNaN(Math.min(Math.max(amount, MINIMUM), MAXIMUM)))
          amount = DEFAULT;
       var sharpened = new java.awt.image.BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
-      var kernel = new java.awt.image.Kernel(3, 3, getSharpeningKernel(amount));
+      var kernel = new java.awt.image.Kernel(3, 3, jala.ImageFilter.getSharpeningKernel(amount));
       var cop = new java.awt.image.ConvolveOp(kernel, java.awt.image.ConvolveOp.EDGE_NO_OP, null);
       cop.filter(bi, sharpened);
       bi = sharpened;
       <span class="reserved">return</span>;
-   }
-   
-   <span class="comment">/**
-    * Perfoms a gaussian operation (unsharp masking or blurring)
-    * on the image using the kernelFactory passed as argument
-    * <span class="attrib">@param</span> {Number} r Radius
-    * <span class="attrib">@param</span> {Number} a Amount
-    * <span class="attrib">@param</span> {Function} kernelFactory Factory method to call for building the kernel
-    * <span class="attrib">@private</span>
-    */</span>
-   var gaussianOp = <span class="reserved">function</span>(r, a, kernelFactory) {
-      var DEFAULT_RADIUS = 2;
-      var MINIMUM_RADIUS = 1;
-      var MAXIMUM_RADIUS = 10;
-      var DEFAULT_AMOUNT = 15;
-      var MINIMUM_AMOUNT = 1;
-      var MAXIMUM_AMOUNT = 100;
-   
-      <span class="comment">// correct arguments if necessary</span>
-      var radius, amount;
-      <span class="reserved">if</span> (isNaN(radius = Math.min(Math.max(r, MINIMUM_RADIUS), MAXIMUM_RADIUS)))
-         radius = DEFAULT_RADIUS;
-      <span class="reserved">if</span> (isNaN(amount = Math.min(Math.max(a, MINIMUM_AMOUNT), MAXIMUM_AMOUNT)))
-         amount = DEFAULT_AMOUNT;
-
-      <span class="reserved">if</span> ((bi.getWidth() &lt; bi.getHeight()) &amp;&amp; (radius &gt; bi.getWidth())) {
-         radius = bi.getWidth();
-      } <span class="reserved">else</span> <span class="reserved">if</span> ((bi.getHeight() &lt; bi.getWidth()) &amp;&amp; (radius &gt; bi.getHeight())) {
-         radius = bi.getHeight();
-      }
-      
-      var size = (radius * 2) + 1;
-      var standard_deviation = amount / 20;
-      var elements = kernelFactory(size, standard_deviation);
-      var large = getEnlargedImageWithMirroring(bi, radius);
-      var resultImg = new java.awt.image.BufferedImage(large.getWidth(), large.getHeight(), large.getType());
-      
-      var kernel = new java.awt.image.Kernel(size, size, elements);
-      var cop = new java.awt.image.ConvolveOp(kernel, java.awt.image.ConvolveOp.EDGE_NO_OP, null);
-      cop.filter(large, resultImg);
-      <span class="comment">// replace the buffered image with the sharpened one</span>
-      bi = resultImg.getSubimage(radius, radius, bi.getWidth(), bi.getHeight());
-      <span class="reserved">return</span>;
-   }
+   };
    
    <span class="comment">/**
     * Performs an unsharp mask operation on the image
-    * <span class="attrib">@param</span> {Number} r Radius
-    * <span class="attrib">@param</span> {Number} a Amount
+    * <span class="attrib">@param</span> {Number} radius The radius
+    * <span class="attrib">@param</span> {Number} amount The amount
     */</span>
-   <span class="reserved">this</span>.unsharpMask = <span class="reserved">function</span>(r, a) {
-      gaussianOp(r, a, getUnsharpMaskKernel);
+   <span class="reserved">this</span>.unsharpMask = <span class="reserved">function</span>(radius, amount) {
+      gaussianOp(radius, amount, jala.ImageFilter.getUnsharpMaskKernel);
       <span class="reserved">return</span>;
-   }
+   };
 
    <span class="comment">/**
     * Performs a gaussian blur operation on the image
-    * <span class="attrib">@param</span> {Number} r Radius
-    * <span class="attrib">@param</span> {Number} a Amount
+    * <span class="attrib">@param</span> {Number} radius The radius
+    * <span class="attrib">@param</span> {Number} amount The amount
     */</span>
-   <span class="reserved">this</span>.gaussianBlur = <span class="reserved">function</span>(r, a) {
-      gaussianOp(r, a, getGaussianBlurKernel);
+   <span class="reserved">this</span>.gaussianBlur = <span class="reserved">function</span>(radius, amount) {
+      gaussianOp(radius, amount, jala.ImageFilter.getGaussianBlurKernel);
       <span class="reserved">return</span>;
-   }
+   };
    
 
    <span class="comment">/**
@@ -431,28 +259,218 @@ jala.ImageFilter = <span class="reserved">function</span>(arg) {
                     bi.getWidth(),
                     bi.getHeight(),
                     generator);
-   }
+   };
+
+   <span class="comment">/**
+    * Returns the wrapped image as byte array, to use eg. in conjunction
+    * with res.writeBinary()
+    * <span class="attrib">@returns</span> The wrapped image as byte array
+    * <span class="attrib">@type</span> byte[]
+    */</span>
+   <span class="reserved">this</span>.getBytes = <span class="reserved">function</span>() {
+      var outStream = new java.io.ByteArrayOutputStream();
+      Packages.javax.imageio.ImageIO.write(bi, <span class="literal">"jpeg"</span>, outStream);
+      var bytes = outStream.toByteArray();
+      outStream.close();
+      <span class="reserved">return</span> bytes;
+   };
 
    <span class="comment">/**
     * constructor body
     * <span class="attrib">@ignore</span>
     */</span>
-   <span class="reserved">if</span> (arg instanceof Packages.helma.image.ImageWrapper) {
-      bi = arg.getBufferedImage();
+   <span class="reserved">if</span> (arguments.length == 0 || img == null) {
+      throw <span class="literal">"jala.ImageFilter: insufficient arguments"</span>;
+   } <span class="reserved">else</span> <span class="reserved">if</span> (img instanceof Packages.helma.image.ImageWrapper) {
+      bi = img.getBufferedImage();
    } <span class="reserved">else</span> {
-      <span class="reserved">if</span> (arg instanceof String) {
-         var instream = new java.io.FileInputStream(new java.io.File(arg));
-      } <span class="reserved">else</span> <span class="reserved">if</span> (arg instanceof helma.File) {
-         var instream = new java.io.FileInputStream(new java.io.File(arg.getAbsolutePath()));
-      } <span class="reserved">else</span> <span class="reserved">if</span> (arg instanceof java.io.File) {
-         var instream = new java.io.FileInputStream(arg);
+      <span class="reserved">if</span> (typeof(img) == <span class="literal">"string"</span>) {
+         var inStream = new java.io.FileInputStream(new java.io.File(img));
+      } <span class="reserved">else</span> {
+         var inStream = new java.io.FileInputStream(img);
       }
-      decoder =  Packages.com.sun.image.codec.jpeg.JPEGCodec.createJPEGDecoder(instream);
+      var decoder =  Packages.com.sun.image.codec.jpeg.JPEGCodec.createJPEGDecoder(inStream);
       bi = decoder.decodeAsBufferedImage();
    }
 
    <span class="reserved">return</span> <span class="reserved">this</span>;
-}
+};
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.ImageFilter.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.ImageFilter]"</span>;
+};
+
+<span class="comment">/**
+ * Transforms an image into a bigger one while mirroring the edges
+ * This method is used to apply the filtering up to the edges
+ * of an image (otherwise the image would keep an unmodified
+ * border).
+ * <span class="attrib">@param</span> {java.awt.image.BufferedImage} bi The buffered image to transform
+ * <span class="attrib">@param</span> {Number} size The size of the border area
+ * <span class="attrib">@returns</span> The transformed image
+ * <span class="attrib">@type</span> java.awt.image.BufferedImage
+ * <span class="attrib">@private</span>
+ */</span>
+jala.ImageFilter.getEnlargedImageWithMirroring = <span class="reserved">function</span>(bi, size) {
+
+   var doFlip = <span class="reserved">function</span>(bi, sx, sy, dist) {
+      var out = new java.awt.image.BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
+      var transform = java.awt.geom.AffineTransform.getScaleInstance(sx, sy);
+      (sx &lt; sy) ? transform.translate(-dist, 0) :  transform.translate(0, -dist);
+      var atop = new java.awt.image.AffineTransformOp(transform,
+          java.awt.image.AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+      out = atop[<span class="literal">"filter(java.awt.image.BufferedImage,java.awt.image.BufferedImage)"</span>](bi, null);
+      <span class="reserved">return</span> out;
+   }
+
+   var doHorizontalFlip = <span class="reserved">function</span>(bi) {
+      <span class="reserved">return</span> doFlip(bi, -1, 1, bi.getWidth());
+   }
+
+   var doVerticalFlip = <span class="reserved">function</span>(bi) {
+      <span class="reserved">return</span> doFlip(bi, 1, -1, bi.getHeight());
+   }
+
+   var width = bi.getWidth() + 2 * size;
+   var height = bi.getHeight() + 2 * size;
+   var out = new java.awt.image.BufferedImage(width, height, bi.getType());
+   var g = out.createGraphics();
+   <span class="comment">// due to method overloading exactly define the method to be called</span>
+   var func = <span class="literal">"drawImage(java.awt.Image,int,int,java.awt.image.ImageObserver)"</span>;
+   g[func](bi, size, size, null);
+   
+   var part;
+   <span class="comment">//top-left corner</span>
+   part = bi.getSubimage(0, 0, size, size);
+   part = doHorizontalFlip(part);
+   part = doVerticalFlip(part);
+   g[func](part, 0, 0, null);
+   <span class="comment">//top-right corner</span>
+   part = bi.getSubimage(bi.getWidth()-size, 0, size, size);
+   part = doHorizontalFlip(part);
+   part = doVerticalFlip(part);
+   g[func](part, width-size, 0, null);
+   <span class="comment">//bottom-left corner</span>
+   part = bi.getSubimage(0, bi.getHeight()-size, size, size);
+   part = doHorizontalFlip(part);
+   part = doVerticalFlip(part);
+   g[func](part, 0, height-size, null);
+   <span class="comment">//bottom-right corner</span>
+   part = bi.getSubimage(bi.getWidth()-size, bi.getHeight()-size, size, size);
+   part = doHorizontalFlip(part);
+   part = doVerticalFlip(part);
+   g[func](part, width-size, height-size, null);
+   <span class="comment">//left border</span>
+   part = bi.getSubimage(0, 0, size, bi.getHeight());
+   part = doHorizontalFlip(part);
+   g[func](part, 0, size, null);
+   <span class="comment">//right border</span>
+   part = bi.getSubimage(bi.getWidth()-size, 0, size, bi.getHeight());
+   part = doHorizontalFlip(part);
+   g[func](part, width-size, size, null);
+   <span class="comment">//top border</span>
+   part = bi.getSubimage(0, 0, bi.getWidth(), size);
+   part = doVerticalFlip(part);
+   g[func](part, size, 0, null);
+   <span class="comment">//bottom border</span>
+   part = bi.getSubimage(0, bi.getHeight()-size, bi.getWidth(), size);
+   part = doVerticalFlip(part);
+   g[func](part, size, height-size, null);
+   <span class="reserved">return</span> out;
+};
+
+<span class="comment">/**
+ * Factory method for a gaussian blur kernel
+ * <span class="attrib">@returns</span> The gaussian blur kernel
+ * <span class="attrib">@param</span> {Number} size The size of the kernel
+ * <span class="attrib">@param</span> {Number} deviation The deviation to use
+ * <span class="attrib">@returns</span> The gaussian blur kernel
+ * <span class="attrib">@type</span> float[]
+ * <span class="attrib">@private</span>
+ */</span>
+jala.ImageFilter.getGaussianBlurKernel = <span class="reserved">function</span>(size, deviation) {
+   var nominator = 2 * deviation * deviation;
+   var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, size*size);
+   var center = (size - 1) / 2;
+   var limit = size - 1;
+   var xx, yy;
+   var sum = 0;
+   var value = 0;
+   <span class="reserved">for</span> (var y=0; y&lt;size; y++) {
+      <span class="reserved">for</span> (var x=0; x&lt;size; x++) {
+         <span class="reserved">if</span> ((y &lt;= center) &amp;&amp; (x &lt;= center)) {
+            <span class="reserved">if</span> (x &gt;= y) {
+               <span class="comment">//calculate new value</span>
+               xx = center - x;
+               yy = center - y;
+               value = Math.exp(-(xx*xx + yy*yy) / nominator);
+               kernel[(y*size)+x] = value;
+               sum += value;
+            } <span class="reserved">else</span> {
+               <span class="comment">//copy existing value</span>
+               value = kernel[(x*size)+y];
+               kernel[(y*size)+x] = value;
+               sum += value;
+            }
+         } <span class="reserved">else</span> {
+            xx = x;
+            yy = y;
+            <span class="reserved">if</span> (yy &gt; center)
+               yy = limit - yy;
+            <span class="reserved">if</span> (xx &gt; center)
+               xx = limit - xx;
+            value = kernel[(yy*size)+xx];
+            kernel[(y*size)+x] = value;
+            sum += value;
+         }
+      }
+   }
+   <span class="reserved">for</span> (var i=0; i&lt;kernel.length; i++) {
+      kernel[i] = kernel[i] / sum;
+   }
+   <span class="reserved">return</span> kernel;
+};
+
+<span class="comment">/**
+ * Factory method for an unsharp mask kernel
+ * <span class="attrib">@param</span> {Number} size The size of the kernel
+ * <span class="attrib">@param</span> {Number} deviation The deviation to use
+ * <span class="attrib">@returns</span> The unsharp mask kernel
+ * <span class="attrib">@type</span> float[]
+ * <span class="attrib">@private</span>
+ */</span>
+jala.ImageFilter.getUnsharpMaskKernel = <span class="reserved">function</span>(size, deviation) {
+   var elements = jala.ImageFilter.getGaussianBlurKernel(size, deviation);
+   var center = ((size * size) - 1) / 2;
+   elements[center] = 0;
+   var sum = 0;
+   <span class="reserved">for</span> (var i=0; i&lt;elements.length; i++) {
+      sum += elements[i];
+      elements[i] = -elements[i];
+   }
+   elements[center] = sum + 1;
+   <span class="reserved">return</span> elements;
+};
+
+<span class="comment">/**
+ * Factory method for a sharpening kernel
+ * <span class="attrib">@param</span> {Number} amount The amount of sharpening to use
+ * <span class="attrib">@return</span> The sharpening kernel
+ * <span class="attrib">@type</span> float[]
+ * <span class="attrib">@private</span>
+ */</span>
+jala.ImageFilter.getSharpeningKernel = <span class="reserved">function</span>(amount) {
+   var kernel = java.lang.reflect.Array.newInstance(java.lang.Float.TYPE, 9);
+   var corner = 0;
+   var side = amount / -50;
+   var center = (side * -4.0) + (corner * -4.0) + 1.0;
+   kernel[0] = kernel[2] = kernel[6] = kernel[8] = corner;
+   kernel[1] = kernel[3] = kernel[5] = kernel[7] = side;
+   kernel[4] = center;
+   <span class="reserved">return</span> kernel;
+};
+
 </pre>
 	<hr>
 
@@ -480,7 +498,7 @@ jala.ImageFilter = <span class="reserved">function</span>(arg) {
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala</b></em>
+<b>Jala 1.0</b></em>
 </td>
 </tr>
 
@@ -511,6 +529,6 @@ jala.ImageFilter = <span class="reserved">function</span>(arg) {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Fri Jan 19 13:24:58 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
 </body>
 </html>

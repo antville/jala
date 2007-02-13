@@ -24,7 +24,7 @@
 %>
 <html>
 <head>
-<title>Helma XmlRpc Client</title>
+<title>Jala XmlRpc Client</title>
 <style type="text/css">
 <!--
 
@@ -151,7 +151,7 @@ div.error {
 </head>
 
 <body>
-<div class="header">Helma XmlRpc Client</div>
+<div class="header">Jala XmlRpc Client</div>
 <div class="main">
    <form method="post" action="<% request.action %>">
    <div><% feedback.error name="url" prefix='<div class="error">' suffix="</div>" %><label for="url" class="required">Url*</label><input id="host" type="text" name="url" value="<% request.url encoding="form" %>" /><br />

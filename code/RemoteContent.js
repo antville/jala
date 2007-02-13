@@ -21,11 +21,9 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Fields and methods of the jala.RemoteContent class.
  */
-
 
 // HelmaLib dependencies
 app.addRepository("modules/core/String.js");
@@ -33,12 +31,10 @@ app.addRepository("modules/core/Object.js");
 app.addRepository("modules/core/Date.js");
 app.addRepository("modules/helma/Http.js");
 
-
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
-
 
 /**
  * Construct a new remote content handler.
@@ -237,7 +233,6 @@ jala.RemoteContent = function(url, method, storage) {
    return this;
 };
 
-
 /**
  * A constant representing the HTTP retrieval method.
  * @type int
@@ -266,19 +261,17 @@ jala.RemoteContent.SUFFIX = ".cache";
  */
 jala.RemoteContent.CACHEDIR = new File(app.dir, jala.RemoteContent.SUFFIX);
 
-
 /**
  * Remove all remote content from a file-based cache.
  * @param {File} cache An optional target directory.
  */
 jala.RemoteContent.flush = function(cache) {
-   jala.RemoteContent.exec(function(rc) {
+   jala.RemoteContent.forEach(function(rc) {
       rc.clear();
       return;
    });
    return;
 };
-
 
 /**
  * Apply a custom method on all remote content in a file-based cache.
@@ -286,7 +279,7 @@ jala.RemoteContent.flush = function(cache) {
  * for each remote content file.
  * @param {File} cache An optional target directory.
  */
-jala.RemoteContent.exec = function(callback, cache) {
+jala.RemoteContent.forEach = function(callback, cache) {
    if (!cache)
       cache = jala.RemoteContent.CACHEDIR;
    var f, rc;
@@ -300,4 +293,15 @@ jala.RemoteContent.exec = function(callback, cache) {
          callback(rc);
    }
    return;
+};
+
+/**
+ * Apply a custom method on all remote content in a file-based cache.
+ * @param {Function} callback The callback method to be executed
+ * for each remote content file.
+ * @param {File} cache An optional target directory.
+ * @deprecated Use {@link #forEach} instead.
+ */
+jala.RemoteContent.exec = function() {
+   jala.RemoteContent.forEach.apply(this, arguments);
 };
