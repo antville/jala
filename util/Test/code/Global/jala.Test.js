@@ -142,7 +142,7 @@ jala.Test.valueToString = function(val) {
 jala.Test.getTestsDirectory = function() {
    var dir;
    if (getProperty("jala.testDir") != null) {
-      dir = new helma.File(getProperty("tests"));
+      dir = new helma.File(getProperty("jala.testDir"));
    }
    if (!dir || !dir.exists()) {
       var appDir = new helma.File(app.dir);
@@ -254,7 +254,6 @@ jala.Test.getStackTrace = function(message) {
    var el, fileName, lineNumber;
    var stack = [];
    // parse the stack trace and keep only the js elements
-   var cnt = 0;
    for (var i=0;i<trace.length;i++) {
       el = trace[i];
       if (!(fileName = el.getFileName()))
@@ -262,15 +261,14 @@ jala.Test.getStackTrace = function(message) {
       if ((lineNumber = el.getLineNumber()) == -1)
          continue;
       if (fileName.endsWith(".js") || fileName.endsWith(".hac") || fileName.endsWith(".hsp")) {
-         // ignore the first two lines of the stack trace, since
-         // these always belong to the test framework
-         if (cnt > 2) {
-            stack[stack.length] = "at " + fileName + ", line " + lineNumber;
+         // ignore all trace lines that refer to jala.Test
+         if (fileName.endsWith("jala.Test.js")) {
+            continue;
          }
+         stack[stack.length] = "at " + fileName + ", line " + lineNumber;
          if (fileName.endsWith(res.meta.currentTest)) {
             break;
          }
-         cnt += 1;
       }
    }
    return stack.join("\n");
