@@ -43,24 +43,34 @@ app.addRepository("modules/jala/lib/javadns.jar");
  * @class This is a wrapper around the Dns Client by wonderly.org
  * providing methods for querying Dns servers. For more information
  * about the Java DNS client visit
- * <a href="https://javadns.dev.java.net/">https://javadns.dev.java.net/</a>
+ * <a href="https://javadns.dev.java.net/">https://javadns.dev.java.net/</a>.
+ * Please mind that the nameserver specified must accept queries on port
+ * 53 TCP (the Java DNS client used doesn't support UDP nameserver queries),
+ * and that reverse lookups are not supported.
  * @param {String} nameServer IP-Address or FQDN of nameserver to query
  * @constructor
  */
 jala.DnsClient = function(nameServer) {
-   // slightly awkward test for the presence of the jar file ..
-   if (jala.DnsClient.PKG.Question.TYPE_A.constructor != Number) {
-      throw("jala.DnsClient requires JavaDNS.jar"
-            + " in lib/ext or application directory "
-            + "[https://javadns.dev.java.net/]");
-   } else if (this.nameServer == null) {
-      throw new Error("nameserver to query is missing");
-   }
    /**
     * Contains the IP Adress/FQDN of the name server to query.
     * @type String
     */
    this.nameServer = nameServer;
+
+   if (!this.nameServer) {
+      throw "jala.DnsClient: missing nameserver argument";
+   } else {
+      // test if required javadns library is available
+      try {
+         var clazz = java.lang.Class.forName("org.wonderly.net.dns.Query",
+                                             false, app.getClassLoader())
+      } catch (e) {
+         throw "jala.DnsClient requires JavaDNS.jar"
+               + " in lib/ext or application directory "
+               + "[https://javadns.dev.java.net/]";
+      }
+   }
+
    return this;
 };
 
@@ -73,90 +83,42 @@ jala.DnsClient.PKG = Packages.org.wonderly.net.dns;
  * @final
  */
 jala.DnsClient.TYPE_A = jala.DnsClient.PKG.Question.TYPE_A;
-/**
- * The "NS" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_NS = jala.DnsClient.PKG.Question.TYPE_NS;
-/**
- * The "MD" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_MD = jala.DnsClient.PKG.Question.TYPE_MD;
-/**
- * The "MF" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_MF = jala.DnsClient.PKG.Question.TYPE_MF;
+
 /**
  * The "CNAME" record/query type.
  * @type Number
  * @final
  */
 jala.DnsClient.TYPE_CNAME = jala.DnsClient.PKG.Question.TYPE_CNAME;
-/**
- * The "SOA" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_SOA = jala.DnsClient.PKG.Question.TYPE_SOA;
-/**
- * The "MB" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_MB = jala.DnsClient.PKG.Question.TYPE_MB;
-/**
- * The "MG" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_MG = jala.DnsClient.PKG.Question.TYPE_MG;
-/**
- * The "MR" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_MR = jala.DnsClient.PKG.Question.TYPE_MR;
-/**
- * The "NULL" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_NULL = jala.DnsClient.PKG.Question.TYPE_NULL;
-/**
- * The "WKS" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_WKS = jala.DnsClient.PKG.Question.TYPE_WKS;
-/**
- * The "PTR" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_PTR = jala.DnsClient.PKG.Question.TYPE_PTR;
-/**
- * The "HINFO" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_HINFO = jala.DnsClient.PKG.Question.TYPE_HINFO;
-/**
- * The "MINFO" record/query type.
- * @type Number
- * @final
- */
-jala.DnsClient.TYPE_MINFO = jala.DnsClient.PKG.Question.TYPE_MINFO;
+
 /**
  * The "MX" record/query type.
  * @type Number
  * @final
  */
 jala.DnsClient.TYPE_MX = jala.DnsClient.PKG.Question.TYPE_MX;
+
+/**
+ * The "NS" record/query type.
+ * @type Number
+ * @final
+ */
+jala.DnsClient.TYPE_NS = jala.DnsClient.PKG.Question.TYPE_NS;
+
+/**
+ * The "PTR" record/query type.
+ * @type Number
+ * @final
+ */
+jala.DnsClient.TYPE_PTR = jala.DnsClient.PKG.Question.TYPE_PTR;
+
+/**
+ * The "SOA" record/query type.
+ * @type Number
+ * @final
+ */
+jala.DnsClient.TYPE_SOA = jala.DnsClient.PKG.Question.TYPE_SOA;
+
 /**
  * The "TXT" record/query type.
  * @type Number
@@ -164,7 +126,12 @@ jala.DnsClient.TYPE_MX = jala.DnsClient.PKG.Question.TYPE_MX;
  */
 jala.DnsClient.TYPE_TXT = jala.DnsClient.PKG.Question.TYPE_TXT;
 
-
+/**
+ * The "WKS" record/query type.
+ * @type Number
+ * @final
+ */
+jala.DnsClient.TYPE_WKS = jala.DnsClient.PKG.Question.TYPE_WKS;
 
 /**
  * Queries the nameserver for a specific domain
@@ -189,7 +156,13 @@ jala.DnsClient.prototype.query = function(dName, queryType) {
    var query = new jala.DnsClient.PKG.Query(question);
    // run the query
    query.runQuery(this.nameServer);
-   return query.getAnswers();
+   // wrap the records received in instances of jala.DnsClient.Record
+   var answers = query.getAnswers();
+   var arr = [];
+   for (var i=0;i<answers.length;i++) {
+      arr[i] = new jala.DnsClient.Record(answers[i]);
+   }
+   return arr;
 };
 
 /**
@@ -206,11 +179,133 @@ jala.DnsClient.prototype.queryMailHost = function (dName) {
 
 /** @ignore */
 jala.DnsClient.toString = function() {
-   return "[jala.DNS-Client]";
+   return "[jala.DnsClient]";
 };
 
 
 /** @ignore */
 jala.DnsClient.prototype.toString = function() {
-   return "[jala.DNS-Client Object]";
+   return "[jala.DnsClient (" + this.nameServer + ")]";
+};
+
+/**
+ * Constructs a new instance of jala.DnsClient.Record.
+ * @class Instances of this class wrap record data as received
+ * from the nameserver.
+ * @param {org.wonderly.net.dns.RR} data The data as received from
+ * the nameserver
+ * @returns A newly constructed Record instance
+ * @constructor
+ */
+jala.DnsClient.Record = function(data) {
+   /**
+    * The type of the nameserver record represented by this Answer instance.
+    * @type Number
+    * @see #TYPE_A
+    * @see #TYPE_CNAME
+    * @see #TYPE_HINFO
+    * @see #TYPE_MX
+    * @see #TYPE_NS
+    * @see #TYPE_PTR
+    * @see #TYPE_SOA
+    * @see #TYPE_TXT
+    * @see #TYPE_WKS
+    */
+   this.type = data.getType();
+
+   /**
+    * The name of the host. This will only be set for records
+    * of type A, AAAA and NS.
+    * @type String
+    * @see #TYPE_A
+    * @see #TYPE_AAAA
+    * @see #TYPE_NS
+    */
+   this.host = null;
+
+   /**
+    * The IP address of the host. This will only be set for records
+    * of type A and AAAA
+    * @type String
+    * @see #TYPE_A
+    * @see #TYPE_AAAA
+    */
+   this.ipAddress = null;
+
+   /**
+    * The CNAME of this record. This will only be set for records
+    * of type CNAME
+    * @type String
+    * @see #TYPE_CNAME
+    */
+   this.cname = null;
+
+   /**
+    * The name of the mail exchanging server. This is only set for
+    * records of type MX
+    * @type String
+    * @see #TYPE_MX
+    */
+   this.mx = null;
+
+   /**
+    * The email address responsible for a name server. This property
+    * will only be set for records of type SOA
+    * @type String
+    * @see #TYPE_SOA
+    */
+   this.email = null;
+
+   /**
+    * Descriptive text as received from the nameserver. This is only
+    * set for records of type TXT
+    * @type String
+    * @see #TYPE_TXT
+    */
+   this.text = null;
+
+   /**
+    * Returns the wrapped nameserver record data
+    * @returns The wrapped data
+    * @type org.wonderly.net.dns.RR
+    */
+   this.getData = function() {
+      return data;
+   };
+
+   /**
+    * Main constructor body
+    */
+   switch (data.getClass()) {
+      case jala.DnsClient.PKG.ARR:
+      case jala.DnsClient.PKG.AAAARR:
+         this.host = data.getHost();
+         this.ipAddress = data.getIPAddress();
+         break;
+      case jala.DnsClient.PKG.NSRR:
+         this.host = data.getHost();
+         break;
+      case jala.DnsClient.PKG.CNAMERR:
+         this.cname = data.getCName();
+         break;
+      case jala.DnsClient.PKG.MXRR:
+         this.mx = data.getExchanger();
+         break;
+      case jala.DnsClient.PKG.SOARR:
+         this.host = data.getNSHost();
+         this.email = data.getResponsibleEmail();
+         break;
+      case jala.DnsClient.PKG.TXTRR:
+         this.text = data.getText();
+         break;
+      default:
+         break;
+   }
+
+   return this;
+};
+
+/** @ignore */
+jala.DnsClient.Record.prototype.toString = function() {
+   return "[jala.DnsClient.Record]";
 };
