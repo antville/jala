@@ -31,7 +31,7 @@ var tests = [
    "testAsyncRequest",
 ];
 
-var result;
+var result = undefined;
 
 /**
  * A simple test of jala.AsyncRequest. It constructs a new AsyncRequest
@@ -51,9 +51,11 @@ var testAsyncRequest = function() {
       elapsed += interval;
       java.lang.Thread.sleep(interval);
    }
+   assertNotUndefined(result);
    assertEqual(result.name, "jala");
    assertEqual(result.request, req);
    assertEqual(result.response, res);
+   assertFalse(r.isAlive());
    return;
 };
 
