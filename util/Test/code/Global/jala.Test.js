@@ -115,13 +115,13 @@ jala.Test.valueToString = function(val) {
    } else if (val === undefined) {
       res.write("undefined");
    } else {
-      if (val.constructor == String) {
+      if (val.constructor && val.constructor == String) {
          res.write('"' + val.toString() + '"');
       } else {
          res.write(val.toString());
       }
       res.write(" (");
-      if (val.constructor.name != null) {
+      if (val.constructor && val.constructor.name != null) {
          res.write(val.constructor.name);
       } else {
          res.write(typeof(val));
