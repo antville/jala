@@ -52,17 +52,17 @@ app.addRepository("modules/jala/lib/tagsoup-1.0rc3.jar");
  */
 jala.HtmlDocument = function(source) {
    var REQUIREMENTS = {
-      dom4j: "http://www.dom4j.org",
-      jaxen: "http://www.jaxen.org",
-      tagsoup: "http://mercury.ccil.org/~cowan/XML/tagsoup"
+      "dom4j-1.6.1": "http://www.dom4j.org",
+      "jaxen-1.1-beta-8": "http://www.jaxen.org",
+      "tagsoup-1.0rc3": "http://mercury.ccil.org/~cowan/XML/tagsoup"
    };
 
    var reader = new java.io.StringReader(source);
-   var dom4j = Packages.org.dom4j.io;
+   var dom4j = Packages.org.dom4j;
    var tagsoup = "org.ccil.cowan.tagsoup.Parser";
 
    try {
-      var saxReader = new dom4j.SAXReader(tagsoup);
+      var saxReader = new dom4j.io.SAXReader(tagsoup);
       var document = saxReader.read(reader);
       document.normalize();
    } catch(e) {
@@ -88,7 +88,7 @@ jala.HtmlDocument = function(source) {
    this.scrape = function(xpathExpr) {
       return document.selectNodes(xpathExpr);
    };
-
+   
    /**
     * Get all link elements of the HTML document.
     * @returns A list of link elements.
@@ -97,7 +97,7 @@ jala.HtmlDocument = function(source) {
    this.getLinks = function() {
       var result = [];
       var list = this.scrape("//html:a");
-      for (var i=0; i<list.size(); i++) {
+      for (var i=0; i<list.size(); i+=1) {
          var element = list.get(i);
          var text = element.getText();
          var href = element.attribute("href");
@@ -107,6 +107,37 @@ jala.HtmlDocument = function(source) {
                url: href.getText()
             });
          }
+      }
+      return result;
+   };
+   
+   /**
+    * Retrieves all elements by name from the document.
+    * The returned object structure is compatible for usage
+    * in {@link jala.XmlWriter}.
+    * @param {String} elementName The name of the desired element
+    * @returns The list of available elements in the document
+    * @type Array
+    */
+   this.getAll = function(elementName) {
+      var result = [], object;
+      var list = this.scrape("//html:" + elementName);
+      var i, n, element, text, attributes, attr;
+      for (i=0; i<list.size(); i+=1) {
+         element = list.get(i);
+         object = {
+            name: element.getName(),
+            value: element.getText() || null
+         };
+         attributes = element.attributes();
+         for (n=0; n<attributes.size(); n+=1) {
+            attr = attributes.get(n);
+            object.attributes = {
+               name: attr.getName(),
+               value: attr.getData() || null
+            };
+         }
+         result.push(object);
       }
       return result;
    };
@@ -121,4 +152,38 @@ jala.HtmlDocument = function(source) {
    };
 
    return this;
+};
+
+/**
+ * Converts a DOM node to a JS object. This method calls 
+ * itself recursively for child nodes.
+ * @param {org.w3c.dom.Node} node The DOM node
+ * @returns The resulting JavaScript object
+ * @type Object
+ */
+jala.HtmlDocument.toObject = function(node) {
+   var result = new Object();
+   var name = node.getNodeName();
+   if (node.hasAttributes()) {
+      var attrList = node.getAttributes();
+      var len = attrList.getLength();
+      for (var n=0; n<len; n++) {
+         var attr = attrList.item(n);
+         result[attr.getNodeName()] = attr.getNodeValue();
+      }
+   }
+   if (node.hasChildNodes()) {
+      var Node = Packages.org.w3c.dom.Node;
+      var childNodes = node.getChildNodes();
+      var max = childNodes.getLength();
+      for (var i=0; i<max; i++) {
+         var child = childNodes.item(i);
+         if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue().trim() != "") {
+            result.value = child.getNodeValue();
+         } else if (child.getNodeType() == Node.ELEMENT_NODE) {
+            result[child.getNodeName().toLowerCase()] = arguments.callee(child);
+         }
+      }
+   }
+   return result;
 };
