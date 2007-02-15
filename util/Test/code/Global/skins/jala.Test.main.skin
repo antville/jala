@@ -33,7 +33,7 @@
    <div class="header">Jala Unit Test Runner</div>
    <div class="main">
       <div class="list">
-         <form method="post" action="<% root.href action="runner" %>">
+         <form method="post" action="<% root.href action="jala.test" %>">
          <% test.list prefix='<h4>Available Tests</h4><ul>'
                       suffix='</ul><input class="submit" type="submit" name="run" value="Execute" />' %>
          </form>
