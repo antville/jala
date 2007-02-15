@@ -21,17 +21,14 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Fields and methods of the jala.Renderings class.
  */
-
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
-
 
 /**
  * Constructs a new Renderings object.
@@ -39,10 +36,9 @@ if (!global.jala) {
  * methods for rendering purposes.
  * @constructor
  */
-jala.Renderings = function() {
+jala.Date = function() {
    return this;
 };
-
 
 /**
  * Renders a timestamp as set of DropDown boxes, following the
@@ -51,7 +47,7 @@ jala.Renderings = function() {
  * easily from the values of a submitted POST request.
  * @param {String} prefix The prefix to use for all dropdown boxes, eg. "postdate"
  * @param {Date} date A Date object to use as preselection (optional)
- * @param {Object} fmt Array containing one parameter object for every single
+ * @param {Object} param Array containing one parameter object for every single
  * select box that should be rendered, with the following properties set:
  * <ul>
  * <li>pattern - The date format pattern that should be rendered. Valid
@@ -59,7 +55,7 @@ jala.Renderings = function() {
  * <li>firstOption - The string to use as first option, eg.: "choose a day"</li>
  * </ul>
  */
-jala.Renderings.prototype.dateEditor = function(prefix, date, fmt) {
+jala.Date.prototype.renderEditor = function(prefix, date, param) {
    /**
     * rendering method
     * @private
@@ -67,36 +63,42 @@ jala.Renderings.prototype.dateEditor = function(prefix, date, fmt) {
    var render = function(param, date) {
       switch (param.pattern) {
          case "dd":
-            param.offset = 1;
-            param.max = 31;
-            param.selected = (date ? date.getDate() : null);
-            break;
+         param.offset = 1;
+         param.max = 31;
+         param.selected = (date ? date.getDate() : null);
+         break;
+
          case "MM":
-            param.offset = 1;
-            param.max = 12;
-            param.selected = (date ? date.getMonth() +1 : null);
-            break;
+         param.offset = 1;
+         param.max = 12;
+         param.selected = (date ? date.getMonth() +1 : null);
+         break;
+
          case "yyyy":
-            param.offset = 2002;
-            param.max = 20;
-            param.selected = (date ? date.getFullYear() : null);
-            break;
+         param.offset = 2002;
+         param.max = 20;
+         param.selected = (date ? date.getFullYear() : null);
+         break;
+
          case "HH":
-            param.offset = 0;
-            param.max = 24;
-            param.selected = (date ? date.getHours() : null);
-            break;
+         param.offset = 0;
+         param.max = 24;
+         param.selected = (date ? date.getHours() : null);
+         break;
+
          case "mm":
-            param.offset = 0;
-            param.max = 60;
-            param.selected = (date ? date.getMinutes() : null);
-            break;
+         param.offset = 0;
+         param.max = 60;
+         param.selected = (date ? date.getMinutes() : null);
+         break;
+
          case "ss":
-            param.offset = 0;
-            param.max = 60;
-            param.selected = (date ? date.getSeconds() : null);
-            break;
+         param.offset = 0;
+         param.max = 60;
+         param.selected = (date ? date.getSeconds() : null);
+         break;
       }
+
       var key = prefix + ":" + param.pattern;
       if (req.data[key])
          param.selected = req.data[key];
@@ -122,18 +124,16 @@ jala.Renderings.prototype.dateEditor = function(prefix, date, fmt) {
    return;
 };
 
-
 /**
  * Returns a timestamp as set of dropdown-boxes
- * @see #dateEditor
+ * @see #renderEditor
  * @type String
  */
-jala.Renderings.prototype.dateEditorAsString = function(prefix, date, fmt) {
+jala.Date.renderEditorAsString = function(prefix, date, pattern) {
    res.push();
-   this.dateEditor(prefix, date, fmt);
+   this.renderEditor(prefix, date, pattern);
    return res.pop();
 };
-
 
 /**
  * Renders a calendar based on a grouped collection of HopObjects. This method
@@ -152,7 +152,7 @@ jala.Renderings.prototype.dateEditorAsString = function(prefix, date, fmt) {
  * @param {Object} renderer A Renderer object which contains the rendering methods listed above
  * @param {String} today A string to highlight in calendar (in format 'yyyyMMdd')
  */
-jala.Renderings.prototype.calendar = function(collection, renderer, today) {
+jala.Date.prototype.renderCalendar = function(collection, renderer, today) {
    var size = collection.size();
    if (size == null)
       return;
@@ -165,17 +165,18 @@ jala.Renderings.prototype.calendar = function(collection, renderer, today) {
       var d;
       switch (which) {
          case "prev":
-            if (size <= dayIndex)
-               return;
-            if (!(d = collection.get(dayIndex +1)))
-               return;
-            break;
+         if (size <= dayIndex)
+            return;
+         if (!(d = collection.get(dayIndex +1)))
+            return;
+         break;
+
          case "next":
-            if (dayIndex == 0)
-               return;
-            if (!(d = collection.get(dayIndex - 1)))
-               return;
-            break;
+         if (dayIndex == 0)
+            return;
+         if (!(d = collection.get(dayIndex - 1)))
+            return;
+         break;
       }
       date.setFullYear(d.groupname.substring(0, 4),
                     d.groupname.substring(4, 6) -1,
@@ -185,7 +186,6 @@ jala.Renderings.prototype.calendar = function(collection, renderer, today) {
                 text: monthNames[d.groupname.substring(4, 6) -1]},
                 collection);
    }
-
 
    // define variables needed in this function
    var calParam = {};
@@ -262,22 +262,20 @@ jala.Renderings.prototype.calendar = function(collection, renderer, today) {
    return;
 };
 
-
 /**
  * Returns a rendered calendar
- * @see #calendar
+ * @see #renderCalendar
  * @type String
  */
-jala.Renderings.prototype.calendarAsString = function(collection, renderer, today) {
+jala.Date.renderCalendarAsString = function(collection, renderer, today) {
    res.push();
-   this.calendar(collection, renderer, today);
+   this.renderCalendar(collection, renderer, today);
    return res.pop();
 };
 
-
 /**
  * Default renderings class instance.
- * @type jala.Renderings
+ * @type jala.Date
  * @final
  */
-jala.render = new jala.Renderings();
+jala.date = new jala.Date();
