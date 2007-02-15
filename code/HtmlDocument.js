@@ -21,17 +21,14 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Fields and methods of the jala.HtmlDocument class.
  */
-
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
-
 
 /**
  * Jala dependencies

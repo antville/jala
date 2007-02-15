@@ -274,7 +274,7 @@ jala.Date.renderCalendarAsString = function(collection, renderer, today) {
 };
 
 /**
- * Default renderings class instance.
+ * Default date class instance.
  * @type jala.Date
  * @final
  */

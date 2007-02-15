@@ -344,7 +344,11 @@ jala.I18n.prototype.message_macro = function(param) {
    return;
 };
 
-// default instantiation of I18n
+/**
+ * Default i18n class instance.
+ * @type jala.I18n
+ * @final
+ */
 jala.i18n = new jala.I18n();
 
 /**

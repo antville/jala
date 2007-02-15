@@ -73,9 +73,9 @@ jala.Utilities.prototype.toString = function() {
 jala.util = new jala.Utilities();
 
 /**
- * Constructs a name from one of a set of objects which
+ * Constructs a name from an object which
  * is unique in the underlying HopObject collection. 
- * @param {Object} The object representing or containing the alias name
+ * @param {Object} obj The object representing or containing the alias name.
  * Possible object types include:
  * <ul>
  * <li>File</li>
@@ -279,13 +279,13 @@ jala.Utilities.prototype.diffObjects = function(obj1, obj2) {
 
 /**
  * Patches an object with a "diff" object created by the 
- * #diffObjects methods.
+ * {@link #diffObjects} method.
  * Please mind that this method is recursive, it descends
  * along the "diff" object structure.
  * @param {Object} obj The Object the diff should be applied to
- * @param {Object} diff A "diff" object created by the #objectDiff method
+ * @param {Object} diff A "diff" object created by the {@link #diffObjects} method
  * @returns The patched Object with all differences applied
- * @type {Object}
+ * @type Object
  */
 jala.Utilities.prototype.patchObject = function(obj, diff) {
    var propDiff, value1;
