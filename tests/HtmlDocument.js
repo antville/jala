@@ -28,8 +28,16 @@
  * @final
  */
 var tests = [
-   "testGetLinks"
+   "testGetAll",
+   "testGetLinks",
+   "testToObject"
 ];
+
+var source = '<html><title>Test</title><body>' +
+             '<h1>Hello, World!</h1>' +
+             '<a href="http://localhost/1">foo</a>' +
+             '<div><a href="http://localhost/2">bar</a></div>' +
+             '</body></html>';
 
 /**
  * Simple test of the HtmlDocument.getLinks method.
@@ -38,21 +46,56 @@ var tests = [
  * evaluated and tested.
  */
 var testGetLinks = function() {
-   var url = "http://user@localhost:80/path/to/file.html";
-   var text = "test";
-   var source = '<html><title>Test</title><body>' +
-                '<h1>Hello, World!</h1>' +
-                '<a href="http://localhost">localhost</a>' +
-                '<a href="' + url + '">' + text + '</a>' +
-                '</body></html>';
    var html = new jala.HtmlDocument(source);
    var links = html.getLinks();
    assertEqual(links.constructor, Array);
    assertEqual(links.length, 2);
    assertEqual(links[0].constructor, Object);
-   assertNotUndefined(links[0].url);
-   assertNotUndefined(links[0].text);
-   assertEqual(links[1].url, url);
-   assertEqual(links[1].text, text);
+   for (var i in links) {
+     assertNotUndefined(links[i].url);
+     assertNotUndefined(links[i].text);
+   }
+   assertEqual(links[0].url, "http://localhost/1");
+   assertEqual(links[0].text, "foo");
+   assertEqual(links[1].url, "http://localhost/2");
+   assertEqual(links[1].text, "bar");
+   return;
+};
+
+/**
+ * Simple test of the HtmlDocument.geAll method.
+ * An instance of HtmlDocument is created from a very 
+ * simple HTML source. The result of getAll is then
+ * evaluated and tested.
+ */
+var testGetAll = function() {
+   var names = ["html", "head", "body", "title", "h1", "a", "div", "a"];
+   var html = new jala.HtmlDocument(source);
+   var list = html.getAll("*");
+   for (var i in list) {
+     assertNotUndefined(list[i].name);
+     assertEqual(list[i].name, names[i]);
+   }
+   assertEqual(list[3].value, "Test");
+   assertEqual(list[4].value, "Hello, World!");
+   assertEqual(list[5].value, "foo");
+   assertEqual(list[7].value, "bar");
+   assertEqual(html.getAll("h1")[0].value, "Hello, World!");
+   return;
+};
+
+/**
+ * Simple test of the HtmlDocument.toObject method.
+ * The source HTML code is converted to a JavaScript
+ * object using jala.HtmlDocument.toObject.
+ * The result is then evaluated and tested.
+ */
+var testToObject = function() {
+   var target = {html:{body:{a:{href:"http://localhost/2", value:"bar"}, 
+                 h1:{value:"Hello, World!"}}, title:{value:"Test"}}};
+   var dom = getHtmlDocument(source);
+   var obj = jala.HtmlDocument.toObject(dom);
+   throw ("<em>testToObject()</em> Method flawed: the supported object structure can only represent some HTML documents. \ " +
+          "As soon as there is more than one element on the same level, any duplicate will be missing.");
    return;
 };
