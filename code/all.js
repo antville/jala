@@ -48,6 +48,7 @@ if (!global.jala) {
       "PodCastWriter",
       "RemoteContent",
       "Rss20Writer",
+      "Utilities",
       "XmlRpcRequest",
       "XmlWriter"
    ];

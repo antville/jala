@@ -21,23 +21,19 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Fields and methods of the jala.Utilities class.
  */
-
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
 
-
 /**
  * HelmaLib dependencies
  */
 app.addRepository("modules/core/Number.js");
-
 
 /**
  * Construct a utility object.
@@ -50,7 +46,6 @@ jala.Utilities = function() {
    return this;
 };
 
-
 /**
  * Return a string representation of the utitility class.
  * @returns [jala.Utilities]
@@ -61,7 +56,6 @@ jala.Utilities.toString = function() {
    return "[jala.Utilities]";
 };
 
-
 /**
  * Return a string representation of the utitility object.
  * @returns [jala.Utilities Object]
@@ -71,7 +65,6 @@ jala.Utilities.prototype.toString = function() {
    return "[jala.Utilities Object]";
 };
 
-
 /**
  * Default utility class instance.
  * @type jala.Utilities
@@ -79,271 +72,262 @@ jala.Utilities.prototype.toString = function() {
  */
 jala.util = new jala.Utilities();
 
-
 /**
- * dump an object tree to response
- */
-jala.Utilities.prototype.dumpTree = function(obj, lvl) {
-   if (lvl == null)
-      var lvl = 0;
-   for (var i in obj) {
-      res.write(("---").repeat(lvl) + i + " = " + obj[i] + "<br />");
-      if (obj[i]) {
-         if (obj[i] instanceof HopObject)
-            this.dumpTree(obj[i], lvl+1);
-         else if (typeof obj[i] == "object")
-            this.dumpTree(obj[i], lvl+1);
-      }
-   }
-   if (obj && obj instanceof HopObject) {
-      for (var i=0;i<obj.size();i++) {
-         this.dumpTree(obj.get(i), lvl+1);
-      }
-   }
-   return;
-};
-
-
-/**
- * function extracts all date editor related form values
- * from the req.data object passed as argument and tries
- * to parse them to a Date object
- * @param Object Object containing the submitted form values
- * @param Object Array containing the format pattern parts
- * @param String format pattern to use (optional)
- * @return Object Date object
- * @see renderDateEditor()
- */
-jala.Utilities.prototype.extractDate = function(param, prefix, fmt) {
-   if (!fmt)
-      var fmt = ["dd", "MM", "yyyy", "HH", "mm"];
-   var str = "";
-   var value;
-   for (var i in fmt) {
-      if (value = param[prefix + ":" + fmt[i]])
-         str += value;
-   }
-   var pattern = fmt.join("");
-   if (str.length == 0)
-      return null;
-   else if (pattern.length != str.length)
-      throw new Error();
-   return str.toDate(pattern);
-};
-
-
-/**
- * function caches the dateSymbols in app.data.dateSymbols
- * because they're not thread-safe and quite expensive
- * FIXME: don't cache in app.data here
- */
-jala.Utilities.prototype.getDateSymbols = function() {
-   if (app.data.dateSymbols)
-      return app.data.dateSymbols;
-   app.data.dateSymbols = new java.text.DateFormatSymbols();
-   return app.data.dateSymbols;
-};
-
-
-/**
- * function gets a MimePart passed as argument and
- * constructs an object-alias based on the name of the uploaded file
- * @param Obj MimePart-Object
+ * Constructs an object-alias based on a MimePart object
+ * passed as argument from the name of the uploaded file
+ * @param {} uploadFile MimePart Object
  * @param Obj Destination collection
  * @param Int maximum length of alias to return
+ * @deprecated Use {@link #buildAlias} instead and generally
  */
 jala.Utilities.prototype.buildAliasFromFile = function(uploadFile, collection, maxLength) {
-   // first fix bloody ie/win file paths containing backslashes
-   var rawName = uploadFile.getName().replace(/\\/g, "/");
-   rawName = rawName.split("/");
-   var filename = rawName.pop();
-   if (filename.contains("."))
-      filename = filename.substring(0, filename.lastIndexOf("."));
-   return this.buildAlias(filename, collection, maxLength);
+   return this.buildAlias(uploadFile, collection, maxLength);
 };
 
-
 /**
- * function gets a String passed as argument and
- * constructs an object-alias which is unique in
- * a collection
- * @param String proposed alias for object
- * @param Obj Destination collection
- * @param Int maximum length of alias to return
- * @return String determined name
+ * Constructs a name from one of a set of objects which
+ * is unique in the underlying HopObject collection. 
+ * @param {Object} The object representing or containing the alias name
+ * Possible object types include:
+ * <ul>
+ * <li>File</li>
+ * <li>helma.File</li>
+ * <li>java.io.File</li>
+ * <li>String</li>
+ * <li>java.lang.String</li>
+ * </ul>
+ * @param {HopObject} collection The collection the alias 
+ * potentially should be added to
+ * @param {Number} maxLength The maximum length of the alias
+ * @returns The resulting alias
+ * @type String
  */
-jala.Utilities.prototype.buildAlias = function(str, collection, maxLength) {
-   // convert alias to lowercase and clean it from any invalid characters
-   var alias = str.toLowerCase().toFileName();
-   var l = alias.length;
+jala.Utilities.prototype.getAlias = function(obj, collection, maxLength) {
+   var name;
+   var clazz = obj.constructor || obj.getClass();
+   switch (clazz) {
+      case File:
+      case helma.File:
+      case java.io.File:
+      case Packages.helma.util.MimePart:
+      // first fix bloody ie/win file paths containing backslashes
+      var rawName = obj.getName().replace(/\\/g, "/");
+      rawName = rawName.split("/");
+      name = rawName.pop();
+      if (name.contains("."))
+         name = name.substring(0, name.lastIndexOf("."));
+      break;
+      
+      case String:
+      case java.lang.String:
+      name = obj;
+      break;
 
-   var getTrimmedAlias = function() {
+      default:
+      name = obj.toString();
+   }
+
+   // convert alias to lowercase and clean it from any invalid characters
+   var alias = name.toLowerCase().toFileName();
+   var len = alias.length;
+   var counter = 0;
+
+   var getAlias = function() {
       var overflow;
       if (maxLength) {
-         if (nr)
-            l += nr.toString().length;
-         if ((overflow = l - maxLength) > 0) {
+         if (counter) {
+            len += counter.toString().length;
+         }
+         if ((overflow = len - maxLength) > 0) {
             alias = alias.substring(0, alias.length - overflow);
-            l = alias.length;
+            len = alias.length;
          }
       }
-      return (nr ? alias + nr.toString() : alias);
+      return (counter ? alias + counter.toString() : alias);
    }
-   if (collection && collection.get(getTrimmedAlias())) {
-      // if alias is already existing in collection, so we append a number
-      var nr = 1;
-      while (collection.get(getTrimmedAlias())) {
-         nr++;
-      }
-      return alias + nr.toString();
-   } else {
-      return getTrimmedAlias();
+
+   if (collection) {
+      var alias;
+      do {
+         alias = getAlias();
+         counter += 1;
+      } while (collection[alias] || collection.get(alias));
+      return alias;
    }
+   return getAlias();
 };
 
+/**
+ * For backwards compatibility
+ * @deprecated
+ * @ignore
+ */
+jala.Utilities.prototype.buildAlias = jala.Utilities.prototype.getAlias;
 
 /**
- * generates a random password with different levels of security
- * 0 = vowels or consonants (default)
- * 1 = throws in a number at random position
- * 2 = throws in a number and a special character at random position
- * @param Number length of password
- * @param Number setting security level (0|1|2)
- * @returns String password
+ * Creates a random password with different levels of security.
+ * @param {Number} len The length of the password (default: 8)
+ * @param {Number} level The security level
+ * <ul>
+ * <li>0 - containing only vowels or consonants (default)</li>
+ * <li>1 - throws in a number at random position</li>
+ * <li>2 - throws in a number and a special character at random position</li>
+ * </ul>
+ * @returns The resulting password
+ * @type String
  */
-jala.Utilities.prototype.randomPassword = function(len, level) {
-   var len = (len==null) ? 8 : len;
-   var level = (level==null) ? 0 : level;
-   var vowels     = ["a", "e", "i", "o", "u"];
-   var consonants = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"];
-   var special    = [".", "#", "!", "$", "%", "&", "?"];
-   var sb = new java.lang.StringBuffer();
-   var posNum     = (level && level>0) ? Math.floor(Math.random()*(len-2)) : -1;
-   var posSpecial = (level && level>1) ? Math.floor(Math.random()*(len-3)) : -2;
-   if (posNum==posSpecial) {
-      posSpecial++;
+jala.Utilities.prototype.createPassword = function(len, level) {
+   len = len || 8;
+   level = level || 0;
+
+   var LETTERSONLY  = 0;
+   var WITHNUMBERS  = 1;
+   var WITHSPECIALS = 2;
+   
+   var vowels     = ['a', 'e', 'i', 'o', 'u'];
+   var consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+   var specials   = ['.', '#', '!', '$', '%', '&', '?'];
+
+   var posNum     = level > LETTERSONLY ? Math.floor(Math.random() * (len - 2)) : -1;
+   var posSpecial = level > WITHNUMBERS ? Math.floor(Math.random() * (len - 3)) : -2;
+   if (posNum == posSpecial) {
+      posSpecial += 1;
    }
+
+   res.push();
    // loop to create characters:
-   for (var i=0; i<(len-level); i++) {
-      if((i % 2)==0) {
+   var i, rnd;
+   for (i=0; i<(len-level); i+=1) {
+      if(i % 2 == 0) {
          // every 2nd one is a vowel
-         var rnd = Math.floor(Math.random()*5);
-         sb.append(vowels[rnd]);
+         rnd = Math.floor(Math.random() * vowels.length);
+         res.write(vowels[rnd]);
       } else {
          // every 2nd one is a consonant
-         var rnd = Math.floor(Math.random()*21);
-         sb.append(consonants[rnd]);
+         rnd = Math.floor(Math.random() * consonants.length);
+         res.write(consonants[rnd]);
       }
-      if (i==posNum) {
+      if (i == posNum) {
          // increased password security:
          // throw in a number at random
-         var rnd = Math.floor(Math.random()*8);
-         sb.append(String(rnd+1));
+         rnd = Math.floor(Math.random() * specials.length);
+         res.write(String(rnd + 1));
       }
-      if (i==posSpecial) {
+      if (i == posSpecial) {
          // increased password security:
          // throw in a number at random
-         var rnd = Math.floor(Math.random()*special.length);
-         sb.append(special[rnd]);
+         rnd = Math.floor(Math.random() * specials.length);
+         res.write(specials[rnd]);
       }
    }
-   return sb.toString();
+   return res.pop();
 };
 
+/**
+ * Static field indicating a removed object property.
+ * @type Number
+ * @final
+ */
+jala.Utilities.VALUE_REMOVED = -1;
 
 /**
- * checks if the group is available.
+ * Static field indicating ad added object property.
+ * @type Number
+ * @final
  */
-jala.Utilities.prototype.isGroupAvailable = function(name) {
-    try {
-      return groups.isConnected(name);
-   } catch (e) {
-      try {
-         return group.isConnected(name);
-      } catch (e) {
-         return false;
+jala.Utilities.VALUE_ADDED = 1;
+
+/**
+ * Static field indicating a modified object property.
+ * @type Number
+ * @final
+ */
+jala.Utilities.VALUE_MODIFIED = 2;
+
+/**
+ * Returns an array containing the properties that are 
+ * added, removed or modified in one object compared to another.
+ * @param {Object} obj1 The first of two objects which should be compared
+ * @param {Object} obj2 The second of two objects which should be compared
+ * @returns An Object containing all properties that are added, removed
+ * or modified in the second object compared to the first. 
+ * Each property contains a status field with an integer value 
+ * which can be checked against the static jala.Utility fields 
+ * VALUE_ADDED, VALUE_MODIFIED and VALUE_REMOVED.
+ * @type Object
+ */
+jala.Utilities.prototype.diffObjects = function(obj1, obj2) {
+   var childDiff, value1, value2;
+   var diff = {};
+   var foundDiff = false;
+
+   for (var propName in obj1) {
+      if (obj2[propName] === undefined || obj2[propName] === "" || obj2[propName] === null) {
+         diff[propName] = {status: jala.Utilities.VALUE_REMOVED};
+         foundDiff = true;
       }
    }
+   for (var propName in obj2) {
+      value1 = obj1[propName];
+      value2 = obj2[propName];
+      switch (value2.constructor) {
+         case HopObject:
+         case Object:
+            if (childDiff = Jala.Utility.prototype.diffObjects(value1, value2)) {
+               diff[propName] = childDiff;
+               foundDiff = true;
+            }
+            break;
+         default:
+            if (value2 != null && value2 !== "") {
+               if (value1 === null || value1 === undefined || value1 === "") {
+                  diff[propName] = {status: jala.Utilities.VALUE_ADDED,
+                                    value: value2};
+                  foundDiff = true;
+               } else if (value1 != value2) {
+                  diff[propName] = {status: jala.Utilities.VALUE_MODIFIED,
+                                    value: value2};
+                  foundDiff = true;
+               }
+            }
+            break;
+      }
+   }
+   return foundDiff ? diff : null;
 };
 
-
 /**
- * function receives a DOM Node as argument and converts it into
- * a JS object (this method calls itself recursively for child nodes!)
- * @param Obj DOM Node
- * @return Obj Javascript object
+ * Patches an object with a "diff" object created by the 
+ * #diffObjects methods.
+ * Please mind that this method is recursive, it descends
+ * along the "diff" object structure.
+ * @param {Object} obj The Object the diff should be applied to
+ * @param {Object} diff A "diff" object created by the #objectDiff method
+ * @returns The patched Object with all differences applied
+ * @type {Object}
  */
-jala.Utilities.prototype.convertNode = function(node) {
-   var result = new Object();
-   var name = node.getNodeName();
-   if (node.hasAttributes()) {
-      var attrList = node.getAttributes();
-      var len = attrList.getLength();
-      for (var n=0; n<len; n++) {
-         var attr = attrList.item(n);
-         result[attr.getNodeName()] = attr.getNodeValue();
-      }
-   }
-   if (node.hasChildNodes()) {
-      var Node = Packages.org.w3c.dom.Node;
-      var childNodes = node.getChildNodes();
-      var max = childNodes.getLength();
-      for (var i=0; i<max; i++) {
-         var child = childNodes.item(i);
-         if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue().trim() != "") {
-            result.value = child.getNodeValue();
-         } else if (child.getNodeType() == Node.ELEMENT_NODE) {
-            result[child.getNodeName()] = this.convertNode(child);
+jala.Utilities.prototype.patchObject = function(obj, diff) {
+   var propDiff, value1;
+   for (var propName in diff) {
+      propDiff = diff[propName];
+      value1 = obj[propName];
+      if (propDiff.status != null) {
+         switch (propDiff.status) {
+            case jala.Utilities.VALUE_REMOVED:
+               // app.debug("applyDiff(): removing property " + propName);
+               delete obj[propName];
+               break;
+            case jala.Utilities.VALUE_ADDED:
+            case jala.Utilities.VALUE_MODIFIED:
+            default:
+               // app.debug("applyDiff(): changing property " + propName + " to " + propDiff.value);
+               obj[propName] = propDiff.value;
+               break;
          }
-      }
-   }
-   return result;
-};
-
-
-/**
- * function sending mail using helma.Mail. if smtp field is not set in
- * app.properties, the mail is written as plain text to appdir/.mail
- * for debugging purposses.
- * @param {String} from sender's address
- * @param {String} to receipient's address
- * @param {String} subject mail subject
- * @param {String} body mail body
- */
-jala.Utilities.prototype.sendMail = function(from, to, subject, body) {
-   if (app.properties["smtp"]) {
-      var m = new helma.Mail();
-      m.setFrom(from);
-      m.addTo(to);
-      m.setSubject(subject);
-      m.addText(body);
-      m.send();
-   } else {
-      var str = "From: " + from + "\n";
-      str += "To: " + to + "\n";
-      str += "Subject: " + subject + "\n";
-      str += "\n";
-      str += body + "\n";
-      var dir = new helma.File(app.dir, ".mail");
-      if (!dir.exists()) {
-         dir.makeDirectory();
-      }
-      var maxId = 0;
-      var arr = dir.list(/[0-9]+\.txt/);
-      for (var i in arr) {
-         var partOfFileName = arr[i].substring(0, arr[i].length - 4);
-         partOfFileName++;
-         if(partOfFileName > maxId) {
-            maxId = partOfFileName;
-         }
-      }
-      if (maxId < 10000) {
-         var f = new helma.File(dir, maxId.format("0000") + ".txt");
-         f.open();
-         f.write(str);
-         f.close();
       } else {
-         app.log("ERROR in jala.Utilities.prototype.sendMail: more than 10.000 messages in trace directory, couldn't write debug mail to app.dir/.mail");
+         // app.debug("applyDiff(): descending to child object " + propName);
+         jala.Utilities.patchObject(value1, propDiff);
       }
    }
+   return obj;
 };
