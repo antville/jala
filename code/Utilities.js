@@ -73,18 +73,6 @@ jala.Utilities.prototype.toString = function() {
 jala.util = new jala.Utilities();
 
 /**
- * Constructs an object-alias based on a MimePart object
- * passed as argument from the name of the uploaded file
- * @param {} uploadFile MimePart Object
- * @param Obj Destination collection
- * @param Int maximum length of alias to return
- * @deprecated Use {@link #buildAlias} instead and generally
- */
-jala.Utilities.prototype.buildAliasFromFile = function(uploadFile, collection, maxLength) {
-   return this.buildAlias(uploadFile, collection, maxLength);
-};
-
-/**
  * Constructs a name from one of a set of objects which
  * is unique in the underlying HopObject collection. 
  * @param {Object} The object representing or containing the alias name
@@ -156,13 +144,6 @@ jala.Utilities.prototype.getAlias = function(obj, collection, maxLength) {
    }
    return getAlias();
 };
-
-/**
- * For backwards compatibility
- * @deprecated
- * @ignore
- */
-jala.Utilities.prototype.buildAlias = jala.Utilities.prototype.getAlias;
 
 /**
  * Creates a random password with different levels of security.
