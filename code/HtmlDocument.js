@@ -122,7 +122,7 @@ jala.HtmlDocument = function(source) {
    this.getAll = function(elementName) {
       var result = [], object;
       var list = this.scrape("//html:" + elementName);
-      var i, n, element, text, attributes, attr;
+      var i, n, element, text, attributes, attr, size;
       for (i=0; i<list.size(); i+=1) {
          element = list.get(i);
          object = {
@@ -130,12 +130,15 @@ jala.HtmlDocument = function(source) {
             value: element.getText() || null
          };
          attributes = element.attributes();
-         for (n=0; n<attributes.size(); n+=1) {
-            attr = attributes.get(n);
-            object.attributes = {
-               name: attr.getName(),
-               value: attr.getData() || null
-            };
+         if ((size = attributes.size()) > 0) {
+            object.attributes = new Array;
+            for (n=0; n<size; n+=1) {
+               attr = attributes.get(n);
+               object.attributes.push({
+                  name: attr.getName(),
+                  value: attr.getData() || null
+               });
+            }
          }
          result.push(object);
       }
@@ -162,26 +165,34 @@ jala.HtmlDocument = function(source) {
  * @type Object
  */
 jala.HtmlDocument.toObject = function(node) {
-   var result = new Object();
-   var name = node.getNodeName();
+   var result = new Object;
+   result.name = node.getNodeName().toLowerCase();
    if (node.hasAttributes()) {
+      result.attributes = new Array;
       var attrList = node.getAttributes();
       var len = attrList.getLength();
       for (var n=0; n<len; n++) {
          var attr = attrList.item(n);
-         result[attr.getNodeName()] = attr.getNodeValue();
+         result.attributes.push({
+            name: attr.getNodeName(),
+            value: attr.getNodeValue()
+         });
       }
    }
    if (node.hasChildNodes()) {
       var Node = Packages.org.w3c.dom.Node;
       var childNodes = node.getChildNodes();
       var max = childNodes.getLength();
-      for (var i=0; i<max; i++) {
-         var child = childNodes.item(i);
-         if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue().trim() != "") {
-            result.value = child.getNodeValue();
-         } else if (child.getNodeType() == Node.ELEMENT_NODE) {
-            result[child.getNodeName().toLowerCase()] = arguments.callee(child);
+      var child, value, type;
+      result.value = new Array;
+      for (var i=0; i<max; i+=1) {
+         child = childNodes.item(i);
+         value = child.getNodeValue();
+         type = child.getNodeType();
+         if (type == Node.TEXT_NODE && (value = value.trim())) {
+            result.value = value;
+         } else if (type == Node.ELEMENT_NODE) {
+            result.value.push(arguments.callee(child));
          }
       }
    }
