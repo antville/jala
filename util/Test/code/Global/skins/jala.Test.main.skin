@@ -27,7 +27,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
 <head>
 <title>Jala Unit Test Runner</title>
-<link rel="stylesheet" type="text/css" media="screen" href="<% root.href action="jala.Test.stylesheet" %>" />
+<link rel="stylesheet" type="text/css" media="screen" href="<% root.href action="jala.test.css" %>" />
 </head>
 <body>
    <div class="header">Jala Unit Test Runner</div>

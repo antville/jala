@@ -32,7 +32,7 @@ app.addRepository("modules/helma/File.js");
 /**
  * Test runner
  */
-Root.prototype.runner_action = function() {
+Root.prototype.jala_test_action = function() {
    res.handlers.test = new jala.Test();
    if (req.isGet() && req.data.test) {
       res.handlers.test.execute(req.data.test);
@@ -46,7 +46,7 @@ Root.prototype.runner_action = function() {
 /**
  * External stylesheet for test runner
  */
-Root.prototype.jala_Test_stylesheet_action = function() {
+Root.prototype.jala_test_css_action = function() {
    res.contentType = "text/css";
    renderSkin("jala.Test.stylesheet");
    return;
