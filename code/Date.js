@@ -47,7 +47,7 @@ jala.Date = function() {
  * easily from the values of a submitted POST request.
  * @param {String} prefix The prefix to use for all dropdown boxes, eg. "postdate"
  * @param {Date} date A Date object to use as preselection (optional)
- * @param {Object} param Array containing one parameter object for every single
+ * @param {Object} fmt Array containing one parameter object for every single
  * select box that should be rendered, with the following properties set:
  * <ul>
  * <li>pattern - The date format pattern that should be rendered. Valid
@@ -55,7 +55,7 @@ jala.Date = function() {
  * <li>firstOption - The string to use as first option, eg.: "choose a day"</li>
  * </ul>
  */
-jala.Date.prototype.renderEditor = function(prefix, date, param) {
+jala.Date.prototype.renderEditor = function(prefix, date, fmt) {
    /**
     * rendering method
     * @private
