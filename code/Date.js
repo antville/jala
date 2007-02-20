@@ -129,7 +129,7 @@ jala.Date.prototype.renderEditor = function(prefix, date, param) {
  * @see #renderEditor
  * @type String
  */
-jala.Date.renderEditorAsString = function(prefix, date, pattern) {
+jala.Date.prototype.renderEditorAsString = function(prefix, date, pattern) {
    res.push();
    this.renderEditor(prefix, date, pattern);
    return res.pop();
