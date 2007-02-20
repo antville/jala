@@ -267,7 +267,7 @@ jala.Date.prototype.renderCalendar = function(collection, renderer, today) {
  * @see #renderCalendar
  * @type String
  */
-jala.Date.renderCalendarAsString = function(collection, renderer, today) {
+jala.Date.prototype.renderCalendarAsString = function(collection, renderer, today) {
    res.push();
    this.renderCalendar(collection, renderer, today);
    return res.pop();
