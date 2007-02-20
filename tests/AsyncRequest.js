@@ -41,8 +41,8 @@ var result = undefined;
  * the other request to finish, and then does the testing of the result.
  */
 var testAsyncRequest = function() {
-   var r = new jala.AsyncRequest(global, "testFunction", ["jala"]);
-   r.evaluate();
+   var r = new jala.AsyncRequest(global, "testFunction");
+   r.run("jala");
    // wait until the async request started above has finished
    // before testing the result, but no longer than 1 second.
    var elapsed = 0;

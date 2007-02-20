@@ -41,7 +41,8 @@ if (!global.jala) {
  * @param {Object} obj Object in whose context the method should be called
  * @param {String} funcName Name of the function to call
  * @param {Array} args Array containing the arguments that should be passed
- * to the function (optional)
+ * to the function (optional). This option is <em>deprecated</em>, instead
+ * pass the arguments directly to the {@link #run} method.
  * @constructor
  * @returns A new instance of AsyncRequest
  * @type AsyncRequest
@@ -71,11 +72,9 @@ jala.AsyncRequest = function(obj, funcName, args) {
 
    /**
     * Run method necessary to implement java.lang.Runnable.
-    * DON'T ever call this directly, use evaluate() to start
-    * the asynchronous request.
-    * @see #evaluate
+    * @private
     */
-   this.run = function() {
+   var runner = function() {
       // evaluator that will handle the request
       var ev = app.__app__.getEvaluator();
 
@@ -83,6 +82,9 @@ jala.AsyncRequest = function(obj, funcName, args) {
          java.lang.Thread.sleep(delay);
       }
       try {
+         if (args === undefined || args === null || args.constructor != Array) {
+            args = [];
+         }
          if (timeout != null) {
             ev.invokeInternal(obj, funcName, args, timeout);
          } else {
@@ -119,11 +121,26 @@ jala.AsyncRequest = function(obj, funcName, args) {
    };
 
    /**
-    * Starts this asynchronous request.
+    * Starts this asynchronous request. Any arguments passed to
+    * this method will be passed to the method executed by
+    * this AsyncRequest instance.
     */
-   this.evaluate  = function() {
-      thread = (new java.lang.Thread(new java.lang.Runnable(this)));
+   this.run  = function() {
+      if (arguments.length > 0) {
+         // convert arguments object into array
+         args = Array.prototype.slice.call(arguments, 0, arguments.length);
+      }
+      thread = (new java.lang.Thread(new java.lang.Runnable({"run": runner})));
       thread.start();
+      return;
+   };
+
+   /**
+    * Starts this asynchronous request.
+    * @deprecated Use {@link #run} instead
+    */
+   this.evaluate = function() {
+      this.run.apply(this, arguments);
       return;
    };
 
@@ -147,7 +164,5 @@ jala.AsyncRequest = function(obj, funcName, args) {
     */
    if (!obj || !funcName)
       throw "jala.AsyncRequest: insufficient arguments.";
-   if (args == undefined)
-      args = [];
    return this;
 }
