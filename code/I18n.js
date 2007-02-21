@@ -186,31 +186,33 @@ jala.I18n.prototype.getCatalog = function(locale) {
  * @see http://java.sun.com/j2se/1.5.0/docs/api/java/text/MessageFormat.html
  */
 jala.I18n.prototype.formatMessage = function(message, values) {
-   var args = null;
-   if (values != null && values.length > 0) {
-      args = java.lang.reflect.Array.newInstance(java.lang.Object, values.length);
-      var arg;
-      for (var i=0;i<values.length;i++) {
-         if ((arg = values[i]) != null) {
-            // MessageFormat can't deal with javascript date objects
-            // so we need to convert them into java.util.Date instances
-            if (arg instanceof Date) {
-               args[i] = new java.util.Date(arg.getTime());
-            } else {
-               args[i] = arg;
+   if (message) {
+      var args = null;
+      if (values != null && values.length > 0) {
+         args = java.lang.reflect.Array.newInstance(java.lang.Object, values.length);
+         var arg;
+         for (var i=0;i<values.length;i++) {
+            if ((arg = values[i]) != null) {
+               // MessageFormat can't deal with javascript date objects
+               // so we need to convert them into java.util.Date instances
+               if (arg instanceof Date) {
+                  args[i] = new java.util.Date(arg.getTime());
+               } else {
+                  args[i] = arg;
+               }
             }
          }
       }
-   }
-   // use either the locale defined in res.meta.locale or the jvm default
-   var locale = res.meta.locale || java.util.Locale.getDefault();
-   // format the message
-   try {
-      var msgFormat = new java.text.MessageFormat(message, locale);
-      return msgFormat.format(args);
-   } catch (e) {
-      app.logger.warn("jala.i18n.formatMessage(): Unable to format message '"
-                      + message + "', reason: " + e, e.javaException);
+      // use either the locale defined in res.meta.locale or the jvm default
+      var locale = res.meta.locale || java.util.Locale.getDefault();
+      // format the message
+      try {
+         var msgFormat = new java.text.MessageFormat(message, locale);
+         return msgFormat.format(args);
+      } catch (e) {
+         app.logger.warn("jala.i18n.formatMessage(): Unable to format message '"
+                         + message + "', reason: " + e, e.javaException);
+      }
    }
    return null;
 };
