@@ -53,11 +53,56 @@ jala.BitTorrent = function(filePath, trackerUrl) {
    self.arguments = arguments;
 
    // FIXME: add support for multi-file mode
-   // FIXME: improve digest loop in write method
 
    var torrent, sourceFile, torrentFile;
    var pieceLength = 256;
 
+   /** @ignore */
+   function updateTorrent() {
+      if (torrent.info) {
+         return torrent;
+      }
+
+      var file = new java.io.File(filePath);
+      if (!file.exists()) {
+         throw Error("File " + file + " does not exist!");
+      }
+   
+      var md5 = java.security.MessageDigest.getInstance("MD5");
+      var sha1 = java.security.MessageDigest.getInstance("SHA-1");   
+
+      var fis = new java.io.FileInputStream(file);
+      var bis = new java.io.BufferedInputStream(fis);
+      var cache = new java.io.ByteArrayOutputStream();
+
+      var pieces = [];
+      var length = pieceLength * 1024;
+      var buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, length);
+
+      while (bis.read(buffer, 0, buffer.length) > -1) {
+         app.debug("Updating SHA-1 hash with " + buffer.length + " bytes");
+         sha1.reset();
+         sha1["update(byte[])"](buffer);
+         cache["write(byte[])"](buffer);
+         pieces.push(new java.lang.String(sha1.digest()));
+      }
+      
+      var checksum = new java.lang.String(md5.digest(cache.toByteArray()));
+
+      bis.close();
+      fis.close();
+ 
+      torrent.info = {
+         //md5sum: checksum,
+         length: cache.size(),
+         name: file.getName(),
+         "piece length": length,
+         pieces: pieces.join("")
+      };
+      
+      return torrent;
+   }
+   
    /**
     * Get all available property names.
     * @returns The list of property names.
@@ -150,66 +195,13 @@ jala.BitTorrent = function(filePath, trackerUrl) {
    };
 
    /**
-    * Write the torrent to a file.
-    * @param {String} filename An optional filename.
-    * The default filename is the name of the original file
-    * plus ".torrent" as suffix.
-    * @returns The bencoded torrent.
-    * @type String
-    */
-   this.getTorrent = function(filename) {
-      if (torrent.info) {
-         return torrent;
-      }
-
-      var file = new java.io.File(self.arguments[0]);
-      if (!file.exists()) {
-         throw Error("File " + file + " does not exist!");
-      }
-   
-      var md5 = java.security.MessageDigest.getInstance("MD5");
-      var sha1 = java.security.MessageDigest.getInstance("SHA-1");   
-
-      var fis = new java.io.FileInputStream(file);
-      var bis = new java.io.BufferedInputStream(fis);
-      var cache = new java.io.ByteArrayOutputStream();
-
-      var pieces = [];
-      var length = pieceLength * 1024;
-      var buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, length);
-
-      while (bis.read(buffer, 0, buffer.length) > -1) {
-         app.debug("Updating SHA-1 hash with " + buffer.length + " bytes");
-         sha1.reset();
-         sha1["update(byte[])"](buffer);
-         cache["write(byte[])"](buffer);
-         pieces.push(new java.lang.String(sha1.digest()));
-      }
-      
-      var checksum = new java.lang.String(md5.digest(cache.toByteArray()));
-
-      bis.close();
-      fis.close();
- 
-      torrent.info = {
-         //md5sum: checksum,
-         length: cache.size(),
-         name: file.getName(),
-         "piece length": length,
-         pieces: pieces.join("")
-      };
-
-      return torrent;
-   };
-   
-   /**
     * Saves the torrent as file.
     * @param {String} filename An optional name for the torrent file.
     * If no name is given it will be composed from name of source
     * file as defined in the torrent plus the ending ".torrent".
     */
    this.save = function(filename) {
-      var torrent = this.getTorrent();
+      updateTorrent();
       if (!filename) {
          filename = torrent.info.name + ".torrent";
       }
