@@ -48,22 +48,15 @@ app.addRepository("modules/core/String.js");
  * @returns A new BitTorrent file.
  * @constructor
  */
-jala.BitTorrent = function(trackerUrl, filePath) {
+jala.BitTorrent = function(filePath, trackerUrl) {
    var self = this;
    self.arguments = arguments;
 
    // FIXME: add support for multi-file mode
    // FIXME: improve digest loop in write method
 
+   var torrent, sourceFile, torrentFile;
    var pieceLength = 256;
-
-   var torrent = {
-      announce: trackerUrl,
-      "announce-list": null,
-      "creation date": null,
-      comment: null,
-      "created by": null
-   };
 
    /**
     * Get all available property names.
@@ -97,6 +90,7 @@ jala.BitTorrent = function(trackerUrl, filePath) {
       if (typeof torrent[name] == "undefined")
          throw Error("Cannot set torrent property " + name);
       torrent[name] = value;
+      delete torrent.info;
       return;
    };
 
@@ -114,8 +108,7 @@ jala.BitTorrent = function(trackerUrl, filePath) {
     * @param {Date} date The desired creation date.
     */
    this.setCreationDate = function(date) {
-      torrent["creation date"] = 
-         Math.round((date || new Date()).getTime() / 1000);
+      this.set("creation date", Math.round((date || new Date()).getTime() / 1000));
       return;
    };
 
@@ -134,7 +127,26 @@ jala.BitTorrent = function(trackerUrl, filePath) {
     */
    this.setPieceLength = function(length) {
       pieceLength = length;
+      delete torrent.info;
       return;
+   };
+
+   /**
+    * Returns the underlying torrent file.
+    * @returns The torrent file.
+    * @type helma.File
+    */
+   this.getTorrentFile = function() {
+      return torrentFile;
+   };
+   
+   /**
+    * Returns the underlying source file.
+    * @returns The source file.
+    * @type helma.File
+    */
+   this.getSourceFile = function() {
+      return sourceFile;
    };
 
    /**
@@ -145,71 +157,68 @@ jala.BitTorrent = function(trackerUrl, filePath) {
     * @returns The bencoded torrent.
     * @type String
     */
-   this.write = function(filename) {
-      var file = new java.io.File(self.arguments[1]);
-      if (!file.exists())
-         throw Error("File " + file + " does not exist!");
-   
-      var pieces = [];
+   this.getTorrent = function(filename) {
+      if (torrent.info) {
+         return torrent;
+      }
 
-      var md = java.security.MessageDigest.getInstance("SHA-1");
+      var file = new java.io.File(self.arguments[0]);
+      if (!file.exists()) {
+         throw Error("File " + file + " does not exist!");
+      }
+   
+      var md5 = java.security.MessageDigest.getInstance("MD5");
+      var sha1 = java.security.MessageDigest.getInstance("SHA-1");   
+
       var fis = new java.io.FileInputStream(file);
       var bis = new java.io.BufferedInputStream(fis);
-      var baos = new java.io.ByteArrayOutputStream();
       var cache = new java.io.ByteArrayOutputStream();
-   
-      function addDigest() {
-         var byteArray = baos.toByteArray();
-         md.reset();
-         //md.update(byteArray)  // FIXME: throws ambiguousity exception
-         md.update(byteArray, 0, byteArray.length);
-         pieces.push(new java.lang.String(md.digest()));
-         return;
-      }
-   
-      var ch, counter = 1, max = pieceLength * 1024;
-      while ((ch = bis.read()) != -1) {
-         baos.write(ch);
-         if (counter > max) {
-            addDigest();
-            counter = 0;
-            baos.reset();
-         }
-         counter += 1;
-         cache.write(ch);
-      }
-      addDigest();
 
-      md = java.security.MessageDigest.getInstance("MD5");
-      var content = cache.toByteArray();
-      var checksum = new java.lang.String(md.digest(content));
+      var pieces = [];
+      var length = pieceLength * 1024;
+      var buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, length);
 
-      baos.close();
+      while (bis.read(buffer, 0, buffer.length) > -1) {
+         app.debug("Updating SHA-1 hash with " + buffer.length + " bytes");
+         sha1.reset();
+         sha1["update(byte[])"](buffer);
+         cache["write(byte[])"](buffer);
+         pieces.push(new java.lang.String(sha1.digest()));
+      }
+      
+      var checksum = new java.lang.String(md5.digest(cache.toByteArray()));
+
       bis.close();
       fis.close();
-      cache.close();
-
+ 
       torrent.info = {
          //md5sum: checksum,
-         length: content.length,
+         length: cache.size(),
          name: file.getName(),
-         "piece length": max,
+         "piece length": length,
          pieces: pieces.join("")
       };
 
-      if (!filename)
+      return torrent;
+   };
+   
+   /**
+    * Saves the torrent as file.
+    * @param {String} filename An optional name for the torrent file.
+    * If no name is given it will be composed from name of source
+    * file as defined in the torrent plus the ending ".torrent".
+    */
+   this.save = function(filename) {
+      var torrent = this.getTorrent();
+      if (!filename) {
          filename = torrent.info.name + ".torrent";
-
-      var output = jala.BitTorrent.bencode(torrent);
-      delete torrent.info;
-
-      file = new helma.File(file.getParent(), filename);
+      }
+      var file = new helma.File(sourceFile.getParent(), filename);
       file.remove();
       file.open();
-      file.write(output);
+      file.write(jala.BitTorrent.bencode(torrent));
       file.close();
-
-      return output;
+      return;     
    };
 
    /**
@@ -221,7 +230,22 @@ jala.BitTorrent = function(trackerUrl, filePath) {
       return "[jala.BitTorrent " + filePath + "]";
    };
 
-   this.setCreationDate();
+   if (filePath.endsWith(".torrent")) {
+      torrentFile = new helma.File(filePath);
+      torrent = jala.BitTorrent.bdecode(torrentFile.readAll());
+      sourceFile = new helma.File(torrent.info.name);
+   } else {
+      torrent = {
+         announce: trackerUrl,
+         "announce-list": null,
+         "creation date": null,
+         comment: null,
+         "created by": null,
+      };
+      this.setCreationDate();
+      sourceFile = new helma.File(filePath);
+   }
+   
    return this;
 };
 
