@@ -193,7 +193,7 @@ jala.Date.prototype.renderCalendar = function(collection, renderer, today) {
    var cal = java.util.Calendar.getInstance();
    var firstDayOfWeek = cal.getFirstDayOfWeek();
 
-   var symbols = jala.util.getDateSymbols();
+   var symbols = new java.text.DateFormatSymbols();
    var weekdays = symbols.getShortWeekdays();
    var monthNames = symbols.getMonths();
 
