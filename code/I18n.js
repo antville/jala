@@ -124,7 +124,7 @@ jala.I18n.prototype.getLocale = function(localeId) {
  * @type String
  */
 jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
-   var translation;
+   var translation = null;
    if (singularKey) {
       // use either the locale defined in res.meta.locale or the jvm default
       var locale = res.meta.locale || java.util.Locale.getDefault();
