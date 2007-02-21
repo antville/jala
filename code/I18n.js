@@ -163,9 +163,8 @@ jala.I18n.prototype.getCatalog = function(locale) {
       jala.I18n.catalogs = {};
    }
    var cache = jala.I18n.catalogs;
-   var catalog;
-   if (!cache[locale]) {
-      var messages = this.getMessages();
+   var catalog, messages;
+   if (!cache[locale] && (messages = this.getMessages()) != null) {
       var arr = [locale.getLanguage(), locale.getCountry(), locale.getVariant()];
       while (arr.length > 0 && !(catalog = messages[arr.join("_")])) {
          arr.pop();
