@@ -34,9 +34,10 @@ if (!global.jala) {
 
 
 /**
- * HelmaLib dependencies
+ * Module dependencies
  */
 app.addRepository("modules/core/String.js");
+app.addRepository("modules/helma/File.js");
 
 
 /**
@@ -87,13 +88,11 @@ jala.BitTorrent = function(filePath, trackerUrl) {
          pieces.push(new java.lang.String(sha1.digest()));
       }
       
-      var checksum = new java.lang.String(md5.digest(cache.toByteArray()));
-
       bis.close();
       fis.close();
  
       torrent.info = {
-         //md5sum: checksum,
+         //md5sum: new java.lang.String(md5.digest(cache.toByteArray())),
          length: cache.size(),
          name: file.getName(),
          "piece length": length,
