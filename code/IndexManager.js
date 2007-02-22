@@ -242,7 +242,7 @@ jala.IndexManager = function(name, dir, lang) {
          try {
             switch (job.action) {
                case "add":
-                  var proto = getGlobal(job._prototype);
+                  var proto = global[job._prototype];
                   var hopObj = proto.getById(job._id);
                   if (hopObj != null) {
                      this.add(hopObj, true);
