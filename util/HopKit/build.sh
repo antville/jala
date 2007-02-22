@@ -24,12 +24,12 @@
 ##
 
 #--------------------------------------------
-# buildfile for ant 1.6.5
+# buildfile for ant 1.7.0
 #--------------------------------------------
-if test -z "${JAVA_HOME}" ; then
-    echo "ERROR: JAVA_HOME not found in your environment."
-    echo "Please, set the JAVA_HOME variable in your environment to match the"
-    echo "location of the Java Virtual Machine you want to use."
+if test -z "${ANT_HOME}" ; then
+    echo "ERROR: ANT_HOME not found in your environment."
+    echo "Please, set the ANT_HOME variable in your environment to match the"
+    echo "location of the Apache Ant installation you want to use."
     exit
 fi
 
@@ -56,8 +56,6 @@ else
    BUILD_XML="${PWD}/build.xml"
 fi
 
-CP="${CLASSPATH}:${BUILD_HOME}/lib/ant-launcher.jar"
-
-"${JAVA_HOME}/bin/java" -classpath "${CP}" -Dant.home="${BUILD_HOME}" -Dbasedir="${PWD}" org.apache.tools.ant.launch.Launcher -propertyfile "${PWD}/build.properties" -file "${BUILD_XML}" ${ANT_CMD_LINE_ARGS}
+"${ANT_HOME}/bin/ant -Dant.home="${BUILD_HOME}" -Dbasedir="${PWD}" -lib "${BUILD_HOME}/lib" -propertyfile "${PWD}\build.properties" ${ANT_CMD_LINE_ARGS}
 
 exit

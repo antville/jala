@@ -24,35 +24,31 @@
 
 @echo off
 
-REM --------------------------------------------
-REM buildfile for ant 1.6.5
-REM --------------------------------------------
+rem This is build.bat for Ant 1.7
 
-rem set JAVA_HOME=c:\programme\Java\jre1.5.0_05
+rem Define the path to the ANT binary directory
+rem (traling slash is mandatory!)
+rem set ANT_HOME=%PROGRAMFILES%\Apache Group\apache-ant-1.7.0\bin\
 
-REM --------------------------------------------
-REM No need to edit anything past here
-REM --------------------------------------------
+rem ==========================================================================
+rem No need to edit anything past here
 
-
-rem ---- store path of this script as BUILD_HOME
+rem store path of this script as BUILD_HOME
 set BUILD_HOME=%~dp0
 
-rem ---- Slurp the command line arguments. This loop allows for an unlimited number
-rem ---- of arguments (up to the command line limit, anyway).
+rem Slurp the command line arguments. This loop allows for an unlimited number
+rem of arguments (up to the command line limit, anyway).
 set ANT_CMD_LINE_ARGS=%1
-if ""%1""=="""" goto final
+if ""%1""=="""" goto runAnt
 shift
 :setupArgs
-if ""%1""=="""" goto final
-if ""%1""==""-noclasspath"" goto final
+if ""%1""=="""" goto runAnt
+if ""%1""==""-noclasspath"" goto runAnt
 set ANT_CMD_LINE_ARGS=%ANT_CMD_LINE_ARGS% %1
 shift
 goto setupArgs
 
-
-:final
-
+:runAnt
 
 rem ---- if there is no build.xml in the working directory, use the library
 rem ---- in this directory
@@ -60,24 +56,8 @@ if not exist ".\build.xml" (
    set ANT_CMD_LINE_ARGS=-file "%BUILD_HOME%lib.xml" %ANT_CMD_LINE_ARGS%
 )
 
-echo buildhome: %BUILD_HOME%
-if "%JAVA_HOME%" == "" goto javahomeerror
+echo BUILD_HOME: %BUILD_HOME%
 
-set CP=%CLASSPATH%;%BUILD_HOME%lib/ant-launcher.jar
-
-echo CLASSPATH: "%CP%"
-echo JAVA_HOME: "%JAVA_HOME%"
-
-"%JAVA_HOME%\bin\java.exe" -classpath "%CP%" %APPNAME% "-Dant.home=." "-Dbasedir=." org.apache.tools.ant.launch.Launcher -propertyfile "%CD%\build.properties" %ANT_CMD_LINE_ARGS%
-
-goto end
-
-
-REM -----------ERROR-------------
-:javahomeerror
-echo "ERROR: JAVA_HOME not found in your environment."
-echo "Please, set the JAVA_HOME variable in your environment to match the"
-echo "location of the Java Virtual Machine you want to use."
+ant -Dant.home=. -Dbasedir=. -lib "%BUILD_HOME%\lib" -propertyfile "%CD%\build.properties" %ANT_CMD_LINE_ARGS%
 
 :end
-

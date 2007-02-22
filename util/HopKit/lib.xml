@@ -2,8 +2,6 @@
 
 <project name="jala-utils" default="usage">
 
-   <taskdef resource="net/sf/antcontrib/antlib.xml"/>
-
    <property environment="env"/>
 	<property name="work" value="${env.BUILD_HOME}/work" />
    
@@ -18,20 +16,20 @@
    <target name="help" depends="usage" />
    <target name="usage">
       <echo message="" />
-      <echo message=" available targets are:" />
-      <echo message=" jslint   -> run jslint on the current directory (validation)" />
-      <echo message=" docs 	 -> run jsdoc on a helma application" />
-      <echo message=" pot      -> parse i18n methods out of function files and skins and" />
-      <echo message="             creates a gettext template file." />
-      <echo message=" messages -> compile gnu gettext .po files into javascript message files" />
+      <echo message=" Available targets are:" />
+      <echo message=" jslint   -> Run jslint on the current directory (validation)" />
+      <echo message=" docs     -> Run jsdoc on a helma application" />
+      <echo message=" pot      -> Parse i18n methods out of function files and skins and" />
+      <echo message="             create a gettext template file." />
+      <echo message=" messages -> Compile Gnu PO-files into JavaScript message files" />
       <echo message="" />
-      <echo message=" macro definitions that can be used in other build files:" />
+      <echo message=" Macro definitions that can be used in other build files:" />
       <echo message=" - jslint" />
       <echo message=" - jsdoc" />
       <echo message=" - jsmin" />
       <echo message="" />
-      <echo message=" See comments inside the build.xml file for more details." />
-      <echo message="---------------------------------------------------------------" />
+      <echo message=" See comments inside this file (lib.xml) for more details." />
+      <echo message="----------------------------------------------------------" />
       <echo message="" />
       <echo message="" />
    </target>
@@ -52,7 +50,7 @@
    <!-- Create documentation with jsdoc.pl                                  -->
    <!-- =================================================================== -->
    <target name="jsdoc">
-      <echo message="Creating javascript docs with jsdoc on ${user.dir}" />
+      <echo message="Creating JavaScript docs with JSDoc on ${user.dir}" />
       <property name="jsdoc.projectName" value="" />
       <input message="Destination directory (docs):"
                addproperty="jsdoc.destination" defaultvalue="docs" />
@@ -90,10 +88,10 @@
    <!-- and create a GNU gettext compatible template file                   -->
    <!-- =================================================================== -->
    <target name="pot">
-      <input message="Template file to generate (messages.pot):"
+      <input message="Name of the template file to generate:"
              addproperty="i18n.template" defaultvalue="messages.pot" />
       <echo message="Using '${i18n.template}' as output" />
-      <input message="Directories containing code/skins (separate with spaces):"
+      <input message="Directories containing code/skins separated by spaces:"
              addproperty="i18n.scan" />
    	<!-- convert inputs to absolute paths -->
    	<property name="dest" location="${i18n.template}" />
@@ -111,7 +109,7 @@
    <!-- directory                                                           -->
    <!-- =================================================================== -->
    <target name="messages">
-      <input message="Directory containing .po files:"
+      <input message="Directory containing PO-files:"
              addproperty="i18n.poDirectory" />
       <input message="Destination directory for generated message files:"
              addproperty="i18n.destination" />
@@ -120,7 +118,7 @@
    	<!-- convert inputs to absolute paths -->
      	<property name="src" location="${i18n.poDirectory}" />
    	<property name="dest" location="${i18n.destination}" />
-      <echo message="Generating message files from .po files in '${src}'..." />
+      <echo message="Generating message files from PO-files in '${src}'..." />
       <echo message="Using '${dest}' as output directory" />
       <java classname="org.mozilla.javascript.tools.shell.Main">
          <arg value="${env.BUILD_HOME}/scripts/PoParser.js" />
@@ -168,7 +166,7 @@
       <attribute name="destdir" />
    	<attribute name="projectName" />
       <sequential>
-         <echo message="Generating API docs for Helma application in @{srcdir}" />
+         <echo message="Generating API specification for Helma application in @{srcdir}" />
          <property name="workHelmadoc" value="${work}/helmadocs-worker" />
          <mkdir dir="${workHelmadoc}" />
          <copy todir="${workHelmadoc}">
