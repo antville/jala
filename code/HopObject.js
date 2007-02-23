@@ -91,7 +91,7 @@ HopObject.prototype.getAccessName = function(obj, maxLength) {
          accessName = accessName + counter.toString();
       }
       counter += 1;
-   } while (collection[accessName] || collection.get(accessName));
+   } while (this[accessName] || this.get(accessName));
    
    return accessName;
 };
