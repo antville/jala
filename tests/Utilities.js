@@ -29,7 +29,6 @@
  */
 var tests = [
    "testCreatePassword",
-   "testGetAlias",
    "testDiffObjects",
    "testPatchObject"
 ];
@@ -46,36 +45,6 @@ var testCreatePassword = function() {
    assertMatch(jala.util.createPassword(100, 1),   /^[\d\w]{100}$/);
    assertEqual(jala.util.createPassword(null, 2).length, 8);
    assertEqual(jala.util.createPassword(100, 2).length, 100);
-   return;
-};
-
-/**
- * Unit test for #jala.util.getAlias.
- */
-var testGetAlias = function() {
-   var name = "foobar";
-   assertEqual(jala.util.getAlias(name), name);
-   assertEqual(jala.util.getAlias(name, null, 3), name.substr(0, 3));
-
-   var collection = new HopObject;
-   assertEqual(jala.util.getAlias(name, collection), name);
-   // Test alias with the same name as a default HopObject method
-   assertNotEqual(jala.util.getAlias("get", collection), "get");
-   assertEqual(jala.util.getAlias("get", collection), "get1");
-   // Set a custom property of the collection and test it
-   collection[name] = true;
-   assertNotEqual(jala.util.getAlias(name, collection), name);
-   assertEqual(jala.util.getAlias(name, collection), name + "1");
-   
-   // Set custom properties equally to the method's numbering
-   collection[name + "1"] = true;
-   collection[name + "12"] = true;
-   assertNotEqual(jala.util.getAlias(name, collection), name + "1");
-   assertNotEqual(jala.util.getAlias(name, collection), name + "12");
-   assertEqual(jala.util.getAlias(name, collection), name + "123");
-
-   assertNotEqual(jala.util.getAlias(name, collection, name.length), name);
-   assertEqual(jala.util.getAlias(name, collection, name.length), "fooba1");
    return;
 };
 

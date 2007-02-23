@@ -41,6 +41,7 @@ if (!global.jala) {
       "Captcha", 
       "History",
       "HtmlDocument",
+      "HopObject",
       "i18n",
       "ImageFilter",
       "IndexManager",
