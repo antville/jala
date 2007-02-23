@@ -35,7 +35,8 @@ if (!global.jala) {
 
 (function() {
    var packages = [
-      "AsyncRequest", 
+      "AsyncRequest",
+      "Date",
       "DnsClient",
       "Captcha", 
       "History",

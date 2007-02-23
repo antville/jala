@@ -53,8 +53,9 @@ jala.BitTorrent = function(filePath, trackerUrl) {
    var self = this;
    self.arguments = arguments;
 
-   // FIXME: add support for multi-file mode
-
+   // FIXME: Add support for multitracker mode as specified in
+   // http://www.bittornado.com/docs/multitracker-spec.txt
+   
    var torrent, sourceFile, torrentFile;
    var pieceLength = 256;
 
@@ -131,8 +132,9 @@ jala.BitTorrent = function(filePath, trackerUrl) {
     * @param {Object} value The property's value.
     */
    this.set = function(name, value) {
-      if (typeof torrent[name] == "undefined")
+      if (typeof torrent[name] == "undefined") {
          throw Error("Cannot set torrent property " + name);
+      }
       torrent[name] = value;
       delete torrent.info;
       return;
@@ -204,11 +206,11 @@ jala.BitTorrent = function(filePath, trackerUrl) {
       if (!filename) {
          filename = torrent.info.name + ".torrent";
       }
-      var file = new helma.File(sourceFile.getParent(), filename);
-      file.remove();
-      file.open();
-      file.write(jala.BitTorrent.bencode(torrent));
-      file.close();
+      torrentFile = new helma.File(sourceFile.getParent(), filename);
+      torrentFile.remove();
+      torrentFile.open();
+      torrentFile.write(jala.BitTorrent.bencode(torrent));
+      torrentFile.close();
       return;     
    };
 
@@ -221,13 +223,13 @@ jala.BitTorrent = function(filePath, trackerUrl) {
       return "[jala.BitTorrent " + filePath + "]";
    };
 
-   if (filePath.endsWith(".torrent")) {
+   if (String(filePath).endsWith(".torrent")) {
       torrentFile = new helma.File(filePath);
       torrent = jala.BitTorrent.bdecode(torrentFile.readAll());
       sourceFile = new helma.File(torrent.info.name);
    } else {
       torrent = {
-         announce: trackerUrl,
+         announce: trackerUrl || null,
          "announce-list": null,
          "creation date": null,
          comment: null,
