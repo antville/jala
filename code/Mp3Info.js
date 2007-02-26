@@ -171,9 +171,10 @@ jala.Mp3Info = function(path) {
     * @type String
     */
    this.toString = function() {
-      return "[jala.Mp3Info of " + this.artist + " / " + this.title + "]";
+      return "[jala.Mp3Info of " + file.getCanonicalPath() + "]";
    };
 
    this.dontEnum("getFile");
+   this.dontEnum("toString");
    return this;
 };
