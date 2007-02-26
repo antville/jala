@@ -47,18 +47,17 @@ var testBitTorrent = function() {
    fos.close();
 
    var torrent = new jala.BitTorrent(file);
-   // Testing against torrent created by S3
-   torrent.set("announce", "http://tracker.amazonaws.com:6969/announce");
+   // Testing against file generated with BitTorrent.app (OS X)
+   torrent.set("announce", "http://tracker.orf.at/announce");
    // S3 defines a multitracker list with a single tracker item
-   torrent.set("announce-list", [["http://tracker.amazonaws.com:6969/announce"]]);
-   // S3 defines no creation date
-   torrent.set("creation date", null);
+   //torrent.set("announce-list", [["http://tracker.amazonaws.com:6969/announce"]]);
+   torrent.setCreationDate(new Date(2007, 1, 26, 14, 46, 44));
    torrent.save();
    file["delete"]();
 
    var torrentFile = torrent.getTorrentFile();
    var refFile = new File("modules/jala/tests/1meg.reference.torrent");
-   assertEqual(torrentFile.readAll(), refFile.readAll());
-   torrentFile["delete"]();
+   assertEqual(torrentFile.readAll().trim(), refFile.readAll().trim());
+   torrentFile.remove();
    return;
 };
