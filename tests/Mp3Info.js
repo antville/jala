@@ -31,11 +31,7 @@ var tests = [
 ];
 
 /**
- * A simple test of jala.AsyncRequest. It constructs a new AsyncRequest
- * with a test function defined below that sets various properties
- * of the global result object above. After evaluating the async request
- * the current thread sleeps for a short period of time to wait for
- * the other request to finish, and then does the testing of the result.
+ * A simple test of jala.Mp3Info.
  */
 var testMp3Info = function() {
    var fpath = jala.DIR + "/tests/test.mp3";
