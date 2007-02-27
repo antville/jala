@@ -337,22 +337,35 @@ jala.Test.createDatabase = function(schemaName) {
 };
 
 /**
- * Prepares the per-thread global scope for the test run.
+ * Returns a custom JavaScript scope used for evaluating unit tests.
  * This method defines all assertion methods as global methods,
  * and creates a default instantiation of the Http client
  * for convenience.
+ * @returns The newly created scope object
+ * @type helma.scripting.rhino.GlobalObject
  * @private
  */
-jala.Test.prepareTestScope = function() {
+jala.Test.getTestScope = function() {
+   // create a new vanilla global object
+   var engine = Packages.helma.scripting.rhino.RhinoEngine.getRhinoEngine();
+   var scope = new Packages.helma.scripting.rhino.GlobalObject(engine.getCore(),
+                         app.__app__, true);
+   var framework = Packages.helma.framework;
+   // put the necessary global objects into the scope
+   scope.root = root;
+   scope.session = session;
+   scope.req = req;
+   scope.res = res;
+   scope.path = path;
    // define global assertion functions
    for (var i in jala.Test.prototype) {
       if (i.indexOf("assert") == 0) {
-         global[i] = jala.Test.prototype[i];
+         scope[i] = jala.Test.prototype[i];
       }
    }
    // instantiate a global HttpClient
-   global.httpClient = new jala.Test.HttpClient();
-   return;
+   scope.httpClient = new jala.Test.HttpClient();
+   return scope;
 }
 
 
@@ -502,31 +515,31 @@ jala.Test.prototype.executeTest = function(testFile) {
    var code = new java.lang.String(testFile.readAll() || "");
    var testResult = new jala.Test.TestResult(testFileName);
    try {
-      // prepare the test scope
-      jala.Test.prepareTestScope();
+      // instantiate a new test scope
+      var scope = jala.Test.getTestScope(scope);
       // evaluate the test file in the per-thread which is garbage
       // collected at the end of the test run and prevents the application
       // scope from being polluted
-      cx.evaluateString(global, code, testFileName, 1, null);
-      if (!global.tests || global.tests.constructor != Array || global.tests.length == 0) {
+      cx.evaluateString(scope, code, testFileName, 1, null);
+      if (!scope.tests || scope.tests.constructor != Array || scope.tests.length == 0) {
          throw "Please define an Array named 'tests' containing the names of the test functions to run";
       }
       var start = new Date();
       // run the test
       try {
-         if (global.setup != null && global.setup instanceof Function) {
+         if (scope.setup != null && scope.setup instanceof Function) {
             // setup function exists, so call it
-            testResult.log[testResult.log.length] = this.executeTestFunction("setup");
+            testResult.log[testResult.log.length] = this.executeTestFunction("setup", scope);
          }
          // run all test methods defined in the array "tests"
          var functionName;
-         for (var i=0;i<global.tests.length;i++) {
-            functionName = global.tests[i];
-            if (!global[functionName] || global[functionName].constructor != Function) {
+         for (var i=0;i<scope.tests.length;i++) {
+            functionName = scope.tests[i];
+            if (!scope[functionName] || scope[functionName].constructor != Function) {
                throw new jala.Test.EvaluatorException("Test function '" +
                                          functionName + "' is not defined.");
             }
-            testResult.log[testResult.log.length] = this.executeTestFunction(functionName);
+            testResult.log[testResult.log.length] = this.executeTestFunction(functionName, scope);
          }
       } catch (e) {
          this.testsFailed += 1;
@@ -534,8 +547,8 @@ jala.Test.prototype.executeTest = function(testFile) {
          testResult.log[testResult.log.length] = e;
       } finally {
          // call any existing "cleanup" method
-         if (global.cleanup != null && global.cleanup instanceof Function) {
-            testResult.log[testResult.log.length] = this.executeTestFunction("cleanup");
+         if (scope.cleanup != null && scope.cleanup instanceof Function) {
+            testResult.log[testResult.log.length] = this.executeTestFunction("cleanup", scope);
          }
       }
    } catch (e) {
@@ -556,13 +569,15 @@ jala.Test.prototype.executeTest = function(testFile) {
 /**
  * Executes a single test function
  * @param {String} functionName The name of the test function to execute
+ * @param {helma.scripting.rhino.GlobalObject} scope The scope to execute
+ * the test method in
  */
-jala.Test.prototype.executeTestFunction = function(functionName) {
+jala.Test.prototype.executeTestFunction = function(functionName, scope) {
    // store the name of the current function in res.meta.currentTestFunction
    res.meta.currentTestFunction = functionName;
    var start = new Date();
    try {
-      global[functionName]();
+      scope[functionName]();
       this.functionsPassed += 1;
       return new jala.Test.TestFunctionResult(functionName, start);
    } catch (e) {
