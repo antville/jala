@@ -36,7 +36,7 @@ var tests = [
  */
 var testBitTorrent = function() {
    var size = 1024 * 1024; // 1 meg
-   var file = new java.io.File("modules/jala/tests/1meg");
+   var file = new java.io.File(jala.Test.getTestFile("1meg"));
    var fos = new java.io.FileOutputStream(file, false);
    var channel = fos.getChannel();
    var iterations = 0;
@@ -56,7 +56,7 @@ var testBitTorrent = function() {
    file["delete"]();
 
    var torrentFile = torrent.getTorrentFile();
-   var refFile = new File("modules/jala/tests/1meg.reference.torrent");
+   var refFile = new helma.File(jala.Test.getTestFile("1meg.reference.torrent"));
    assertEqual(torrentFile.readAll().trim(), refFile.readAll().trim());
    torrentFile.remove();
    return;
