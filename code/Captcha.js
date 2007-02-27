@@ -32,12 +32,6 @@ if (!global.jala) {
    global.jala = {};
 }
 
-
-/**
- * Jala dependencies
- */
-app.addRepository("modules/jala/lib/jcaptcha-all-1.0-RC3.jar");
-
 /** 
  * Construct a new captcha.
  * @returns A new captcha.
@@ -50,6 +44,11 @@ app.addRepository("modules/jala/lib/jcaptcha-all-1.0-RC3.jar");
  * @constructor
  */
 jala.Captcha = function() {
+   /**
+    * Jala dependencies
+    */
+   app.addRepository("modules/jala/lib/jcaptcha-all-1.0-RC3.jar");
+
    var gimpy;
 
    try {
