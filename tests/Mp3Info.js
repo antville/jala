@@ -27,14 +27,15 @@
  * @final
  */
 var tests = [
-   "testMp3Info",
+   "testId3",
+   "testId3v2"
 ];
 
 /**
  * A simple test of jala.Mp3Info.
  */
-var testMp3Info = function() {
-   var fpath = jala.DIR + "/tests/test.mp3";
+var testId3 = function() {
+   var fpath = jala.Test.getTestFile("test.mp3") + "/";
    var mp3 = new jala.Mp3Info(fpath);
    assertEqual(mp3.artist, "jala.Mp3Info");
    assertEqual(mp3.title, "Test");
@@ -50,9 +51,12 @@ var testMp3Info = function() {
    assertEqual(mp3.size, 165640);
    assertEqual(mp3.frequency, 44100);
    assertTrue(mp3.getFile().equals(new java.io.File(fpath)));
-   
+   return;
+};
+
+var testId3v2 = function() {
    // MP3 files containing ID3v2 tags only are currently not supported
-   //mp3 = new jala.Mp3Info(jala.DIR + "/tests/test.id3v2.mp3");
-   //assertEqual(mp3.artist, "jala.Mp3Info");
+   var mp3 = jala.Test.getTestFile("test.id3v2.mp3") + "/";
+   assertEqual(mp3.artist, "jala.Mp3Info");
    return;
 };
