@@ -115,7 +115,8 @@ jala.Date.prototype.renderEditor = function(prefix, date, fmt) {
          opt = (param.offset + i).format("00");
          options[i] = [opt, opt];
       }
-      Html.dropDown({name: key}, options, param.selected, param.firstOption);
+      var html = new helma.Html();
+      html.dropDown({name: key}, options, param.selected, param.firstOption);
    }
 
    if (!fmt)
