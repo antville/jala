@@ -46,6 +46,14 @@ jala.I18n = function() {
    var messages = global.messages;
    
    /**
+    * The default method for retrieving the locale.
+    * @ignore
+    */
+   var localeGetter = function() {
+      return java.util.Locale.getDefault();
+   };
+   
+   /**
     * Overwrite the default object containing
     * the messages (ie. a vanilla EcmaScript object).
     * @param {Object} msgObject The object containing the messages
@@ -61,6 +69,28 @@ jala.I18n = function() {
     */
    this.getMessages = function() {
       return messages;
+   };
+   
+   /**
+    * Set the method for retrieving the locale.
+    * @param {Function} func The getter method
+    */
+   this.setLocaleGetter = function(func) {
+      if (func && func.constructor == Function) {
+         localeGetter = func;
+      } else {
+         throw Error("Getter method to retrieve locale must be a function");
+      }
+      return;
+   };
+   
+   /**
+    * Get the method for retrieving the locale.
+    * @returns The getter method
+    * @type Function
+    */
+   this.getLocaleGetter = function() {
+      return localeGetter;
    };
    
    return this;
@@ -126,8 +156,8 @@ jala.I18n.prototype.getLocale = function(localeId) {
 jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
    var translation = null;
    if (singularKey) {
-      // use either the locale defined in res.meta.locale or the jvm default
-      var locale = res.meta.locale || java.util.Locale.getDefault();
+      // use the getter method for retrieving the locale
+      var locale = this.getLocaleGetter()();
       var catalog, key;
       if ((catalog = jala.i18n.getCatalog(locale))) {
          if (arguments.length == 3 && amount != 1) { // is plural
@@ -203,8 +233,8 @@ jala.I18n.prototype.formatMessage = function(message, values) {
             }
          }
       }
-      // use either the locale defined in res.meta.locale or the jvm default
-      var locale = res.meta.locale || java.util.Locale.getDefault();
+      // use the getter method for retrieving the locale
+      var locale = this.getLocaleGetter()();
       // format the message
       try {
          var msgFormat = new java.text.MessageFormat(message, locale);
