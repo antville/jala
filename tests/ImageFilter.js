@@ -33,6 +33,23 @@ var tests = [
 ];
 
 /**
+ * Called after tests have finished. This method will be called
+ * regarless whether the test succeeded or failed.
+ */
+var cleanup = function() {
+   var tempDir = new helma.File(java.lang.System.getProperty("java.io.tmpdir"));
+   var names = ["sharpen", "unsharpMask", "gaussianBlur"];
+   var file;
+   for (var i=0; i<names.length; i++) {
+      file = new helma.File(tempDir, names[i] + ".temp.jpg");
+      if (file.exists()) {
+         file.remove();
+      }
+   }
+   return;
+};
+
+/**
  * Helper method to test jala.ImageFilter. The argument
  * specifies the desired method which will be applied to a
  * source image. Then, the result is compared with a corresponding
@@ -43,10 +60,11 @@ var tests = [
  */
 var testImageFilter = function(methodName) {
    var testsDir = jala.Test.getTestsDirectory() + "/";
-   var tempPath = testsDir + methodName + ".temp.jpg";
+   var tempDir = new helma.File(java.lang.System.getProperty("java.io.tmpdir"));
+   var tempPath = tempDir + "/" + methodName + ".temp.jpg";
 
    // Define source and reference images
-   var sourceImage = new jala.ImageFilter(testsDir + "/test.jpg");
+   var sourceImage = new jala.ImageFilter(testsDir + "test.jpg");
    var reference = new jala.ImageFilter(testsDir + methodName + ".reference.jpg");
 
    // Apply the image filter and save the result as file
@@ -65,9 +83,6 @@ var testImageFilter = function(methodName) {
    for (var i=0; i<imgBytes.length; i+=1) {
       assertEqual(imgBytes[i], refBytes[i]);
    }
-
-   // Remove the result image file
-   (new helma.File(tempPath)).remove();
    return;
 };
 
