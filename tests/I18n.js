@@ -53,6 +53,8 @@ var setup = function() {
    };
    // tell jala where to find the messages
    jala.i18n.setMessages(messages);
+   // assign a method for retrieving the locale for translation
+   jala.i18n.setLocaleGetter(new Function("return res.meta.locale;"));
    // set the locale to use by jala.i18n
    res.meta.locale = new java.util.Locale("de", "AT");
    return;
