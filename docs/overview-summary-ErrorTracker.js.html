@@ -1,0 +1,297 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala 1.0 Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="ErrorTracker.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala 1.0</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>ErrorTracker.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the ErrorTracker class.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.ErrorTracker.html">jala.ErrorTracker</a></b></td>
+    <td>Instances of this class can contain a generic error- and non-error
+ message and any number of error- and confirm messages which can be embedded
+ in a skin using either the message or error macro.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the ErrorTracker class.
+ */</span>
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * A generic (error-)message container
+ * <span class="attrib">@class</span> Instances of this class can contain a generic error- and non-error
+ * message and any number of error- and confirm messages which can be embedded
+ * in a skin using either the message or error macro.
+ * <span class="attrib">@constructor</span>
+ * <span class="attrib">@param</span> {String} a generic error message that can be rendered in a skin
+ *        using the error macro without any "name" attribute
+ * <span class="attrib">@returns</span> A newly created FormFeedback instance
+ * <span class="attrib">@type</span> ErrorTracker
+ */</span>
+jala.ErrorTracker = <span class="reserved">function</span>(mainErrorMessage) {
+
+   <span class="comment">/**
+    * Contains a generic error message that can be rendered in a skin
+    * using the error macro without any "name" attribute
+    * <span class="attrib">@type</span> String
+    */</span>
+   <span class="reserved">this</span>.mainErrorMessage = mainErrorMessage;
+
+   <span class="comment">/**
+    * A map containing error messages
+    */</span>
+   <span class="reserved">this</span>.errors = {};
+
+   <span class="comment">/**
+    * A flag indicating that this instance contains error messages
+    */</span>
+   <span class="reserved">this</span>.isError = false;
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+<span class="comment">/**
+ * Adds the message with the given name to the list of errors and
+ * sets the isError flag to true. If only one argument is given, it
+ * is interpreted as generic error message which can be rendered in
+ * a skin using the error macro without any "name" attibute, otherwise
+ * the message is stored with the given name argument as key.
+ * <span class="attrib">@param</span> {String} nameOrMessage Either the name of the error message
+ * or a generic error message to use
+ * <span class="attrib">@param</span> {message} message The message to store under the key passed as first
+ * argument
+ */</span>
+jala.ErrorTracker.<span class="reserved">prototype</span>.setError = <span class="reserved">function</span>(nameOrMessage <span class="comment">/** [, message] */</span>) {
+   <span class="reserved">if</span> (arguments.length == 2) {
+      <span class="reserved">this</span>.errors[nameOrMessage] = arguments[1];
+   } <span class="reserved">else</span> <span class="reserved">if</span> (nameOrMessage != null) {
+      <span class="reserved">this</span>.mainErrorMessage = nameOrMessage;
+   }
+   <span class="reserved">this</span>.isError = true;
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Returns the error message with the given name. If the macro doesn't
+ * contain a "name" attribute, the generic error message is returned,
+ * otherwise the error message stored under the given name is returned.
+ * If neither prefix nor suffix are set, the message is wrapped in a div-tag
+ * of class 'error'.
+ * <span class="attrib">@param</span> {String} param.name name of message
+ * <span class="attrib">@returns</span> A previously stored error message
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.ErrorTracker.<span class="reserved">prototype</span>.error_macro = <span class="reserved">function</span>(param) {
+   var str;
+   <span class="reserved">if</span> (!param.name &amp;&amp; <span class="reserved">this</span>.isError &amp;&amp; <span class="reserved">this</span>.mainErrorMessage) {
+      str = <span class="reserved">this</span>.mainErrorMessage;
+   } <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.errors[param.name]) {
+      str = <span class="reserved">this</span>.errors[param.name];
+   } <span class="reserved">else</span> {
+      <span class="reserved">return</span> null;
+   }
+   <span class="reserved">return</span> (!param.prefix &amp;&amp; !param.suffix) ? <span class="literal">'&lt;div class="error"&gt;'</span> + str + <span class="literal">'&lt;/div&gt;'</span> : str;
+};
+
+
+
+<span class="comment">/**
+ * Dumps the content of this tracker using res.debug
+ */</span>
+jala.ErrorTracker.<span class="reserved">prototype</span>.debug = <span class="reserved">function</span>() {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.mainErrorMessage) {
+      res.debug(<span class="reserved">this</span>.mainErrorMessage);
+   }
+   <span class="reserved">for</span> (var key in <span class="reserved">this</span>.errors) {
+      res.debug(key + <span class="literal">" = "</span> + <span class="reserved">this</span>.errors[key]);
+   }
+};
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala 1.0</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:40:28 2007</div>
+</body>
+</html>

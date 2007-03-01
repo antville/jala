@@ -1,0 +1,886 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala 1.0 Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="Form.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala 1.0</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>Form.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the Form class.
+ This library depends on ErrorTracker.js.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.html">jala.Form</a></b></td>
+    <td>A class that renders and parses forms
+ </td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the Form class.
+ * This library depends on ErrorTracker.js.
+ */</span>
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * Jala dependencies
+ */</span>
+app.addRepository(<span class="literal">"modules/jala/code/ErrorTracker.js"</span>);
+
+<span class="comment">/**
+  * <span class="attrib">@class</span> A class that renders and parses forms
+  * <span class="attrib">@param</span> {Object} config An object tree holding the layout of the form.
+  * <span class="attrib">@param</span> {Object} srcObj The object which is being edited by this form.
+  *    For a commented example see at the end of this file
+  * <span class="attrib">@constructor</span>
+  */</span>
+jala.Form = <span class="reserved">function</span>(config, srcObj) {
+   <span class="reserved">if</span> (!config) {
+      throw <span class="literal">"Form created without config object."</span>;
+   }
+   <span class="reserved">if</span> (!config.name) {
+      throw <span class="literal">"Form created without config.name property."</span>;
+   }
+   <span class="reserved">if</span> (!config.elements) {
+      throw <span class="literal">"Form created without config.elements Array."</span>;
+   }
+
+   <span class="comment">// Default message processor. Use setMessageProcessor</span>
+   <span class="comment">// to override it (eg. to use gettext() instead)</span>
+   var messageProcessor = <span class="reserved">function</span>(msg) {
+      <span class="reserved">return</span> msg;
+   }
+   <span class="comment">// keeps track of error messages</span>
+   var tracker = new jala.ErrorTracker(config.mainErrorMessage);
+
+   <span class="comment">// Use a plain JS object if no source object is given</span>
+   <span class="reserved">if</span> (!srcObj) {
+      srcObj = {};
+   }
+
+   <span class="comment">/**
+    * Sets the message processor to the function passed as argument.
+    * <span class="attrib">@param</span> {Function} functionObj The message processor function. It is
+    * expected to accept a single argument (the message to process) and
+    * to return the processed message.
+    */</span>
+   <span class="reserved">this</span>.setMessageProcessor = <span class="reserved">function</span>(functionObj) {
+      messageProcessor = functionObj;
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Process the message passed as argument by calling
+    * the message processor. All arguments to this method
+    * are directly passed to the message processor.
+    * <span class="attrib">@param</span> {String} msg The message to process
+    * <span class="attrib">@returns</span> The processed message
+    * <span class="attrib">@type</span> String
+    */</span>
+   <span class="reserved">this</span>.processMessage = <span class="reserved">function</span>(msg <span class="comment">/**[, arg][, arg][...] */</span>) {
+      <span class="reserved">return</span> messageProcessor.apply(null, arguments);
+   };
+
+   <span class="comment">/**
+    * Returns the config of this Form instance.
+    * <span class="attrib">@returns</span> The config of this Form instance.
+    * <span class="attrib">@type</span> Object
+    */</span>
+   <span class="reserved">this</span>.getConfig = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> config;
+   };
+
+   <span class="comment">/**
+    * Returns the tracker associated with this Form instance.
+    * <span class="attrib">@returns</span> The tracker of this Form instance.
+    * <span class="attrib">@type</span> jala.ErrorTracker
+    */</span>
+   <span class="reserved">this</span>.getTracker = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> tracker;
+   };
+
+   <span class="comment">/**
+    * Returns the source object containing the values used
+    * for rendering the form.
+    * <span class="attrib">@returns</span> The source object of this Form instance
+    */</span>
+   <span class="reserved">this</span>.getSource = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> srcObj || {};
+   };
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+}
+
+<span class="comment">/**
+ * Renders this form directly to response.
+ * <span class="attrib">@param</span> {Object} param An optional parameter object containing macro attributes
+ */</span>
+jala.Form.<span class="reserved">prototype</span>.render = <span class="reserved">function</span>(param) {
+   var tracker = <span class="reserved">this</span>.getTracker();
+   var config = <span class="reserved">this</span>.getConfig();
+   var srcObj = <span class="reserved">this</span>.getSource();
+
+   <span class="comment">// open the form tag</span>
+   Html.openTag(<span class="literal">"form"</span>, {
+      id     : config.name,
+      name   : config.name,
+      <span class="literal">"class"</span>: <span class="literal">"form"</span>,
+      action : req.action,
+      method : <span class="literal">"post"</span>
+   });
+
+   <span class="reserved">if</span> (tracker &amp;&amp; tracker.isError &amp;&amp; tracker.mainErrorMessage) {
+      Html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(tracker.mainErrorMessage),
+                   {id: <span class="reserved">this</span>.createDomId(<span class="literal">"error"</span>), <span class="literal">"class"</span>: <span class="literal">"form_error"</span>});
+   }
+
+   Html.openTag(<span class="literal">"fieldset"</span>);
+   <span class="reserved">if</span> (config.title != null) {
+      Html.element(<span class="literal">"legend"</span>, <span class="reserved">this</span>.processMessage(config.title));
+   }
+
+   var configEl;
+   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
+      configEl = config.elements[i];
+
+      var className = (configEl.required == true) ? <span class="literal">"required"</span> : <span class="literal">"optional"</span>;
+      <span class="reserved">if</span> (configEl.className) {
+         className += <span class="literal">" "</span> + configEl.className;
+      }
+      Html.openTag(<span class="literal">"div"</span>, {id: config.name + <span class="literal">"_row_"</span> + configEl.name, <span class="literal">"class"</span>: <span class="literal">"row "</span> + className});
+
+      <span class="reserved">if</span> (configEl.skin != null) {
+         <span class="comment">// render the skin specified in the context of the srcObj</span>
+         srcObj.renderSkin(configEl.skin);
+
+      } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.text != null) {
+         <span class="comment">// element contains only a text, so create a skin based on it and render</span>
+         Html.element(<span class="literal">"label"</span>, null);
+         Html.element(<span class="literal">"div"</span>, renderSkinAsString(createSkin(configEl.text)), <span class="reserved">this</span>.createElementAttributes(configEl));
+
+      } <span class="reserved">else</span> {
+         <span class="comment">// render the form element</span>
+         <span class="reserved">if</span> (tracker &amp;&amp; tracker.errors[configEl.name]) {
+            Html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(tracker.errors[configEl.name]),
+                         {id: <span class="reserved">this</span>.createDomId(<span class="literal">"error"</span>, configEl.name),
+                          <span class="literal">"class"</span>: <span class="literal">"error"</span>});
+         }
+
+         Html.element(<span class="literal">"label"</span>, <span class="reserved">this</span>.processMessage(configEl.label || <span class="literal">""</span>),
+                      {id: <span class="reserved">this</span>.createDomId(<span class="literal">"label"</span>, configEl.name),
+                       <span class="literal">"for"</span>: <span class="reserved">this</span>.createDomId(configEl.name)});
+   
+         Html.openTag(<span class="literal">"div"</span>, {<span class="literal">"class"</span>:<span class="literal">"element"</span>});
+
+         <span class="comment">// use either a submitted form value or the value of the</span>
+         <span class="comment">// source object in the form element</span>
+         var val;
+         <span class="reserved">if</span> (req.data[configEl.name] != null) {
+            <span class="comment">// value from failed form submit</span>
+            val = req.data[configEl.name];
+         } <span class="reserved">else</span> <span class="reserved">if</span> (typeof(configEl.src) == <span class="literal">"string"</span>) {
+            <span class="reserved">if</span> (resolved = Form.getProperty(srcObj, configEl.src)) {
+               val = resolved.value;
+            };
+         } <span class="reserved">else</span> {
+            <span class="comment">// no getter defined, so search for a primitive property</span>
+            <span class="comment">// of the source object</span>
+            val = Form.getProperty(srcObj, configEl.getter, configEl.name);
+         }
+   
+         <span class="comment">// render the form element itself</span>
+         var attr = <span class="reserved">this</span>.createElementAttributes(configEl);
+         var options;
+         switch (configEl.type) {
+            case <span class="literal">"select"</span>:
+            case <span class="literal">"dropdown"</span>:
+               <span class="comment">// Drop down select box</span>
+               Html.dropDown(attr, <span class="reserved">this</span>.getOptions(configEl), val, <span class="reserved">this</span>.processMessage(configEl.firstOption));
+               break;
+   
+            case <span class="literal">"radio"</span>:
+               <span class="comment">// A (set of) radio buttons</span>
+               var options = <span class="reserved">this</span>.getOptions(configEl);
+               var optionAttr;
+               <span class="reserved">for</span> (var j=0; j&lt;options.length; j++) {
+                  optionAttr = attr.clone({}, false);
+                  optionAttr.id += <span class="literal">"_"</span> + j;
+                  optionAttr.value = options[j].value;
+                  <span class="reserved">if</span> (String(val) == String(options[j].value)) {
+                     optionAttr.checked = <span class="literal">"checked"</span>;
+                  }
+                  Html.radioButton(optionAttr);
+                  res.write(<span class="reserved">this</span>.processMessage(options[j].display));
+                  Html.tag(<span class="literal">"br"</span>);
+               }
+               break;
+   
+            case <span class="literal">"checkbox"</span>:
+               <span class="comment">// Checkbox</span>
+               <span class="reserved">if</span> (val == configEl.checked || req.data[configEl.name] == <span class="literal">"1"</span>) {
+                  attr.checked = <span class="literal">"checked"</span>;
+               }
+               attr.value = <span class="literal">"1"</span>;
+               Html.checkBox(attr);
+               break;
+   
+            case <span class="literal">"textarea"</span>:
+               <span class="comment">// Textarea</span>
+               attr.value = val;
+               delete attr.maxlength;
+               Html.textArea(attr);
+               break;
+   
+            case <span class="literal">"password"</span>:
+               <span class="comment">// Password input field</span>
+               attr.value = val;
+               Html.password(attr);
+               break;
+   
+            default:
+               <span class="comment">// Text input field</span>
+               attr.value = val;
+               Html.input(attr);
+               break;
+         }
+   
+         <span class="reserved">if</span> (configEl.help) {
+            Html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(configEl.help),
+                         {id: <span class="reserved">this</span>.createDomId(<span class="literal">"help"</span>, configEl.name),
+                          <span class="literal">"class"</span>: <span class="literal">"help"</span>});
+            res.write(<span class="literal">"\n"</span>);
+         }
+   
+         Html.closeTag(<span class="literal">"div"</span>);
+      }
+      Html.closeTag(<span class="literal">"div"</span>);
+      res.write(<span class="literal">"\n\n"</span>);
+   }
+   Html.openTag(<span class="literal">"div"</span>);
+   Html.element(<span class="literal">"label"</span>, <span class="literal">""</span>, {id: <span class="reserved">this</span>.createDomId(<span class="literal">"label"</span>, <span class="literal">"submit"</span>)});
+   Html.submit({id: <span class="reserved">this</span>.createDomId(<span class="literal">"submit"</span>),
+                name: <span class="reserved">this</span>.createDomId(<span class="literal">"submit"</span>),
+                <span class="literal">"class"</span>: <span class="literal">"submit"</span>,
+                <span class="literal">"value"</span>: <span class="reserved">this</span>.processMessage(config.submit || <span class="literal">"Submit"</span>)});
+   Html.closeTag(<span class="literal">"div"</span>);
+   Html.closeTag(<span class="literal">"fieldset"</span>);
+   Html.closeTag(<span class="literal">"form"</span>);
+};
+
+<span class="comment">/**
+ * renders the form as a string
+ * <span class="attrib">@returns</span> rendered form
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Form.<span class="reserved">prototype</span>.renderAsString = <span class="reserved">function</span>(param) {
+   res.push();
+   <span class="reserved">this</span>.render(param);
+   <span class="reserved">return</span> res.pop();
+};
+
+<span class="comment">/**
+ * Creates a DOM identifier based on the arguments passed. The
+ * resulting Id will be prefixed with the name of the form config,
+ * and all arguments will be separated by an underscore.
+ * <span class="attrib">@returns</span> The DOM Id
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Form.<span class="reserved">prototype</span>.createDomId = <span class="reserved">function</span>(<span class="comment">/* [part1][, part2][, ...] */</span>) {
+   res.push();
+   res.write(<span class="reserved">this</span>.getConfig().name);
+   <span class="reserved">for</span> (var i=0;i&lt;arguments.length;i++) {
+      <span class="reserved">if</span> (arguments[i]) {
+         <span class="reserved">if</span> (i &lt; arguments.length) {
+            res.write(<span class="literal">"_"</span>);
+         }
+         res.write(arguments[i]);
+      }
+   }
+   <span class="reserved">return</span> res.pop();
+};
+
+<span class="comment">/**
+ * Creates a CSS class string based on the configuration element
+ * passed as argument.
+ * <span class="attrib">@param</span> {Object} configEl The configuration element
+ * <span class="attrib">@returns</span> The CSS class string for this element
+ */</span>
+jala.Form.<span class="reserved">prototype</span>.createElementAttributes = <span class="reserved">function</span>(configEl) {
+   var attr = configEl.clone({}, false);
+   attr.id = <span class="reserved">this</span>.createDomId(configEl.name);
+   attr[<span class="literal">"class"</span>] = (configEl.type || <span class="literal">"text"</span>);
+   <span class="reserved">if</span> (configEl.className) {
+      attr[<span class="literal">"class"</span>] += <span class="literal">" "</span> + configEl.className;
+   }
+   attr[<span class="literal">"name"</span>] = configEl.name;
+   delete attr.getter;
+   delete attr.setter;
+   delete attr.validate;
+   delete attr.options;
+   delete attr.firstOption;
+   delete attr.label;
+   delete attr.required;
+   delete attr.className;
+   delete attr.type;
+   delete attr.text;
+   delete attr.skin;
+   delete attr.minlength;
+   delete attr.help;
+   <span class="reserved">return</span> attr;
+};
+
+<span class="comment">/**
+  * create an array of options for a dropdown element or a
+  * group of radiobuttons.
+  * configEl.options is returned if that value is an Array.
+  * If it's a Function, its return value is returned.
+  * <span class="attrib">@param</span> {Object} configEl a node from the config
+  * <span class="attrib">@returns</span> array of options
+  * <span class="attrib">@type</span> Array
+  */</span>
+jala.Form.<span class="reserved">prototype</span>.getOptions = <span class="reserved">function</span>(configEl) {
+   <span class="reserved">if</span> (!configEl || !configEl.options) {
+      <span class="reserved">return</span> [];
+   }
+   <span class="reserved">if</span> (configEl.options instanceof Array) {
+      <span class="reserved">return</span> configEl.options;
+   }
+   <span class="reserved">if</span> (configEl.options instanceof Function) {
+      <span class="reserved">return</span> configEl.options.call(<span class="reserved">this</span>.getSource());
+   }
+   <span class="reserved">return</span> [];
+};
+
+<span class="comment">/**
+ * Retrieves a property from the object passed as argument. If a
+ * path is given, this method follows the path down to the destination
+ * property, which can either be a function or a primitive property.
+ * For the former the method is called and the name argument is passed
+ * to it, and the result value of this method is returned. For the former
+ * this method directly returns the value of the primitive property.
+ * <span class="attrib">@param</span> {Object} obj The object to start with in case a path is given,
+ * or the object whose property "name" should be returned
+ * <span class="attrib">@param</span> {String} path A dot-delimited path to the destination property
+ * <span class="attrib">@param</span> {String} name The name of the property to retrieve. In case the
+ * path is given, and it leads to a getter-function, it is passed to this
+ * method as the single argument.
+ * <span class="attrib">@returns</span> The value of the property
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Form.getProperty = <span class="reserved">function</span>(obj, path, name) {
+   var result = null;
+   <span class="reserved">if</span> (path != null) {
+      var arr = path.split(<span class="literal">"."</span>);
+      var propName = arr.pop();
+      <span class="reserved">if</span> ((obj = Form.followPath(obj, arr)) != null) {
+         <span class="reserved">if</span> (obj[propName] != null &amp;&amp; obj[propName] instanceof Function) {
+            result = obj[propName](name);
+         } <span class="reserved">else</span> {
+            result = obj[propName];
+         }
+      }
+   } <span class="reserved">else</span> {
+      result = obj[name];
+   }
+   <span class="reserved">return</span> result;
+};
+
+<span class="comment">/**
+ * Sets a property of the object passed as argument to the given value.
+ * <span class="attrib">@param</span> {Object} obj The object to start with in case a path is given,
+ * or the object whose property "name" should be returned
+ * <span class="attrib">@param</span> {String} path A dot-delimited path to the destination property
+ * <span class="attrib">@param</span> {String} name The name of the property to retrieve. In case the
+ * path is given, and it leads to a setter-function, it is passed to this
+ * method as the first argument.
+ * <span class="attrib">@param</span> {Object} value The value to set the property to
+ * <span class="attrib">@returns</span> True in case the update was successful, false otherwise.
+ * <span class="attrib">@type</span> Boolean
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Form.setProperty = <span class="reserved">function</span>(obj, path, name, value) {
+   <span class="comment">// app.logger.debug("Form.setProperty(): obj: " + obj + ", path: " + path + ", name: " + name);</span>
+   <span class="comment">// use null value if value is an empty string</span>
+   <span class="reserved">if</span> (value === <span class="literal">""</span>) {
+      value = null;
+   }
+   <span class="reserved">if</span> (path != null) {
+      var arr = path.split(<span class="literal">"."</span>);
+      var propName = arr.pop();
+      <span class="reserved">if</span> ((obj = Form.followPath(obj, arr)) != null) {
+         <span class="reserved">if</span> (obj[propName] != null &amp;&amp; obj[propName] instanceof Function) {
+            obj[propName](name, value);
+         } <span class="reserved">else</span> {
+            obj[propName] = value;
+         }
+      } <span class="reserved">else</span> {
+         <span class="reserved">return</span> false;
+      }
+   } <span class="reserved">else</span> {
+      obj[name] = value;
+   }
+   <span class="reserved">return</span> true;
+};
+
+<span class="comment">/**
+ * Helper method that follows a path array down, starting at the object
+ * passed as argument.
+ * <span class="attrib">@param</span> {Object} obj The object to start at
+ * <span class="attrib">@param</span> {Array} pathArr The array containing path elements to follow
+ * <span class="attrib">@returns</span> The last object in the path, or null
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Form.followPath = <span class="reserved">function</span>(obj, pathArr) {
+   <span class="reserved">for</span> (var i=0;i&lt;pathArr.length;i++) {
+      <span class="reserved">if</span> ((obj = obj[pathArr[i]]) == null) {
+         break;
+      }
+   }
+   <span class="reserved">return</span> obj;
+};
+
+<span class="comment">/**
+ * parses form input, applies check functions and stores the values
+ * <span class="attrib">@param</span> {Object} reqData input from form
+ * <span class="attrib">@returns</span> false if one of the checks failed,
+ *          true if the element was saved correctly
+ */</span>
+jala.Form.<span class="reserved">prototype</span>.handle = <span class="reserved">function</span>(reqData, storeObj) {
+   <span class="comment">/**
+    * Returns a specific message for a config element.
+    * <span class="attrib">@param</span> {Object} configEl The config object containing a single element's metadata
+    * <span class="attrib">@param</span> {String} key The key of message (e.g. "missing", "toolong", "tooshort").
+    * <span class="attrib">@param</span> {String} defaultMsg the message to use when no message was defined 
+    *        in the config.
+    * <span class="attrib">@returns</span> message
+    * <span class="attrib">@type</span> String
+    * <span class="attrib">@private</span>
+    */</span>
+   var getMessage = <span class="reserved">function</span>(configEl, key, defaultMsg) {
+      <span class="reserved">if</span> (configEl &amp;&amp; configEl.messages &amp;&amp; configEl.messages[key]) {
+         <span class="reserved">return</span> configEl.messages[key];
+      } <span class="reserved">else</span> {
+         <span class="reserved">return</span> defaultMsg;
+      }
+   };
+   
+   <span class="reserved">if</span> (arguments.length != 2) {
+      throw Error(<span class="literal">"Form.handle() called with insufficient arguments"</span>);
+   }
+
+   var config = <span class="reserved">this</span>.getConfig();
+   var tracker = <span class="reserved">this</span>.getTracker();
+   var formValues = {};
+
+   <span class="comment">// validate form elements</span>
+   var configEl;
+   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
+      configEl = config.elements[i];
+
+      <span class="comment">// check required, max and min length:</span>
+      <span class="reserved">if</span> (configEl.required &amp;&amp; (reqData[configEl.name] == null || reqData[configEl.name].trim() == <span class="literal">""</span>)) {
+         tracker.setError(configEl.name,
+                       <span class="reserved">this</span>.processMessage(getMessage(configEl, <span class="literal">"missing"</span>, <span class="literal">"Bitte füll dieses Textfeld aus."</span>)));
+      } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.maxlength &amp;&amp; reqData[configEl.name].length &gt; configEl.maxlength) {
+         tracker.setError(configEl.name, 
+                       <span class="reserved">this</span>.processMessage(getMessage(configEl, <span class="literal">"tooLong"</span>, <span class="literal">"Die Eingabe in diesem Textfeld ist zu lang ({0} Zeichen). Bitte gib höchstens {1} Zeichen ein."</span>),
+                                    reqData[configEl.name].length, configEl.maxlength));
+      } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.minlength) {
+         <span class="comment">// set an error if the element is required but the input is too short</span>
+         <span class="comment">// but don't throw an error if the element is optional and empty</span>
+         <span class="reserved">if</span> (reqData[configEl.name].length &lt; configEl.minlength &amp;&amp;
+             (configEl.required || (!configEl.required &amp;&amp; reqData[configEl.name].length &gt; 0))) {
+            tracker.setError(configEl.name,
+                  <span class="reserved">this</span>.processMessage(getMessage(configEl, <span class="literal">"tooShort"</span>, <span class="literal">"Die Eingabe in diesem Textfeld ist zu kurz ({0} Zeichen). Bitte gib mindestens {1} Zeichen ein."</span>),
+                  reqData[configEl.name].length, configEl.minlength)
+            );
+         }
+      }
+
+      <span class="comment">// for checkboxes, only 1 and empty are allowed</span>
+      <span class="reserved">if</span> (configEl.type == <span class="literal">"checkbox"</span> &amp;&amp; reqData[configEl.name] &amp;&amp; reqData[configEl.name] != <span class="literal">"1"</span>) {
+         tracker.setError(configEl.name, <span class="reserved">this</span>.processMessage(<span class="literal">"Bitte wähle einen gültigen Wert aus."</span>));
+      }
+
+      <span class="comment">// if option group, check that value is within options</span>
+      <span class="reserved">if</span> (configEl.options) {
+         var options = <span class="reserved">this</span>.getOptions(configEl);
+         var found = false;
+         <span class="reserved">for</span> (var j=0; j&lt;options.length; j++) {
+            <span class="reserved">if</span> ( (options[j].length &gt; 0 &amp;&amp; options[j][0] == reqData[configEl.name]) ||
+                 (!options[j].length &amp;&amp; options[j].value == reqData[configEl.name]) ||
+                 (options[j] == reqData[configEl.name]) ) {
+               found = true;
+               break;
+            }
+         }
+         <span class="reserved">if</span> (!found) {
+            tracker.setError(configEl.name, <span class="reserved">this</span>.processMessage(<span class="literal">"Bitte wähle einen gültigen Wert aus."</span>));
+         }
+      }
+      <span class="comment">// run custom validation functions</span>
+      <span class="reserved">if</span> (!tracker.errors[configEl.name] &amp;&amp; configEl.validate) {
+         <span class="reserved">if</span> (configEl.validate instanceof Function) {
+            configEl.validate(configEl.name, reqData[configEl.name], tracker, reqData, <span class="reserved">this</span>);
+         } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.validate instanceof Array) {
+            <span class="reserved">for</span> (var j=0; j&lt;configEl.validate.length; j++) {
+               configEl.validate[j](configEl.name, reqData[configEl.name], tracker, reqData, <span class="reserved">this</span>);
+            }
+         }
+      }
+      <span class="comment">// store the form value in the data object</span>
+      formValues[configEl.name] = reqData[configEl.name];
+   }
+
+   <span class="reserved">if</span> (tracker.isError) {
+      <span class="reserved">return</span> false;
+   }
+
+   <span class="comment">// call a possible beforeSave-function:</span>
+   <span class="reserved">if</span> (config.beforeSave != null &amp;&amp; storeObj[config.beforeSave] != null &amp;&amp;
+             storeObj[config.beforeSave] instanceof Function) {
+      <span class="comment">// return with false if the beforeSave method returns false</span>
+      <span class="reserved">if</span> (storeObj[config.beforeSave](formValues) == false) {
+         tracker.setError(<span class="reserved">this</span>.processMessage(<span class="literal">"Ein unvorhergesehenes Problem ist aufgetreten. Bitte zu einem späteren Zeitpunkt wieder versuchen. "</span>));
+         <span class="reserved">return</span> false;
+      }
+   }
+   <span class="comment">// store values in the storeObj</span>
+   var resolved;
+   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
+      configEl = config.elements[i];
+      var val = formValues[configEl.name];
+      <span class="comment">// translate checkbox values:</span>
+      <span class="reserved">if</span> (configEl.type == <span class="literal">"checkbox"</span>) {
+         <span class="reserved">if</span> (val == <span class="literal">"1"</span>) {
+            val = configEl.checked != null ? configEl.checked : 1;
+         } <span class="reserved">else</span> {
+            val = configEl.unchecked != null ? configEl.unchecked : 0;
+         }
+      }
+      <span class="reserved">if</span> (configEl.setter !== null) {
+         Form.setProperty(storeObj, configEl.setter, configEl.name, val);
+      }
+   }
+   <span class="reserved">return</span> true;
+};
+
+<span class="comment">/**
+  * macro to render the form
+  */</span>
+jala.Form.<span class="reserved">prototype</span>.form_macro = <span class="reserved">function</span>(param) {
+   <span class="reserved">this</span>.render(param);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+  * static helper function to test values for being a valid email address.
+  * <span class="attrib">@param</span> {String} name name of the property being validated.
+  * <span class="attrib">@param</span> {String} value value in form input
+  * <span class="attrib">@param</span> {jala.ErrorTracker} tracker object holding error messages
+  * <span class="attrib">@param</span> {Object} reqData the whole request-data-object,
+           in case properties depend on each other
+  */</span>
+jala.Form.isEmail = <span class="reserved">function</span>(name, value, tracker, reqData) {
+   <span class="reserved">if</span> (!value.isEmail()) {
+      tracker.setError(name, gettext(<span class="literal">"Bitte gib eine gültige E-Mail-Adresse in das Textfeld ein."</span>));
+   }
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+  * static helper function to test values for being a valid url.
+  * <span class="attrib">@param</span> {String} name name of the property being validated.
+  * <span class="attrib">@param</span> {String} value value in form input
+  * <span class="attrib">@param</span> {jala.ErrorTracker} tracker object holding error messages
+  * <span class="attrib">@param</span> {Object} reqData the whole request-data-object,
+           in case properties depend on each other
+  */</span>
+jala.Form.isUrl = <span class="reserved">function</span>(name, value, tracker, reqData) {
+   <span class="reserved">if</span> (value &amp;&amp; !helma.Http.evalUrl(value)) {
+      tracker.setError(name, gettext(<span class="literal">"Bitte gib eine gültige URL (Web-Adresse) in das Textfeld ein."</span>));
+   }
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ 
+    Prototype.FORM_NAME = {
+
+      name:"login",                 // name of the form (required)
+      text: "message text"          // if set the message text will be rendered as skin (therefor it can contain macros)
+      skin: "skinName"              // render an external skin at this position of the form (the skin must be located in
+                                    // the srcObj prototype passed to the Form constructor!)
+      title: "Einloggen",           // title of the form, printed as &lt;legend&gt;&lt;/legend&gt;
+      submit: "Einloggen",          // caption of the submit button
+      mainErrorMessage: "An error", // (optional) message printed above form in case of error
+      beforeSave: "functionName",   // (optional) the name of the message to call before values are saved
+
+      elements:[                    // array holding config for all the form elements
+
+         {  name:"username",        // name of the form element
+            type:"text",            // type of the element: text (default), textarea, password,
+                                    //    radio, checkbox, dropdown
+            label:"Nick",           // caption of the element
+            size:20,                // size of input elements
+            maxlength: 100,         // max allowed length
+            minlength: 4,           // min allowed length
+            className:"nickclass",  // optional classnames added to element
+            required:true,          // if true, element has to be filled in (default false)
+                                    //    this is reflected in class definition
+            validate:[Form.isUrl],  // function or array of functions called
+                                    //    to specifically validate contents,
+                                    //    function has four arguments:
+                                    //       * name of the current element
+                                    //       * value of the current element
+                                    //       * errortracker object
+                                    //       * reqData - the input from the form
+            getter:"user.name",     // lets you specify the name of a function or property where the value
+                                    // to display in the form element should be retrieved. the name can
+                                    // contain dots, in which case Form will follow the object path down
+                                    // to the desired property/function. if a function is specified, the
+                                    // single argument passed to it is the name of the form element
+                                    // if omitted, the value of the primitive property at the data object
+                                    // with the name of the form element is used.
+            setter:"user.name",     // lets you specify the name of a function or property where the value
+                                    // of the form should be saved. the name can
+                                    // contain dots, in which case Form will follow the object path down
+                                    // to the desired property/function. if a function is specified, the
+                                    // name of the form element and the submitted value are passed to it.
+                                    // if omitted, the value of the primitive property at the data object
+                                    // with the name of the form element is used. if set explicitly to null
+                                    // the value of the form is *not* saved (in this case you might want to
+                                    // handle it in a "beforeSave" method
+            options: [...],         // for radio and dropdown, option-arrays are needed. the format is either:
+                                    //    an array of objects {value:XX, display: YY}
+                                    //    an array of arrays (1st element value, 2nd element display)
+                                    //    or
+                                    //    an array of strings (value and display)
+            firstOption:" choooose" // caption of dropdown in case nothing is selected
+            messages: {             // An object containing messages used in specific situations
+               "missing":  msg      // A message displayed if the value is missing
+               "tooLong":  msg      // A message used if the submitted value is too long
+               "tooShort": msg      // A message used if the submitted value is too short
+            }
+         },
+      ]
+   };
+ 
+ 
+ 
+   the render function renders html-code like this:
+   
+
+   &lt;form id="FORMNAME"&gt;
+      &lt;legend&gt;formtitle&lt;/legend&gt;
+      &lt;div id="FORMNAME_error" class="form_error"&gt;eventuelle allgemeine fehlermeldung&lt;/div&gt;
+   
+      &lt;fieldset&gt;
+   
+         &lt;div id="FORMNAME_row_ELEMENTNAME" class="row optional|required CLASS_FROM_CONFIG"&gt;
+            &lt;div id="FORMNAME_error_ELEMENTNAME" class="error"&gt;errormsg&lt;/div&gt;
+            &lt;label id="FORMNAME_label_ELEMENTNAME" for="FORMNAME_ELEMENTNAME"&gt;desc&lt;/LABEL&gt;
+            &lt;div class="element"&gt;
+               &lt;input class="text|dropdown|etc CLASS_FROM_CONFIG" id="FORMNAME_ELEMENTNAME"&gt;
+               &lt;div id="FORMNAME_help_ELEMENTNAME" class="help"&gt;helpmsg&lt;/div&gt;
+            &lt;/div&gt;
+         &lt;/div&gt;
+   
+         (... repeat for all form elements ...)
+   
+         &lt;div&gt;
+            &lt;label&gt;&lt;/label&gt;
+            &lt;input type="submit" id="FORMNAME_submit" name="FORMNAME_submit" class="submit" /&gt;
+         &lt;/div&gt;
+   
+      &lt;/fieldset&gt;
+&lt;/form&gt;
+
+
+**/</span>
+ </pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala 1.0</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:40:28 2007</div>
+</body>
+</html>
