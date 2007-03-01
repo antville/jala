@@ -145,7 +145,6 @@ function asd() {
  * HelmaLib dependencies
  */</span>
 app.addRepository(<span class="literal">"modules/core/Number.js"</span>);
-app.addRepository(<span class="literal">"modules/core/String.js"</span>);
 
 <span class="comment">/**
  * Construct a utility object.
@@ -351,108 +350,6 @@ jala.Utilities.<span class="reserved">prototype</span>.patchObject = <span class
    }
    <span class="reserved">return</span> obj;
 };
-
-<span class="comment">/**
- * Returns the object passed as argument as formatted JSOn compatible
- * literal string.
- * <span class="attrib">@param</span> {Object} obj The object to convert into a literal string
- * <span class="attrib">@returns</span> The literal string
- */</span>
-jala.Utilities.<span class="reserved">prototype</span>.toLiteral = <span class="reserved">function</span>(obj) {
-
-   var pad = <span class="reserved">function</span>(str) {
-      <span class="reserved">return</span> <span class="literal">"&amp;nbsp;"</span>.repeat((lvl) * 3) + str;
-   };
-
-   var printString = <span class="reserved">function</span>(str) {
-      <span class="reserved">return</span> <span class="literal">'"'</span> + encode(str) + <span class="literal">'"'</span>;
-   };
-
-   var printInteger = <span class="reserved">function</span>(nr) {
-      <span class="reserved">return</span> nr.toString();
-   };
-
-   var printBoolean = <span class="reserved">function</span>(bool) {
-      <span class="reserved">return</span> bool.toString();
-   };
-
-   var printUndefined = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> <span class="literal">"undefined"</span>;
-   };
-   
-   var printNull = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> <span class="literal">"null"</span>;
-   };
-   
-   var printDate = <span class="reserved">function</span>(date) {
-      <span class="reserved">return</span> date.toString();
-   };
-
-   var printArray = <span class="reserved">function</span>(arr) {
-      var buf = new java.lang.StringBuffer();
-      buf.append(<span class="literal">"["</span>);
-      lvl += 1;
-      <span class="reserved">for</span> (var i=0;i&lt;arr.length;i++) {
-         <span class="reserved">if</span> (i &gt; 0) {
-            buf.append(<span class="literal">","</span>);
-         }
-         buf.append(<span class="literal">"\n"</span>);
-         buf.append(pad(printValue(arr[i])));
-      }
-      lvl -= 1;
-      buf.append(<span class="literal">"\n"</span>);
-      buf.append(pad(<span class="literal">"]"</span>));
-      <span class="reserved">return</span> buf.toString();
-   };
-
-   var printObject = <span class="reserved">function</span>(obj) {
-      var buf = new java.lang.StringBuffer();
-      buf.append(<span class="literal">"{"</span>);
-      lvl += 1;
-      var first = true;
-      <span class="reserved">for</span> (var i in obj) {
-         <span class="reserved">if</span> (first) {
-            first = !first;
-         } <span class="reserved">else</span> {
-            buf.append(<span class="literal">","</span>);
-         }
-         buf.append(<span class="literal">"\n"</span>);
-         buf.append(pad(printString(i) + <span class="literal">": "</span>));
-         buf.append(printValue(obj[i]));
-      }
-      lvl -= 1;
-      buf.append(<span class="literal">"\n"</span>);
-      buf.append(pad(<span class="literal">"}"</span>));
-      <span class="reserved">return</span> buf.toString();
-   };
-   
-   var printValue = <span class="reserved">function</span>(val) {
-      <span class="reserved">if</span> (isArray(val)) {
-         <span class="reserved">return</span> printArray(val);
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isDate(val)) {
-         <span class="reserved">return</span> printDate(val);
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isString(val)) {
-         <span class="reserved">return</span> printString(val);
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isNumber(val)) {
-         <span class="reserved">return</span> printInteger(val);
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isBoolean(val)) {
-         <span class="reserved">return</span> printBoolean(val);
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isNull(val)) {
-         <span class="reserved">return</span> printNull();
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isUndefined(val)) {
-         <span class="reserved">return</span> printUndefined();
-      } <span class="reserved">else</span> <span class="reserved">if</span> (isObject(val)) {
-         <span class="reserved">return</span> printObject(val);
-      } <span class="reserved">else</span> <span class="reserved">if</span> (val.toString != null) {
-         <span class="reserved">return</span> val.toString();
-      }
-      <span class="reserved">return</span>;
-   };
-
-   var lvl = 0;
-   <span class="reserved">return</span> printValue(obj);
-};
-
 </pre>
 	<hr>
 
@@ -511,6 +408,6 @@ jala.Utilities.<span class="reserved">prototype</span>.toLiteral = <span class="
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:40:28 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:46:54 2007</div>
 </body>
 </html>
