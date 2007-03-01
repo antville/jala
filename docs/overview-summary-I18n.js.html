@@ -158,6 +158,14 @@ jala.I18n = <span class="reserved">function</span>() {
    var messages = global.messages;
    
    <span class="comment">/**
+    * The default method for retrieving the locale.
+    * <span class="attrib">@ignore</span>
+    */</span>
+   var localeGetter = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> java.util.Locale.getDefault();
+   };
+   
+   <span class="comment">/**
     * Overwrite the default object containing
     * the messages (ie. a vanilla EcmaScript object).
     * <span class="attrib">@param</span> {Object} msgObject The object containing the messages
@@ -175,8 +183,36 @@ jala.I18n = <span class="reserved">function</span>() {
       <span class="reserved">return</span> messages;
    };
    
+   <span class="comment">/**
+    * Set the method for retrieving the locale.
+    * <span class="attrib">@param</span> {Function} func The getter method
+    */</span>
+   <span class="reserved">this</span>.setLocaleGetter = <span class="reserved">function</span>(func) {
+      <span class="reserved">if</span> (func &amp;&amp; func.constructor == Function) {
+         localeGetter = func;
+      } <span class="reserved">else</span> {
+         throw Error(<span class="literal">"Getter method to retrieve locale must be a function"</span>);
+      }
+      <span class="reserved">return</span>;
+   };
+   
+   <span class="comment">/**
+    * Get the method for retrieving the locale.
+    * <span class="attrib">@returns</span> The getter method
+    * <span class="attrib">@type</span> Function
+    */</span>
+   <span class="reserved">this</span>.getLocaleGetter = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> localeGetter;
+   };
+   
    <span class="reserved">return</span> <span class="reserved">this</span>;
 };
+
+<span class="comment">/**
+ * The default handler containing the messages.
+ * <span class="attrib">@ignore</span>
+ */</span>
+jala.I18n.HANDLER = global;
 
 <span class="comment">/** <span class="attrib">@ignore</span> */</span>
 jala.I18n.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
@@ -230,10 +266,10 @@ jala.I18n.<span class="reserved">prototype</span>.getLocale = <span class="reser
  * <span class="attrib">@type</span> String
  */</span>
 jala.I18n.<span class="reserved">prototype</span>.translate = <span class="reserved">function</span>(singularKey, pluralKey, amount) {
-   var translation;
+   var translation = null;
    <span class="reserved">if</span> (singularKey) {
-      <span class="comment">// use either the locale defined in res.meta.locale or the jvm default</span>
-      var locale = res.meta.locale || java.util.Locale.getDefault();
+      <span class="comment">// use the getter method for retrieving the locale</span>
+      var locale = <span class="reserved">this</span>.getLocaleGetter()();
       var catalog, key;
       <span class="reserved">if</span> ((catalog = jala.i18n.getCatalog(locale))) {
          <span class="reserved">if</span> (arguments.length == 3 &amp;&amp; amount != 1) { <span class="comment">// is plural</span>
@@ -269,9 +305,8 @@ jala.I18n.<span class="reserved">prototype</span>.getCatalog = <span class="rese
       jala.I18n.catalogs = {};
    }
    var cache = jala.I18n.catalogs;
-   var catalog;
-   <span class="reserved">if</span> (!cache[locale]) {
-      var messages = <span class="reserved">this</span>.getMessages();
+   var catalog, messages;
+   <span class="reserved">if</span> (!cache[locale] &amp;&amp; (messages = <span class="reserved">this</span>.getMessages()) != null) {
       var arr = [locale.getLanguage(), locale.getCountry(), locale.getVariant()];
       <span class="reserved">while</span> (arr.length &gt; 0 &amp;&amp; !(catalog = messages[arr.join(<span class="literal">"_"</span>)])) {
          arr.pop();
@@ -293,31 +328,33 @@ jala.I18n.<span class="reserved">prototype</span>.getCatalog = <span class="rese
  * <span class="attrib">@see</span> http://java.sun.com/j2se/1.5.0/docs/api/java/text/MessageFormat.html
  */</span>
 jala.I18n.<span class="reserved">prototype</span>.formatMessage = <span class="reserved">function</span>(message, values) {
-   var args = null;
-   <span class="reserved">if</span> (values != null &amp;&amp; values.length &gt; 0) {
-      args = java.lang.reflect.Array.newInstance(java.lang.Object, values.length);
-      var arg;
-      <span class="reserved">for</span> (var i=0;i&lt;values.length;i++) {
-         <span class="reserved">if</span> ((arg = values[i]) != null) {
-            <span class="comment">// MessageFormat can't deal with javascript date objects</span>
-            <span class="comment">// so we need to convert them into java.util.Date instances</span>
-            <span class="reserved">if</span> (arg instanceof Date) {
-               args[i] = new java.util.Date(arg.getTime());
-            } <span class="reserved">else</span> {
-               args[i] = arg;
+   <span class="reserved">if</span> (message) {
+      var args = null;
+      <span class="reserved">if</span> (values != null &amp;&amp; values.length &gt; 0) {
+         args = java.lang.reflect.Array.newInstance(java.lang.Object, values.length);
+         var arg;
+         <span class="reserved">for</span> (var i=0;i&lt;values.length;i++) {
+            <span class="reserved">if</span> ((arg = values[i]) != null) {
+               <span class="comment">// MessageFormat can't deal with javascript date objects</span>
+               <span class="comment">// so we need to convert them into java.util.Date instances</span>
+               <span class="reserved">if</span> (arg instanceof Date) {
+                  args[i] = new java.util.Date(arg.getTime());
+               } <span class="reserved">else</span> {
+                  args[i] = arg;
+               }
             }
          }
       }
-   }
-   <span class="comment">// use either the locale defined in res.meta.locale or the jvm default</span>
-   var locale = res.meta.locale || java.util.Locale.getDefault();
-   <span class="comment">// format the message</span>
-   try {
-      var msgFormat = new java.text.MessageFormat(message, locale);
-      <span class="reserved">return</span> msgFormat.format(args);
-   } catch (e) {
-      app.logger.warn(<span class="literal">"jala.i18n.formatMessage(): Unable to format message '"</span>
-                      + message + <span class="literal">"', reason: "</span> + e, e.javaException);
+      <span class="comment">// use the getter method for retrieving the locale</span>
+      var locale = <span class="reserved">this</span>.getLocaleGetter()();
+      <span class="comment">// format the message</span>
+      try {
+         var msgFormat = new java.text.MessageFormat(message, locale);
+         <span class="reserved">return</span> msgFormat.format(args);
+      } catch (e) {
+         app.logger.warn(<span class="literal">"jala.i18n.formatMessage(): Unable to format message '"</span>
+                         + message + <span class="literal">"', reason: "</span> + e, e.javaException);
+      }
    }
    <span class="reserved">return</span> null;
 };
@@ -450,7 +487,11 @@ jala.I18n.<span class="reserved">prototype</span>.message_macro = <span class="r
    <span class="reserved">return</span>;
 };
 
-<span class="comment">// default instantiation of I18n</span>
+<span class="comment">/**
+ * Default i18n class instance.
+ * <span class="attrib">@type</span> jala.I18n
+ * <span class="attrib">@final</span>
+ */</span>
 jala.i18n = new jala.I18n();
 
 <span class="comment">/**
@@ -527,6 +568,6 @@ var message_macro = <span class="reserved">function</span>() {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:40:28 2007</div>
 </body>
 </html>

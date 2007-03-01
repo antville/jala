@@ -44,7 +44,7 @@ parent.document.title="jala.IndexManager";
 &nbsp;<A HREF="jala.ImageFilter.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.IndexManager.Queue.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.IndexManager.Job.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="jala.IndexManager.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -98,7 +98,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
  calls of add/remove/optimize are queued, but the queue is not flushed
  until rebuilding has finished. This ensures that objects that have been
  modified during a rebuilding process are re-indexed properly afterwards.
- <BR/><I>Defined in <a href='overview-summary-IndexManager.js.html'>IndexManager.js</a></I><BR/><BR/>
+ <BR/><I>Defined in <a href='overview-summary-IndexManager.js.html'>IndexManager.js</a></I><BR/><BR/><B>See:</B><UL>- helma.Search.createIndex</UL>
    </P>
    
    <HR>
@@ -115,7 +115,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
    <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
    <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="jala.IndexManager.Queue.html">jala.IndexManager.Queue</A></B></CODE></TD>
+   <TD><CODE><B><A HREF="jala.IndexManager.Job.html">jala.IndexManager.Job</A></B></CODE></TD>
    </TR>
 
 </TABLE>
@@ -134,16 +134,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
          </TR>
 
    <!-- This is one instance field summary -->
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&nbsp;String</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#name">name</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the index this queue is responsible for,
- which equals the name of the directory the underlying
- index resides in.</TD>
-   </TR>
    
    <TR BGCOLOR="white" CLASS="TableRowColor">
    <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -235,45 +225,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#add">add</A></B>(&lt;HopObject&gt; obj, &lt;Boolean&gt; force)
+	       <A HREF="#add">add</A></B>(&lt;helma.Search.Document&gt; doc, &lt;Boolean&gt; force)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Adds a HopObject to the underlying index.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#addJob">addJob</A></B>(&lt;String&gt; action, &lt;Object&gt; param)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Adds a new job to the queue.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#flush">flush</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Flushes the underlying queue.
       </TD>
    </TR>
 
@@ -314,7 +270,25 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;<a href="jala.IndexManager.Queue.html">jala.IndexManager.Queue</a></CODE>
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getName">getName</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the name of the index manger, which
+ is equal to the name of the underlying index
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;java.util.LinkedList</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -324,7 +298,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the underlying queue.
+	 Returns the queue this index manager is using.
       </TD>
    </TR>
 
@@ -363,6 +337,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Returns the status of this manager.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getVersion">getVersion</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the current version of this index manager
       </TD>
    </TR>
 
@@ -420,7 +411,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -460,7 +451,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#remove">remove</A></B>(obj, &lt;Boolean&gt; force)
+	       <A HREF="#remove">remove</A></B>(id, &lt;Boolean&gt; force)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -483,7 +474,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Modifies the status of this manager, which has implications
- on how objects are indexed (a/synchronous or queued).
+ on how index modifying jobs are handled.
       </TD>
    </TR>
 
@@ -496,12 +487,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#startWorker">startWorker</A></B>(&lt;Boolean&gt; force)
+	       <A HREF="#updateVersion">updateVersion</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Starts a new worker thread if there isn't already one
- processing the queue.
+	 Updates the internal version property of this index manager
+ to the current version of the underlying index.
       </TD>
    </TR>
 
@@ -523,17 +514,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       </TR>
    </TABLE>
 
-   
-   <A NAME="name"><!-- --></A>
-   <H3>name</H3>
-   <PRE>String&nbsp;<B>name</B></PRE>
-   <UL>
-   The name of the index this queue is responsible for,
- which equals the name of the directory the underlying
- index resides in.
-   
-   </UL>
-   <HR>
    
    <A NAME="!s!MAXTRIES"><!-- --></A>
    <H3>MAXTRIES</H3>
@@ -645,6 +625,10 @@ jala.IndexManager</H3>
 
 <!-- ADDITIONAL ATTRIBUTES -->
 
+<UL>   
+<B>See:</B><UL>- helma.Search.createIndex</UL>
+</UL>
+
 <HR/>
 <!-- END ADDITIONAL ATTRIBUTES  -->
 
@@ -666,7 +650,7 @@ jala.IndexManager</H3>
 
    <A NAME="add"><!-- --></A>
    <H3>add</H3>
-   <PRE>void <B>add</B>(&lt;HopObject&gt; obj, &lt;Boolean&gt; force)</PRE>
+   <PRE>void <B>add</B>(&lt;helma.Search.Document&gt; doc, &lt;Boolean&gt; force)</PRE>
    
       <UL>Adds a HopObject to the underlying index. This is done
  by adding a new job to the internal queue and starting
@@ -683,7 +667,7 @@ jala.IndexManager</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>obj</CODE> -  The HopObject that should be indexed.  
+     <UL><CODE>doc</CODE> -  The document object that should be  added to the underlying index.  
       </UL> 
    
      <UL><CODE>force</CODE> -  (optional) If true the object will be added  instantly to the index without any check if the index is  locked or not, so use this option with caution. Normally this  option should never be set manually.  
@@ -700,59 +684,6 @@ jala.IndexManager</H3>
    <UL>   
    <B>See:</B><UL>- helma.Search.Document</UL>
    </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="addJob"><!-- --></A>
-   <H3>addJob</H3>
-   <PRE>void <B>addJob</B>(&lt;String&gt; action, &lt;Object&gt; param)</PRE>
-   
-      <UL>Adds a new job to the queue.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>action</CODE> -  The action to perform. Currently  supported values are "add", "remove" and "optimize".  
-      </UL> 
-   
-     <UL><CODE>param</CODE> -  An optional parameter object needed to  process the job.       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="flush"><!-- --></A>
-   <H3>flush</H3>
-   <PRE>void <B>flush</B>()</PRE>
-   
-      <UL>Flushes the underlying queue. This method should not be called
- directly as it might run for a long time (depends on the length
- of the queue). Instead this method will be executed asynchronously
- after calling add(), remove() or optimize(). For safety reasons
- every flush() will only run for a maximum time of 5 minutes, if
- after that any objects are left in the queue a new asynchronous
- thread will be started to continue processing the queue.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
@@ -807,11 +738,12 @@ jala.IndexManager</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="getQueue"><!-- --></A>
-   <H3>getQueue</H3>
-   <PRE><a href="jala.IndexManager.Queue.html">jala.IndexManager.Queue</a> <B>getQueue</B>()</PRE>
+   <A NAME="getName"><!-- --></A>
+   <H3>getName</H3>
+   <PRE>String <B>getName</B>()</PRE>
    
-      <UL>Returns the underlying queue.</UL>
+      <UL>Returns the name of the index manger, which
+ is equal to the name of the underlying index</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -822,7 +754,32 @@ jala.IndexManager</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The underlying queue.   
+        The name of the index manager   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getQueue"><!-- --></A>
+   <H3>getQueue</H3>
+   <PRE>java.util.LinkedList <B>getQueue</B>()</PRE>
+   
+      <UL>Returns the queue this index manager is using.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The queue.   
         </UL>
    </UL>
    
@@ -877,6 +834,35 @@ jala.IndexManager</H3>
    <B>Returns:</B>
         <UL>
         The status of this index manager.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#!s!NORMAL">NORMAL</a><BR/>- <a href="#!s!REBUILDING">REBUILDING</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getVersion"><!-- --></A>
+   <H3>getVersion</H3>
+   <PRE>Number <B>getVersion</B>()</PRE>
+   
+      <UL>Returns the current version of this index manager</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current version of this index manager   
         </UL>
    </UL>
    
@@ -963,7 +949,7 @@ jala.IndexManager</H3>
 
    <A NAME="needsOptimize"><!-- --></A>
    <H3>needsOptimize</H3>
-   <PRE>Object <B>needsOptimize</B>()</PRE>
+   <PRE>Boolean <B>needsOptimize</B>()</PRE>
    
       <UL>Returns true if the index should be optimized. This is done by
  comparing the version number of this IndexManager with the one of
@@ -975,6 +961,13 @@ jala.IndexManager</H3>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True in case the underlying should be optimized, false  otherwise   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -1010,7 +1003,7 @@ jala.IndexManager</H3>
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <UL>   
-   <B>See:</B><UL>- <a href="#isOptimized">()</a></UL>
+   <B>See:</B><UL>- <a href="#needsOptimize">()</a></UL>
    </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
@@ -1018,7 +1011,7 @@ jala.IndexManager</H3>
 
    <A NAME="remove"><!-- --></A>
    <H3>remove</H3>
-   <PRE>void <B>remove</B>(obj, &lt;Boolean&gt; force)</PRE>
+   <PRE>void <B>remove</B>(id, &lt;Boolean&gt; force)</PRE>
    
       <UL>Removes the object passed as argument from the underlying
  index. The argument can be either a HopObject or a JavaScript
@@ -1033,7 +1026,7 @@ jala.IndexManager</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>force</CODE> -  (optional) If true the removal is done instantly.  In this case no checking is done if the index is locked, so use  this option with caution as it might lead to index corruption.       
+     <UL><CODE>force</CODE> -  (optional) If true the removal is done instantly.  In this case no checking is done if the index is locked, so use  this option with caution as it might lead to index corruption.    
       </UL> 
    
      <UL><CODE>HopObject</CODE> -  | Object} obj The HopObject or JavaScript object  whose property <code>_id</code> contains the Id of the index record.  
@@ -1055,7 +1048,9 @@ jala.IndexManager</H3>
    <PRE>void <B>setStatus</B>(&lt;Number&gt; s)</PRE>
    
       <UL>Modifies the status of this manager, which has implications
- on how objects are indexed (a/synchronous or queued).</UL>
+ on how index modifying jobs are handled. If the status
+ is <a href="#!s!REBUILDING">REBUILDING</a>, all jobs are queued until the status
+ is set back to <a href="#!s!NORMAL">NORMAL</a>.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1063,7 +1058,7 @@ jala.IndexManager</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>s</CODE> -  The new status of this manager.       
+     <UL><CODE>s</CODE> -  The new status of this manager.  
       </UL> 
    
    </UL>
@@ -1074,27 +1069,22 @@ jala.IndexManager</H3>
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
+   <UL>   
+   <B>See:</B><UL>- <a href="#!s!NORMAL">NORMAL</a><BR/>- <a href="#!s!REBUILDING">REBUILDING</a></UL>
+   </UL>
+   
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="startWorker"><!-- --></A>
-   <H3>startWorker</H3>
-   <PRE>void <B>startWorker</B>(&lt;Boolean&gt; force)</PRE>
+   <A NAME="updateVersion"><!-- --></A>
+   <H3>updateVersion</H3>
+   <PRE>void <B>updateVersion</B>()</PRE>
    
-      <UL>Starts a new worker thread if there isn't already one
- processing the queue. This method also checks if the
- thread is actually dead.</UL>
+      <UL>Updates the internal version property of this index manager
+ to the current version of the underlying index.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>force</CODE> -  If true the worker is created regardless  whether there is one already or not. Use this option with caution  as it might lead to index corruption when two workers are processing  the same queue on the same index.       
-      </UL> 
-   
-   </UL>
    
    <!-- METHOD PARAMETERS END -->
 
@@ -1140,7 +1130,7 @@ jala.IndexManager</H3>
 &nbsp;<A HREF="jala.ImageFilter.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.IndexManager.Queue.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.IndexManager.Job.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="jala.IndexManager.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -1171,6 +1161,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:40:28 2007</div>
 </BODY>
 </HTML>

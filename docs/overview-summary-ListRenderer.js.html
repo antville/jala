@@ -99,6 +99,12 @@ function asd() {
     <td>This class eases the rendering of arbitrary lists.</td>
     </tr>
     
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.ListRenderer.ArrayList.html">jala.ListRenderer.ArrayList</a></b></td>
+    <td>A simple wrapper around an array to use in conjunction
+ with jala.ListRenderer.</td>
+    </tr>
+    
     </table>
     <hr/> 
 
@@ -473,7 +479,7 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
    <span class="comment">// object initialization</span>
    <span class="comment">// FIXME: this is for backwards compatibility only</span>
    <span class="reserved">if</span> (listParam.collection instanceof Array) {
-      collection = new jala.ArrayList(listParam.collection);
+      collection = new jala.ListRenderer.ArrayList(listParam.collection);
    } <span class="reserved">else</span> {
       collection = listParam.collection;
    }
@@ -497,6 +503,11 @@ jala.ListRenderer = <span class="reserved">function</span>(listParam, renderers)
  * <span class="attrib">@type</span> helma.Html
  */</span>
 jala.ListRenderer.html = new helma.Html();
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.ListRenderer.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.ListRenderer]"</span>;
+};
 
 
 
@@ -707,7 +718,83 @@ jala.ListRenderer.defaultRenderer = {
       }
    }
 };
-</pre>
+
+
+
+<span class="comment">/*****************************************************
+ ********** D E F A U L T   R E N D E R E R **********
+ *****************************************************/</span>
+
+
+
+<span class="comment">/**
+ * Creates a new ArrayList instance.
+ * <span class="attrib">@class</span> A simple wrapper around an array to use in conjunction
+ * with jala.ListRenderer. This wrapper can either handle complete arrays
+ * or subsections of an array. In the latter case the wrapper needs offset
+ * and total size information as argument to mimick a complete array.
+ * <span class="attrib">@param</span> {Array} arr The array (or a subsection of an array) to wrap
+ * <span class="attrib">@param</span> {Number} offset An optional offset to use (mandatory if the array
+ * is just a subsection).
+ * <span class="attrib">@param</span> {Number} total An optional total size of the array. This argument is mandatory
+ * if the wrapped array is just a subsection.
+ * <span class="attrib">@returns</span> A newly created ArrayList instance
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.ListRenderer.ArrayList = <span class="reserved">function</span>(arr, offset, total) {
+   <span class="reserved">this</span>.offset = offset || 0;
+   <span class="reserved">this</span>.length = total || arr.length;
+   
+   var isArraySubset = offset || total ? true : false;
+
+   <span class="comment">/**
+    * Returns the element at the index position passed
+    * as argument. If the wrapped array is just a subsection
+    * the index position passed will be corrected using
+    * the offset.
+    * <span class="attrib">@param</span> {Number} idx The index position of the element
+    * to return
+    * <span class="attrib">@returns</span> The element at the given index position
+    */</span>
+   <span class="reserved">this</span>.get = <span class="reserved">function</span>(idx) {
+      <span class="reserved">return</span> arr[(<span class="reserved">this</span>.offset &gt; 0) ? idx - offset : idx];
+   };
+
+   <span class="comment">/**
+    * Returns the size of this ArrayList, which is either
+    * the length of the wrapped array or the total size
+    * passed as argument to the constructor (in case the wrapped
+    * array is just a subsection).
+    * <span class="attrib">@returns</span> The size of this ArrayList instance
+    * <span class="attrib">@type</span> Number
+    */</span>
+   <span class="reserved">this</span>.size = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> <span class="reserved">this</span>.length;
+   };
+   
+   <span class="comment">/**
+    * Returns true if this ArrayList is a subsection of a bigger array
+    * <span class="attrib">@returns</span> true or false. true if this ArrayList is a subsection of a bigger array
+    */</span>
+   <span class="reserved">this</span>.isSubset = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> isArraySubset;
+   }
+   
+   <span class="comment">/**
+    * Returns the actual size of this ArrayList's wrapped array.
+    * <span class="attrib">@returns</span> the actual size of this ArrayList's wrapped array.
+    */</span>
+   <span class="reserved">this</span>.subsetSize = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> arr.length;
+   }
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.ListRenderer.ArrayList.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.ListRenderer.ArrayList]"</span>;
+};</pre>
 	<hr>
 
 
@@ -765,6 +852,6 @@ jala.ListRenderer.defaultRenderer = {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Feb 13 14:03:27 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar  1 09:40:28 2007</div>
 </body>
 </html>
