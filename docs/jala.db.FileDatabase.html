@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.XmlWriter
+jala.db.FileDatabase
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.XmlWriter";
+parent.document.title="jala.db.FileDatabase";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -24,7 +24,7 @@ parent.document.title="jala.XmlWriter";
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-XmlWriter.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Db.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -41,13 +41,13 @@ parent.document.title="jala.XmlWriter";
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.XmlRpcRequest.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.db.DataType.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<B>NEXT CLASS</B></FONT></TD>
+&nbsp;<A HREF="jala.db.RamDatabase.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.XmlWriter.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.db.FileDatabase.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,39 +72,32 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.XmlWriter</H2>
+<H2>Class jala.db.FileDatabase</H2>
 <PRE>Object
    |
-   +--<b>jala.XmlWriter</b>
+   +--<a href='jala.db.RamDatabase.html'>jala.db.RamDatabase</a>
+         |
+         +--<b>jala.db.FileDatabase</b>
 </PRE>
-
-   <DL>
-   <DT>
-      <B>Direct Known Subclasses:</B> 
-      <DD>
-                <a href="jala.Rss20Writer.html">jala.Rss20Writer</a>
-      </DD>
-   </DL>
 
 
 <HR>
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.XmlWriter</B>
+   <B>jala.db.FileDatabase</B>
+   
+      <DT>extends <a href='jala.db.RamDatabase.html'>jala.db.RamDatabase</a> 
    
 
 </DL>
    
    <P>
-   <BR/>This class defines a generic interface to write
- arbitrary and validating XML source code. This is done
- by first applying data objects onto template objects, 
- both in a specified format. Then, the resulting object
- tree is transformed into XML. Moreover, template objects
- can be extended with other template objects to provide
- full flexibility in inheriting subclasses.
- <BR/><I>Defined in <a href='overview-summary-XmlWriter.js.html'>XmlWriter.js</a></I><BR/><BR/>
+   <BR/>Instances of this class represent a file based in-process database
+ <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
+ of your helma installation for this library to work, which you can get
+ at <a href="http://hsqldb.org/">http://hsqldb.org/</a>.
+ <BR/><I>Defined in <a href='overview-summary-Db.js.html'>Db.js</a></I><BR/><BR/>
    </P>
    
    <HR>
@@ -134,13 +127,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.XmlWriter.html#jala.XmlWriter()">jala.XmlWriter</A> 
+	    <A HREF="jala.db.FileDatabase.html#jala.db.FileDatabase()">jala.db.FileDatabase</A> 
 	 </B>
-	 (&lt;String&gt; header)
+	 (&lt;String&gt; name, &lt;helma.File&gt; directory)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Construct a new XML writer.
+      Returns a newly created instance of FileDatabase.
       </TD>
 </TR>
 </TABLE>
@@ -162,85 +155,17 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;jala.XmlWriter.XmlElement</CODE>
+	    <CODE>&nbsp;helma.File</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#addNamespace">addNamespace</A></B>(&lt;String&gt; name, &lt;String&gt; url)
+	       <A HREF="#getDirectory">getDirectory</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Add a namespace to this writer.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;<a href="jala.XmlWriter.html">jala.XmlWriter</a></CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#clone">clone</A></B>(obj)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Clone this XML writer.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;jala.XmlWriter.XmlElement</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#createElement">createElement</A></B>(&lt;Object&gt; data)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get a newly created XML element.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;<a href="jala.XmlWriter.html">jala.XmlWriter</a></CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#extend">extend</A></B>(&lt;Object&gt; template, &lt;Object&gt; ext)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Extend a template object.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;jala.XmlWriter.XmlElement</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getRoot">getRoot</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get the root XML element of this writer.
+	 Returns the directory where the database files are stored.
       </TD>
    </TR>
 
@@ -253,28 +178,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#toString">toString</A></B>()
+	       <A HREF="#getName">getName</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get the XML output as string.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#write">write</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Write the XML to the response buffer.
+	 Returns the name of the database
       </TD>
    </TR>
 
@@ -282,6 +190,20 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 </TABLE>
 
 
+
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TD><B>Methods inherited from class <a href="jala.db.RamDatabase.html">jala.db.RamDatabase</a></B></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>
+<!-- Inherited methods -->
+<a href="jala.db.RamDatabase.html#getUrl">getUrl</a>, <a href="jala.db.RamDatabase.html#getProperties">getProperties</a>, <a href="jala.db.RamDatabase.html#getConnection">getConnection</a>, <a href="jala.db.RamDatabase.html#shutdown">shutdown</a>, <a href="jala.db.RamDatabase.html#createTable">createTable</a>, <a href="jala.db.RamDatabase.html#dropTable">dropTable</a>, <a href="jala.db.RamDatabase.html#tableExists">tableExists</a>, <a href="jala.db.RamDatabase.html#copyTables">copyTables</a>, <a href="jala.db.RamDatabase.html#getDataTypes">getDataTypes</a>, <a href="jala.db.RamDatabase.html#getDataType">getDataType</a>, <a href="jala.db.RamDatabase.html#runScript">runScript</a>
+</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
 
 <P>
 <!-- ========== END METHOD SUMMARY =========== -->
@@ -303,13 +225,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.XmlWriter()"><!-- --></A><H3>
-jala.XmlWriter</H3>
-<PRE><B>jala.XmlWriter</B>(&lt;String&gt; header)</PRE>
+<A NAME="jala.db.FileDatabase()"><!-- --></A><H3>
+jala.db.FileDatabase</H3>
+<PRE><B>jala.db.FileDatabase</B>(&lt;String&gt; name, &lt;helma.File&gt; directory)</PRE>
 
 
 <UL>
-   Construct a new XML writer.
+   Returns a newly created instance of FileDatabase.
 </UL>
 
 
@@ -317,7 +239,10 @@ jala.XmlWriter</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>header</CODE> -  An optional XML header.  
+     <UL><CODE>name</CODE> -  The name of the database  
+     </UL>
+   
+     <UL><CODE>directory</CODE> -  The directory where the database files  should be stored in.  
      </UL>
    
    
@@ -329,7 +254,7 @@ jala.XmlWriter</H3>
    <UL>
    <B>Returns:</B>
      <UL>
-     A new XML writer.   
+     A newly created FileDatabase instance   
      </UL>
    </UL>
 
@@ -356,149 +281,11 @@ jala.XmlWriter</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="addNamespace"><!-- --></A>
-   <H3>addNamespace</H3>
-   <PRE>jala.XmlWriter.XmlElement <B>addNamespace</B>(&lt;String&gt; name, &lt;String&gt; url)</PRE>
+   <A NAME="getDirectory"><!-- --></A>
+   <H3>getDirectory</H3>
+   <PRE>helma.File <B>getDirectory</B>()</PRE>
    
-      <UL>Add a namespace to this writer.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>name</CODE> -  The name of the namespace.  
-      </UL> 
-   
-     <UL><CODE>url</CODE> -  The URL string of the namespace.  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The XML root element.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="clone"><!-- --></A>
-   <H3>clone</H3>
-   <PRE><a href="jala.XmlWriter.html">jala.XmlWriter</a> <B>clone</B>(obj)</PRE>
-   
-      <UL>Clone this XML writer.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>The</CODE> -  clone templare.  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The cloned XML writer.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="createElement"><!-- --></A>
-   <H3>createElement</H3>
-   <PRE>jala.XmlWriter.XmlElement <B>createElement</B>(&lt;Object&gt; data)</PRE>
-   
-      <UL>Get a newly created XML element.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>data</CODE> -  The XML data as object tree.  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The resulting XML element.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="extend"><!-- --></A>
-   <H3>extend</H3>
-   <PRE><a href="jala.XmlWriter.html">jala.XmlWriter</a> <B>extend</B>(&lt;Object&gt; template, &lt;Object&gt; ext)</PRE>
-   
-      <UL>Extend a template object.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>template</CODE> -  The template object.  
-      </UL> 
-   
-     <UL><CODE>ext</CODE> -  The extension object.  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The XML writer.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getRoot"><!-- --></A>
-   <H3>getRoot</H3>
-   <PRE>jala.XmlWriter.XmlElement <B>getRoot</B>()</PRE>
-   
-      <UL>Get the root XML element of this writer.</UL>
+      <UL>Returns the directory where the database files are stored.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -509,7 +296,7 @@ jala.XmlWriter</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The root XML element.   
+        The directory where the database is stored.   
         </UL>
    </UL>
    
@@ -519,11 +306,11 @@ jala.XmlWriter</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="toString"><!-- --></A>
-   <H3>toString</H3>
-   <PRE>String <B>toString</B>()</PRE>
+   <A NAME="getName"><!-- --></A>
+   <H3>getName</H3>
+   <PRE>String <B>getName</B>()</PRE>
    
-      <UL>Get the XML output as string.</UL>
+      <UL>Returns the name of the database</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -534,27 +321,9 @@ jala.XmlWriter</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The XML output.   
+        The name of the database   
         </UL>
    </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="write"><!-- --></A>
-   <H3>write</H3>
-   <PRE>void <B>write</B>()</PRE>
-   
-      <UL>Write the XML to the response buffer.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -577,7 +346,7 @@ jala.XmlWriter</H3>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-XmlWriter.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Db.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -594,13 +363,13 @@ jala.XmlWriter</H3>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.XmlRpcRequest.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.db.DataType.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<B>NEXT CLASS</B></FONT></TD>
+&nbsp;<A HREF="jala.db.RamDatabase.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.XmlWriter.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.db.FileDatabase.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
