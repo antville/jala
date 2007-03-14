@@ -39,6 +39,11 @@ if (!global.jala) {
 app.addRepository("modules/helma/Http.js");
 
 /**
+ * Jala dependencies
+ */
+app.addRepository("modules/jala/code/Db.js");
+
+/**
  * Constructs a new Test instance.
  * @class Provides various methods for automated tests.
  * This is essentially a port of JSUnit (http://www.edwardh.com/jsunit/)
@@ -275,68 +280,6 @@ jala.Test.getStackTrace = function(message) {
 };
 
 /**
- * Duplicates the schema with the name passed as argument
- * in the embedded test database.
- * FIXME: for now prevent this method from appearing in the
- * API docs by marking it as private
- * @returns The embedded database object
- * @type jala.EmbeddedDatabase
- * @private
- */
-jala.Test.createDatabase = function(schemaName) {
-   // the database files are stored in a subdirectory
-   // in the location where the test files are stored
-   var dir = jala.Test.getTestsDirectory();
-   var dbDir = new helma.File(dir, schemaName);
-   var testDb = new jala.EmbeddedDatabase(dbDir.getAbsolutePath());
-   // start the embedded database
-   if (!testDb.start(true)) {
-      throw "Unable to initialize embedded db!";
-   }
-
-   // retrieve the metadata for all tables in this schema
-   var dbSource = app.getDbSource(schemaName);
-   var con = dbSource.getConnection();
-   var meta = con.getMetaData();
-   var t = meta.getTables(null, schemaName, "%", null);
-   var tableName, columns;
-   while (t.next()) {
-      tableName = t.getString(3).toUpperCase();
-      if (testDb.tableExists(tableName)) {
-         testDb.dropTable(tableName);
-      }
-      // create an array containing the necessary column metadata
-      var columns = [];
-      var c = meta.getColumns(null, schemaName, tableName, "%");
-      var columnName, columnType, columnTypeName, columnSize, columnNullable;
-      while (c.next()) {
-         columns[columns.length] = {
-            name: c.getString(4),
-            type: c.getInt(5),
-            length: c.getInt(7),
-            nullable: (c.getInt(11) == meta.typeNoNulls) ? false : true,
-            "default": c.getString(13),
-            precision: c.getInt(9),
-            scale: c.getInt(10)
-         }
-      }
-
-      // retrieve the primary keys of the table
-      var pk = meta.getPrimaryKeys(null, schemaName, tableName);
-      var keys = [];
-      while (pk.next()) {
-         keys[keys.length] = pk.getString(4);
-      }
-      // create the table in the embedded database
-      testDb.createTable(tableName, columns, keys.length > 0 ? keys : null);
-   }
-   // cleanup
-   con.close();
-   testDb.stop();
-   return testDb;
-};
-
-/**
  * Returns a custom JavaScript scope used for evaluating unit tests.
  * This method defines all assertion methods as global methods,
  * and creates a default instantiation of the Http client
@@ -365,6 +308,8 @@ jala.Test.getTestScope = function() {
    }
    // instantiate a global HttpClient
    scope.httpClient = new jala.Test.HttpClient();
+   // instantiate the test database manager
+   scope.testDatabases = new jala.Test.DatabaseMgr();
    return scope;
 }
 
@@ -1074,4 +1019,92 @@ jala.Test.HttpClient.prototype.submitForm = function(url, param) {
 /** @ignore */
 jala.Test.HttpClient.prototype.toString = function() {
    return "[jala.Test.HttpClient]";
+};
+
+
+
+
+/*****************************************************
+ ***** T E S T   D A T A B A S E   M A N A G E R *****
+ *****************************************************/
+
+
+jala.Test.DatabaseMgr = function() {
+   /**
+    * Map containing all test databases
+    */
+   this.databases = {};
+
+   /**
+    * Map containing the original datasource
+    * properties that were temporarily deactivated
+    * by activating a test database
+    */
+   this.dbSourceProperties = {};
+
+   return this;
+};
+
+/**
+ * Switches the application datasource with the given name
+ * to a newly created in-memory database. In addition this method
+ * also clears the application cache and invalidates the root
+ * object to ensure that everything is re-retrieved from the
+ * test database.
+ * @param {String} dbSourceName The name of the application database
+ * source as defined in db.properties
+ * @param {Boolean} copyTables If true this method also copies all
+ * tables in the source database to the test database (excluding
+ * indexes). 
+ * @returns The test database
+ * @type jala.db.RamDatabase
+ */
+jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTables) {
+   try {
+      var testDb = new jala.db.RamDatabase(dbSourceName);
+      // switch the datasource to the test database
+      var dbSource = app.getDbSource(dbSourceName);
+      if (copyTables === true) {
+         testDb.copyTables(dbSource);
+      }
+      var oldProps = dbSource.switchProperties(testDb.getProperties());
+      // store the test database in this manager for use in stopAll()
+      this.databases[dbSourceName] = testDb;
+      this.dbSourceProperties[dbSourceName] = oldProps;
+      // clear the application cache and invalidate root
+      app.clearCache();
+      root.invalidate();
+      return testDb;
+   } catch (e) {
+      throw new jala.Test.EvaluatorException("Unable to switch to test database, reason: " + e);
+   }
+};
+
+/**
+ * Stops all registered test databases and and reverts the application
+ * to its original datasource(s) as defined in db.properties file.
+ * In addition this method commits all pending changes within the request,
+ * cleares the application cache and invalidates the root object
+ * to ensure no traces of the test database are left behind.
+ */
+jala.Test.DatabaseMgr.prototype.stopAll = function() {
+   // commit all pending changes
+   res.commit();
+   try {
+      // loop over all registered databases and revert the appropriate
+      // datasource back to the original database
+      var testDb, dbSource;
+      for (var dbSourceName in this.databases) {
+         testDb = this.databases[dbSourceName];
+         dbSource = app.getDbSource(dbSourceName);
+         dbSource.switchProperties(this.dbSourceProperties[dbSourceName]);
+         testDb.shutdown();
+      }
+      // clear the application cache and invalidate root
+      app.clearCache();
+      root.invalidate();
+   } catch (e) {
+      throw new jala.Test.EvaluatorException("Unable to stop test databases, reason: " + e);
+   }
+   return;
 };
