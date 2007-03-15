@@ -230,6 +230,9 @@ jala.db.Server.prototype.addDatabase = function(db, props) {
  * @type String
  */
 jala.db.Server.prototype.getUrl = function(name, props) {
+   if (!this.getDatabase(name)) {
+      throw "jala.db.Server: database '" + name + "' doesn't exist";
+   }
    res.push();
    res.write("jdbc:hsqldb:hsql://localhost:");
    res.write(this.getServer().getPort());
@@ -251,6 +254,9 @@ jala.db.Server.prototype.getUrl = function(name, props) {
  * @type helma.util.ResourceProperties
  */
 jala.db.Server.prototype.getProperties = function(name, props) {
+   if (!this.getDatabase(name)) {
+      throw "jala.db.Server: database '" + name + "' doesn't exist";
+   }
    var rp = new Packages.helma.util.ResourceProperties();
    rp.put(name + ".url", this.getUrl(name, props));
    rp.put(name + ".driver", "org.hsqldb.jdbcDriver");
