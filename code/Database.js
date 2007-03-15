@@ -49,17 +49,16 @@ jala.db.getPropertyString = function(props) {
 
 /**
  * Returns a new Server instance.
- * @class Instances of this class represent a <a href="http://hsqldb.org/">HSQLDB</a>
- * database server hosting up to 10 separate databases, which are accessible via network.
+ * @class Instances of this class represent a HSQLDB database server
+ * hosting up to 10 separate databases, which are accessible via network.
  * <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
  * of your helma installation for this library to work, which you can get
- * at <a href="http://hsqldb.org/">http://hsqldb.org/</a>.
+ * at http://hsqldb.org/.
  * @param {String|Number} address Either the IP address or the port number or a combination
  * of both in the form "ip:port". By default the IP address is "127.0.0.1" (aka localhost)
  * and the port is 9001.
  * @returns A newly created Server instance
  * @constructor
- * @see <a href="http://hsqldb.org/">http://hsqldb.org/</a>
  */
 jala.db.Server = function(address) {
 
@@ -99,7 +98,7 @@ jala.db.Server = function(address) {
     * Returns the database with the given name.
     * @param {String} name The name of the database to return
     * @returns The database with the given name
-    * @type jala.db.RamDatabase|jala.db.FileDatabase
+    * @type jala.db.RamDatabase
     * @private
     */
    this.getDatabase = function(name) {
@@ -190,7 +189,7 @@ jala.db.Server.prototype.isRunning = function() {
 
 /**
  * Adds a database to this server.
- * @param {jala.db.RamDatabase|jala.db.FileDatabase} db The database to add
+ * @param {jala.db.RamDatabase} db The database to add
  * @param {Object} props An optional parameter object containing database
  * properties
  */
@@ -376,7 +375,7 @@ jala.db.DataType.prototype.needsQuotes = function() {
  * @class Instances of this class represent an in-memory sql database.
  * <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
  * of your helma installation for this library to work, which you can get
- * at <a href="http://hsqldb.org/">http://hsqldb.org/</a>.
+ * at http://hsqldb.org/.
  * @param {String} name The name of the database
  * @returns A newly created instance of RamDatabase
  * @constructor
@@ -740,7 +739,7 @@ jala.db.RamDatabase.prototype.runScript = function(file) {
  * @class Instances of this class represent a file based in-process database
  * <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
  * of your helma installation for this library to work, which you can get
- * at <a href="http://hsqldb.org/">http://hsqldb.org/</a>.
+ * at http://hsqldb.org/.
  * @param {String} name The name of the database
  * @param {helma.File} directory The directory where the database files
  * should be stored in.
