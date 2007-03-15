@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.Test.ArgumentsException
+jala.Test.DatabaseMgr
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.Test.ArgumentsException";
+parent.document.title="jala.Test.DatabaseMgr";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -41,13 +41,13 @@ parent.document.title="jala.Test.ArgumentsException";
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Test.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Test.ArgumentsException.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Test.DatabaseMgr.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Test.EvaluatorException.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.Test.ArgumentsException.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Test.DatabaseMgr.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,12 +72,10 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.Test.ArgumentsException</H2>
+<H2>Class jala.Test.DatabaseMgr</H2>
 <PRE>Object
    |
-   +--<a href='jala.Test.Exception.html'>jala.Test.Exception</a>
-         |
-         +--<b>jala.Test.ArgumentsException</b>
+   +--<b>jala.Test.DatabaseMgr</b>
 </PRE>
 
 
@@ -85,16 +83,15 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.Test.ArgumentsException</B>
-   
-      <DT>extends <a href='jala.Test.Exception.html'>jala.Test.Exception</a> 
+   <B>jala.Test.DatabaseMgr</B>
    
 
 </DL>
    
    <P>
-   <BR/>Instances of this exception are thrown whenever an assertion
- function is called with incorrect or insufficient arguments
+   <BR/>Instances of this class allow managing test databases
+ and switching a running application to an in-memory test
+ database to use within a unit test.
  <BR/><I>Defined in <a href='overview-summary-Global_jala.Test.js.html'>Global/jala.Test.js</a></I><BR/><BR/>
    </P>
    
@@ -107,6 +104,37 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- =========== FIELD SUMMARY =========== -->
 
+   <A NAME="field_summary"><!-- --></A>
+      <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+         <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+            <TD COLSPAN=2><FONT SIZE="+2">
+               <B>Field Summary</B></FONT></TD>
+         </TR>
+
+   <!-- This is one instance field summary -->
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#databases">databases</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map containing all test databases</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#dbSourceProperties">dbSourceProperties</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map containing the original datasource
+ properties that were temporarily deactivated
+ by activating a test database</TD>
+   </TR>
+   
+
+   </TABLE>
+   &nbsp;
+   
 
    
 
@@ -125,13 +153,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.Test.ArgumentsException.html#jala.Test.ArgumentsException()">jala.Test.ArgumentsException</A> 
+	    <A HREF="jala.Test.DatabaseMgr.html#jala.Test.DatabaseMgr()">jala.Test.DatabaseMgr</A> 
 	 </B>
-	 (&lt;String&gt; message)
+	 ()
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Creates a new ArgumentsException instance
+      Returns a newly created DatabaseMgr instance
       </TD>
 </TR>
 </TABLE>
@@ -142,6 +170,53 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- ========== METHOD SUMMARY =========== -->
 
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;jala.db.RamDatabase</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#startDatabase">startDatabase</A></B>(&lt;String&gt; dbSourceName, &lt;Boolean&gt; copyTables)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Switches the application datasource with the given name
+ to a newly created in-memory database.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#stopAll">stopAll</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Stops all registered test databases and and reverts the application
+ to its original datasource(s) as defined in db.properties file.
+      </TD>
+   </TR>
+
+
+</TABLE>
+
 
 
 <P>
@@ -149,6 +224,35 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 
 <!-- ============ FIELD DETAIL START =========== -->
+
+   <A NAME="field_detail"><!-- --></A>
+   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+      <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+         <TD COLSPAN=1><FONT SIZE="+2"><B>Field Detail</B></FONT></TD>
+      </TR>
+   </TABLE>
+
+   
+   <A NAME="databases"><!-- --></A>
+   <H3>databases</H3>
+   <PRE>Object&nbsp;<B>databases</B></PRE>
+   <UL>
+   Map containing all test databases
+   
+   </UL>
+   <HR>
+   
+   <A NAME="dbSourceProperties"><!-- --></A>
+   <H3>dbSourceProperties</H3>
+   <PRE>Object&nbsp;<B>dbSourceProperties</B></PRE>
+   <UL>
+   Map containing the original datasource
+ properties that were temporarily deactivated
+ by activating a test database
+   
+   </UL>
+   <HR>
+   
 
 
 <!-- ============ FIELD DETAIL END =========== -->
@@ -164,24 +268,17 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.Test.ArgumentsException()"><!-- --></A><H3>
-jala.Test.ArgumentsException</H3>
-<PRE><B>jala.Test.ArgumentsException</B>(&lt;String&gt; message)</PRE>
+<A NAME="jala.Test.DatabaseMgr()"><!-- --></A><H3>
+jala.Test.DatabaseMgr</H3>
+<PRE><B>jala.Test.DatabaseMgr</B>()</PRE>
 
 
 <UL>
-   Creates a new ArgumentsException instance
+   Returns a newly created DatabaseMgr instance
 </UL>
 
 
 
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>message</CODE> -  The failure message  
-     </UL>
-   
-   
    </UL>
 
 
@@ -190,7 +287,7 @@ jala.Test.ArgumentsException</H3>
    <UL>
    <B>Returns:</B>
      <UL>
-     A newly created ArgumentsException instance   
+     A newly created instance of DatabaseMgr   
      </UL>
    </UL>
 
@@ -205,6 +302,80 @@ jala.Test.ArgumentsException</H3>
 
 
 <!-- ============ METHOD DETAIL START ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+   <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+      <TD COLSPAN=1><FONT SIZE="+2">
+         <B>Method Detail</B></FONT>
+      </TD>
+   </TR>
+</TABLE>
+
+<!-- One single method detail entry -->
+
+   <A NAME="startDatabase"><!-- --></A>
+   <H3>startDatabase</H3>
+   <PRE>jala.db.RamDatabase <B>startDatabase</B>(&lt;String&gt; dbSourceName, &lt;Boolean&gt; copyTables)</PRE>
+   
+      <UL>Switches the application datasource with the given name
+ to a newly created in-memory database. In addition this method
+ also clears the application cache and invalidates the root
+ object to ensure that everything is re-retrieved from the
+ test database.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>dbSourceName</CODE> -  The name of the application database  source as defined in db.properties  
+      </UL> 
+   
+     <UL><CODE>copyTables</CODE> -  If true this method also copies all  tables in the source database to the test database (excluding  indexes).   
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The test database   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="stopAll"><!-- --></A>
+   <H3>stopAll</H3>
+   <PRE>void <B>stopAll</B>()</PRE>
+   
+      <UL>Stops all registered test databases and and reverts the application
+ to its original datasource(s) as defined in db.properties file.
+ In addition this method commits all pending changes within the request,
+ cleares the application cache and invalidates the root object
+ to ensure no traces of the test database are left behind.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
 
 
 <!-- ============ METHOD DETAIL END ========== -->
@@ -237,13 +408,13 @@ jala.Test.ArgumentsException</H3>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Test.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Test.ArgumentsException.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Test.DatabaseMgr.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Test.EvaluatorException.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.Test.ArgumentsException.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Test.DatabaseMgr.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--

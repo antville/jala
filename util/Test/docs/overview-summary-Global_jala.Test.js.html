@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-jala.Test Overview
+Jala Test Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>jala.Test</b></em>
+<b>Jala Test</b></em>
 </td>
 </tr>
 
@@ -104,6 +104,13 @@ function asd() {
     <td>Instances of this exception are thrown whenever an assertion
  function is called with incorrect or insufficient arguments
  </td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Test.DatabaseMgr.html">jala.Test.DatabaseMgr</a></b></td>
+    <td>Instances of this class allow managing test databases
+ and switching a running application to an in-memory test
+ database to use within a unit test.</td>
     </tr>
     
     <tr bgcolor="white" class="TableRowColor">
@@ -198,6 +205,11 @@ function asd() {
 app.addRepository(<span class="literal">"modules/helma/Http.js"</span>);
 
 <span class="comment">/**
+ * Jala dependencies
+ */</span>
+app.addRepository(<span class="literal">"modules/jala/code/Database.js"</span>);
+
+<span class="comment">/**
  * Constructs a new Test instance.
  * <span class="attrib">@class</span> Provides various methods for automated tests.
  * This is essentially a port of JSUnit (http://www.edwardh.com/jsunit/)
@@ -274,13 +286,13 @@ jala.Test.valueToString = <span class="reserved">function</span>(val) {
    } <span class="reserved">else</span> <span class="reserved">if</span> (val === undefined) {
       res.write(<span class="literal">"undefined"</span>);
    } <span class="reserved">else</span> {
-      <span class="reserved">if</span> (val.constructor == String) {
+      <span class="reserved">if</span> (val.constructor &amp;&amp; val.constructor == String) {
          res.write(<span class="literal">'"'</span> + val.toString() + <span class="literal">'"'</span>);
       } <span class="reserved">else</span> {
          res.write(val.toString());
       }
       res.write(<span class="literal">" ("</span>);
-      <span class="reserved">if</span> (val.constructor.name != null) {
+      <span class="reserved">if</span> (val.constructor &amp;&amp; val.constructor.name != null) {
          res.write(val.constructor.name);
       } <span class="reserved">else</span> {
          res.write(typeof(val));
@@ -293,15 +305,15 @@ jala.Test.valueToString = <span class="reserved">function</span>(val) {
 <span class="comment">/**
  * Returns the directory containing the test files.
  * The location of the directory is either defined by the
- * application property "tests" or expected to be one level
+ * application property "jala.testDir" or expected to be one level
  * above the application directory (and named "tests")
  * <span class="attrib">@returns</span> The directory containing the test files
  * <span class="attrib">@type</span> helma.File
  */</span>
 jala.Test.getTestsDirectory = <span class="reserved">function</span>() {
    var dir;
-   <span class="reserved">if</span> (getProperty(<span class="literal">"tests"</span>) != null) {
-      dir = new helma.File(getProperty(<span class="literal">"tests"</span>));
+   <span class="reserved">if</span> (getProperty(<span class="literal">"jala.testDir"</span>) != null) {
+      dir = new helma.File(getProperty(<span class="literal">"jala.testDir"</span>));
    }
    <span class="reserved">if</span> (!dir || !dir.exists()) {
       var appDir = new helma.File(app.dir);
@@ -413,7 +425,6 @@ jala.Test.getStackTrace = <span class="reserved">function</span>(message) {
    var el, fileName, lineNumber;
    var stack = [];
    <span class="comment">// parse the stack trace and keep only the js elements</span>
-   var cnt = 0;
    <span class="reserved">for</span> (var i=0;i&lt;trace.length;i++) {
       el = trace[i];
       <span class="reserved">if</span> (!(fileName = el.getFileName()))
@@ -421,99 +432,51 @@ jala.Test.getStackTrace = <span class="reserved">function</span>(message) {
       <span class="reserved">if</span> ((lineNumber = el.getLineNumber()) == -1)
          continue;
       <span class="reserved">if</span> (fileName.endsWith(<span class="literal">".js"</span>) || fileName.endsWith(<span class="literal">".hac"</span>) || fileName.endsWith(<span class="literal">".hsp"</span>)) {
-         <span class="comment">// ignore the first two lines of the stack trace, since</span>
-         <span class="comment">// these always belong to the test framework</span>
-         <span class="reserved">if</span> (cnt &gt; 2) {
-            stack[stack.length] = <span class="literal">"at "</span> + fileName + <span class="literal">", line "</span> + lineNumber;
+         <span class="comment">// ignore all trace lines that refer to jala.Test</span>
+         <span class="reserved">if</span> (fileName.endsWith(<span class="literal">"jala.Test.js"</span>)) {
+            continue;
          }
+         stack[stack.length] = <span class="literal">"at "</span> + fileName + <span class="literal">", line "</span> + lineNumber;
          <span class="reserved">if</span> (fileName.endsWith(res.meta.currentTest)) {
             break;
          }
-         cnt += 1;
       }
    }
    <span class="reserved">return</span> stack.join(<span class="literal">"\n"</span>);
 };
 
 <span class="comment">/**
- * Duplicates the schema with the name passed as argument
- * in the embedded test database.
- * FIXME: for now prevent this method from appearing in the
- * API docs by marking it as private
- * <span class="attrib">@returns</span> The embedded database object
- * <span class="attrib">@type</span> jala.EmbeddedDatabase
- * <span class="attrib">@private</span>
- */</span>
-jala.Test.createDatabase = <span class="reserved">function</span>(schemaName) {
-   <span class="comment">// the database files are stored in a subdirectory</span>
-   <span class="comment">// in the location where the test files are stored</span>
-   var dir = jala.Test.getTestsDirectory();
-   var dbDir = new helma.File(dir, schemaName);
-   var testDb = new jala.EmbeddedDatabase(dbDir.getAbsolutePath());
-   <span class="comment">// start the embedded database</span>
-   <span class="reserved">if</span> (!testDb.start(true)) {
-      throw <span class="literal">"Unable to initialize embedded db!"</span>;
-   }
-
-   <span class="comment">// retrieve the metadata for all tables in this schema</span>
-   var dbSource = app.getDbSource(schemaName);
-   var con = dbSource.getConnection();
-   var meta = con.getMetaData();
-   var t = meta.getTables(null, schemaName, <span class="literal">"%"</span>, null);
-   var tableName, columns;
-   <span class="reserved">while</span> (t.next()) {
-      tableName = t.getString(3).toUpperCase();
-      <span class="reserved">if</span> (testDb.tableExists(tableName)) {
-         testDb.dropTable(tableName);
-      }
-      <span class="comment">// create an array containing the necessary column metadata</span>
-      var columns = [];
-      var c = meta.getColumns(null, schemaName, tableName, <span class="literal">"%"</span>);
-      var columnName, columnType, columnTypeName, columnSize, columnNullable;
-      <span class="reserved">while</span> (c.next()) {
-         columns[columns.length] = {
-            name: c.getString(4),
-            type: c.getInt(5),
-            length: c.getInt(7),
-            nullable: (c.getInt(11) == meta.typeNoNulls) ? false : true,
-            <span class="literal">"default"</span>: c.getString(13),
-            precision: c.getInt(9),
-            scale: c.getInt(10)
-         }
-      }
-
-      <span class="comment">// retrieve the primary keys of the table</span>
-      var pk = meta.getPrimaryKeys(null, schemaName, tableName);
-      var keys = [];
-      <span class="reserved">while</span> (pk.next()) {
-         keys[keys.length] = pk.getString(4);
-      }
-      <span class="comment">// create the table in the embedded database</span>
-      testDb.createTable(tableName, columns, keys.length &gt; 0 ? keys : null);
-   }
-   <span class="comment">// cleanup</span>
-   con.close();
-   testDb.stop();
-   <span class="reserved">return</span> testDb;
-};
-
-<span class="comment">/**
- * Prepares the per-thread global scope for the test run.
+ * Returns a custom JavaScript scope used for evaluating unit tests.
  * This method defines all assertion methods as global methods,
  * and creates a default instantiation of the Http client
  * for convenience.
+ * <span class="attrib">@returns</span> The newly created scope object
+ * <span class="attrib">@type</span> helma.scripting.rhino.GlobalObject
  * <span class="attrib">@private</span>
  */</span>
-jala.Test.prepareTestScope = <span class="reserved">function</span>() {
+jala.Test.getTestScope = <span class="reserved">function</span>() {
+   <span class="comment">// create a new vanilla global object</span>
+   var engine = Packages.helma.scripting.rhino.RhinoEngine.getRhinoEngine();
+   var scope = new Packages.helma.scripting.rhino.GlobalObject(engine.getCore(),
+                         app.__app__, true);
+   var framework = Packages.helma.framework;
+   <span class="comment">// put the necessary global objects into the scope</span>
+   scope.root = root;
+   scope.session = session;
+   scope.req = req;
+   scope.res = res;
+   scope.path = path;
    <span class="comment">// define global assertion functions</span>
    <span class="reserved">for</span> (var i in jala.Test.<span class="reserved">prototype</span>) {
       <span class="reserved">if</span> (i.indexOf(<span class="literal">"assert"</span>) == 0) {
-         global[i] = jala.Test.<span class="reserved">prototype</span>[i];
+         scope[i] = jala.Test.<span class="reserved">prototype</span>[i];
       }
    }
    <span class="comment">// instantiate a global HttpClient</span>
-   global.httpClient = new jala.Test.HttpClient();
-   <span class="reserved">return</span>;
+   scope.httpClient = new jala.Test.HttpClient();
+   <span class="comment">// instantiate the test database manager</span>
+   scope.testDatabases = new jala.Test.DatabaseMgr();
+   <span class="reserved">return</span> scope;
 }
 
 
@@ -663,31 +626,31 @@ jala.Test.<span class="reserved">prototype</span>.executeTest = <span class="res
    var code = new java.lang.String(testFile.readAll() || <span class="literal">""</span>);
    var testResult = new jala.Test.TestResult(testFileName);
    try {
-      <span class="comment">// prepare the test scope</span>
-      jala.Test.prepareTestScope();
+      <span class="comment">// instantiate a new test scope</span>
+      var scope = jala.Test.getTestScope(scope);
       <span class="comment">// evaluate the test file in the per-thread which is garbage</span>
       <span class="comment">// collected at the end of the test run and prevents the application</span>
       <span class="comment">// scope from being polluted</span>
-      cx.evaluateString(global, code, testFileName, 1, null);
-      <span class="reserved">if</span> (!global.tests || global.tests.constructor != Array || global.tests.length == 0) {
+      cx.evaluateString(scope, code, testFileName, 1, null);
+      <span class="reserved">if</span> (!scope.tests || scope.tests.constructor != Array || scope.tests.length == 0) {
          throw <span class="literal">"Please define an Array named 'tests' containing the names of the test functions to run"</span>;
       }
       var start = new Date();
       <span class="comment">// run the test</span>
       try {
-         <span class="reserved">if</span> (global.setup != null &amp;&amp; global.setup instanceof Function) {
+         <span class="reserved">if</span> (scope.setup != null &amp;&amp; scope.setup instanceof Function) {
             <span class="comment">// setup function exists, so call it</span>
-            testResult.log[testResult.log.length] = <span class="reserved">this</span>.executeTestFunction(<span class="literal">"setup"</span>);
+            testResult.log[testResult.log.length] = <span class="reserved">this</span>.executeTestFunction(<span class="literal">"setup"</span>, scope);
          }
          <span class="comment">// run all test methods defined in the array "tests"</span>
          var functionName;
-         <span class="reserved">for</span> (var i=0;i&lt;global.tests.length;i++) {
-            functionName = global.tests[i];
-            <span class="reserved">if</span> (!global[functionName] || global[functionName].constructor != Function) {
+         <span class="reserved">for</span> (var i=0;i&lt;scope.tests.length;i++) {
+            functionName = scope.tests[i];
+            <span class="reserved">if</span> (!scope[functionName] || scope[functionName].constructor != Function) {
                throw new jala.Test.EvaluatorException(<span class="literal">"Test function '"</span> +
                                          functionName + <span class="literal">"' is not defined."</span>);
             }
-            testResult.log[testResult.log.length] = <span class="reserved">this</span>.executeTestFunction(functionName);
+            testResult.log[testResult.log.length] = <span class="reserved">this</span>.executeTestFunction(functionName, scope);
          }
       } catch (e) {
          <span class="reserved">this</span>.testsFailed += 1;
@@ -695,8 +658,8 @@ jala.Test.<span class="reserved">prototype</span>.executeTest = <span class="res
          testResult.log[testResult.log.length] = e;
       } finally {
          <span class="comment">// call any existing "cleanup" method</span>
-         <span class="reserved">if</span> (global.cleanup != null &amp;&amp; global.cleanup instanceof Function) {
-            testResult.log[testResult.log.length] = <span class="reserved">this</span>.executeTestFunction(<span class="literal">"cleanup"</span>);
+         <span class="reserved">if</span> (scope.cleanup != null &amp;&amp; scope.cleanup instanceof Function) {
+            testResult.log[testResult.log.length] = <span class="reserved">this</span>.executeTestFunction(<span class="literal">"cleanup"</span>, scope);
          }
       }
    } catch (e) {
@@ -717,13 +680,15 @@ jala.Test.<span class="reserved">prototype</span>.executeTest = <span class="res
 <span class="comment">/**
  * Executes a single test function
  * <span class="attrib">@param</span> {String} functionName The name of the test function to execute
+ * <span class="attrib">@param</span> {helma.scripting.rhino.GlobalObject} scope The scope to execute
+ * the test method in
  */</span>
-jala.Test.<span class="reserved">prototype</span>.executeTestFunction = <span class="reserved">function</span>(functionName) {
+jala.Test.<span class="reserved">prototype</span>.executeTestFunction = <span class="reserved">function</span>(functionName, scope) {
    <span class="comment">// store the name of the current function in res.meta.currentTestFunction</span>
    res.meta.currentTestFunction = functionName;
    var start = new Date();
    try {
-      global[functionName]();
+      scope[functionName]();
       <span class="reserved">this</span>.functionsPassed += 1;
       <span class="reserved">return</span> new jala.Test.TestFunctionResult(functionName, start);
    } catch (e) {
@@ -1221,6 +1186,102 @@ jala.Test.HttpClient.<span class="reserved">prototype</span>.submitForm = <span 
 jala.Test.HttpClient.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
    <span class="reserved">return</span> <span class="literal">"[jala.Test.HttpClient]"</span>;
 };
+
+
+
+
+<span class="comment">/*****************************************************
+ ***** T E S T   D A T A B A S E   M A N A G E R *****
+ *****************************************************/</span>
+
+
+<span class="comment">/**
+ * Returns a newly created DatabaseMgr instance
+ * <span class="attrib">@class</span> Instances of this class allow managing test databases
+ * and switching a running application to an in-memory test
+ * database to use within a unit test.
+ * <span class="attrib">@returns</span> A newly created instance of DatabaseMgr
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Test.DatabaseMgr = <span class="reserved">function</span>() {
+   <span class="comment">/**
+    * Map containing all test databases
+    */</span>
+   <span class="reserved">this</span>.databases = {};
+
+   <span class="comment">/**
+    * Map containing the original datasource
+    * properties that were temporarily deactivated
+    * by activating a test database
+    */</span>
+   <span class="reserved">this</span>.dbSourceProperties = {};
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+<span class="comment">/**
+ * Switches the application datasource with the given name
+ * to a newly created in-memory database. In addition this method
+ * also clears the application cache and invalidates the root
+ * object to ensure that everything is re-retrieved from the
+ * test database.
+ * <span class="attrib">@param</span> {String} dbSourceName The name of the application database
+ * source as defined in db.properties
+ * <span class="attrib">@param</span> {Boolean} copyTables If true this method also copies all
+ * tables in the source database to the test database (excluding
+ * indexes). 
+ * <span class="attrib">@returns</span> The test database
+ * <span class="attrib">@type</span> jala.db.RamDatabase
+ */</span>
+jala.Test.DatabaseMgr.<span class="reserved">prototype</span>.startDatabase = <span class="reserved">function</span>(dbSourceName, copyTables) {
+   try {
+      var testDb = new jala.db.RamDatabase(dbSourceName);
+      <span class="comment">// switch the datasource to the test database</span>
+      var dbSource = app.getDbSource(dbSourceName);
+      <span class="reserved">if</span> (copyTables === true) {
+         testDb.copyTables(dbSource);
+      }
+      var oldProps = dbSource.switchProperties(testDb.getProperties());
+      <span class="comment">// store the test database in this manager for use in stopAll()</span>
+      <span class="reserved">this</span>.databases[dbSourceName] = testDb;
+      <span class="reserved">this</span>.dbSourceProperties[dbSourceName] = oldProps;
+      <span class="comment">// clear the application cache and invalidate root</span>
+      app.clearCache();
+      root.invalidate();
+      <span class="reserved">return</span> testDb;
+   } catch (e) {
+      throw new jala.Test.EvaluatorException(<span class="literal">"Unable to switch to test database, reason: "</span> + e);
+   }
+};
+
+<span class="comment">/**
+ * Stops all registered test databases and and reverts the application
+ * to its original datasource(s) as defined in db.properties file.
+ * In addition this method commits all pending changes within the request,
+ * cleares the application cache and invalidates the root object
+ * to ensure no traces of the test database are left behind.
+ */</span>
+jala.Test.DatabaseMgr.<span class="reserved">prototype</span>.stopAll = <span class="reserved">function</span>() {
+   <span class="comment">// commit all pending changes</span>
+   res.commit();
+   try {
+      <span class="comment">// loop over all registered databases and revert the appropriate</span>
+      <span class="comment">// datasource back to the original database</span>
+      var testDb, dbSource;
+      <span class="reserved">for</span> (var dbSourceName in <span class="reserved">this</span>.databases) {
+         testDb = <span class="reserved">this</span>.databases[dbSourceName];
+         dbSource = app.getDbSource(dbSourceName);
+         dbSource.switchProperties(<span class="reserved">this</span>.dbSourceProperties[dbSourceName]);
+         testDb.shutdown();
+      }
+      <span class="comment">// clear the application cache and invalidate root</span>
+      app.clearCache();
+      root.invalidate();
+   } catch (e) {
+      throw new jala.Test.EvaluatorException(<span class="literal">"Unable to stop test databases, reason: "</span> + e);
+   }
+   <span class="reserved">return</span>;
+};
 </pre>
 	<hr>
 
@@ -1248,7 +1309,7 @@ jala.Test.HttpClient.<span class="reserved">prototype</span>.toString = <span cl
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>jala.Test</b></em>
+<b>Jala Test</b></em>
 </td>
 </tr>
 
@@ -1279,6 +1340,6 @@ jala.Test.HttpClient.<span class="reserved">prototype</span>.toString = <span cl
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Mon Feb 12 14:40:38 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar 15 14:24:11 2007</div>
 </body>
 </html>

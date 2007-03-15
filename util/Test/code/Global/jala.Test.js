@@ -1029,6 +1029,14 @@ jala.Test.HttpClient.prototype.toString = function() {
  *****************************************************/
 
 
+/**
+ * Returns a newly created DatabaseMgr instance
+ * @class Instances of this class allow managing test databases
+ * and switching a running application to an in-memory test
+ * database to use within a unit test.
+ * @returns A newly created instance of DatabaseMgr
+ * @constructor
+ */
 jala.Test.DatabaseMgr = function() {
    /**
     * Map containing all test databases

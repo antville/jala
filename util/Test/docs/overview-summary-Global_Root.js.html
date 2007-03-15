@@ -8,7 +8,7 @@ Jala Test Overview
 <script>
 function asd() {
 	
-		parent.document.title="Jala Test Overview";
+		parent.document.title="Global/Root.js Overview";
 	
 }
 </script>
@@ -25,8 +25,8 @@ function asd() {
   <tr align="center" valign="top">
   
   
-  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>Overview</b></font>&nbsp;</td>
-  <td bgcolor="#EEEEFF" class="NavBarCell1"> <font class="NavBarFont1">File</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
   
 
   <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
@@ -68,55 +68,84 @@ function asd() {
 <hr>
 <center>
 	
-	   <h2>Jala Test</h2>
+	   <h2>Global/Root.js</h2>
 	
 </center>
 
-	
-		<p>
-			This document is the API Specification for 
-			Jala Test.
-		</p>
 	
 
 
 <h4>Summary</h4>
 <p>
 	
-    	No summary generated for these documents.
+		No overview generated for 'Global/Root.js'<BR/><BR/>
 	
 </p>
 
 <hr>
 
 
-    <table border="1" cellpadding="3" cellspacing="0" width="100%">
-    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
-    <td colspan=2><font size="+2">
-    
-        <b>File Summary</b>
-    
-    </font></td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="overview-summary-Global_jala.Test.js.html">Global/jala.Test.js</a></b></td>
-    <td>Fields and methods of the jala.Test class.</td>
-    </tr>
-    
-    <tr bgcolor="white" class="TableRowColor">
-    <td width="15%"><b><a href="overview-summary-Global_Root.js.html">Global/Root.js</a></b></td>
-    <td>&nbsp;</td>
-    </tr>
-    
-    </table>
-    <hr/> 
-
 
 <!-- ========== METHOD SUMMARY =========== -->
 
 <!-- ========== END METHOD SUMMARY =========== -->
 
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * Module dependencies
+ */</span>
+app.addRepository(<span class="literal">"modules/core/HopObject.js"</span>);
+app.addRepository(<span class="literal">"modules/core/Array.js"</span>);
+app.addRepository(<span class="literal">"modules/helma/File.js"</span>);
+
+<span class="comment">/**
+ * Test runner
+ */</span>
+Root.<span class="reserved">prototype</span>.jala_test_action = <span class="reserved">function</span>() {
+   res.handlers.test = new jala.Test();
+   <span class="reserved">if</span> (req.isGet() &amp;&amp; req.data.test) {
+      res.handlers.test.execute(req.data.test);
+   } <span class="reserved">else</span> <span class="reserved">if</span> (req.isPost() &amp;&amp; (req.data.test_array || req.data.test)) {
+      res.handlers.test.execute(req.data.test_array || req.data.test);
+   }
+   renderSkin(<span class="literal">"jala.Test.main"</span>);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * External stylesheet for test runner
+ */</span>
+Root.<span class="reserved">prototype</span>.jala_test_css_action = <span class="reserved">function</span>() {
+   res.contentType = <span class="literal">"text/css"</span>;
+   renderSkin(<span class="literal">"jala.Test.stylesheet"</span>);
+   <span class="reserved">return</span>;
+};
+</pre>
+	<hr>
 
 
 
@@ -130,8 +159,8 @@ function asd() {
   <tr align="center" valign="top">
   
   
-  <td bgcolor="#FFFFFF" class="NavBarCell1Rev"> &nbsp;<font class="NavBarFont1Rev"><b>Overview</b></font>&nbsp;</td>
-  <td bgcolor="#EEEEFF" class="NavBarCell1"> <font class="NavBarFont1">File</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
   
 
   <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
