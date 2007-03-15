@@ -212,8 +212,8 @@ jala.db.Server.prototype.addDatabase = function(db, props) {
    if (props != null) {
       dbPath += jala.db.getPropertyString(props);
    }
-   names[name] = dbIdx;
-   databases[dbIdx] = db;
+   this.getDatabaseMap()[name] = dbIdx;
+   this.getDatabases()[dbIdx] = db;
    // add the database to the server
    server.setDatabaseName(dbIdx, name);
    server.setDatabasePath(dbIdx, dbPath);
@@ -251,7 +251,6 @@ jala.db.Server.prototype.getUrl = function(name, props) {
  * @type helma.util.ResourceProperties
  */
 jala.db.Server.prototype.getProperties = function(name, props) {
-   var name = this.getName();
    var rp = new Packages.helma.util.ResourceProperties();
    rp.put(name + ".url", this.getUrl(name, props));
    rp.put(name + ".driver", "org.hsqldb.jdbcDriver");
