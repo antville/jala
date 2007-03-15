@@ -41,7 +41,7 @@ app.addRepository("modules/helma/Http.js");
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/code/Db.js");
+app.addRepository("modules/jala/code/Database.js");
 
 /**
  * Constructs a new Test instance.
