@@ -104,6 +104,21 @@ jala.audio.Mp3 = function(file) {
    };
 
 
+   // flag to remember if mp3 header has been read
+   var mp3HeaderRead = false;   
+
+   /**
+    * makes sure that the mp3 header is read once
+    * @private
+    */
+   this.readMp3Header = function() {
+      if (!mp3HeaderRead) {
+         mp3File.seekMP3Frame();
+         mp3HeaderRead = true;
+      }
+   };
+
+
    /**   @type String   */
    this.album;
 
@@ -182,22 +197,6 @@ jala.audio.Mp3.prototype.createTag = function(tagClass, tagObject) {
 
 
 /**
- * The audio length of the file in seconds at best estimate from the file info (method returns immediately).
- */
-jala.audio.Mp3.prototype.getDuration = function() {
-};
-
-
-/**
- * Returns the file size in bytes.
- * @type Number
- */
-jala.audio.Mp3.prototype.getSize = function() {
-   return this.getFile().getLength();
-};
-
-
-/**
  * Returns a tag object, type is specified using the class name
  * in jala.audio.tag.*.
  * @type Object
@@ -239,29 +238,98 @@ jala.audio.Mp3.prototype.removeTag = function(tagClass) {
  *                       to a different file
  */
 jala.audio.Mp3.prototype.save = function(file) {
-   // TODO: handling of the extra file argument
+   // FIXME: handling of the extra file argument
    this.getJavaObject().save();
 };
 
 
 /**
- * 
+ * The audio length of the file in seconds at best estimate
+ * from the file info (method returns immediately).
+ * This method calculates based on the bitrate. Therefore it
+ * has to produce wrong results for files encoded with variable
+ * bitrate (vbr). For these files parseDuration() can be used.
+ * @returns length in seconds
+ * @type Number
+ * @see #parseDuration
+ */
+jala.audio.Mp3.prototype.getDuration = function() {
+   var bitrate = this.getBitRate();
+   if (bitrate != 0) {
+      return Math.round(this.getSize() / (bitrate * 1000 / 8));
+   }
+   return 0;
+};
+
+
+/**
+ * Parses the audio file to extract the precise duration of the audio.
+ * The upside is that it works fine for files with variable bitrates.
+ * The downside is that this action may take a few seconds depending on
+ * the size of the audio file.
+ * @returns length in seconds
+ * @type Number
+ * @see #getDuration
+ */
+jala.audio.Mp3.prototype.parseDuration = function() {
+   try {
+      var reader = Packages.de.ueberdosis.mp3info.ID3Reader(this.getFile().getAbsolutePath());
+      var tag = reader.getExtendedID3Tag();
+      return tag.getRuntime();
+   } catch (e) {
+      throw "jala.audio.Mp3#parseDuration requires id3-1.6.0d9.jar"
+      + " in lib/ext or modules/jala/lib directory "
+      + "[http://sourceforge.net/projects/mp3info/]";
+   }
+};
+
+
+/**
+ * Returns the file size in bytes.
+ * @type Number
+ */
+jala.audio.Mp3.prototype.getSize = function() {
+   return this.getFile().getLength();
+};
+
+
+/**
+ * Returns the bit rate the file was encoded with.
+ * @type Number
  */
 jala.audio.Mp3.prototype.getBitRate = function() {
+   this.readMp3Header()
+   return this.getJavaObject().getBitRate();
 };
 
 
 /**
- * 
+ * Returns the channel mode the file was encoded with.
+ * @type String
  */
 jala.audio.Mp3.prototype.getChannelMode = function() {
+   this.readMp3Header()
+   return jala.audio.Mp3.MODES[this.getJavaObject().getMode()];
 };
 
 
 /**
- * 
+ * Returns the frequency the file was encoded with.
+ * @type Number
  */
-jala.audio.Mp3.prototype.getFrameRate = function() {
+jala.audio.Mp3.prototype.getFrequency = function() {
+   this.readMp3Header()
+   return this.getJavaObject().getFrequency();
+};
+
+
+/**
+ * @type Boolean
+ */
+jala.audio.Mp3.prototype.isVariableBitRate = function() {
+   this.readMp3Header()
+   return this.getJavaObject().isVariableBitRate();
+   // FIXME: java method seems to always return true!
 };
 
 
@@ -345,21 +413,6 @@ jala.audio.Mp3.prototype.removeV2Tag = function() {
 };
 
 
-/**
- * 
- */
-jala.audio.Mp3.prototype.isVariableBitRate = function() {
-};
-
-
-/**
- * Parses the audio file to extract the precise duration of the audio
- * (this may take some seconds).
- */
-jala.audio.Mp3.prototype.parseDuration = function() {
-};
-
-
 /** @ignore */
 jala.audio.Mp3.toString = function() {
    return "[jala.audio.Mp3 " + this.getFile() + "]";
@@ -392,6 +445,7 @@ jala.audio.Mp3.GENRES = ["Blues", "Classic Rock", "Country", "Dance", "Disco",
    "Power Ballad", "Rhythmic Soul", "Freestyle", "Duet", "Punk Rock", "Drum Solo",
    "Acapella", "Euro-House", "Dance Hall"];
 
+jala.audio.Mp3.MODES = ["Stereo", "Joint stereo", "Dual channel", "Mono"];
 
 
 /**
@@ -399,6 +453,27 @@ jala.audio.Mp3.GENRES = ["Blues", "Classic Rock", "Country", "Dance", "Disco",
  */
 jala.audio.tag = {};
 
+
+/**
+ * Helper method to copy the standard fields from one tag
+ * to another
+ * @param {Object} src  object with setter methods for fields album, artist,
+ *                      comment, title, trackNumber, genre and year.
+ * @param {Object} dest object with getter methods for fields album, artist,
+ *                      comment, title, trackNumber, genre and year.
+ * @returns changed object
+ * @type Object
+ */
+jala.audio.tag.copyFields = function(src, dest) {
+   dest.setAlbum(src.getAlbum());
+   dest.setArtist(src.getArtist());
+   dest.setComment(src.getComment());
+   dest.setTitle(src.getTitle());
+   dest.setTrackNumber(src.getTrackNumber());
+   dest.setGenre(src.getGenre());
+   dest.setYear(src.getYear());
+   return dest;
+}
 
 /**
  * Constructs a new Id3v1 tag from an Mp3 file
@@ -434,10 +509,12 @@ jala.audio.tag.Id3v1 = function(audioObj) {
 
 
 /**
- * copies tag information from another tag.
- * @param {Object} tag
+ * Copies standard fields from another tag.
+ * @param {Object} src object with getter methods for fields album, artist,
+ *                     comment, title, trackNumber, genre and year.
  */
 jala.audio.tag.Id3v1.prototype.copyFrom = function(tag) {
+   jala.audio.tag.copyFields(tag, this);
 };
 
 
@@ -651,10 +728,12 @@ jala.audio.tag.Id3v2 = function(audioObj) {
 
 
 /**
- * copies tag information from another tag.
- * @param {Object} tag
+ * Copies standard fields from another tag.
+ * @param {Object} src object with getter methods for fields album, artist,
+ *                     comment, title, trackNumber, genre and year.
  */
 jala.audio.tag.Id3v2.prototype.copyFrom = function(tag) {
+   jala.audio.tag.copyFields(tag, this);
 };
 
 
@@ -832,7 +911,7 @@ jala.audio.tag.Id3v2.prototype.setTextContent = function(id, val)  {
  * Converts the tag to the id3v2 tag of the given sub-version number (2, 3 or 4).
  */
 jala.audio.tag.Id3v2.prototype.convertToSubtype = function(type) {
-   // TODO: dig to find out how this conversion is done with JavaMusicTag
+   // FIXME: dig to find out how this conversion is done with JavaMusicTag
 };
 
 
@@ -862,7 +941,7 @@ jala.audio.tag.Id3v2.prototype.getImage = function(pictureType) {
  * returns the version number of id3v2 tags used (values 2 to 4 for id3v2.2 to id3v2.4)
  */
 jala.audio.tag.Id3v2.prototype.getSubtype = function() {
-   // TODO: getRevision() didn't return anything for test files!
+   // FIXME: getRevision() didn't return anything for test files!
    return this.getJavaObject().getRevision();
 };
 
