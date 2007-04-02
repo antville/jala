@@ -34,9 +34,15 @@ if (!global.jala) {
 
 
 /**
- * Jala dependencies
+ * Load java libraries
  */
-app.addRepository("modules/jala/lib/java_mp3.jar");
+
+// JavaMusicTag (org.farng.mp3.*)
+app.addRepository("modules/jala/lib/jid3lib-0.5.4.jar");
+
+// Mp3Info (de.ueberdosis.mp3info.*, required for parseDuration)
+app.addRepository("modules/jala/lib/id3-1.6.0d9.jar");
+
 
 
 /**
@@ -80,7 +86,7 @@ jala.audio.Mp3 = function(file) {
       var clazz = java.lang.Class.forName("org.farng.mp3.MP3File",
                                           false, app.getClassLoader())
    } catch (e) {
-      throw "jala.audio.Mp3 requires java_mp3.jar"
+      throw "jala.audio.Mp3 requires jid3lib-0.5.4.jar"
             + " in lib/ext or modules/jala/lib directory "
             + "[http://javamusictag.sourceforge.net/]";
    }
