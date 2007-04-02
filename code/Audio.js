@@ -875,7 +875,7 @@ jala.audio.tag.Id3v2 = function(audioObj) {
 
    var tag = audioObj.getJavaObject().getID3v2Tag();
    if (!tag) {
-      tag = new Packages.org.farng.mp3.id3.ID3v2_4();
+      tag = new Packages.org.farng.mp3.id3.ID3v2_3();
       audioObj.getJavaObject().setID3v2Tag(tag);
    }
 
