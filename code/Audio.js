@@ -71,15 +71,8 @@ jala.audio.Mp3 = function(file) {
    // check and normalize file argument
    if (!file) {
       throw "jala.audio.Mp3: missing argument";
-   } else if (typeof(file) == "string") {
+   } else {
       file = new helma.File(file);
-   } else if (!(file instanceof helma.File)) {
-      try {
-         file = new helma.File(file.getAbsolutePath());
-      } catch (e) {
-         throw "jala.audio.Mp3: requires a path string "
-               + "or a file object as argument";
-      }
    }
 
    try {
@@ -142,7 +135,6 @@ jala.audio.Mp3 = function(file) {
     * @type Object
     */
    this.createTag = function(tagClass, tagObject) {
-   res.debug("creating tag " + tagClass);
 
       this.removeTag(tagClass);
       tagObjects[tagClass] = new tagClass(this);
@@ -197,14 +189,13 @@ jala.audio.Mp3 = function(file) {
    };
 
 
-
-
    /**
     * Writes changed metadata back to the source file or to a new file. 
-    * @param {helma.File} file (optional) save the modified file
+    * @param {String | helma.File} outFile (optional) save the modified file
     *                       to a different file
     */
-   this.save = function(file) {
+   this.save = function(outFile) {
+      // turn off saving of backup-files:
       Packages.org.farng.mp3.TagOptionSingleton.getInstance().setOriginalSavedAfterAdjustingID3v2Padding(false);
   
       if (v2JavaTagToDelete) {
@@ -215,11 +206,19 @@ jala.audio.Mp3 = function(file) {
          var raf = new java.io.RandomAccessFile(mp3File.getMp3file(), "rw");
          v2JavaTagToDelete["delete"](raf);
          v2JavaTagToDelete = null;
+         raf.close();
       }
    
-      // FIXME: handling of the extra file argument
-      mp3File.save(
-         Packages.org.farng.mp3.TagConstant.MP3_FILE_SAVE_WRITE
+      if(outFile) {
+         var outFile = new helma.File(outFile);
+         // MP3File.save(file) only saves the tags!
+         // Thus, we make a hardcopy first.
+         file.hardCopy(outFile);
+      } else {
+         outFile = file;
+      }
+      mp3File.save(outFile,
+         Packages.org.farng.mp3.TagConstant.MP3_FILE_SAVE_OVERWRITE
       );
    };
 
@@ -660,6 +659,7 @@ jala.audio.tag.Id3v1 = function(audioObj) {
    /**
     * Removes the tag from the audio file and
     * nulls out the wrapper.
+    * @private
     */
    this.removeFromAudio = function() {
       // unfortunately the arguments for the two variants of
@@ -1012,14 +1012,12 @@ jala.audio.tag.Id3v2.prototype.decodeText = function(str, encoding) {
  * of the underlying tag. For the list of valid identifiers
  * and their meaning see http://www.id3.org/
  * The identifiers vary across the sub versions of id3v2 tags,
- * use getSubtype and convertToSubtype to make sure you use the
- * correct version.
+ * use getSubtype to make sure you use the correct version.
  * @param {String} id Frame identifier according to Id3v2 specification
  *                   or shortcut as defined in jala.audio.Mp3.FIELD_MAPPING.
  * @returns String contained in the frame
  * @type String
  * @see #getSubtype
- * @see #convertToSubtype
  */
 jala.audio.tag.Id3v2.prototype.getTextContent = function(idStr) {
    var id = idStr;
@@ -1040,13 +1038,11 @@ jala.audio.tag.Id3v2.prototype.getTextContent = function(idStr) {
  * of the underlying tag. For the list of valid identifiers
  * and their meaning see http://www.id3.org/
  * The identifiers vary across the sub versions of id3v2 tags,
- * use getSubtype and convertToSubtype to make sure you use the
- * correct version.
+ * use getSubtype to make sure you use the correct version.
  * @param {String} id Frame identifier according to Id3v2 specification
  * @param {String} value
  * @type String
  * @see #getSubtype
- * @see #convertToSubtype
  */
 jala.audio.tag.Id3v2.prototype.setTextContent = function(idStr, val)  {
    var id = idStr;
@@ -1104,14 +1100,6 @@ jala.audio.tag.Id3v2.prototype.getSubtype = function() {
       return 2;
    }
    return 0;
-};
-
-
-/**
- * Converts the tag to the id3v2 tag of the given sub-version number (2, 3 or 4).
- */
-jala.audio.tag.Id3v2.prototype.convertToSubtype = function(type) {
-   // FIXME: dig to find out how this conversion is done with JavaMusicTag
 };
 
 
@@ -1241,7 +1229,6 @@ jala.audio.tag.Id3v2.prototype.setArtist = function(artist) {
  * @param {String} comment
  */
 jala.audio.tag.Id3v2.prototype.setComment = function(comment) {
-   res.debug("this is setComment");
    // comment (COMM) isn't a text frame. it supports the getText()
    // method but its constructor has a different signature.
    var frame = this.getFrame("comment", "eng", "");
