@@ -85,7 +85,14 @@ jala.audio.Mp3 = function(file) {
             + "[http://javamusictag.sourceforge.net/]";
    }
 
-   var mp3File = new Packages.org.farng.mp3.MP3File(file.getAbsolutePath());
+   if (file.getLength() < 128) {
+      throw "file too short to be an MP3 file (< 128 bytes)";
+   }
+   try {
+      var mp3File = new Packages.org.farng.mp3.MP3File(file.getAbsolutePath());
+   } catch (e) {
+      throw "error parsing mp3 file: " + e.toString();
+   }
 
    /**
     * Returns a helma.File reference to the wrapped file.
@@ -96,7 +103,7 @@ jala.audio.Mp3 = function(file) {
    };
 
    /**
-    * @returns the underlying java object
+    * Returns the underlying java object
     * @type org.farng.mp3.MP3File
     */
    this.getJavaObject = function() {
@@ -104,11 +111,121 @@ jala.audio.Mp3 = function(file) {
    };
 
 
+   // map to remember tag objects
+   var tagObjects = {};
+
+   if (mp3File.hasID3v1Tag()) {
+      tagObjects[jala.audio.tag.Id3v1] = new jala.audio.tag.Id3v1(this);
+   }
+   
+   if (mp3File.hasID3v2Tag()) {
+      tagObjects[jala.audio.tag.Id3v2] = new jala.audio.tag.Id3v2(this);
+   }
+
+   /**
+    * This method creates a new tag object, attaches it
+    * to the file (thereby replacing an existing tag of
+    * this type) and returns it. Type is specified using 
+    * the class name in jala.audio.tag.*. If a second 
+    * argument is provided, its values are copied into 
+    * the new tag.
+    *
+    * @param {Object} tagClass
+    * @param {Object} tagObject optional tag whose standard
+    *        properties are copied to the new tag.
+    * @type Object
+    */
+   this.createTag = function(tagClass, tagObject) {
+   res.debug("creating tag " + tagClass);
+
+      this.removeTag(tagClass);
+      tagObjects[tagClass] = new tagClass(this);
+      // we use zero as default value for empty track numbers.
+      // this is the same behaviour as with winamp and tag&rename.
+      tagObjects[tagClass].setTrackNumber("0");
+
+      if (tagObject) {
+         tagObjects[tagClass].copyFrom(tagObject);
+      }
+      return tagObjects[tagClass];
+   };
+
+   /**
+    * Returns a tag object, type is specified using the class name
+    * in jala.audio.tag.*.
+    * @type Object
+    */
+   this.getTag = function(tagClass) {
+      return tagObjects[tagClass];
+   };
+
+   /**
+    * Tells if the file contains a certain tag, type is specified
+    * using the class name in jala.audio.tag.*
+    */
+   this.hasTag = function(tagClass) {
+      return (tagObjects[tagClass]) ? true : false;
+   };
+
+
+   // field to remember a v2 tag that has to be deleted from the file in save()
+   var v2JavaTagToDelete = null;
+
+   /**
+    * Removes a tag from the file, type is specified using the
+    * class name in jala.audio.tag.*
+    */
+   this.removeTag = function(tagClass) {
+      if (!tagObjects[tagClass]) {
+         return;
+      }
+
+      // remember v2 tag here to explicitly delete it from
+      // the audio file if save() is called ...
+      // this is a workaround for a bug in JavaMusicTag!
+      v2JavaTagToDelete = tagObjects[tagClass].getJavaObject();
+
+      tagObjects[tagClass].removeFromAudio();
+      tagObjects[tagClass] = null;
+      return;
+   };
+
+
+
+
+   /**
+    * Writes changed metadata back to the source file or to a new file. 
+    * @param {helma.File} file (optional) save the modified file
+    *                       to a different file
+    */
+   this.save = function(file) {
+      Packages.org.farng.mp3.TagOptionSingleton.getInstance().setOriginalSavedAfterAdjustingID3v2Padding(false);
+  
+      if (v2JavaTagToDelete) {
+         // this is a workaround for a bug in JavaMusicTag:
+         // MP3File.save() just tries to delete an ID3v2_4 tag,
+         // but omits 2_3 or 2_2 tags. To be on the safe side
+         // we have to explicitly remove the deleted v2 tag.
+         var raf = new java.io.RandomAccessFile(mp3File.getMp3file(), "rw");
+         v2JavaTagToDelete["delete"](raf);
+         v2JavaTagToDelete = null;
+      }
+   
+      // FIXME: handling of the extra file argument
+      mp3File.save(
+         Packages.org.farng.mp3.TagConstant.MP3_FILE_SAVE_WRITE
+      );
+   };
+
+
+
    // flag to remember if mp3 header has been read
    var mp3HeaderRead = false;   
 
    /**
-    * makes sure that the mp3 header is read once
+    * Makes sure that the mp3 header is read only once
+    * This takes a few milliseconds, so we only do it when a
+    * function that depends on header data is called.
     * @private
     */
    this.readMp3Header = function() {
@@ -156,90 +273,88 @@ try {
    // older helma versions can't handle __defineGetter__
 }
 
+
 /**
- * Returns the information for a field from the tags: At first the ID3v2
- * tag is checked. If it isn't present or doesn't contain the field,
- * the ID3v1 tag is checked.
- * @type {String}
+ * Array defining valid genres in ID3v1
+ * @type Array
+ * @final
+ */
+jala.audio.Mp3.GENRES = ["Blues", "Classic Rock", "Country", "Dance", "Disco",
+   "Funk", "Grunge", "Hip-Hop", "Jazz", "Metal", "New Age", "Oldies", "Other",
+   "Pop", "R&B", "Rap", "Reggae", "Rock", "Techno", "Industrial", "Alternative",
+   "Ska", "Death Metal", "Pranks", "Soundtrack", "Euro-Techno", "Ambient",
+   "Trip-Hop", "Vocal", "Jazz+Funk", "Fusion", "Trance", "Classical",
+   "Instrumental", "Acid", "House", "Game", "Sound Clip", "Gospel", "Noise",
+   "AlternRock", "Bass", "Soul", "Punk", "Space", "Meditative", "Instrumental Pop",
+   "Instrumental Rock", "Ethnic", "Gothic", "Darkwave", "Techno-Industrial",
+   "Electronic", "Pop-Folk", "Eurodance", "Dream", "Southern Rock", "Comedy",
+   "Cult", "Gangsta", "Top 40", "Christian Rap", "Pop/Funk", "Jungle",
+   "Native American", "Cabaret", "New Wave", "Psychadelic", "Rave",
+   "Showtunes", "Trailer", "Lo-Fi", "Tribal", "Acid Punk", "Acid Jazz", "Polka",
+   "Retro", "Musical", "Rock & Roll", "Hard Rock", "Folk", "Folk-Rock",
+   "National Folk", "Swing", "Fast Fusion", "Bebob", "Latin", "Revival", "Celtic",
+   "Bluegrass", "Avantgarde", "Gothic Rock", "Progressive Rock",
+   "Psychedelic Rock", "Symphonic Rock", "Slow Rock", "Big Band", "Chorus",
+   "Easy Listening", "Acoustic", "Humour", "Speech", "Chanson", "Opera",
+   "Chamber Music", "Sonata", "Symphony", "Booty Bass", "Primus", "Porn Groove",
+   "Satire", "Slow Jam", "Club", "Tango", "Samba", "Folklore", "Ballad",
+   "Power Ballad", "Rhythmic Soul", "Freestyle", "Duet", "Punk Rock", "Drum Solo",
+   "Acapella", "Euro-House", "Dance Hall"];
+
+
+/**
+ * Array defining mp3 modes.
+ * @type Array
+ * @final
+ */
+jala.audio.Mp3.MODES = ["Stereo", "Joint stereo", "Dual channel", "Mono"];
+
+
+/**
+ * Array defining valid text encodings. Note: UTF-8 is valid for v2.4 only.
+ * UTF-16 with BOM doesn't work with Winamp etc - use UTF-16BE instead!
+ * The index position within the array defines the number used in the mp3 file.
+ * @type Array
+ * @final
+ */
+jala.audio.Mp3.TEXT_ENCODINGS = ["ISO-8859-1", "UTF-16", "UTF-16BE", "UTF-8"];
+
+
+/**
+ * Array defining valid picture types. Note: Most image tagged files come with
+ * one picture of picture type null!
+ * The index position within the array defines the number used in the mp3 file.
+ * @type Array
+ * @final
+ */
+jala.audio.Mp3.PICTURE_TYPES = ["Other", "32x32 pixels 'file icon' (PNG only)",
+   "Other file icon", "Cover (front)", "Cover (back)", "Leaflet page",
+   "Media (e.g. label side of CD)", "Lead artist/lead performer/soloist",
+   "Artist/performer", "Conductor", "Band/Orchestra", "Composer",
+   "Lyricist/text writer", "Recording Location", "During recording",
+   "During performance", "Movie/video screen capture", "A bright coloured fish",
+   "Illustration", "Band/artist logotype", "Publisher/Studio logotype"];
+
+
+/**
+ * Maps the name of the standard fields to frame ids in the different versions
+ * of ID3v2.
+ * @type Object
  * @private
+ * @final
  */
-jala.audio.Mp3.prototype.getField = function(fieldName) {
-   var id3v1 = this.getV1Tag();
-   var id3v2 = this.getV2Tag();
-   var funcName = "get" + fieldName.head(1, "").toUpperCase() + fieldName.tail(1, "");
-   if (id3v2) {
-      var val = id3v2[funcName]();
-      if (val) {
-         return val;
-      }
-   }
-   if (id3v1) {
-      return id3v1[funcName]();
-   }
-   return null;
-};
-
-
-/**
- * If the file doesn't contain the given tag, this method
- * creates a new tag object, attaches it to the file
- * and returns it. Type is specified using the class
- * name in jala.audio.tag.*. If a second argument is
- * provided, its values are copied into the new tag.
- *
- * @param {Object} tagClass
- * @param {Object} tagObject optional tag whose standard
- *        properties are copied to the new tag.
- * @type Object
- */
-jala.audio.Mp3.prototype.createTag = function(tagClass, tagObject) {
-};
-
-
-/**
- * Returns a tag object, type is specified using the class name
- * in jala.audio.tag.*.
- * @type Object
- */
-jala.audio.Mp3.prototype.getTag = function(tagClass) {
-   try {
-      return new tagClass(this);
-   } catch (e) {
-      return null;
-   }
-};
-
-
-/**
- * Tells if the file contains a certain tag, type is specified
- * using the class name in jala.audio.tag.*
- */
-jala.audio.Mp3.prototype.hasTag = function(tagClass) {
-   try {
-      var check = new tagClass(this);
-      return true;
-   } catch (e) {
-      return false;
-   }
-};
-
-
-/**
- * Removes a tag from the file, type is specified using the
- * class name in jala.audio.tag.*
- */
-jala.audio.Mp3.prototype.removeTag = function(tagClass) {
-};
-
-
-/**
- * Writes changed metadata back to the source file or to a new file. 
- * @param {helma.File} file (optional) save the modified file
- *                       to a different file
- */
-jala.audio.Mp3.prototype.save = function(file) {
-   // FIXME: handling of the extra file argument
-   this.getJavaObject().save();
+jala.audio.Mp3.FIELD_MAPPING = {
+   "album":    ["", "", "TAL", "TALB", "TALB"],
+   "artist":   ["", "", "TP1", "TPE1", "TPE1"],
+   "comment":  ["", "", "COM", "COMM", "COMM"],
+   "genre":    ["", "", "TCO", "TCON", "TCON"],
+   "title":    ["", "", "TT2", "TIT2", "TIT2"],
+   "trackNumber": ["", "", "TRK", "TRCK", "TRCK"],
+   "year":     ["", "", "TYE", "TYER", "TDRC"],
+   "author":   ["", "", "TCM", "TCOM", "TCOM"],
+   "copyright":["", "", "TCR", "TCOP", "TCOP"],
+   "url":      ["", "", "WXX", "WXXX", "WXXX"],
+   "image":    ["", "", "PIC", "APIC", "APIC"]
 };
 
 
@@ -324,12 +439,38 @@ jala.audio.Mp3.prototype.getFrequency = function() {
 
 
 /**
+ * Returns true if the file is (or seems to be) encoded with
+ * variable bit rate. FIXME: The current implementation returned
+ * true for all test files.
  * @type Boolean
  */
 jala.audio.Mp3.prototype.isVariableBitRate = function() {
    this.readMp3Header()
    return this.getJavaObject().isVariableBitRate();
-   // FIXME: java method seems to always return true!
+};
+
+
+/**
+ * Returns the information for a field from the tags: At first the ID3v2
+ * tag is checked. If it isn't present or doesn't contain the field,
+ * the ID3v1 tag is checked.
+ * @type {String}
+ * @private
+ */
+jala.audio.Mp3.prototype.getField = function(fieldName) {
+   var id3v1 = this.getV1Tag();
+   var id3v2 = this.getV2Tag();
+   var funcName = "get" + fieldName.head(1, "").toUpperCase() + fieldName.tail(1, "");
+   if (id3v2) {
+      var val = id3v2[funcName]();
+      if (val) {
+         return val;
+      }
+   }
+   if (id3v1) {
+      return id3v1[funcName]();
+   }
+   return null;
 };
 
 
@@ -423,29 +564,31 @@ jala.audio.Mp3.prototype.toString = jala.audio.Mp3.toString;
 
 
 
-jala.audio.Mp3.GENRES = ["Blues", "Classic Rock", "Country", "Dance", "Disco",
-   "Funk", "Grunge", "Hip-Hop", "Jazz", "Metal", "New Age", "Oldies", "Other",
-   "Pop", "R&B", "Rap", "Reggae", "Rock", "Techno", "Industrial", "Alternative",
-   "Ska", "Death Metal", "Pranks", "Soundtrack", "Euro-Techno", "Ambient",
-   "Trip-Hop", "Vocal", "Jazz+Funk", "Fusion", "Trance", "Classical",
-   "Instrumental", "Acid", "House", "Game", "Sound Clip", "Gospel", "Noise",
-   "AlternRock", "Bass", "Soul", "Punk", "Space", "Meditative", "Instrumental Pop",
-   "Instrumental Rock", "Ethnic", "Gothic", "Darkwave", "Techno-Industrial",
-   "Electronic", "Pop-Folk", "Eurodance", "Dream", "Southern Rock", "Comedy",
-   "Cult", "Gangsta", "Top 40", "Christian Rap", "Pop/Funk", "Jungle",
-   "Native American", "Cabaret", "New Wave", "Psychadelic", "Rave",
-   "Showtunes", "Trailer", "Lo-Fi", "Tribal", "Acid Punk", "Acid Jazz", "Polka",
-   "Retro", "Musical", "Rock & Roll", "Hard Rock", "Folk", "Folk-Rock",
-   "National Folk", "Swing", "Fast Fusion", "Bebob", "Latin", "Revival", "Celtic",
-   "Bluegrass", "Avantgarde", "Gothic Rock", "Progressive Rock",
-   "Psychedelic Rock", "Symphonic Rock", "Slow Rock", "Big Band", "Chorus",
-   "Easy Listening", "Acoustic", "Humour", "Speech", "Chanson", "Opera",
-   "Chamber Music", "Sonata", "Symphony", "Booty Bass", "Primus", "Porn Groove",
-   "Satire", "Slow Jam", "Club", "Tango", "Samba", "Folklore", "Ballad",
-   "Power Ballad", "Rhythmic Soul", "Freestyle", "Duet", "Punk Rock", "Drum Solo",
-   "Acapella", "Euro-House", "Dance Hall"];
 
-jala.audio.Mp3.MODES = ["Stereo", "Joint stereo", "Dual channel", "Mono"];
+/**
+ * Helper function to handle arguments that may either be a
+ * number or an object that matches a value in an array.
+ * In the first case the number itself is returned, in the latter
+ * case the index position within the array is returned.
+ * @param {Number | Object} arg argument as number or object
+ * @param {Array} values Array of objects.
+ * @returns The number the argument represents
+ * @type Number
+ * @private
+ */
+jala.audio.Mp3.normalizeArg = function(arg, values, defaultValue) {
+   if (arg == null) {
+      return defaultValue;
+   } else if (!isNaN(arg)) {
+      return parseInt(arg);
+   } else {
+      var idx = values.indexOf(arg);
+      if (idx > 0) {
+         return idx;
+      }
+   }
+   return null;
+};
 
 
 /**
@@ -463,6 +606,7 @@ jala.audio.tag = {};
  *                      comment, title, trackNumber, genre and year.
  * @returns changed object
  * @type Object
+ * @private
  */
 jala.audio.tag.copyFields = function(src, dest) {
    dest.setAlbum(src.getAlbum());
@@ -473,7 +617,8 @@ jala.audio.tag.copyFields = function(src, dest) {
    dest.setGenre(src.getGenre());
    dest.setYear(src.getYear());
    return dest;
-}
+};
+
 
 /**
  * Constructs a new Id3v1 tag from an Mp3 file
@@ -485,7 +630,8 @@ jala.audio.tag.Id3v1 = function(audioObj) {
 
    var tag = audioObj.getJavaObject().getID3v1Tag();
    if (!tag) {
-      throw "no Id3v1 tag in file";
+      tag = new Packages.org.farng.mp3.id3.ID3v1_1();
+      audioObj.getJavaObject().setID3v1Tag(tag);
    }
 
    /**
@@ -494,7 +640,7 @@ jala.audio.tag.Id3v1 = function(audioObj) {
     */
    this.getAudio = function() {
       return audioObj;
-   }
+   };
 
    /**
     * Returns the java representation of the tag,
@@ -504,6 +650,23 @@ jala.audio.tag.Id3v1 = function(audioObj) {
    this.getJavaObject = function() {
       return tag;
    };   
+
+   /**
+    * Removes the tag from the audio file and
+    * nulls out the wrapper.
+    */
+   this.removeFromAudio = function() {
+      // unfortunately the arguments for the two variants of
+      // org.farng.mp3.MP3File#setID3v2Tag are ambigous so that
+      // rhino can't choose the proper function when the argument
+      // is null. java reflection helps us:
+      var clazz = audioObj.getJavaObject().getClass();
+      var method = clazz.getMethod("setID3v1Tag", [Packages.org.farng.mp3.id3.ID3v1]);
+      method.invoke(audioObj.getJavaObject(), [null]);
+
+      tag = null;
+      audioObj = null;
+   };
 
 };
 
@@ -575,7 +738,7 @@ jala.audio.tag.Id3v1.prototype.getTrackNumber = function() {
  */
 jala.audio.tag.Id3v1.prototype.getGenre = function() {
    var genre = this.getJavaObject().getGenre();
-   return Packages.org.farng.mp3.TagConstant.genreIdToString.get(new java.lang.Long(genre));
+   return jala.audio.Mp3.GENRES[genre];
 };
 
 
@@ -643,6 +806,10 @@ jala.audio.tag.Id3v1.prototype.setTitle = function(title) {
  * @param {Number} trackNumber
  */
 jala.audio.tag.Id3v1.prototype.setTrackNumber = function(trackNumber) {
+   if (trackNumber == null || trackNumber.trim() == "" || isNaN(trackNumber)) {
+      // default value for empty track numbers in v1 is zero.
+      trackNumber = "0";
+   }
    this.getJavaObject().setTrackNumberOnAlbum(trackNumber);
 };
 
@@ -653,7 +820,7 @@ jala.audio.tag.Id3v1.prototype.setTrackNumber = function(trackNumber) {
  * @param {String} genre
  */
 jala.audio.tag.Id3v1.prototype.setGenre = function(genre) {
-   var genreByte = Packages.org.farng.mp3.TagConstant.genreStringToId.get(genre);
+   var genreByte = new java.lang.Long(jala.audio.Mp3.GENRES.indexOf(genre));
    this.getJavaObject().setSongGenre(genreByte);
 };
 
@@ -702,9 +869,9 @@ jala.audio.tag.Id3v2 = function(audioObj) {
 
    var tag = audioObj.getJavaObject().getID3v2Tag();
    if (!tag) {
-      throw "no Id3v2 tag in file";
+      tag = new Packages.org.farng.mp3.id3.ID3v2_4();
+      audioObj.getJavaObject().setID3v2Tag(tag);
    }
-
 
    /**
     * Returns the wrapper for the underlying audio file.
@@ -712,8 +879,7 @@ jala.audio.tag.Id3v2 = function(audioObj) {
     */
    this.getAudio = function() {
       return audioObj;
-   }
-
+   };
 
    /**
     * returns the java representation of the tag,
@@ -724,6 +890,46 @@ jala.audio.tag.Id3v2 = function(audioObj) {
       return tag;
    };
    
+   /**
+    * Removes the tag from the audio file and
+    * nulls out the wrapper.
+    */
+   this.removeFromAudio = function() {
+      // unfortunately the arguments for the two variants of
+      // org.farng.mp3.MP3File#setID3v2Tag are ambigous so that
+      // rhino can't choose the proper function when the argument
+      // is null. java reflection helps us:
+      var clazz = audioObj.getJavaObject().getClass();
+      var method = clazz.getMethod("setID3v2Tag", [Packages.org.farng.mp3.id3.AbstractID3v2]);
+      method.invoke(audioObj.getJavaObject(), [null]);
+
+      tag = null;
+      audioObj = null;
+   };
+
+
+   // default encoding = ISO 8859-1
+   var textEncoding = new java.lang.Long(0);
+
+   /**
+    * sets the text encoding used when creating new frames
+    * (the encoding type of old frames can't be changed with
+    * JavaMusicTag)
+    * @param {Number | String} encType the new encoding type
+    *       as number or string
+    * @see jala.audio.Mp3.TEXT_ENCODINGS
+    */
+   this.setTextEncoding = function(encType) {
+      textEncoding = normalizeArg(encType, jala.audio.Mp3.TEXT_ENCODINGS, new java.lang.Long(0));
+   };
+
+   /**
+    * sets the text encoding used when setting values.
+    */
+   this.getTextEncoding = function() {
+      return textEncoding;
+   };
+
 };
 
 
@@ -738,156 +944,89 @@ jala.audio.tag.Id3v2.prototype.copyFrom = function(tag) {
 
 
 /**
- * Returns the album information of the tag.
- * @returns string containing album name
- * @type String
+ * Helper method that constructs an identifier string from the
+ * arguments array in which the arguments are separated by a 
+ * character of the value 0 and then returns the frame for this
+ * identifier string.
+ * @param {String} idStr frame id (or for standard fields the 
+ *         name from jala.audio.Mp3.FIELD_MAPPING can be used)
+ * @returns frame object
+ * @type org.farng.mp3.id3.AbstractID3v2
+ * @private
  */
-jala.audio.tag.Id3v2.prototype.getAlbum = function() {
-   return this.getJavaObject().getAlbumTitle();
+jala.audio.tag.Id3v2.prototype.getFrame = function(idStr) {
+   var id = idStr;
+   if (jala.audio.Mp3.FIELD_MAPPING[idStr]) {
+      id = jala.audio.Mp3.FIELD_MAPPING[idStr][this.getSubtype()];
+   }
+   for (var i=1; i<arguments.length; i++) {
+      id += java.lang.Character(0) + arguments[i];
+   }
+   return this.getJavaObject().getFrame(id);
 };
 
 
 /**
- * Returns the artist information of the tag.
- * @returns string containing artist name
+ * Encodes a string using the given encoding.
+ * @param {String} str string to encode
+ * @param {String} encoding encoding to use
+ * @returns decoded string
  * @type String
+ * @private
  */
-jala.audio.tag.Id3v2.prototype.getArtist = function() {
-   return this.getJavaObject().getLeadArtist();
+jala.audio.tag.Id3v2.prototype.encodeText = function(str, encoding) {
+   if (!isNaN(encoding)) {
+      // if encoding is the byte value -> get the correct encoding string from constant
+      encoding = jala.audio.Mp3.TEXT_ENCODINGS[encoding]
+   }
+   return new java.lang.String(new java.lang.String(str).getBytes(encoding));
 };
 
 
 /**
- * Returns the comment information of the tag.
- * @returns string containing comment
+ * Decodes a string using the given encoding.
+ * @param {String} str string to decode
+ * @param {String} encoding encoding to use
+ * @returns decoded string
  * @type String
+ * @private
  */
-jala.audio.tag.Id3v2.prototype.getComment = function() {
-   return this.getJavaObject().getSongComment();
+jala.audio.tag.Id3v2.prototype.decodeText = function(str, encoding) {
+   if (!isNaN(encoding)) {
+      // if encoding is the byte value -> get the correct encoding string from constant
+      encoding = jala.audio.Mp3.TEXT_ENCODINGS[encoding]
+   }
+   var rawStr = new java.lang.String(str);
+   return "" + new java.lang.String(rawStr.getBytes(), encoding);
 };
 
 
 /**
- * Returns the title information of the tag.
- * @returns string containing title
- * @type String
- */
-jala.audio.tag.Id3v2.prototype.getTitle = function() {
-   return this.getJavaObject().getSongTitle();
-};
-
-
-/**
- * Returns the track number information of the tag.
- * @returns string representing track number
- * @type String
- */
-jala.audio.tag.Id3v2.prototype.getTrackNumber = function() {
-   return this.getJavaObject().getTrackNumberOnAlbum();
-};
-
-
-/**
- * Returns the genre information of the tag.
- * @returns string containing genre name
- * @type String
- */
-jala.audio.tag.Id3v2.prototype.getGenre = function() {
-   return this.getJavaObject().getSongGenre();
-};
-
-
-/**
- * Returns the year information of the tag.
- * @returns string representing year
- * @type String
- */
-jala.audio.tag.Id3v2.prototype.getYear = function() {
-   return this.getJavaObject().getYearReleased();
-};
-
-
-/**
- * This method can be used to retrieve an arbitrary field
+ * This method can be used to retrieve an arbitrary text frame
  * of the underlying tag. For the list of valid identifiers
  * and their meaning see http://www.id3.org/
  * The identifiers vary across the sub versions of id3v2 tags,
  * use getSubtype and convertToSubtype to make sure you use the
  * correct version.
  * @param {String} id Frame identifier according to Id3v2 specification
+ *                   or shortcut as defined in jala.audio.Mp3.FIELD_MAPPING.
  * @returns String contained in the frame
  * @type String
  * @see #getSubtype
  * @see #convertToSubtype
  */
-jala.audio.tag.Id3v2.prototype.getTextContent = function(id) {
+jala.audio.tag.Id3v2.prototype.getTextContent = function(idStr) {
+   var id = idStr;
+   if (jala.audio.Mp3.FIELD_MAPPING[idStr]) {
+      id = jala.audio.Mp3.FIELD_MAPPING[idStr][this.getSubtype()];
+   }
+   var frame = this.getJavaObject().getFrame(id);
+   if (frame) {
+      var body = frame.getBody();
+      return this.decodeText(body.getText(), body.getObject("Text Encoding"));
+   }
    return null;
 }
-
-
-/**
- * Sets the album information.
- * @param {String} album
- */
-jala.audio.tag.Id3v2.prototype.setAlbum = function(album) {
-   this.getJavaObject().setAlbumTitle(album);
-
-};
-
-
-/**
- * Sets the artist information.
- * @param {String} artist
- */
-jala.audio.tag.Id3v2.prototype.setArtist = function(artist) {
-   this.getJavaObject().setLeadArtist(artist);
-};
-
-
-/**
- * Sets the comment
- * @param {String} comment
- */
-jala.audio.tag.Id3v2.prototype.setComment = function(comment) {
-   this.getJavaObject().setSongComment(comment);
-};
-
-
-/**
- * Sets the title information
- * @param {String} title
- */
-jala.audio.tag.Id3v2.prototype.setTitle = function(title) {
-   this.getJavaObject().setSongTitle(title);
-};
-
-
-/**
- * Sets the track number information.
- * @param {Number} trackNumber
- */
-jala.audio.tag.Id3v2.prototype.setTrackNumber = function(trackNumber) {
-   this.getJavaObject().setTrackNumberOnAlbum(trackNumber);
-};
-
-
-/**
- * Sets the genre information. A list of genre names that are compatible
- * with ID3v1 tags is located in jala.audio.Mp3.GENRES.
- * @param {String} genre
- */
-jala.audio.tag.Id3v2.prototype.setGenre = function(genre) {
-   this.getJavaObject().setSongGenre(genre);
-};
-
-
-/**
- * Sets the year information.
- * @param {Number} year
- */
-jala.audio.tag.Id3v2.prototype.setYear = function(year) {
-   this.getJavaObject().setYearReleased(year);
-};
 
 
 /**
@@ -903,7 +1042,62 @@ jala.audio.tag.Id3v2.prototype.setYear = function(year) {
  * @see #getSubtype
  * @see #convertToSubtype
  */
-jala.audio.tag.Id3v2.prototype.setTextContent = function(id, val)  {
+jala.audio.tag.Id3v2.prototype.setTextContent = function(idStr, val)  {
+   var id = idStr;
+   if (jala.audio.Mp3.FIELD_MAPPING[idStr]) {
+      id = jala.audio.Mp3.FIELD_MAPPING[idStr][this.getSubtype()];
+   }
+   var frame = this.getJavaObject().getFrame(id);
+   if (frame) {
+      var body = frame.getBody();
+      // frame already exists, use its encoding:
+      body.setText(this.encodeText(val, body.getObject("Text Encoding")));
+   } else {
+      // new frame is created, use our own encoding:
+      var body = new Packages.org.farng.mp3.id3["FrameBody" + id](
+         this.getTextEncoding(), this.encodeText(val, this.getTextEncoding())
+      );
+      this.getJavaObject().setFrame(this.createFrameObject(body));
+   }
+};
+
+
+/**
+ * Creates a new frame object that fits to the tag version.
+ * @param {org.farng.mp3.id3.AbstractID3v2FrameBody} body frame body object
+ * @returns new frame object
+ * @type org.farng.mp3.id.ID3v2_2
+ * @private
+ */
+jala.audio.tag.Id3v2.prototype.createFrameObject = function(body) {
+   var subtype = this.getSubtype();
+   if (subtype == 2) {
+      return new Packages.org.farng.mp3.id3.ID3v2_2Frame(body);
+   } else if (subtype == 3) {
+      return new Packages.org.farng.mp3.id3.ID3v2_3Frame(body);
+   } else if (subtype == 4 || subtype == 0) {
+      return new Packages.org.farng.mp3.id3.ID3v2_4Frame(body);
+   }
+   return null;
+};
+
+
+/**
+ * returns the version number of id3v2 tags used (values 2 to 4 for id3v2.2 to id3v2.4)
+ */
+jala.audio.tag.Id3v2.prototype.getSubtype = function() {
+   // AbstractID3v2#getRevision() only works for newly constructed tag objects,
+   // but not for tag objects that have been read from a file.
+   // so we make a class comparison to find out the subtype:
+   var obj = this.getJavaObject();
+   if (obj instanceof Packages.org.farng.mp3.id3.ID3v2_4) {
+      return 4;
+   } else if (obj instanceof Packages.org.farng.mp3.id3.ID3v2_3) {
+      return 3;
+   } else if (obj instanceof Packages.org.farng.mp3.id3.ID3v2_2) {
+      return 2;
+   }
+   return 0;
 };
 
 
@@ -916,9 +1110,85 @@ jala.audio.tag.Id3v2.prototype.convertToSubtype = function(type) {
 
 
 /**
+ * Returns the album information of the tag.
+ * @returns string containing album name
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getAlbum = function() {
+   return this.getTextContent("album");
+};
+
+
+/**
+ * Returns the artist information of the tag.
+ * @returns string containing artist name
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getArtist = function() {
+   return this.getTextContent("artist");
+};
+
+
+/**
+ * Returns the comment information of the tag.
+ * @returns string containing comment
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getComment = function() {
+   var frame = this.getFrame("comment", "eng", "");
+   if (frame) {
+      var str = frame.getBody().getText();
+      return this.decodeText(str, frame.getBody().getObject("Text Encoding"));
+   }
+   return null;
+};
+
+
+/**
+ * Returns the title information of the tag.
+ * @returns string containing title
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getTitle = function() {
+   return this.getTextContent("title");
+};
+
+
+/**
+ * Returns the track number information of the tag.
+ * @returns string representing track number
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getTrackNumber = function() {
+   return this.getTextContent("trackNumber");
+};
+
+
+/**
+ * Returns the genre information of the tag.
+ * @returns string containing genre name
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getGenre = function() {
+   return this.getTextContent("genre");
+};
+
+
+/**
+ * Returns the year information of the tag.
+ * @returns string representing year
+ * @type String
+ */
+jala.audio.tag.Id3v2.prototype.getYear = function() {
+   return this.getTextContent("year");
+};
+
+
+/**
  * 
  */
-jala.audio.tag.Id3v2.prototype.getComposer = function() {
+jala.audio.tag.Id3v2.prototype.getAuthor = function() {
+   return this.getTextContent("author");
 };
 
 
@@ -926,23 +1196,7 @@ jala.audio.tag.Id3v2.prototype.getComposer = function() {
  * 
  */
 jala.audio.tag.Id3v2.prototype.getCopyright = function() {
-};
-
-
-/**
- * returns image as helma.util.MimePart.
- */
-jala.audio.tag.Id3v2.prototype.getImage = function(pictureType) {
-};
-
-
-
-/**
- * returns the version number of id3v2 tags used (values 2 to 4 for id3v2.2 to id3v2.4)
- */
-jala.audio.tag.Id3v2.prototype.getSubtype = function() {
-   // FIXME: getRevision() didn't return anything for test files!
-   return this.getJavaObject().getRevision();
+   return this.getTextContent("copyright");
 };
 
 
@@ -950,13 +1204,94 @@ jala.audio.tag.Id3v2.prototype.getSubtype = function() {
  * 
  */
 jala.audio.tag.Id3v2.prototype.getUrl = function() {
+   var frame = this.getFrame("url", "");
+   if (frame) {
+      return frame.getBody().getUrlLink();
+   }
+   return null;
+};
+
+
+/**
+ * Sets the album information.
+ * @param {String} album
+ */
+jala.audio.tag.Id3v2.prototype.setAlbum = function(album) {
+   this.setTextContent("album", album);
+};
+
+
+/**
+ * Sets the artist information.
+ * @param {String} artist
+ */
+jala.audio.tag.Id3v2.prototype.setArtist = function(artist) {
+   this.setTextContent("artist", artist);
+};
+
+
+/**
+ * Sets the comment
+ * @param {String} comment
+ */
+jala.audio.tag.Id3v2.prototype.setComment = function(comment) {
+   res.debug("this is setComment");
+   // comment (COMM) isn't a text frame. it supports the getText()
+   // method but its constructor has a different signature.
+   var frame = this.getFrame("comment", "eng", "");
+   if (frame) {
+      frame.getBody().setText(this.encodeText(comment, frame.getBody().getObject("Text Encoding")));
+   } else {
+      var body = new Packages.org.farng.mp3.id3.FrameBodyCOMM(
+         this.getTextEncoding(), "eng", "", this.encodeText(comment, this.getTextEncoding())
+      );
+      this.getJavaObject().setFrame(this.createFrameObject(body));
+   }
+};
+
+
+/**
+ * Sets the title information
+ * @param {String} title
+ */
+jala.audio.tag.Id3v2.prototype.setTitle = function(title) {
+   this.setTextContent("title", title);
+};
+
+
+/**
+ * Sets the track number information.
+ * @param {Number} trackNumber
+ */
+jala.audio.tag.Id3v2.prototype.setTrackNumber = function(trackNumber) {
+   this.setTextContent("trackNumber", trackNumber);
+};
+
+
+/**
+ * Sets the genre information. A list of genre names that are compatible
+ * with ID3v1 tags is located in jala.audio.Mp3.GENRES.
+ * @param {String} genre
+ */
+jala.audio.tag.Id3v2.prototype.setGenre = function(genre) {
+   this.setTextContent("genre", genre);
+};
+
+
+/**
+ * Sets the year information.
+ * @param {Number} year
+ */
+jala.audio.tag.Id3v2.prototype.setYear = function(year) {
+   this.setTextContent("year", year);
 };
 
 
 /**
  * 
  */
-jala.audio.tag.Id3v2.prototype.setComposer = function(composer) {
+jala.audio.tag.Id3v2.prototype.setAuthor = function(author) {
+   this.setTextContent("author", author);
 };
 
 
@@ -964,29 +1299,99 @@ jala.audio.tag.Id3v2.prototype.setComposer = function(composer) {
  * 
  */
 jala.audio.tag.Id3v2.prototype.setCopyright = function(copyright) {
-};
-
-
-/**
- * adds an image to the file.
- */
-jala.audio.tag.Id3v2.prototype.setImage = function(mimeType, pictureType, binArray, desc) {
-};
-
-
-
-/**
- * sets the text encoding used when setting values.
- */
-jala.audio.tag.Id3v2.prototype.setTextEncoding = function(encType) {
+   this.setTextContent("copyright", copyright);
 };
 
 
 /**
  * 
  */
-jala.audio.tag.Id3v2.prototype.setUrl = function(url) {
+jala.audio.tag.Id3v2.prototype.setUrl = function(url, desc) {
+   var frame = this.getFrame("url", "");
+   if (frame) {
+      frame.getBody().setUrlLink(url);
+   } else {
+      var body = new Packages.org.farng.mp3.id3.FrameBodyWXXX(
+         this.getTextEncoding(), desc, url
+      );
+      this.getJavaObject().setFrame(this.createFrameObject(body));
+   }
 };
+
+
+/**
+ * Extracts the image from the tag
+ * @param {String} pictureType number describing picture type
+ *                (default is 3, describing a front cover).
+ * @returns image as mime object
+ * @type helma.util.MimePart
+ */
+jala.audio.tag.Id3v2.prototype.getImage = function(pictureType) {
+   // FIXME: maybe add description to arguments of getFrame?
+   // more testing needed...
+   pictureType = jala.audio.Mp3.normalizeArg(pictureType,
+      jala.audio.Mp3.PICTURE_TYPES, 3);
+
+   var frame = this.getFrame("image", new java.lang.Character(pictureType));
+   if (frame) {
+      var body = frame.getBody();
+      var mimeType = body.getObject("MIME Type");
+      var imageType = mimeType.substring(6);
+      var imageName = this.getAudio().getFile().getName().replace(/\.[^\.]+$/i, "") + "." + imageType;
+      return new Packages.helma.util.MimePart(
+         imageName,
+         body.getObject("Picture Data"),
+         mimeType
+      );
+   }
+   return null;
+};
+
+
+/**
+ * adds an image to the file.
+ * @param {Number} pictureType number determining picture type
+ * @param {String} mimeType mime type of image
+ * @param {Array} byteArray image binary data
+ * @param {String} desc optional description
+ * @see jala.audio.tag
+ */
+jala.audio.tag.Id3v2.prototype.setImage = function(pictureType, mimeType, byteArray) {
+   pictureType = jala.audio.Mp3.normalizeArg(pictureType,
+      jala.audio.Mp3.PICTURE_TYPES, 3);
+
+   var frame = this.getFrame("image", new java.lang.Character(pictureType));
+   if (frame) {
+      if (mimeType && byteArray) {
+         // set new image data
+         frame.getBody().setObject("MIME Type", mimeType);
+         frame.getBody().setObject("Picture Data", byteArray);
+      }
+   } else {
+      // add new image to tag
+      var body = new Packages.org.farng.mp3.id3.FrameBodyAPIC(
+         this.getTextEncoding(),
+         mimeType,
+         new java.lang.Long(pictureType),
+         new java.lang.Character(pictureType),
+         byteArray
+      );
+      this.getJavaObject().setFrame(this.createFrameObject(body));
+   }
+};
+
+
+/**
+ * returns an array of all image frames (APIC) in the tag
+ * @type Array
+ * @private
+ */
+jala.audio.tag.Id3v2.prototype.debug = function() {
+   return "<pre>" + this.getJavaObject().toString() + "</pre>";
+};
+
+
+
 
 
 /** @ignore */
@@ -996,4 +1401,10 @@ jala.audio.tag.Id3v2.toString = function() {
 
 /** @ignore */
 jala.audio.tag.Id3v2.prototype.toString = jala.audio.tag.Id3v2.toString;
+
+
+// FIXME: report bug in JavaMusicTag:
+// if you delete a v2 tag and call save() JMT calls the delete method of an ID3v2_4 tag.
+// this way a 2_2 or 2_3 tag in the file isn't found and not deleted.
+// Mp3.save() has a workaround for this.
 
