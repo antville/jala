@@ -78,8 +78,116 @@ function asd() {
 <h4>Summary</h4>
 <p>
 	
-		Fields and methods of the Form class.
- This library depends on ErrorTracker.js.<BR/><BR/>
+		This class can be used to render forms and to validate
+    and store user submits. Further types of form elements can be added
+    by subclassing jala.Form.InputComponent.
+
+ <p>Example code:</p>
+ <pre style="background-color: #eeeeee;">
+========= Root.actions.js:
+var form = res.handlers.testform = new jala.Form(this.FORMNAME, obj);
+if (req.isPost() && form.handle(req.data, obj)) {
+      // optional code after form was stored successfully
+      // (like storing a new object, saving upload data)
+      res.redirect(this.href("saved"));
+}
+this.renderSkin("main");
+
+========= Root/main.skin:
+<% testform.form %>
+
+
+========= Root/formDef.js:
+
+ this.FORMNAME = {
+
+   name:"main",                  // name of the form (required)
+   text: "message text"          // if set the message text will be rendered as skin (therefor it can contain macros)
+   componentSkin: "skinName"     // render an external skin for each component of the form (the skin must be located in
+                                 // the data object's prototype passed to the Form constructor!).
+                                 // param object of the skin will contain these fields: label, error, help, control.
+   title: "Einloggen",           // title of the form, printed as <legend></legend>
+   submit: "Einloggen",          // caption of the submit button
+   mainErrorMessage: "An error", // (optional) message printed above form in case of error
+   beforeSave: "functionName",   // (optional) the name of the message to call before values are saved
+
+   elements:[                    // array holding config for all the form elements
+
+      {  name:"username",        // name of the form element
+         type:"input",           // type of the element: input (default), textarea, password,
+                                 //    radio, checkbox, dropdown, date, time, datetime, file, text
+         label:"Nick",           // caption of the element
+         size:20,                // size of input elements
+         maxlength: 100,         // max allowed length
+         minlength: 4,           // min allowed length
+         className:"nickclass",  // optional classnames added to element
+         required:true,          // if true, element has to be filled in (default false), an extra classname will be added.
+
+         validate:[jala.Form.isUrl],  // function or array of functions called
+                                 //    to specifically validate contents,
+                                 //    function has four arguments:
+                                 //       * name of the current element
+                                 //       * value of the current element
+                                 //       * jala.ErrorTracker object
+                                 //       * reqData - the input from the form
+         
+         getter:function         // lets you specify a function which should retrieve the value of the property.
+            (obj,name)  {        // the function is called with the data object as first and the name of the
+         },                      // property as the second argument.
+                                 // if omitted, the value of the primitive property at the data object
+                                 // with the name of the form element is used.
+
+         setter:function         // lets you specify a function which should save the value of the property.
+            (obj, name, value) { // the function is called with the data object as first, the name as second
+         },                      // and the new value as third argument.
+                                 // if omitted, the value of the primitive property at the data object
+                                 // with the name of the form element is used. if set explicitly to null
+                                 // the value of the form is *not* saved (in this case you might want to
+                                 // handle it in a "beforeSave" method).
+
+         options: [...],         // for radio and dropdown, option-arrays are needed. they can be defined in 
+                                 // the config directly or as a function (arguments: data object, name).
+                                 // possible format of the array are:
+                                 //    an array of objects {value:XX, display: YY}
+                                 //    an array of arrays (1st element value, 2nd element display)
+                                 //    or
+                                 //    an array of strings (value and display)
+
+         firstOption:" choooose" // caption of dropdown in case nothing is selected
+         messages: {             // An object containing messages used in specific situations
+            "missing":  msg      // A message displayed if the value is missing
+            "tooLong":  msg      // A message used if the submitted value is too long
+            "tooShort": msg      // A message used if the submitted value is too short
+            "invalid":  msg      // A message used if the submitted value is invalid
+         }
+      },
+   ]
+};
+</pre>
+ <p>For further config options please refer to the overview of the specific class.</p>
+ 
+ <p>With the default skin, the render function produces html-code structured like this:</p>
+ <pre style="background-color: #eeeeee;">
+&lt;form id="FORMNAME"&gt;
+   &lt;legend&gt;optional title&lt;/legend&gt;
+   &lt;div id="FORMNAME_error" class="form_error"&gt;general error message&lt;/div&gt;
+   &lt;fieldset&gt;
+      &lt;div id="FORMNAME_row_ELEMENTNAME" class="row optional|required CLASS_FROM_CONFIG"&gt;
+         &lt;div id="FORMNAME_error_ELEMENTNAME" class="error"&gt;errormsg&lt;/div&gt;
+         &lt;label id="FORMNAME_label_ELEMENTNAME" for="FORMNAME_ELEMENTNAME"&gt;label&lt;/label&gt;
+         &lt;div class="element"&gt;
+            &lt;input class="text|dropdown|etc CLASS_FROM_CONFIG" id="FORMNAME_ELEMENTNAME" /&gt;
+            &lt;div id="FORMNAME_help_ELEMENTNAME" class="help"&gt;help&lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      (... repeat for all form elements ...)
+      &lt;div&gt;
+         &lt;label&gt;&lt;/label&gt;
+         &lt;input type="submit" id="FORMNAME_submit" name="FORMNAME_submit" class="submit" /&gt;
+      &lt;/div&gt;
+   &lt;/fieldset&gt;
+&lt;/form&gt;
+ </pre><BR/><BR/>
 	
 </p>
 
@@ -98,7 +206,78 @@ function asd() {
     <tr bgcolor="white" class="TableRowColor">
     <td width="15%"><b><a href="jala.Form.html">jala.Form</a></b></td>
     <td>A class that renders and parses forms
- </td>
+
+</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.CaptchaComponent.html">jala.Form.CaptchaComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ captcha check.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.CheckboxComponent.html">jala.Form.CheckboxComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ checkbox.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.DateComponent.html">jala.Form.DateComponent</a></b></td>
+    <td>Subclass of jala.Form.TimestampComponent which renders and validates a
+ set of three dropdown boxes for editing date values.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.FileComponent.html">jala.Form.FileComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ file upload.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.InputComponent.html">jala.Form.InputComponent</a></b></td>
+    <td>Class for rendering and validating input form elements.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.PasswordComponent.html">jala.Form.PasswordComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ password input tag.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.RadioComponent.html">jala.Form.RadioComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ set of radio buttons.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.SelectComponent.html">jala.Form.SelectComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ dropdown element.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.TextareaComponent.html">jala.Form.TextareaComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ textarea tag.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.TextComponent.html">jala.Form.TextComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders plain text or skins.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.TimeComponent.html">jala.Form.TimeComponent</a></b></td>
+    <td>Subclass of jala.Form.TimestampComponent which renders and validates a
+ set of two or three dropdown boxes for editing time values.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Form.TimestampComponent.html">jala.Form.TimestampComponent</a></b></td>
+    <td>Subclass of jala.Form.InputComponent which renders and validates a
+ set of five or six dropdown boxes for editing date and time values.</td>
     </tr>
     
     </table>
@@ -135,9 +314,118 @@ function asd() {
 
 
 <span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the Form class.
- * This library depends on ErrorTracker.js.
- */</span>
+ * <span class="attrib">@fileoverview</span> This class can be used to render forms and to validate
+ *    and store user submits. Further types of form elements can be added
+ *    by subclassing jala.Form.InputComponent.
+ *
+ * &lt;p&gt;Example code:&lt;/p&gt;
+ * &lt;pre style="background-color: #eeeeee;"&gt;
+========= Root.actions.js:
+var form = res.handlers.testform = new jala.Form(this.FORMNAME, obj);
+if (req.isPost() &amp;&amp; form.handle(req.data, obj)) {
+      // optional code after form was stored successfully
+      // (like storing a new object, saving upload data)
+      res.redirect(this.href("saved"));
+}
+this.renderSkin("main");
+
+========= Root/main.skin:
+&lt;% testform.form %&gt;
+
+
+========= Root/formDef.js:
+
+ this.FORMNAME = {
+
+   name:"main",                  // name of the form (required)
+   text: "message text"          // if set the message text will be rendered as skin (therefor it can contain macros)
+   componentSkin: "skinName"     // render an external skin for each component of the form (the skin must be located in
+                                 // the data object's prototype passed to the Form constructor!).
+                                 // param object of the skin will contain these fields: label, error, help, control.
+   title: "Einloggen",           // title of the form, printed as &lt;legend&gt;&lt;/legend&gt;
+   submit: "Einloggen",          // caption of the submit button
+   mainErrorMessage: "An error", // (optional) message printed above form in case of error
+   beforeSave: "functionName",   // (optional) the name of the message to call before values are saved
+
+   elements:[                    // array holding config for all the form elements
+
+      {  name:"username",        // name of the form element
+         type:"input",           // type of the element: input (default), textarea, password,
+                                 //    radio, checkbox, dropdown, date, time, datetime, file, text
+         label:"Nick",           // caption of the element
+         size:20,                // size of input elements
+         maxlength: 100,         // max allowed length
+         minlength: 4,           // min allowed length
+         className:"nickclass",  // optional classnames added to element
+         required:true,          // if true, element has to be filled in (default false), an extra classname will be added.
+
+         validate:[jala.Form.isUrl],  // function or array of functions called
+                                 //    to specifically validate contents,
+                                 //    function has four arguments:
+                                 //       * name of the current element
+                                 //       * value of the current element
+                                 //       * jala.ErrorTracker object
+                                 //       * reqData - the input from the form
+         
+         getter:function         // lets you specify a function which should retrieve the value of the property.
+            (obj,name)  {        // the function is called with the data object as first and the name of the
+         },                      // property as the second argument.
+                                 // if omitted, the value of the primitive property at the data object
+                                 // with the name of the form element is used.
+
+         setter:function         // lets you specify a function which should save the value of the property.
+            (obj, name, value) { // the function is called with the data object as first, the name as second
+         },                      // and the new value as third argument.
+                                 // if omitted, the value of the primitive property at the data object
+                                 // with the name of the form element is used. if set explicitly to null
+                                 // the value of the form is *not* saved (in this case you might want to
+                                 // handle it in a "beforeSave" method).
+
+         options: [...],         // for radio and dropdown, option-arrays are needed. they can be defined in 
+                                 // the config directly or as a function (arguments: data object, name).
+                                 // possible format of the array are:
+                                 //    an array of objects {value:XX, display: YY}
+                                 //    an array of arrays (1st element value, 2nd element display)
+                                 //    or
+                                 //    an array of strings (value and display)
+
+         firstOption:" choooose" // caption of dropdown in case nothing is selected
+         messages: {             // An object containing messages used in specific situations
+            "missing":  msg      // A message displayed if the value is missing
+            "tooLong":  msg      // A message used if the submitted value is too long
+            "tooShort": msg      // A message used if the submitted value is too short
+            "invalid":  msg      // A message used if the submitted value is invalid
+         }
+      },
+   ]
+};
+&lt;/pre&gt;
+ &lt;p&gt;For further config options please refer to the overview of the specific class.&lt;/p&gt;
+ 
+ &lt;p&gt;With the default skin, the render function produces html-code structured like this:&lt;/p&gt;
+ &lt;pre style="background-color: #eeeeee;"&gt;
+&amp;lt;form id="FORMNAME"&amp;gt;
+   &amp;lt;legend&amp;gt;optional title&amp;lt;/legend&amp;gt;
+   &amp;lt;div id="FORMNAME_error" class="form_error"&amp;gt;general error message&amp;lt;/div&amp;gt;
+   &amp;lt;fieldset&amp;gt;
+      &amp;lt;div id="FORMNAME_row_ELEMENTNAME" class="row optional|required CLASS_FROM_CONFIG"&amp;gt;
+         &amp;lt;div id="FORMNAME_error_ELEMENTNAME" class="error"&amp;gt;errormsg&amp;lt;/div&amp;gt;
+         &amp;lt;label id="FORMNAME_label_ELEMENTNAME" for="FORMNAME_ELEMENTNAME"&amp;gt;label&amp;lt;/label&amp;gt;
+         &amp;lt;div class="element"&amp;gt;
+            &amp;lt;input class="text|dropdown|etc CLASS_FROM_CONFIG" id="FORMNAME_ELEMENTNAME" /&amp;gt;
+            &amp;lt;div id="FORMNAME_help_ELEMENTNAME" class="help"&amp;gt;help&amp;lt;/div&amp;gt;
+         &amp;lt;/div&amp;gt;
+      &amp;lt;/div&amp;gt;
+      (... repeat for all form elements ...)
+      &amp;lt;div&amp;gt;
+         &amp;lt;label&amp;gt;&amp;lt;/label&amp;gt;
+         &amp;lt;input type="submit" id="FORMNAME_submit" name="FORMNAME_submit" class="submit" /&amp;gt;
+      &amp;lt;/div&amp;gt;
+   &amp;lt;/fieldset&amp;gt;
+&amp;lt;/form&amp;gt;
+ &lt;/pre&gt;
+ 
+ **/</span>
 
 
 <span class="comment">// Define the global namespace for Jala modules</span>
@@ -145,42 +433,70 @@ function asd() {
    global.jala = {};
 }
 
+<span class="comment">/**
+ * core dependencies
+ */</span>
+app.addRepository(<span class="literal">"modules/core/Object.js"</span>);
+app.addRepository(<span class="literal">"modules/helma/Html.js"</span>);
+app.addRepository(<span class="literal">"modules/helma/Http.js"</span>);
 
 <span class="comment">/**
  * Jala dependencies
  */</span>
 app.addRepository(<span class="literal">"modules/jala/code/ErrorTracker.js"</span>);
+app.addRepository(<span class="literal">"modules/jala/code/I18n.js"</span>);
+app.addRepository(<span class="literal">"modules/jala/code/Captcha.js"</span>);
 
 <span class="comment">/**
-  * <span class="attrib">@class</span> A class that renders and parses forms
-  * <span class="attrib">@param</span> {Object} config An object tree holding the layout of the form.
-  * <span class="attrib">@param</span> {Object} srcObj The object which is being edited by this form.
-  *    For a commented example see at the end of this file
-  * <span class="attrib">@constructor</span>
-  */</span>
-jala.Form = <span class="reserved">function</span>(config, srcObj) {
+ * <span class="attrib">@class</span> A class that renders and parses forms
+ *
+ * &lt;p&gt;&lt;b&gt;Config options valid for jala.Form:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;name&lt;/code&gt; Name of the form.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;elements&lt;/code&gt; Array of objects defining the form elements.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;componentSkin&lt;/code&gt; Name of skin located in the data object's prototype
+ *      used to render form elements.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;mainErrorMessage&lt;/code&gt; Error message rendered ahead of the elements
+ *      if any error occured while submitting the form.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;beforeSave&lt;/code&gt; Optional method at the store object called after
+ *      the user input has validated but before the element is saved.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;title&lt;/code&gt; Title of the form, printed as legend.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;submit&lt;/code&gt; Value of submit button.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@param</span> {Object} config An object tree holding the layout of the form.
+ * <span class="attrib">@param</span> {Object} dataObj The object which is being edited by this form.
+ *    For a commented example see at the end of this file
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form = <span class="reserved">function</span>(config, dataObj) {
+
+   <span class="comment">// check config</span>
    <span class="reserved">if</span> (!config) {
-      throw <span class="literal">"Form created without config object."</span>;
+      throw <span class="literal">"jala.Form created without config object."</span>;
    }
    <span class="reserved">if</span> (!config.name) {
-      throw <span class="literal">"Form created without config.name property."</span>;
+      throw <span class="literal">"jala.Form created without config.name property."</span>;
    }
-   <span class="reserved">if</span> (!config.elements) {
-      throw <span class="literal">"Form created without config.elements Array."</span>;
+   <span class="reserved">if</span> (!config.elements || !(config.elements instanceof Array)) {
+      throw <span class="literal">"jala.Form created without config.elements Array."</span>;
    }
 
-   <span class="comment">// Default message processor. Use setMessageProcessor</span>
-   <span class="comment">// to override it (eg. to use gettext() instead)</span>
-   var messageProcessor = <span class="reserved">function</span>(msg) {
-      <span class="reserved">return</span> msg;
-   }
+   <span class="comment">// init private fields:</span>
+   
+   <span class="comment">// stores req.data if the form is handling a submit</span>
+   var reqData = null;
+
+   <span class="comment">// contains an Array of component-objects </span>
+   <span class="comment">// (initialization at the end of the constructor)</span>
+   var components = [];
+
    <span class="comment">// keeps track of error messages</span>
    var tracker = new jala.ErrorTracker(config.mainErrorMessage);
 
-   <span class="comment">// Use a plain JS object if no source object is given</span>
-   <span class="reserved">if</span> (!srcObj) {
-      srcObj = {};
-   }
+   <span class="comment">// The default component skin</span>
+   <span class="reserved">this</span>.componentSkin = createSkin(<span class="literal">"&lt;% param.error %&gt;&lt;% param.label %&gt;&lt;div class=\"</span>element\<span class="literal">"&gt;&lt;% param.controls %&gt;&lt;% param.help %&gt;&lt;/div&gt;"</span>);
+
+   <span class="comment">// Default message processor: gettext() from jala.I18n-package</span>
+   var messageProcessor = gettext;
 
    <span class="comment">/**
     * Sets the message processor to the function passed as argument.
@@ -201,22 +517,32 @@ jala.Form = <span class="reserved">function</span>(config, srcObj) {
     * <span class="attrib">@returns</span> The processed message
     * <span class="attrib">@type</span> String
     */</span>
-   <span class="reserved">this</span>.processMessage = <span class="reserved">function</span>(msg <span class="comment">/**[, arg][, arg][...] */</span>) {
+   <span class="reserved">this</span>.processMessage = <span class="reserved">function</span>(<span class="comment">/** args **/</span>) {
       <span class="reserved">return</span> messageProcessor.apply(null, arguments);
    };
 
    <span class="comment">/**
-    * Returns the config of this Form instance.
-    * <span class="attrib">@returns</span> The config of this Form instance.
+    * Returns the config of this jala.Form instance.
+    * <span class="attrib">@returns</span> The config of this jala.Form instance.
     * <span class="attrib">@type</span> Object
     */</span>
    <span class="reserved">this</span>.getConfig = <span class="reserved">function</span>() {
       <span class="reserved">return</span> config;
    };
 
+
    <span class="comment">/**
-    * Returns the tracker associated with this Form instance.
-    * <span class="attrib">@returns</span> The tracker of this Form instance.
+    * Returns the components of this jala.Form instance.
+    * <span class="attrib">@returns</span> The components of this jala.Form instance.
+    * <span class="attrib">@type</span> Array
+    */</span>
+   <span class="reserved">this</span>.getComponents = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> components;
+   };
+
+   <span class="comment">/**
+    * Returns the tracker associated with this jala.Form instance.
+    * <span class="attrib">@returns</span> The tracker of this jala.Form instance.
     * <span class="attrib">@type</span> jala.ErrorTracker
     */</span>
    <span class="reserved">this</span>.getTracker = <span class="reserved">function</span>() {
@@ -224,172 +550,1522 @@ jala.Form = <span class="reserved">function</span>(config, srcObj) {
    };
 
    <span class="comment">/**
-    * Returns the source object containing the values used
+    * Returns the data object containing the values used
     * for rendering the form.
-    * <span class="attrib">@returns</span> The source object of this Form instance
+    * <span class="attrib">@returns</span> The data object of this jala.Form instance
     */</span>
-   <span class="reserved">this</span>.getSource = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> srcObj || {};
+   <span class="reserved">this</span>.getDataObj = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> dataObj || {};
    };
 
+
+   <span class="comment">/**
+    * Stores the request-data object once the form was submitted.
+    * Values will be used for re-printing the form if an error occurs.
+    * <span class="attrib">@param</span> {Object} newReqData Object holding request data.
+    */</span>
+   <span class="reserved">this</span>.setRequestData = <span class="reserved">function</span>(newReqData) {
+      reqData = newReqData;
+   };
+
+   <span class="comment">/**
+    * Returns the request-data object associated with this form.
+    * <span class="attrib">@returns</span> Object holding request data for this form.
+    * <span class="attrib">@type</span> Object
+    */</span>
+   <span class="reserved">this</span>.getRequestData = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> reqData;
+   };
+
+
+   <span class="comment">// walk through the config and create the corresponding form element objects</span>
+   var element, type;
+   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
+      element = config.elements[i];
+      type = (element.type != null) ? element.type.toLowerCase() : <span class="literal">"input"</span>;
+      <span class="reserved">if</span> (type == <span class="literal">"input"</span>) {
+         components[i] = new jala.Form.InputComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"password"</span>) {
+         components[i] = new jala.Form.PasswordComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"textarea"</span>) {
+         components[i] = new jala.Form.TextareaComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"select"</span>) {
+         components[i] = new jala.Form.SelectComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"radio"</span>) {
+         components[i] = new jala.Form.RadioComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"checkbox"</span>) {
+         components[i] = new jala.Form.CheckboxComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"date"</span>) {
+         components[i] = new jala.Form.DateComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"time"</span>) {
+         components[i] = new jala.Form.TimeComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"timestamp"</span>) {
+         components[i] = new jala.Form.TimestampComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"file"</span>) {
+         components[i] = new jala.Form.FileComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"text"</span>) {
+         components[i] = new jala.Form.TextComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> <span class="reserved">if</span> (type == <span class="literal">"captcha"</span>) {
+         components[i] = new jala.Form.CaptchaComponent(<span class="reserved">this</span>, element);
+      } <span class="reserved">else</span> {
+         throw <span class="literal">"invalid config element at position "</span> + i + <span class="literal">": "</span> + element.type;
+      }
+   }
+
    <span class="reserved">return</span> <span class="reserved">this</span>;
-}
+};
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Form.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.Form]"</span>;
+};
 
 <span class="comment">/**
- * Renders this form directly to response.
- * <span class="attrib">@param</span> {Object} param An optional parameter object containing macro attributes
+ * The HTML renderer used by jala.Form
+ * <span class="attrib">@type</span> helma.Html
  */</span>
-jala.Form.<span class="reserved">prototype</span>.render = <span class="reserved">function</span>(param) {
+jala.Form.html = new helma.Html();
+
+<span class="comment">/**
+ * Utility to set up the prototype, constructor, superclass and superconstructor
+ * properties to support an inheritance strategy that can chain constructors and methods.
+ *
+ * <span class="attrib">@param</span> {Function} subClass the object which inherits superClass' functions
+ * <span class="attrib">@param</span> {Function} superClass the object to inherit
+ */</span>
+jala.Form.extend = <span class="reserved">function</span>(subClass, superClass) {
+   var f = <span class="reserved">function</span>() {};
+   f.<span class="reserved">prototype</span> = superClass.<span class="reserved">prototype</span>;
+
+   subClass.<span class="reserved">prototype</span> = new f();
+   subClass = subClass;
+   subClass.superClass = superClass.<span class="reserved">prototype</span>;
+   subClass.superConstructor = superClass;
+};
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Class for rendering and validating input form elements.
+
+ * &lt;p&gt;&lt;b&gt;Config options valid for all components:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;name&lt;/code&gt; Name of the element in the form,
+ *      name of the primitive property edited by this element.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;type&lt;/code&gt; Type of element to render: input (default), 
+ *      password, textarea, dropdown, radio, checkbox, date, time
+ *      datetime, file.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;classname&lt;/code&gt; Custom classname appended to the classname
+ *      value computed by this class.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;label&lt;/code&gt; Label of form element.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;help&lt;/code&gt; Help text to show next to the form element.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;getter&lt;/code&gt; Optional function used to retrieve the value
+ *      of a property.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;setter&lt;/code&gt; Optional function used to save the value.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;messages&lt;/code&gt; Optional object containing custom error messages
+ *      for cases missing, invalid, tooLong, tooShort: {missing:"msgtext"}&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;validate&lt;/code&gt; Optional function called to validate user input.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;skin&lt;/code&gt; Optional name of a skin located in the data object prototype
+ *      used to render this form element.&lt;/li&gt;
+ * &lt;/p&gt;
+ * These options are copied as fields of the component object.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.InputComponent = <span class="reserved">function</span>(form, configObj) {
+   <span class="reserved">if</span> (form &amp;&amp; configObj) {
+
+      <span class="comment">/**
+       * Reference to form object
+       * <span class="attrib">@type</span> jala.Form
+       */</span>
+      <span class="reserved">this</span>.form = form;
+
+      <span class="comment">/**
+       * Type of element as used in the config
+       * <span class="attrib">@type</span> String
+       */</span>
+      <span class="reserved">this</span>.type = configObj.type;
+
+      <span class="comment">/**
+       * Optional getter function. Will be called by getProperty with these
+       * arguments: getter(dataObj, name)
+       * <span class="attrib">@type</span> Function
+       */</span>
+      <span class="reserved">this</span>.getter = undefined;
+
+      <span class="comment">/**
+       * Optional setter function. Will be called by setProperty with these
+       * arguments: setter(dataObj, name, value)
+       * <span class="attrib">@type</span> Function
+       */</span>
+      <span class="reserved">this</span>.setter = undefined;
+
+      <span class="comment">/**
+       * Optional validate function. Will be called by Form.handle with these
+       * arguments: validate(name, value, tracker, reqData, form)
+       * <span class="attrib">@type</span> Function
+       */</span> 
+      <span class="reserved">this</span>.validate = undefined;
+      
+      <span class="reserved">if</span> (!configObj.name) {
+         throw <span class="literal">"no name given for form element "</span> + configObj.type;
+      }
+      <span class="reserved">for</span> (var key in configObj) {
+         <span class="reserved">if</span> (jala.Form.InputComponent.ACCEPTED_FIELDS_DEFAULT.indexOf(key) == -1 &amp;&amp;
+             (<span class="reserved">this</span>.constructor.ACCEPTED_FIELDS &amp;&amp; <span class="reserved">this</span>.constructor.ACCEPTED_FIELDS.indexOf(key) == -1)) {
+            throw <span class="literal">"error configuring element \"</span><span class="literal">" + configObj.name + "</span>\<span class="literal">": \"</span><span class="literal">" + key + "</span>\<span class="literal">" is not a valid config field"</span>;
+         }
+         <span class="reserved">this</span>[key] = configObj[key];
+      }
+      <span class="reserved">if</span> (<span class="reserved">this</span>.validate &amp;&amp; !(<span class="reserved">this</span>.validate instanceof Function)) {
+         throw <span class="literal">"error configuring element \"</span><span class="literal">" + this.name + "</span>\<span class="literal">": validate field may only contain a function or an array of functions"</span>;
+      }
+      <span class="reserved">return</span> <span class="reserved">this</span>;
+   }
+};
+
+
+<span class="comment">/**
+ * An Array containing config field names that are valid for all components
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.InputComponent.ACCEPTED_FIELDS_DEFAULT = [<span class="literal">"name"</span>, <span class="literal">"type"</span>, <span class="literal">"classname"</span>, <span class="literal">"label"</span>, <span class="literal">"help"</span>, <span class="literal">"required"</span>, <span class="literal">"getter"</span>, <span class="literal">"setter"</span>, <span class="literal">"messages"</span>, <span class="literal">"validate"</span>, <span class="literal">"skin"</span>];
+
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.InputComponent.ACCEPTED_FIELDS = [<span class="literal">"size"</span>, <span class="literal">"maxlength"</span>, <span class="literal">"minlength"</span>];
+
+
+
+<span class="comment">/**
+ * Returns either a submitted form value or the value of the
+ * data object in the form element
+ * <span class="attrib">@returns</span> Value of the element depending on the state of the form.
+ * <span class="attrib">@type</span> String Number Date
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getValue = <span class="reserved">function</span>() {
+   var reqData = <span class="reserved">this</span>.form.getRequestData();
+   <span class="reserved">if</span> (reqData) {
+      <span class="comment">// value from failed form submit</span>
+      <span class="reserved">return</span> reqData[<span class="reserved">this</span>.name];
+   } <span class="reserved">else</span> {
+      <span class="reserved">return</span> <span class="reserved">this</span>.getProperty();
+   }
+};
+
+
+
+<span class="comment">/**
+ * Retrieves the property which is edited by this component.
+ * &lt;li&gt;If no getter is given, the primitive property of the data object is returned.
+ * &lt;li&gt;If a getter function is defined, it is executed and the return value used
+ * as property. The data object and the name of the property are passed to the function
+ * as arguments.&lt;/li&gt;
+ * <span class="attrib">@returns</span> The value of the property
+ * <span class="attrib">@type</span> String Number Date
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getProperty = <span class="reserved">function</span>() {
+   var obj = <span class="reserved">this</span>.form.getDataObj();
+   var result = null;
+   <span class="reserved">if</span> (<span class="reserved">this</span>.getter instanceof Function) {
+      result = <span class="reserved">this</span>.getter.apply(null, [obj, <span class="reserved">this</span>.name]);
+   } <span class="reserved">else</span> {
+      result = obj[<span class="reserved">this</span>.name];
+   }
+   <span class="reserved">return</span> result;
+};
+
+
+
+<span class="comment">/**
+ * Sets a property of the object passed as argument to the given value.
+ * &lt;li&gt;If no setter is given, the primitive property of the data object is changed.
+ * &lt;li&gt;If a setter function is defined it is executed with the data object, name and
+ * new value provided as arguments&lt;/li&gt;
+ * &lt;li&gt;If the setter is explicitly set to null, no changes are made at all.
+ * <span class="attrib">@param</span> {Object} value The value to set the property to
+ * <span class="attrib">@returns</span> True in case the update was successful, false otherwise.
+ * <span class="attrib">@type</span> Boolean
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.setProperty = <span class="reserved">function</span>(value) {
+   var obj = <span class="reserved">this</span>.form.getDataObj();
+   <span class="comment">// only set the property if setter is not explicitly null,</span>
+   <span class="comment">// otherwise we assume that the property is handled by a</span>
+   <span class="comment">// "beforeSave" method or purposely ignored at all</span>
+   <span class="reserved">if</span> (<span class="reserved">this</span>.setter !== null) {
+      <span class="reserved">if</span> (<span class="reserved">this</span>.setter instanceof Function) {
+         <span class="reserved">this</span>.setter.apply(null, [obj, <span class="reserved">this</span>.name, value]);
+      } <span class="reserved">else</span> {
+         obj[<span class="reserved">this</span>.name] = value;
+      }
+   }
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * Renders an element including label, error and help messages.
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.render = <span class="reserved">function</span>() {
+   var param = {};
+   param.error    = <span class="reserved">this</span>.getError();
+   param.label    = <span class="reserved">this</span>.getLabel();
+   param.help     = <span class="reserved">this</span>.getHelp();
+
+   res.push();
+   <span class="reserved">this</span>.renderControls(<span class="reserved">this</span>.getControlAttributes(), <span class="reserved">this</span>.getValue());
+   param.controls = res.pop();
+
+   var className = (<span class="reserved">this</span>.required == true) ? <span class="literal">"required"</span> : <span class="literal">"optional"</span>;
+   <span class="reserved">if</span> (<span class="reserved">this</span>.className) {
+      className += <span class="literal">" "</span> + configEl.className;
+   }
+
+   jala.Form.html.openTag(<span class="literal">"div"</span>, {id: <span class="reserved">this</span>.form.getConfig().name + <span class="literal">"_row_"</span> + <span class="reserved">this</span>.name,
+                                  <span class="literal">"class"</span>: <span class="literal">"row "</span> + className});
+   <span class="reserved">if</span> (<span class="reserved">this</span>.skin) {
+      <span class="reserved">this</span>.form.getDataObj().renderSkin(<span class="reserved">this</span>.skin, param);
+   } <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.form.getConfig().componentSkin) {
+      <span class="reserved">this</span>.form.getDataObj().renderSkin(<span class="reserved">this</span>.form.getConfig().componentSkin, param);
+   } <span class="reserved">else</span> {
+      renderSkin(<span class="reserved">this</span>.form.componentSkin, param);
+   }
+   jala.Form.html.closeTag(<span class="literal">"div"</span>);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Renders an input tag to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   attr.value = value;
+   <span class="reserved">if</span> (<span class="reserved">this</span>.maxlength) {
+      attr.maxlength = <span class="reserved">this</span>.maxlength;
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.size) {
+      attr.size = <span class="reserved">this</span>.size;
+   }
+   jala.Form.html.input(attr);
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * If the error tracker holds an error message for this element,
+ * it is wrapped in a div-tag and returned as a string.
+ * <span class="attrib">@returns</span> Rendered string
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getError = <span class="reserved">function</span>() {
+   var tracker = <span class="reserved">this</span>.form.getTracker();
+   <span class="reserved">if</span> (tracker.errors[<span class="reserved">this</span>.name]) {
+      <span class="reserved">return</span> jala.Form.html.elementAsString(<span class="literal">"div"</span>,
+                                  <span class="reserved">this</span>.form.processMessage(tracker.errors[<span class="reserved">this</span>.name]),
+                                  {id: <span class="reserved">this</span>.form.createDomId(<span class="literal">"error"</span>, <span class="reserved">this</span>.name),
+                                   <span class="literal">"class"</span>: <span class="literal">"error"</span>});
+   }
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * Wraps the Label for this element in a div-tag and returns it
+ * as a string
+ * <span class="attrib">@returns</span> Rendered string
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getLabel = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> jala.Form.html.elementAsString(<span class="literal">"label"</span>,
+                               <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.label || <span class="literal">""</span>),
+                               {id: <span class="reserved">this</span>.form.createDomId(<span class="literal">"label"</span>, <span class="reserved">this</span>.name),
+                                <span class="literal">"for"</span>: <span class="reserved">this</span>.form.createDomId(<span class="reserved">this</span>.name)});
+};
+
+
+
+<span class="comment">/**
+ * If this element contains a help message, it is wrapped in
+ * a div-tag and returned as a string.
+ * <span class="attrib">@returns</span> Rendered string
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getHelp = <span class="reserved">function</span>() {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.help) {
+      <span class="reserved">return</span> jala.Form.html.elementAsString(<span class="literal">"div"</span>,
+                                  <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.help),
+                                  {id: <span class="reserved">this</span>.form.createDomId(<span class="literal">"help"</span>, <span class="reserved">this</span>.name),
+                                   <span class="literal">"class"</span>: <span class="literal">"help"</span>});
+   }
+   <span class="reserved">return</span> null;
+};
+
+
+
+<span class="comment">/**
+ * Creates a new attribute object for this element.
+ * <span class="attrib">@returns</span> Object with properties id, name, class
+ * <span class="attrib">@type</span> Object
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getControlAttributes = <span class="reserved">function</span>() {
+   var attr = {
+      id: <span class="reserved">this</span>.form.createDomId(<span class="reserved">this</span>.name),
+      name: <span class="reserved">this</span>.name,
+      <span class="literal">"class"</span>: <span class="reserved">this</span>.type 
+   };
+   <span class="reserved">if</span> (<span class="reserved">this</span>.className) {
+      attr[<span class="literal">"class"</span>] += <span class="literal">" "</span> + <span class="reserved">this</span>.className;
+   }
+   <span class="reserved">return</span> attr;
+};
+
+
+
+<span class="comment">/**
+ * Returns a specific message for a config element.
+ * <span class="attrib">@param</span> {Object} configEl The config object containing a single element's metadata
+ * <span class="attrib">@param</span> {String} key The key of message (e.g. "missing", "toolong", "tooshort").
+ * <span class="attrib">@param</span> {String} defaultMsg the message to use when no message was defined 
+ *        in the config.
+ * <span class="attrib">@returns</span> message
+ * <span class="attrib">@type</span> String
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.getMessage = <span class="reserved">function</span>(key, defaultMsg) {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.messages &amp;&amp; <span class="reserved">this</span>.messages[key]) {
+      <span class="reserved">return</span> <span class="reserved">this</span>.messages[key];
+   } <span class="reserved">else</span> {
+      <span class="reserved">return</span> defaultMsg;
+   }
+};
+
+
+
+<span class="comment">/**
+ * Validates user input from an input tag.
+ * <span class="attrib">@see</span> jala.Form.InputComponent#checkLength
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">this</span>.checkLength(reqData, tracker);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+<span class="comment">/**
+ * Checks user input for maximum length, minimum length and required
+ * if the corresponding options are set in this element's config.
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.checkLength = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.required &amp;&amp; (reqData[<span class="reserved">this</span>.name] == null || reqData[<span class="reserved">this</span>.name].trim() == <span class="literal">""</span>)) {
+      tracker.setError(<span class="reserved">this</span>.name,
+                    <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.getMessage(<span class="literal">"missing"</span>, <span class="literal">"Please enter text into this field!"</span>)));
+   } <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.maxlength &amp;&amp; reqData[<span class="reserved">this</span>.name].length &gt; <span class="reserved">this</span>.maxlength) {
+      tracker.setError(<span class="reserved">this</span>.name, 
+                    <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.getMessage(<span class="literal">"tooLong"</span>, <span class="literal">"Input for this field is too long ({0} characters). Please enter no more than {1} characters!"</span>),
+                                 reqData[<span class="reserved">this</span>.name].length, <span class="reserved">this</span>.maxlength));
+   } <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.minlength) {
+      <span class="comment">// set an error if the element is required but the input is too short</span>
+      <span class="comment">// but don't throw an error if the element is optional and empty</span>
+      <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name].length &lt; <span class="reserved">this</span>.minlength &amp;&amp;
+          (<span class="reserved">this</span>.required || (!<span class="reserved">this</span>.required &amp;&amp; reqData[<span class="reserved">this</span>.name].length &gt; 0))) {
+         tracker.setError(<span class="reserved">this</span>.name,
+               <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.getMessage(<span class="literal">"tooShort"</span>, <span class="literal">"Input for this field is too short ({0} characters). Please enter at least {1} characters!"</span>),
+               reqData[<span class="reserved">this</span>.name].length, <span class="reserved">this</span>.minlength)
+         );
+      }
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Saves the value of this component in the data object.
+ * <span class="attrib">@param</span> {Object} reqData request data
+ */</span>
+jala.Form.InputComponent.<span class="reserved">prototype</span>.setValue = <span class="reserved">function</span>(reqData) {
+   <span class="reserved">this</span>.setProperty(reqData[<span class="reserved">this</span>.name]);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders plain text or skins.
+ *
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;text&lt;/code&gt; String rendered as skin.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.TextComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.TextComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.TextComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.TextComponent.ACCEPTED_FIELDS = [<span class="literal">"text"</span>];
+
+
+<span class="comment">/**
+ * Renders an input tag to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.TextComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.text) {
+      renderSkin(createSkin(<span class="reserved">this</span>.text));
+   }      
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Not used in jala.Form.Text prototype.
+ * <span class="attrib">@see</span> jala.Form.InputComponent#checkLength
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.TextComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * password input tag.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;size&lt;/code&gt; Size attribute of the input tag.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;maxlength&lt;/code&gt; Maximum length of text.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;minlength&lt;/code&gt; Minimum length of text.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.PasswordComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.PasswordComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.PasswordComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.PasswordComponent.ACCEPTED_FIELDS = [<span class="literal">"size"</span>, <span class="literal">"maxlength"</span>, <span class="literal">"minlength"</span>];
+
+
+<span class="comment">/**
+ * Renders a password input tag to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.PasswordComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   attr.value = value;
+   <span class="reserved">if</span> (<span class="reserved">this</span>.maxlength) {
+      attr.maxlength = <span class="reserved">this</span>.maxlength;
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.size) {
+      attr.size = <span class="reserved">this</span>.size;
+   }
+   jala.Form.html.password(attr);
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * textarea tag.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;rows&lt;/code&gt; Rows attribute of the textarea.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;cols&lt;/code&gt; Cols attribute of the textarea.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;maxlength&lt;/code&gt; Maximum length of text.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;minlength&lt;/code&gt; Minimum length of text.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.TextareaComponent = <span class="reserved">function</span> TextareaComponent(form, configObj) {
+   jala.Form.TextareaComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.TextareaComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.TextareaComponent.ACCEPTED_FIELDS = [<span class="literal">"rows"</span>, <span class="literal">"cols"</span>, <span class="literal">"maxlength"</span>, <span class="literal">"minlength"</span>];
+
+<span class="comment">/**
+ * Renders a textarea tag to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.TextareaComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   attr.value = value;
+   <span class="reserved">if</span> (<span class="reserved">this</span>.rows) {
+      attr.rows = <span class="reserved">this</span>.rows;
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.cols) {
+      attr.cols = <span class="reserved">this</span>.cols;
+   }
+   jala.Form.html.textArea(attr);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * dropdown element.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;options&lt;/code&gt; An array of a function defining the options for this
+ *      element. A function is called with the data object and the field name as 
+ *      arguments and has to return an array.
+ *      The array may contain arrays: &lt;code&gt;[  [val, display], [val, display] ]&lt;/code&gt;,
+ *      or objects: &lt;code&gt;[  {value:val, display:display}, ...]&lt;/code&gt;,
+ *      or strings whose value will be their index position.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;firstOption&lt;/code&gt; Text to display if no value is selected&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.SelectComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.SelectComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.SelectComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.SelectComponent.ACCEPTED_FIELDS = [<span class="literal">"options"</span>, <span class="literal">"firstOption"</span>];
+
+<span class="comment">/**
+ * Renders a dropdown element to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.SelectComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   jala.Form.html.dropDown(attr, <span class="reserved">this</span>.getOptions(), value,
+                           <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.firstOption));
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates user input from a dropdown element and makes sure that
+ * option value list contains the user input.
+ * <span class="attrib">@see</span> jala.Form.SelectComponent#checkOptions
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.SelectComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">this</span>.checkOptions(reqData, tracker);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * sCreate an array of options for a dropdown element or a
+ * group of radiobuttons. If options field of this element's
+ * config is an array, that array is returned.
+ * If options is a function, its return value is returned.
+ * <span class="attrib">@returns</span> array of options
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.SelectComponent.<span class="reserved">prototype</span>.getOptions = <span class="reserved">function</span>() {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.options != null) {
+      <span class="reserved">if</span> (<span class="reserved">this</span>.options instanceof Array) {
+         <span class="reserved">return</span> <span class="reserved">this</span>.options;
+      } <span class="reserved">else</span> <span class="reserved">if</span> (<span class="reserved">this</span>.options instanceof Function) {
+         <span class="reserved">return</span> <span class="reserved">this</span>.options.call(null, [<span class="reserved">this</span>.form.getDataObj(), <span class="reserved">this</span>.name]);
+      }
+   }
+   <span class="reserved">return</span> [];
+};
+
+<span class="comment">/**
+ * Checks user input for optiongroups: Value has to be in option array.
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.SelectComponent.<span class="reserved">prototype</span>.checkOptions = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="comment">// if field is required, an empty option is not allowed:</span>
+   var found = (!<span class="reserved">this</span>.required &amp;&amp; !reqData[<span class="reserved">this</span>.name]);
+   <span class="reserved">if</span> (!found) {
+      var options = <span class="reserved">this</span>.getOptions();
+      var val = reqData[<span class="reserved">this</span>.name];
+      <span class="reserved">for</span> (var i=0; i&lt;options.length; i++) {
+         <span class="reserved">if</span> ((options[i] instanceof Array) &amp;&amp; options[i].length &gt; 0) {
+            <span class="comment">// option is an array (1st element = value, 2nd = display)</span>
+            <span class="reserved">if</span> (options[i][0] == reqData[<span class="reserved">this</span>.name]) {
+               found = true;
+               break;
+            }
+         } <span class="reserved">else</span> <span class="reserved">if</span> (options[i].value &amp;&amp; options[i].display) {
+            <span class="comment">// option is an object with fields value + display</span>
+            <span class="reserved">if</span> (options[i].value == reqData[<span class="reserved">this</span>.name]) {
+               found = true;
+               break;
+            }
+         } <span class="reserved">else</span> {
+            <span class="comment">// option is a string, value is index number</span>
+            <span class="reserved">if</span> (i == reqData[<span class="reserved">this</span>.name]) {
+               found = true;
+               break;
+            }
+         }
+      }
+   }
+   <span class="reserved">if</span> (!found) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Please select a valid option!"</span>));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * set of radio buttons.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;options&lt;/code&gt; An array of a function defining the options for this
+ *      element. A function is called with the data object and the field name as 
+ *      arguments and has to return an array.
+ *      The array may contain arrays: &lt;code&gt;[  [val, display], [val, display] ]&lt;/code&gt;,
+ *      or objects: &lt;code&gt;[  {value:val, display:display}, ...]&lt;/code&gt;,
+ *      or strings whose value will be their index position.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.SelectComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.RadioComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.RadioComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend SelectComponent</span>
+jala.Form.extend(jala.Form.RadioComponent, jala.Form.SelectComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.RadioComponent.ACCEPTED_FIELDS = [<span class="literal">"options"</span>];
+
+<span class="comment">/**
+ * Renders a set of radio buttons to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.RadioComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   var options = <span class="reserved">this</span>.getOptions();
+   var optionAttr, optionDisplay;
+   <span class="reserved">for</span> (var i=0; i&lt;options.length; i++) {
+      optionAttr = attr.clone({}, false);
+      optionAttr.id += <span class="literal">"_"</span> + i;
+      <span class="reserved">if</span> ((options[i] instanceof Array) &amp;&amp; options[i].length &gt; 0) {
+         optionAttr.value = options[i][0];
+         optionDisplay = options[i][1];
+      } <span class="reserved">else</span> <span class="reserved">if</span> (options[i].value &amp;&amp; options[i].display) {
+         optionAttr.value = options[i].value;
+         optionDisplay = options[i].display;
+      } <span class="reserved">else</span> {
+         optionAttr.value = i;
+         optionDisplay = options[i];
+      }
+      <span class="reserved">if</span> (String(value) == String(optionAttr.value)) {
+         optionAttr.checked = <span class="literal">"checked"</span>;
+      }
+      jala.Form.html.radioButton(optionAttr);
+      res.write(<span class="reserved">this</span>.form.processMessage(optionDisplay));
+      jala.Form.html.tag(<span class="literal">"br"</span>);
+   }
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates user input from a set of radio buttons and makes sure that
+ * option value list contains the user input.
+ * <span class="attrib">@see</span> jala.Form.SelectComponent#checkOptions
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.RadioComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">this</span>.checkOptions(reqData, tracker);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * checkbox.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;checked&lt;/code&gt; Value to save if checkbox is checked.&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;unchecked&lt;/code&gt; Value to save if checkbox is not checked.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.CheckboxComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.CheckboxComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.CheckboxComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.CheckboxComponent.ACCEPTED_FIELDS = [<span class="literal">"checked"</span>, <span class="literal">"unchecked"</span>];
+
+<span class="comment">/**
+ * Renders an checkbox to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.CheckboxComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">if</span> ((<span class="reserved">this</span>.checked &amp;&amp; value == <span class="reserved">this</span>.checked) || value == <span class="literal">"1"</span>) {
+      attr.checked = <span class="literal">"checked"</span>;
+   }
+   attr.value = <span class="literal">"1"</span>;
+   jala.Form.html.checkBox(attr);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates user input from checkbox. This method translates the "1" value
+ * of the checkbox back into the checked/unchecked values defined by the
+ * config.
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.CheckboxComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name] == <span class="literal">"1"</span>) {
+      reqData[<span class="reserved">this</span>.name] = (<span class="reserved">this</span>.checked) ? <span class="reserved">this</span>.checked : <span class="literal">"1"</span>;
+   } <span class="reserved">else</span> {
+      reqData[<span class="reserved">this</span>.name] = (<span class="reserved">this</span>.unchecked) ? <span class="reserved">this</span>.unchecked : <span class="literal">"0"</span>;
+   }
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * set of five or six dropdown boxes for editing date and time values.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;yearStart&lt;/code&gt; First year in option list (current
+ *          year by default).&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;yearEnd&lt;/code&gt; Last year in option list (five years
+ *          into the future by default)&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;seconds&lt;/code&gt; If set to true, a dropdown for editing
+ *          seconds will be rendered&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.TimestampComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.TimestampComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.TimestampComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.TimestampComponent.ACCEPTED_FIELDS = [<span class="literal">"yearStart"</span>, <span class="literal">"yearEnd"</span>, <span class="literal">"seconds"</span>];
+
+<span class="comment">/**
+ * Overrides method of the same name in InputComponent.
+ * This methods returns an object with properties year, month, date,#
+ * hours, minutes, seoncds. The value is based on the user input if present,
+ * otherwise the original date value is dissected.
+ * <span class="attrib">@see</span> jala.Form.InputComponent#getValue
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.getValue = <span class="reserved">function</span>() {
+   var reqData = <span class="reserved">this</span>.form.getRequestData();
+   <span class="reserved">if</span> (reqData) {
+      <span class="comment">// value from failed form submit</span>
+      <span class="reserved">return</span> {
+         year: reqData[<span class="reserved">this</span>.name + <span class="literal">"_year"</span>],
+         month: reqData[<span class="reserved">this</span>.name + <span class="literal">"_month"</span>],
+         date: reqData[<span class="reserved">this</span>.name + <span class="literal">"_date"</span>],
+         hours: reqData[<span class="reserved">this</span>.name + <span class="literal">"_hours"</span>],
+         minutes: reqData[<span class="reserved">this</span>.name + <span class="literal">"_minutes"</span>],
+         seconds: reqData[<span class="reserved">this</span>.name + <span class="literal">"_seconds"</span>],
+      };
+   } <span class="reserved">else</span> {
+      var val = <span class="reserved">this</span>.getProperty();
+      <span class="reserved">return</span> {
+         year: val.getFullYear(),
+         month: val.getMonth(),
+         date: val.getDate(),
+         hours: val.getHours(),
+         minutes: val.getMinutes(),
+         seconds: val.getSeconds()
+      };
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Overrides method of the same name in InputComponent.
+ * This method first retrieves the original date value, updates the
+ * original values with the relevant user input and calls
+ * InputComponent.setProperty().
+ * <span class="attrib">@see</span> jala.Form.InputComponent#save
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.setValue = <span class="reserved">function</span>(reqData) {
+   var val = <span class="reserved">this</span>.getProperty();
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name + <span class="literal">"_year"</span>]) {
+      val.setYear(reqData[<span class="reserved">this</span>.name + <span class="literal">"_year"</span>]);
+   }
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name + <span class="literal">"_month"</span>]) {
+      val.setMonth(reqData[<span class="reserved">this</span>.name + <span class="literal">"_month"</span>]);
+   }
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name + <span class="literal">"_date"</span>]) {
+      val.setDate(reqData[<span class="reserved">this</span>.name + <span class="literal">"_date"</span>]);
+   }
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name + <span class="literal">"_hours"</span>]) {
+      val.setHours(reqData[<span class="reserved">this</span>.name + <span class="literal">"_hours"</span>]);
+   }
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name + <span class="literal">"_minutes"</span>]) {
+      val.setMinutes(reqData[<span class="reserved">this</span>.name + <span class="literal">"_minutes"</span>]);
+   }
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name + <span class="literal">"_seconds"</span>]) {
+      val.setSeconds(reqData[<span class="reserved">this</span>.name + <span class="literal">"_seconds"</span>]);
+   }
+   <span class="reserved">this</span>.setProperty(val);
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * Helper function which parses config properties yearStart + yearEnd.
+ * If they aren't present, default values are used (current year, five years from now).
+ * <span class="attrib">@returns</span> Object with properties start, end.
+ * <span class="attrib">@type</span> Object
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.getYearClip = <span class="reserved">function</span>() {
+   var clip = {};
+   var getit = <span class="reserved">function</span>(field, prop, def) {
+      <span class="reserved">if</span> (prop &amp;&amp; (prop instanceof Function)) {
+         clip[field] = prop();
+      } <span class="reserved">else</span> <span class="reserved">if</span> (prop) {
+         clip[field] = parseInt(prop);
+      } <span class="reserved">else</span> {
+         clip[field] = def;
+      }
+   }
+   getit(<span class="literal">"start"</span>, <span class="reserved">this</span>.yearStart, new Date().getFullYear());
+   getit(<span class="literal">"end"</span>,   <span class="reserved">this</span>.yearEnd,   (new Date().getFullYear() + 4));
+   <span class="reserved">return</span> clip;
+};
+
+
+<span class="comment">/**
+ * Renders a set of dropdown boxes to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">this</span>.renderDateControls(attr, value);
+   <span class="reserved">this</span>.renderTimeControls(attr, value);
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * Renders dropdown boxes for day, month and year to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.renderDateControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">this</span>.renderSelect(attr, <span class="literal">"date"</span>, <span class="literal">"Tag"</span>, 1, 31, value.date);
+   <span class="reserved">this</span>.renderMonthSelect(attr, <span class="literal">"month"</span>, <span class="literal">"Monat"</span>, value.month);
+   var year = <span class="reserved">this</span>.getYearClip();
+   <span class="reserved">this</span>.renderSelect(attr, <span class="literal">"year"</span>, <span class="literal">"Jahr"</span>, year.start, year.end, value.year);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Renders dropdown boxes for hours, minutes and (if configured) seconds
+ * to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.renderTimeControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">this</span>.renderSelect(attr, <span class="literal">"hours"</span>, null, 0, 23, value.hours);
+   <span class="reserved">this</span>.renderSelect(attr, <span class="literal">"minutes"</span>, null, 0, 59, value.minutes);
+   <span class="reserved">if</span> (<span class="reserved">this</span>.seconds == true) {
+      <span class="reserved">this</span>.renderSelect(attr, <span class="literal">"seconds"</span>, null, 0, 59, value.seconds);
+   }
+   <span class="reserved">return</span>;
+};
+
+
+
+
+<span class="comment">/**
+ * Validates user input from a set of date and time dropdown boxes
+ * and makes sure that each value is within the valid range of options.
+ * Further validation has to be done by custom functions!
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ * <span class="attrib">@see</span> jala.Form.TimestampComponent#checkDate
+ * <span class="attrib">@see</span> jala.Form.TimestampComponent#checkTime
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">this</span>.checkTime(reqData, tracker);
+   <span class="reserved">this</span>.checkDate(reqData, tracker);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Helper function to check user input from date dropdowns
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.checkDate = <span class="reserved">function</span>(reqData, tracker) {
+   var year = <span class="reserved">this</span>.getYearClip();
+   <span class="reserved">if</span> (<span class="reserved">this</span>.notInRange(reqData[<span class="reserved">this</span>.name + <span class="literal">"_year"</span>], year.start, year.end)) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Input for 'year' is invalid."</span>));
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.notInRange(reqData[<span class="reserved">this</span>.name + <span class="literal">"_month"</span>], 0, 11)) {
+      res.debug(<span class="literal">"monat ungültig"</span>);
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Input for 'month' is invalid."</span>));
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.notInRange(reqData[<span class="reserved">this</span>.name + <span class="literal">"_date"</span>], 1, 31)) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Input for 'day' is invalid."</span>));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Helper function to check user input from time dropdowns
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.checkTime = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.notInRange(reqData[<span class="reserved">this</span>.name + <span class="literal">"_hours"</span>], 0, 23)) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Input for 'hour' is invalid."</span>));
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.notInRange(reqData[<span class="reserved">this</span>.name + <span class="literal">"_minutes"</span>], 0, 59)) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Input for 'minute' is invalid."</span>));
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.seconds == true &amp;&amp; <span class="reserved">this</span>.notInRange(reqData[<span class="reserved">this</span>.name + <span class="literal">"_seconds"</span>], 0, 59)) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Input for 'seconds' is invalid."</span>));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+
+<span class="comment">/**
+ * Helper function for check methods. Checks that a value is set and within 
+ * a given range.
+ * <span class="attrib">@param</span> {Object} value value to check
+ * <span class="attrib">@param</span> {Number} start miniumum value allowed
+ * <span class="attrib">@param</span> {Number} end maximum value allowed
+ * <span class="attrib">@type</span> Boolean
+ * <span class="attrib">@returns</span> true if value is within range, false otherwise.
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.notInRange = <span class="reserved">function</span>(value, start, end) {
+   <span class="reserved">return</span> (!value || isNaN(value) || value &lt; start || value &gt; end);
+};
+
+
+
+<span class="comment">/**
+ * Helper function which renders a selectbox for choosing numbers.
+ * <span class="attrib">@param</span> {Object} attr
+ * <span class="attrib">@param</span> {String} suffix suffix to use for id and name values
+ * <span class="attrib">@param</span> {String} desc first element of select box
+ * <span class="attrib">@param</span> {Number} start where to start counting
+ * <span class="attrib">@param</span> {Number} end where to end counting
+ * <span class="attrib">@param</span> {Object} value current value of element
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.renderSelect = <span class="reserved">function</span>(attr, suffix, desc, start, end, value) {
+   var myAttr = attr.clone({}, false);
+   myAttr.id += <span class="literal">"_"</span> + suffix;
+   myAttr.name += <span class="literal">"_"</span> + suffix;
+   var options = [];
+   <span class="reserved">for</span> (var i=start; i&lt;=end; i++) {
+      options.push([i, String(i)]);
+   }
+   <span class="reserved">if</span> (desc) {
+      desc = <span class="reserved">this</span>.form.processMessage(desc);
+   }
+   <span class="reserved">if</span> (isNaN(value)) {
+      value = null;
+   }
+   jala.Form.html.dropDown(myAttr, options, value, desc);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Helper function which renders a selectbox for choosing months.
+ * <span class="attrib">@param</span> {Object} attr
+ * <span class="attrib">@param</span> {String} suffix suffix to use for id and name values
+ * <span class="attrib">@param</span> {String} desc first element of select box
+ * <span class="attrib">@param</span> {Object} value current value of element
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Form.TimestampComponent.<span class="reserved">prototype</span>.renderMonthSelect = <span class="reserved">function</span>(attr, suffix, desc, value) {
+   var myAttr = attr.clone({}, false);
+   myAttr.id += <span class="literal">"_"</span> + suffix;
+   myAttr.name += <span class="literal">"_"</span> + suffix;
+   var options = [
+      [0, <span class="reserved">this</span>.form.processMessage(<span class="literal">"January"</span>)],
+      [1, <span class="reserved">this</span>.form.processMessage(<span class="literal">"February"</span>)],
+      [2, <span class="reserved">this</span>.form.processMessage(<span class="literal">"March"</span>)],
+      [3, <span class="reserved">this</span>.form.processMessage(<span class="literal">"April"</span>)],
+      [4, <span class="reserved">this</span>.form.processMessage(<span class="literal">"May"</span>)],
+      [5, <span class="reserved">this</span>.form.processMessage(<span class="literal">"June"</span>)],
+      [6, <span class="reserved">this</span>.form.processMessage(<span class="literal">"July"</span>)],
+      [7, <span class="reserved">this</span>.form.processMessage(<span class="literal">"August"</span>)],
+      [8, <span class="reserved">this</span>.form.processMessage(<span class="literal">"September"</span>)],
+      [9, <span class="reserved">this</span>.form.processMessage(<span class="literal">"October"</span>)],
+      [10, <span class="reserved">this</span>.form.processMessage(<span class="literal">"November"</span>)],
+      [11, <span class="reserved">this</span>.form.processMessage(<span class="literal">"December"</span>)]
+   ];
+   <span class="reserved">if</span> (desc) {
+      desc = <span class="reserved">this</span>.form.processMessage(<span class="literal">"Monat"</span>);
+   }
+   <span class="reserved">if</span> (isNaN(value)) {
+      value = null;
+   }
+   jala.Form.html.dropDown(myAttr, options, value, desc);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.TimestampComponent which renders and validates a
+ * set of three dropdown boxes for editing date values.
+
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;yearStart&lt;/code&gt; First year in option list (current
+ *          year by default).&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;yearEnd&lt;/code&gt; Last year in option list (five years
+ *          into the future by default)&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.TimestampComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.DateComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.DateComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend TimestampComponent</span>
+jala.Form.extend(jala.Form.DateComponent, jala.Form.TimestampComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.DateComponent.ACCEPTED_FIELDS = [<span class="literal">"yearStart"</span>, <span class="literal">"yearEnd"</span>];
+
+<span class="comment">/**
+ * Renders a set of dropdown boxes to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.DateComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">this</span>.renderDateControls(attr, value);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates user input from a set of date dropdown boxes and makes sure that
+ * each value is within the valid range of time options.
+ * Further validation has to be done by custom functions!
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.DateComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">this</span>.checkDate(reqData, tracker);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.TimestampComponent which renders and validates a
+ * set of two or three dropdown boxes for editing time values.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;seconds&lt;/code&gt; If set to true, a dropdown for editing
+ *          seconds will be rendered&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.TimestampComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.TimeComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.TimeComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend TimestampComponent</span>
+jala.Form.extend(jala.Form.TimeComponent, jala.Form.TimestampComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.TimeComponent.ACCEPTED_FIELDS = [<span class="literal">"seconds"</span>];
+
+<span class="comment">/**
+ * Renders a set of dropdown boxes to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.TimeComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">this</span>.renderTimeControls(attr, value);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates user input from a set of time dropdown boxes and makes sure that
+ * each value is within the valid range of time options.
+ * Further validation has to be done by custom functions!
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.TimeComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   <span class="reserved">this</span>.checkTime(reqData, tracker);
+   <span class="reserved">return</span>;
+};
+
+
+
+
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * file upload. Note that the file is not saved. Use req.data[field].writeToFile(dir, name).
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;required&lt;/code&gt; If set to true, upload is mandatory for this form.
+ * &lt;li&gt;&lt;code&gt;contentType&lt;/code&gt; Mime-Types accepted as upload
+ *          (String or Array of Strings, no wildcards!)&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;maxlength&lt;/code&gt; Maximum length of file in bytes&lt;/li&gt;
+ * &lt;li&gt;&lt;code&gt;validateImage&lt;/code&gt; If set to true, Helma will try to
+ *          create an image with the uploaded data and print an
+ *          error if this fails.&lt;/li&gt;
+ * &lt;/p&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.FileComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.FileComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.FileComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.FileComponent.ACCEPTED_FIELDS = [<span class="literal">"contentType"</span>, <span class="literal">"maxlength"</span>, <span class="literal">"validateImage"</span>];
+
+<span class="comment">/**
+ * Renders a file input tag to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.FileComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">if</span> (<span class="reserved">this</span>.contentType) {
+      attr.accept = (<span class="reserved">this</span>.contentType instanceof Array) ? <span class="reserved">this</span>.contentType.join(<span class="literal">","</span>) : <span class="reserved">this</span>.contentType;
+   }
+   jala.Form.html.file(attr);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates a file upload by making sure it's there (if config.required is set),
+ * checking the file size, the content type and by trying to construct an image.
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.FileComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+
+   <span class="reserved">if</span> (reqData[<span class="reserved">this</span>.name].contentLength == 0) {
+      <span class="comment">// no upload</span>
+      <span class="reserved">if</span> (<span class="reserved">this</span>.required == true) {
+         tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"File upload is required."</span>));
+         <span class="reserved">return</span> false;
+      } <span class="reserved">else</span> {
+         <span class="comment">// no further checks necessary, exit here</span>
+         <span class="reserved">return</span> true;
+      }
+   }
+
+   <span class="reserved">if</span> (<span class="reserved">this</span>.maxlength &amp;&amp; reqData[<span class="reserved">this</span>.name].contentLength &gt; <span class="reserved">this</span>.maxlength) {
+      tracker.setError(<span class="reserved">this</span>.name, 
+         <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.getMessage(<span class="literal">"tooLong"</span>, <span class="literal">"This file is too big ({0} bytes), maximum allowed size {1} bytes."</span>),
+            reqData[<span class="reserved">this</span>.name].contentLength, <span class="reserved">this</span>.maxlength
+         )
+      );
+      <span class="reserved">return</span> false;
+   }
+   
+   <span class="reserved">if</span> (<span class="reserved">this</span>.contentType) {
+      var arr = (<span class="reserved">this</span>.contentType instanceof Array) ? <span class="reserved">this</span>.contentType : [<span class="reserved">this</span>.contentType];
+      <span class="reserved">if</span> (arr.indexOf(reqData[<span class="reserved">this</span>.name].contentType) == -1) {
+         tracker.setError(<span class="reserved">this</span>.name,
+            <span class="reserved">this</span>.form.processMessage(<span class="reserved">this</span>.getMessage(<span class="literal">"invalid"</span>, <span class="literal">"This file type is not allowed."</span>))
+         );
+         <span class="reserved">return</span> false;
+      }
+   }
+   
+   <span class="reserved">if</span> (<span class="reserved">this</span>.validateImage) {
+      try {
+         var helmaImg = new Image(reqData[<span class="reserved">this</span>.name]);
+      } catch (imgError) {
+         tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"This image file can't be processed."</span>));
+         <span class="reserved">return</span> false;
+      }
+   }
+
+   <span class="reserved">return</span> true;
+};
+
+
+
+
+
+
+
+
+<span class="comment">/**
+ * <span class="attrib">@class</span> Subclass of jala.Form.InputComponent which renders and validates a
+ * captcha check.
+ * &lt;p&gt;&lt;b&gt;Possible config options:&lt;/b&gt;&lt;br/&gt;
+ * &lt;li&gt;&lt;code&gt;zero&lt;/code&gt; To be done yet.
+ * &lt;/p&gt;
+ * &lt;h3&gt;alpha code!!&lt;/h3&gt;
+ * <span class="attrib">@base</span> jala.Form.InputComponent
+ * <span class="attrib">@param</span> {jala.Form} form The form this element belongs to.
+ * <span class="attrib">@param</span> {Object} configObj Object holding configuration data for this element.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Form.CaptchaComponent = <span class="reserved">function</span>(form, configObj) {
+   jala.Form.CaptchaComponent.superConstructor.apply(<span class="reserved">this</span>, arguments);
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+<span class="comment">// extend InputComponent</span>
+jala.Form.extend(jala.Form.CaptchaComponent, jala.Form.InputComponent);
+
+<span class="comment">/**
+ * An Array containing the config field names that are valid for this component
+ * <span class="attrib">@type</span> Array
+ */</span>
+jala.Form.CaptchaComponent.ACCEPTED_FIELDS = [];
+
+<span class="comment">/**
+ * Renders a captcha image and input tag to the response.
+ * <span class="attrib">@param</span> {Object} attr Basic attributes for this element.
+ * <span class="attrib">@param</span> {Object} value Value to be used for rendering this element.
+ */</span>
+jala.Form.CaptchaComponent.<span class="reserved">prototype</span>.renderControls = <span class="reserved">function</span>(attr, value) {
+   <span class="reserved">if</span> (req.data.captcha == <span class="literal">"image"</span>) {
+      var cap = session.data[<span class="literal">"jala_ "</span> + <span class="reserved">this</span>.form.name + <span class="literal">"_"</span> + <span class="reserved">this</span>.name + <span class="literal">"_captcha"</span>] = new jala.Captcha();
+      res.reset();
+      cap.renderImage();
+      res.abort();
+   }
+   <span class="reserved">if</span> (<span class="reserved">this</span>.size) {
+      attr.size = <span class="reserved">this</span>.size;
+   }
+   jala.Form.html.tag(<span class="literal">"img"</span>, {id: attr.id + <span class="literal">"_image"</span>, src:req.action + <span class="literal">"?captcha=image&amp;"</span> + new Date().getTime(), width:150, height: 75, border:0});
+   var newImgFunc = <span class="literal">"function jala_newCaptcha_"</span> + attr.id + <span class="literal">"() { var img = new Image(); img.src = \"</span>?captcha=image&amp;\<span class="literal">" + new Date().getTime(); document.getElementById(\"</span><span class="literal">" + attr.id + "</span>_image\<span class="literal">").src = img.src; return false; } "</span>;
+   var newImgLink = <span class="literal">"document.write('&lt;br /&gt;"</span> + <span class="reserved">this</span>.form.processMessage(<span class="literal">"Can't read distored text?"</span>) + <span class="literal">" &lt;a href=\"</span>#\<span class="literal">" onclick=\"</span>jala_newCaptcha_<span class="literal">" + attr.id + "</span>()\<span class="literal">"&gt;"</span> + <span class="reserved">this</span>.form.processMessage(<span class="literal">"Change it!"</span>) + <span class="literal">"&lt;/a&gt;');"</span>;
+   jala.Form.html.element(<span class="literal">"script"</span>, <span class="literal">"&lt;!--\n\n"</span> + newImgFunc + <span class="literal">"\n\n"</span> + newImgLink + <span class="literal">" //--&gt;"</span>);
+   jala.Form.html.tag(<span class="literal">"br"</span>);
+   jala.Form.html.input(attr);
+   <span class="reserved">return</span>;
+};
+
+<span class="comment">/**
+ * Validates a captcha image
+ * <span class="attrib">@param</span> {Object} reqData request data
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker jala.ErrorTracker object storing possible error messages
+ */</span>
+jala.Form.CaptchaComponent.<span class="reserved">prototype</span>.checkSyntax = <span class="reserved">function</span>(reqData, tracker) {
+   var cap = session.data[<span class="literal">"jala_ "</span> + <span class="reserved">this</span>.form.name + <span class="literal">"_"</span> + <span class="reserved">this</span>.name + <span class="literal">"_captcha"</span>];
+   <span class="reserved">if</span> (!cap.validate(reqData[<span class="reserved">this</span>.name])) {
+      tracker.setError(<span class="reserved">this</span>.name, <span class="reserved">this</span>.form.processMessage(<span class="literal">"Distorted text has to be typed in this field!"</span>));
+      <span class="reserved">return</span> false;
+   }
+   <span class="reserved">return</span> true;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="comment">/**
+ * Renders this form to the response.
+ */</span>
+jala.Form.<span class="reserved">prototype</span>.render = <span class="reserved">function</span>() {
    var tracker = <span class="reserved">this</span>.getTracker();
    var config = <span class="reserved">this</span>.getConfig();
-   var srcObj = <span class="reserved">this</span>.getSource();
+   var components  = <span class="reserved">this</span>.getComponents();
+   var dataObj = <span class="reserved">this</span>.getDataObj();
 
    <span class="comment">// open the form tag</span>
-   Html.openTag(<span class="literal">"form"</span>, {
+   var formAttr = {
       id     : config.name,
       name   : config.name,
       <span class="literal">"class"</span>: <span class="literal">"form"</span>,
       action : req.action,
       method : <span class="literal">"post"</span>
-   });
+   };
+   
+   <span class="comment">// if there is an upload element, use multipart-enctype</span>
+   <span class="reserved">for</span> (var i=0;i&lt;components.length; i++) {
+      <span class="reserved">if</span> (components[i].type == <span class="literal">"file"</span>) {
+         formAttr.enctype = <span class="literal">"multipart/form-data"</span>;
+      }
+   }
+   jala.Form.html.openTag(<span class="literal">"form"</span>, formAttr);
 
+   <span class="comment">// optional general error message</span>
    <span class="reserved">if</span> (tracker &amp;&amp; tracker.isError &amp;&amp; tracker.mainErrorMessage) {
-      Html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(tracker.mainErrorMessage),
+      jala.Form.html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(tracker.mainErrorMessage),
                    {id: <span class="reserved">this</span>.createDomId(<span class="literal">"error"</span>), <span class="literal">"class"</span>: <span class="literal">"form_error"</span>});
    }
 
-   Html.openTag(<span class="literal">"fieldset"</span>);
+   jala.Form.html.openTag(<span class="literal">"fieldset"</span>);
+
+   <span class="comment">// optional title</span>
    <span class="reserved">if</span> (config.title != null) {
-      Html.element(<span class="literal">"legend"</span>, <span class="reserved">this</span>.processMessage(config.title));
+      jala.Form.html.element(<span class="literal">"legend"</span>, <span class="reserved">this</span>.processMessage(config.title));
    }
 
-   var configEl;
-   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
-      configEl = config.elements[i];
-
-      var className = (configEl.required == true) ? <span class="literal">"required"</span> : <span class="literal">"optional"</span>;
-      <span class="reserved">if</span> (configEl.className) {
-         className += <span class="literal">" "</span> + configEl.className;
-      }
-      Html.openTag(<span class="literal">"div"</span>, {id: config.name + <span class="literal">"_row_"</span> + configEl.name, <span class="literal">"class"</span>: <span class="literal">"row "</span> + className});
-
-      <span class="reserved">if</span> (configEl.skin != null) {
-         <span class="comment">// render the skin specified in the context of the srcObj</span>
-         srcObj.renderSkin(configEl.skin);
-
-      } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.text != null) {
-         <span class="comment">// element contains only a text, so create a skin based on it and render</span>
-         Html.element(<span class="literal">"label"</span>, null);
-         Html.element(<span class="literal">"div"</span>, renderSkinAsString(createSkin(configEl.text)), <span class="reserved">this</span>.createElementAttributes(configEl));
-
-      } <span class="reserved">else</span> {
-         <span class="comment">// render the form element</span>
-         <span class="reserved">if</span> (tracker &amp;&amp; tracker.errors[configEl.name]) {
-            Html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(tracker.errors[configEl.name]),
-                         {id: <span class="reserved">this</span>.createDomId(<span class="literal">"error"</span>, configEl.name),
-                          <span class="literal">"class"</span>: <span class="literal">"error"</span>});
-         }
-
-         Html.element(<span class="literal">"label"</span>, <span class="reserved">this</span>.processMessage(configEl.label || <span class="literal">""</span>),
-                      {id: <span class="reserved">this</span>.createDomId(<span class="literal">"label"</span>, configEl.name),
-                       <span class="literal">"for"</span>: <span class="reserved">this</span>.createDomId(configEl.name)});
-   
-         Html.openTag(<span class="literal">"div"</span>, {<span class="literal">"class"</span>:<span class="literal">"element"</span>});
-
-         <span class="comment">// use either a submitted form value or the value of the</span>
-         <span class="comment">// source object in the form element</span>
-         var val;
-         <span class="reserved">if</span> (req.data[configEl.name] != null) {
-            <span class="comment">// value from failed form submit</span>
-            val = req.data[configEl.name];
-         } <span class="reserved">else</span> <span class="reserved">if</span> (typeof(configEl.src) == <span class="literal">"string"</span>) {
-            <span class="reserved">if</span> (resolved = Form.getProperty(srcObj, configEl.src)) {
-               val = resolved.value;
-            };
-         } <span class="reserved">else</span> {
-            <span class="comment">// no getter defined, so search for a primitive property</span>
-            <span class="comment">// of the source object</span>
-            val = Form.getProperty(srcObj, configEl.getter, configEl.name);
-         }
-   
-         <span class="comment">// render the form element itself</span>
-         var attr = <span class="reserved">this</span>.createElementAttributes(configEl);
-         var options;
-         switch (configEl.type) {
-            case <span class="literal">"select"</span>:
-            case <span class="literal">"dropdown"</span>:
-               <span class="comment">// Drop down select box</span>
-               Html.dropDown(attr, <span class="reserved">this</span>.getOptions(configEl), val, <span class="reserved">this</span>.processMessage(configEl.firstOption));
-               break;
-   
-            case <span class="literal">"radio"</span>:
-               <span class="comment">// A (set of) radio buttons</span>
-               var options = <span class="reserved">this</span>.getOptions(configEl);
-               var optionAttr;
-               <span class="reserved">for</span> (var j=0; j&lt;options.length; j++) {
-                  optionAttr = attr.clone({}, false);
-                  optionAttr.id += <span class="literal">"_"</span> + j;
-                  optionAttr.value = options[j].value;
-                  <span class="reserved">if</span> (String(val) == String(options[j].value)) {
-                     optionAttr.checked = <span class="literal">"checked"</span>;
-                  }
-                  Html.radioButton(optionAttr);
-                  res.write(<span class="reserved">this</span>.processMessage(options[j].display));
-                  Html.tag(<span class="literal">"br"</span>);
-               }
-               break;
-   
-            case <span class="literal">"checkbox"</span>:
-               <span class="comment">// Checkbox</span>
-               <span class="reserved">if</span> (val == configEl.checked || req.data[configEl.name] == <span class="literal">"1"</span>) {
-                  attr.checked = <span class="literal">"checked"</span>;
-               }
-               attr.value = <span class="literal">"1"</span>;
-               Html.checkBox(attr);
-               break;
-   
-            case <span class="literal">"textarea"</span>:
-               <span class="comment">// Textarea</span>
-               attr.value = val;
-               delete attr.maxlength;
-               Html.textArea(attr);
-               break;
-   
-            case <span class="literal">"password"</span>:
-               <span class="comment">// Password input field</span>
-               attr.value = val;
-               Html.password(attr);
-               break;
-   
-            default:
-               <span class="comment">// Text input field</span>
-               attr.value = val;
-               Html.input(attr);
-               break;
-         }
-   
-         <span class="reserved">if</span> (configEl.help) {
-            Html.element(<span class="literal">"div"</span>, <span class="reserved">this</span>.processMessage(configEl.help),
-                         {id: <span class="reserved">this</span>.createDomId(<span class="literal">"help"</span>, configEl.name),
-                          <span class="literal">"class"</span>: <span class="literal">"help"</span>});
-            res.write(<span class="literal">"\n"</span>);
-         }
-   
-         Html.closeTag(<span class="literal">"div"</span>);
-      }
-      Html.closeTag(<span class="literal">"div"</span>);
-      res.write(<span class="literal">"\n\n"</span>);
+   <span class="comment">// loop through elements</span>
+   <span class="reserved">for</span> (var i=0; i&lt;components.length; i++) {
+      components[i].render();
    }
-   Html.openTag(<span class="literal">"div"</span>);
-   Html.element(<span class="literal">"label"</span>, <span class="literal">""</span>, {id: <span class="reserved">this</span>.createDomId(<span class="literal">"label"</span>, <span class="literal">"submit"</span>)});
-   Html.submit({id: <span class="reserved">this</span>.createDomId(<span class="literal">"submit"</span>),
+
+   <span class="comment">// submit button</span>
+   jala.Form.html.openTag(<span class="literal">"div"</span>);
+   jala.Form.html.element(<span class="literal">"label"</span>, <span class="literal">""</span>, {id: <span class="reserved">this</span>.createDomId(<span class="literal">"label"</span>, <span class="literal">"submit"</span>)});
+   jala.Form.html.submit({id: <span class="reserved">this</span>.createDomId(<span class="literal">"submit"</span>),
                 name: <span class="reserved">this</span>.createDomId(<span class="literal">"submit"</span>),
                 <span class="literal">"class"</span>: <span class="literal">"submit"</span>,
                 <span class="literal">"value"</span>: <span class="reserved">this</span>.processMessage(config.submit || <span class="literal">"Submit"</span>)});
-   Html.closeTag(<span class="literal">"div"</span>);
-   Html.closeTag(<span class="literal">"fieldset"</span>);
-   Html.closeTag(<span class="literal">"form"</span>);
+   jala.Form.html.closeTag(<span class="literal">"div"</span>);
+   jala.Form.html.closeTag(<span class="literal">"fieldset"</span>);
+   jala.Form.html.closeTag(<span class="literal">"form"</span>);
+   <span class="reserved">return</span>;
 };
+
 
 <span class="comment">/**
  * renders the form as a string
@@ -423,240 +2099,42 @@ jala.Form.<span class="reserved">prototype</span>.createDomId = <span class="res
    <span class="reserved">return</span> res.pop();
 };
 
-<span class="comment">/**
- * Creates a CSS class string based on the configuration element
- * passed as argument.
- * <span class="attrib">@param</span> {Object} configEl The configuration element
- * <span class="attrib">@returns</span> The CSS class string for this element
- */</span>
-jala.Form.<span class="reserved">prototype</span>.createElementAttributes = <span class="reserved">function</span>(configEl) {
-   var attr = configEl.clone({}, false);
-   attr.id = <span class="reserved">this</span>.createDomId(configEl.name);
-   attr[<span class="literal">"class"</span>] = (configEl.type || <span class="literal">"text"</span>);
-   <span class="reserved">if</span> (configEl.className) {
-      attr[<span class="literal">"class"</span>] += <span class="literal">" "</span> + configEl.className;
-   }
-   attr[<span class="literal">"name"</span>] = configEl.name;
-   delete attr.getter;
-   delete attr.setter;
-   delete attr.validate;
-   delete attr.options;
-   delete attr.firstOption;
-   delete attr.label;
-   delete attr.required;
-   delete attr.className;
-   delete attr.type;
-   delete attr.text;
-   delete attr.skin;
-   delete attr.minlength;
-   delete attr.help;
-   <span class="reserved">return</span> attr;
-};
-
-<span class="comment">/**
-  * create an array of options for a dropdown element or a
-  * group of radiobuttons.
-  * configEl.options is returned if that value is an Array.
-  * If it's a Function, its return value is returned.
-  * <span class="attrib">@param</span> {Object} configEl a node from the config
-  * <span class="attrib">@returns</span> array of options
-  * <span class="attrib">@type</span> Array
-  */</span>
-jala.Form.<span class="reserved">prototype</span>.getOptions = <span class="reserved">function</span>(configEl) {
-   <span class="reserved">if</span> (!configEl || !configEl.options) {
-      <span class="reserved">return</span> [];
-   }
-   <span class="reserved">if</span> (configEl.options instanceof Array) {
-      <span class="reserved">return</span> configEl.options;
-   }
-   <span class="reserved">if</span> (configEl.options instanceof Function) {
-      <span class="reserved">return</span> configEl.options.call(<span class="reserved">this</span>.getSource());
-   }
-   <span class="reserved">return</span> [];
-};
-
-<span class="comment">/**
- * Retrieves a property from the object passed as argument. If a
- * path is given, this method follows the path down to the destination
- * property, which can either be a function or a primitive property.
- * For the former the method is called and the name argument is passed
- * to it, and the result value of this method is returned. For the former
- * this method directly returns the value of the primitive property.
- * <span class="attrib">@param</span> {Object} obj The object to start with in case a path is given,
- * or the object whose property "name" should be returned
- * <span class="attrib">@param</span> {String} path A dot-delimited path to the destination property
- * <span class="attrib">@param</span> {String} name The name of the property to retrieve. In case the
- * path is given, and it leads to a getter-function, it is passed to this
- * method as the single argument.
- * <span class="attrib">@returns</span> The value of the property
- * <span class="attrib">@final</span>
- */</span>
-jala.Form.getProperty = <span class="reserved">function</span>(obj, path, name) {
-   var result = null;
-   <span class="reserved">if</span> (path != null) {
-      var arr = path.split(<span class="literal">"."</span>);
-      var propName = arr.pop();
-      <span class="reserved">if</span> ((obj = Form.followPath(obj, arr)) != null) {
-         <span class="reserved">if</span> (obj[propName] != null &amp;&amp; obj[propName] instanceof Function) {
-            result = obj[propName](name);
-         } <span class="reserved">else</span> {
-            result = obj[propName];
-         }
-      }
-   } <span class="reserved">else</span> {
-      result = obj[name];
-   }
-   <span class="reserved">return</span> result;
-};
-
-<span class="comment">/**
- * Sets a property of the object passed as argument to the given value.
- * <span class="attrib">@param</span> {Object} obj The object to start with in case a path is given,
- * or the object whose property "name" should be returned
- * <span class="attrib">@param</span> {String} path A dot-delimited path to the destination property
- * <span class="attrib">@param</span> {String} name The name of the property to retrieve. In case the
- * path is given, and it leads to a setter-function, it is passed to this
- * method as the first argument.
- * <span class="attrib">@param</span> {Object} value The value to set the property to
- * <span class="attrib">@returns</span> True in case the update was successful, false otherwise.
- * <span class="attrib">@type</span> Boolean
- * <span class="attrib">@final</span>
- */</span>
-jala.Form.setProperty = <span class="reserved">function</span>(obj, path, name, value) {
-   <span class="comment">// app.logger.debug("Form.setProperty(): obj: " + obj + ", path: " + path + ", name: " + name);</span>
-   <span class="comment">// use null value if value is an empty string</span>
-   <span class="reserved">if</span> (value === <span class="literal">""</span>) {
-      value = null;
-   }
-   <span class="reserved">if</span> (path != null) {
-      var arr = path.split(<span class="literal">"."</span>);
-      var propName = arr.pop();
-      <span class="reserved">if</span> ((obj = Form.followPath(obj, arr)) != null) {
-         <span class="reserved">if</span> (obj[propName] != null &amp;&amp; obj[propName] instanceof Function) {
-            obj[propName](name, value);
-         } <span class="reserved">else</span> {
-            obj[propName] = value;
-         }
-      } <span class="reserved">else</span> {
-         <span class="reserved">return</span> false;
-      }
-   } <span class="reserved">else</span> {
-      obj[name] = value;
-   }
-   <span class="reserved">return</span> true;
-};
-
-<span class="comment">/**
- * Helper method that follows a path array down, starting at the object
- * passed as argument.
- * <span class="attrib">@param</span> {Object} obj The object to start at
- * <span class="attrib">@param</span> {Array} pathArr The array containing path elements to follow
- * <span class="attrib">@returns</span> The last object in the path, or null
- * <span class="attrib">@final</span>
- */</span>
-jala.Form.followPath = <span class="reserved">function</span>(obj, pathArr) {
-   <span class="reserved">for</span> (var i=0;i&lt;pathArr.length;i++) {
-      <span class="reserved">if</span> ((obj = obj[pathArr[i]]) == null) {
-         break;
-      }
-   }
-   <span class="reserved">return</span> obj;
-};
 
 <span class="comment">/**
  * parses form input, applies check functions and stores the values
  * <span class="attrib">@param</span> {Object} reqData input from form
- * <span class="attrib">@returns</span> false if one of the checks failed,
- *          true if the element was saved correctly
+ * <span class="attrib">@param</span> {Object} storeObj object to save data
+ * <span class="attrib">@returns</span> False if one of the checks failed,
+ *          true if the element was saved correctly.
+ * <span class="attrib">@type</span> Boolean
  */</span>
 jala.Form.<span class="reserved">prototype</span>.handle = <span class="reserved">function</span>(reqData, storeObj) {
-   <span class="comment">/**
-    * Returns a specific message for a config element.
-    * <span class="attrib">@param</span> {Object} configEl The config object containing a single element's metadata
-    * <span class="attrib">@param</span> {String} key The key of message (e.g. "missing", "toolong", "tooshort").
-    * <span class="attrib">@param</span> {String} defaultMsg the message to use when no message was defined 
-    *        in the config.
-    * <span class="attrib">@returns</span> message
-    * <span class="attrib">@type</span> String
-    * <span class="attrib">@private</span>
-    */</span>
-   var getMessage = <span class="reserved">function</span>(configEl, key, defaultMsg) {
-      <span class="reserved">if</span> (configEl &amp;&amp; configEl.messages &amp;&amp; configEl.messages[key]) {
-         <span class="reserved">return</span> configEl.messages[key];
-      } <span class="reserved">else</span> {
-         <span class="reserved">return</span> defaultMsg;
-      }
-   };
-   
    <span class="reserved">if</span> (arguments.length != 2) {
-      throw Error(<span class="literal">"Form.handle() called with insufficient arguments"</span>);
+      throw <span class="literal">"jala.Form.handle() called with insufficient arguments"</span>;
    }
 
-   var config = <span class="reserved">this</span>.getConfig();
-   var tracker = <span class="reserved">this</span>.getTracker();
-   var formValues = {};
+   <span class="comment">// store request data map. after this any further render functions</span>
+   <span class="comment">// will use this object as source of their data</span>
+   <span class="reserved">this</span>.setRequestData(reqData);
 
-   <span class="comment">// validate form elements</span>
-   var configEl;
-   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
-      configEl = config.elements[i];
+   var config     = <span class="reserved">this</span>.getConfig();
+   var components = <span class="reserved">this</span>.getComponents();
+   var tracker    = <span class="reserved">this</span>.getTracker();
 
-      <span class="comment">// check required, max and min length:</span>
-      <span class="reserved">if</span> (configEl.required &amp;&amp; (reqData[configEl.name] == null || reqData[configEl.name].trim() == <span class="literal">""</span>)) {
-         tracker.setError(configEl.name,
-                       <span class="reserved">this</span>.processMessage(getMessage(configEl, <span class="literal">"missing"</span>, <span class="literal">"Bitte füll dieses Textfeld aus."</span>)));
-      } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.maxlength &amp;&amp; reqData[configEl.name].length &gt; configEl.maxlength) {
-         tracker.setError(configEl.name, 
-                       <span class="reserved">this</span>.processMessage(getMessage(configEl, <span class="literal">"tooLong"</span>, <span class="literal">"Die Eingabe in diesem Textfeld ist zu lang ({0} Zeichen). Bitte gib höchstens {1} Zeichen ein."</span>),
-                                    reqData[configEl.name].length, configEl.maxlength));
-      } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.minlength) {
-         <span class="comment">// set an error if the element is required but the input is too short</span>
-         <span class="comment">// but don't throw an error if the element is optional and empty</span>
-         <span class="reserved">if</span> (reqData[configEl.name].length &lt; configEl.minlength &amp;&amp;
-             (configEl.required || (!configEl.required &amp;&amp; reqData[configEl.name].length &gt; 0))) {
-            tracker.setError(configEl.name,
-                  <span class="reserved">this</span>.processMessage(getMessage(configEl, <span class="literal">"tooShort"</span>, <span class="literal">"Die Eingabe in diesem Textfeld ist zu kurz ({0} Zeichen). Bitte gib mindestens {1} Zeichen ein."</span>),
-                  reqData[configEl.name].length, configEl.minlength)
-            );
-         }
-      }
+   <span class="reserved">for</span> (var i=0; i&lt;components.length; i++) {
+      var name = components[i].name;
 
-      <span class="comment">// for checkboxes, only 1 and empty are allowed</span>
-      <span class="reserved">if</span> (configEl.type == <span class="literal">"checkbox"</span> &amp;&amp; reqData[configEl.name] &amp;&amp; reqData[configEl.name] != <span class="literal">"1"</span>) {
-         tracker.setError(configEl.name, <span class="reserved">this</span>.processMessage(<span class="literal">"Bitte wähle einen gültigen Wert aus."</span>));
+      <span class="comment">// call check function of each component:</span>
+      components[i].checkSyntax(reqData, tracker);
+      
+      <span class="reserved">if</span> (!tracker[name] &amp;&amp; components[i].validate) {
+         <span class="comment">// call a custom check function from the config</span>
+         components[i].validate(name, reqData[name], tracker, reqData, <span class="reserved">this</span>);
       }
-
-      <span class="comment">// if option group, check that value is within options</span>
-      <span class="reserved">if</span> (configEl.options) {
-         var options = <span class="reserved">this</span>.getOptions(configEl);
-         var found = false;
-         <span class="reserved">for</span> (var j=0; j&lt;options.length; j++) {
-            <span class="reserved">if</span> ( (options[j].length &gt; 0 &amp;&amp; options[j][0] == reqData[configEl.name]) ||
-                 (!options[j].length &amp;&amp; options[j].value == reqData[configEl.name]) ||
-                 (options[j] == reqData[configEl.name]) ) {
-               found = true;
-               break;
-            }
-         }
-         <span class="reserved">if</span> (!found) {
-            tracker.setError(configEl.name, <span class="reserved">this</span>.processMessage(<span class="literal">"Bitte wähle einen gültigen Wert aus."</span>));
-         }
-      }
-      <span class="comment">// run custom validation functions</span>
-      <span class="reserved">if</span> (!tracker.errors[configEl.name] &amp;&amp; configEl.validate) {
-         <span class="reserved">if</span> (configEl.validate instanceof Function) {
-            configEl.validate(configEl.name, reqData[configEl.name], tracker, reqData, <span class="reserved">this</span>);
-         } <span class="reserved">else</span> <span class="reserved">if</span> (configEl.validate instanceof Array) {
-            <span class="reserved">for</span> (var j=0; j&lt;configEl.validate.length; j++) {
-               configEl.validate[j](configEl.name, reqData[configEl.name], tracker, reqData, <span class="reserved">this</span>);
-            }
-         }
-      }
-      <span class="comment">// store the form value in the data object</span>
-      formValues[configEl.name] = reqData[configEl.name];
    }
 
    <span class="reserved">if</span> (tracker.isError) {
+      <span class="comment">// if any error occured, exit before saving:</span>
       <span class="reserved">return</span> false;
    }
 
@@ -665,33 +2143,22 @@ jala.Form.<span class="reserved">prototype</span>.handle = <span class="reserved
              storeObj[config.beforeSave] instanceof Function) {
       <span class="comment">// return with false if the beforeSave method returns false</span>
       <span class="reserved">if</span> (storeObj[config.beforeSave](formValues) == false) {
-         tracker.setError(<span class="reserved">this</span>.processMessage(<span class="literal">"Ein unvorhergesehenes Problem ist aufgetreten. Bitte zu einem späteren Zeitpunkt wieder versuchen. "</span>));
+         tracker.setError(<span class="reserved">this</span>.processMessage(<span class="literal">"The server has encountered technical problems and can't save your input. Please try again later!"</span>));
          <span class="reserved">return</span> false;
       }
    }
-   <span class="comment">// store values in the storeObj</span>
-   var resolved;
-   <span class="reserved">for</span> (var i=0; i&lt;config.elements.length; i++) {
-      configEl = config.elements[i];
-      var val = formValues[configEl.name];
-      <span class="comment">// translate checkbox values:</span>
-      <span class="reserved">if</span> (configEl.type == <span class="literal">"checkbox"</span>) {
-         <span class="reserved">if</span> (val == <span class="literal">"1"</span>) {
-            val = configEl.checked != null ? configEl.checked : 1;
-         } <span class="reserved">else</span> {
-            val = configEl.unchecked != null ? configEl.unchecked : 0;
-         }
-      }
-      <span class="reserved">if</span> (configEl.setter !== null) {
-         Form.setProperty(storeObj, configEl.setter, configEl.name, val);
-      }
+
+   <span class="reserved">for</span> (var i=0; i&lt;components.length; i++) {
+      <span class="comment">// call save method of each component:</span>
+      components[i].setValue(reqData);
    }
+
    <span class="reserved">return</span> true;
 };
 
 <span class="comment">/**
-  * macro to render the form
-  */</span>
+ * macro to render the form
+ */</span>
 jala.Form.<span class="reserved">prototype</span>.form_macro = <span class="reserved">function</span>(param) {
    <span class="reserved">this</span>.render(param);
    <span class="reserved">return</span>;
@@ -699,131 +2166,35 @@ jala.Form.<span class="reserved">prototype</span>.form_macro = <span class="rese
 
 
 <span class="comment">/**
-  * static helper function to test values for being a valid email address.
-  * <span class="attrib">@param</span> {String} name name of the property being validated.
-  * <span class="attrib">@param</span> {String} value value in form input
-  * <span class="attrib">@param</span> {jala.ErrorTracker} tracker object holding error messages
-  * <span class="attrib">@param</span> {Object} reqData the whole request-data-object,
+ * static helper function to test values for being a valid email address.
+ * <span class="attrib">@param</span> {String} name name of the property being validated.
+ * <span class="attrib">@param</span> {String} value value in form input
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker object holding error messages
+ * <span class="attrib">@param</span> {Object} reqData the whole request-data-object,
            in case properties depend on each other
-  */</span>
+ */</span>
 jala.Form.isEmail = <span class="reserved">function</span>(name, value, tracker, reqData) {
    <span class="reserved">if</span> (!value.isEmail()) {
-      tracker.setError(name, gettext(<span class="literal">"Bitte gib eine gültige E-Mail-Adresse in das Textfeld ein."</span>));
+      tracker.setError(name, gettext(<span class="literal">"Please enter a valid email address!"</span>));
    }
    <span class="reserved">return</span>;
 };
 
 <span class="comment">/**
-  * static helper function to test values for being a valid url.
-  * <span class="attrib">@param</span> {String} name name of the property being validated.
-  * <span class="attrib">@param</span> {String} value value in form input
-  * <span class="attrib">@param</span> {jala.ErrorTracker} tracker object holding error messages
-  * <span class="attrib">@param</span> {Object} reqData the whole request-data-object,
+ * static helper function to test values for being a valid url.
+ * <span class="attrib">@param</span> {String} name name of the property being validated.
+ * <span class="attrib">@param</span> {String} value value in form input
+ * <span class="attrib">@param</span> {jala.ErrorTracker} tracker object holding error messages
+ * <span class="attrib">@param</span> {Object} reqData the whole request-data-object,
            in case properties depend on each other
-  */</span>
+ */</span>
 jala.Form.isUrl = <span class="reserved">function</span>(name, value, tracker, reqData) {
    <span class="reserved">if</span> (value &amp;&amp; !helma.Http.evalUrl(value)) {
-      tracker.setError(name, gettext(<span class="literal">"Bitte gib eine gültige URL (Web-Adresse) in das Textfeld ein."</span>));
+      tracker.setError(name, gettext(<span class="literal">"Please enter a valid URL (web address)!"</span>));
    }
    <span class="reserved">return</span>;
 };
-
-<span class="comment">/**
- 
-    Prototype.FORM_NAME = {
-
-      name:"login",                 // name of the form (required)
-      text: "message text"          // if set the message text will be rendered as skin (therefor it can contain macros)
-      skin: "skinName"              // render an external skin at this position of the form (the skin must be located in
-                                    // the srcObj prototype passed to the Form constructor!)
-      title: "Einloggen",           // title of the form, printed as &lt;legend&gt;&lt;/legend&gt;
-      submit: "Einloggen",          // caption of the submit button
-      mainErrorMessage: "An error", // (optional) message printed above form in case of error
-      beforeSave: "functionName",   // (optional) the name of the message to call before values are saved
-
-      elements:[                    // array holding config for all the form elements
-
-         {  name:"username",        // name of the form element
-            type:"text",            // type of the element: text (default), textarea, password,
-                                    //    radio, checkbox, dropdown
-            label:"Nick",           // caption of the element
-            size:20,                // size of input elements
-            maxlength: 100,         // max allowed length
-            minlength: 4,           // min allowed length
-            className:"nickclass",  // optional classnames added to element
-            required:true,          // if true, element has to be filled in (default false)
-                                    //    this is reflected in class definition
-            validate:[Form.isUrl],  // function or array of functions called
-                                    //    to specifically validate contents,
-                                    //    function has four arguments:
-                                    //       * name of the current element
-                                    //       * value of the current element
-                                    //       * errortracker object
-                                    //       * reqData - the input from the form
-            getter:"user.name",     // lets you specify the name of a function or property where the value
-                                    // to display in the form element should be retrieved. the name can
-                                    // contain dots, in which case Form will follow the object path down
-                                    // to the desired property/function. if a function is specified, the
-                                    // single argument passed to it is the name of the form element
-                                    // if omitted, the value of the primitive property at the data object
-                                    // with the name of the form element is used.
-            setter:"user.name",     // lets you specify the name of a function or property where the value
-                                    // of the form should be saved. the name can
-                                    // contain dots, in which case Form will follow the object path down
-                                    // to the desired property/function. if a function is specified, the
-                                    // name of the form element and the submitted value are passed to it.
-                                    // if omitted, the value of the primitive property at the data object
-                                    // with the name of the form element is used. if set explicitly to null
-                                    // the value of the form is *not* saved (in this case you might want to
-                                    // handle it in a "beforeSave" method
-            options: [...],         // for radio and dropdown, option-arrays are needed. the format is either:
-                                    //    an array of objects {value:XX, display: YY}
-                                    //    an array of arrays (1st element value, 2nd element display)
-                                    //    or
-                                    //    an array of strings (value and display)
-            firstOption:" choooose" // caption of dropdown in case nothing is selected
-            messages: {             // An object containing messages used in specific situations
-               "missing":  msg      // A message displayed if the value is missing
-               "tooLong":  msg      // A message used if the submitted value is too long
-               "tooShort": msg      // A message used if the submitted value is too short
-            }
-         },
-      ]
-   };
- 
- 
- 
-   the render function renders html-code like this:
-   
-
-   &lt;form id="FORMNAME"&gt;
-      &lt;legend&gt;formtitle&lt;/legend&gt;
-      &lt;div id="FORMNAME_error" class="form_error"&gt;eventuelle allgemeine fehlermeldung&lt;/div&gt;
-   
-      &lt;fieldset&gt;
-   
-         &lt;div id="FORMNAME_row_ELEMENTNAME" class="row optional|required CLASS_FROM_CONFIG"&gt;
-            &lt;div id="FORMNAME_error_ELEMENTNAME" class="error"&gt;errormsg&lt;/div&gt;
-            &lt;label id="FORMNAME_label_ELEMENTNAME" for="FORMNAME_ELEMENTNAME"&gt;desc&lt;/LABEL&gt;
-            &lt;div class="element"&gt;
-               &lt;input class="text|dropdown|etc CLASS_FROM_CONFIG" id="FORMNAME_ELEMENTNAME"&gt;
-               &lt;div id="FORMNAME_help_ELEMENTNAME" class="help"&gt;helpmsg&lt;/div&gt;
-            &lt;/div&gt;
-         &lt;/div&gt;
-   
-         (... repeat for all form elements ...)
-   
-         &lt;div&gt;
-            &lt;label&gt;&lt;/label&gt;
-            &lt;input type="submit" id="FORMNAME_submit" name="FORMNAME_submit" class="submit" /&gt;
-         &lt;/div&gt;
-   
-      &lt;/fieldset&gt;
-&lt;/form&gt;
-
-
-**/</span>
- </pre>
+</pre>
 	<hr>
 
 
@@ -881,6 +2252,6 @@ jala.Form.isUrl = <span class="reserved">function</span>(name, value, tracker, r
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar 15 15:28:10 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
 </body>
 </html>

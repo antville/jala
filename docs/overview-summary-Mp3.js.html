@@ -1,0 +1,1673 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<html>
+<head>
+<title>
+Jala 1.0 Overview
+</title>
+<link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+<script>
+function asd() {
+	
+		parent.document.title="Mp3.js Overview";
+	
+}
+</script>
+</head>
+<body bgcolor="white" onload="asd();">
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> 	<font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top">
+<em>
+<b>Jala 1.0</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<center>
+	
+	   <h2>Mp3.js</h2>
+	
+</center>
+
+	
+
+
+<h4>Summary</h4>
+<p>
+	
+		Fields and methods of the jala.audio package.<BR/><BR/>
+	
+</p>
+
+<hr>
+
+
+    <table border="1" cellpadding="3" cellspacing="0" width="100%">
+    <tr bgcolor="#CCCCFF" class="TableHeadingColor">
+    <td colspan=2><font size="+2">
+    
+        <b>Class Summary</b>
+    
+    </font></td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Mp3.html">jala.Mp3</a></b></td>
+    <td>This is a class representing an MP3 file
+ providing methods to access its metadata.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Mp3.Id3v1.html">jala.Mp3.Id3v1</a></b></td>
+    <td>This class represents an Id3v1 tag.</td>
+    </tr>
+    
+    <tr bgcolor="white" class="TableRowColor">
+    <td width="15%"><b><a href="jala.Mp3.Id3v2.html">jala.Mp3.Id3v2</a></b></td>
+    <td>This class represents an Id3v2 tag.</td>
+    </tr>
+    
+    </table>
+    <hr/> 
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<!-- ========== END METHOD SUMMARY =========== -->
+
+
+        <pre class="sourceview"><span class="comment">//</span>
+<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
+<span class="comment">//</span>
+<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
+<span class="comment">//</span>
+<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
+<span class="comment">// you may not use this file except in compliance with the License.</span>
+<span class="comment">// You may obtain a copy of the License at</span>
+<span class="comment">//</span>
+<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="comment">//</span>
+<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
+<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
+<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="comment">// See the License for the specific language governing permissions and</span>
+<span class="comment">// limitations under the License.</span>
+<span class="comment">//</span>
+<span class="comment">// $Revision$</span>
+<span class="comment">// $LastChangedBy$</span>
+<span class="comment">// $LastChangedDate$</span>
+<span class="comment">// $HeadURL$</span>
+<span class="comment">//</span>
+
+
+<span class="comment">/**
+ * <span class="attrib">@fileoverview</span> Fields and methods of the jala.audio package.
+ */</span>
+
+
+<span class="comment">// Define the global namespace for Jala modules</span>
+<span class="reserved">if</span> (!global.jala) {
+   global.jala = {};
+}
+
+
+<span class="comment">/**
+ * Load java libraries
+ */</span>
+
+<span class="comment">// JavaMusicTag (org.farng.mp3.*)</span>
+app.addRepository(<span class="literal">"modules/jala/lib/jid3lib-0.5.4.jar"</span>);
+
+<span class="comment">// Mp3Info (de.ueberdosis.mp3info.*, required for parseDuration)</span>
+app.addRepository(<span class="literal">"modules/jala/lib/id3-1.6.0d9.jar"</span>);
+
+
+<span class="comment">/**
+ * HelmaLib dependencies
+ */</span>
+app.addRepository(<span class="literal">"modules/helma/File.js"</span>);
+
+
+<span class="comment">/**
+ * Constructs a new jala.Mp3 wrapper and
+ * parses the header data of the MP3 file.
+ * The standard fields for a tag are accessible
+ * as properties of the new object.
+ *
+ * <span class="attrib">@class</span> This is a class representing an MP3 file
+ * providing methods to access its metadata.
+ *
+ * <span class="attrib">@param</span> {String|File} file The mp3 file to be parsed, either as
+ * path string or as any kind of file object
+ *
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Mp3 = <span class="reserved">function</span>(file) {
+
+   <span class="comment">// check and normalize file argument</span>
+   <span class="reserved">if</span> (!file) {
+      throw <span class="literal">"jala.Mp3: missing argument"</span>;
+   } <span class="reserved">else</span> {
+      file = new helma.File(file);
+   }
+
+   try {
+      var clazz = java.lang.Class.forName(<span class="literal">"org.farng.mp3.MP3File"</span>,
+                                          false, app.getClassLoader())
+   } catch (e) {
+      throw <span class="literal">"jala.Mp3 requires jid3lib-0.5.4.jar"</span>
+            + <span class="literal">" in lib/ext or modules/jala/lib directory "</span>
+            + <span class="literal">"[http://javamusictag.sourceforge.net/]"</span>;
+   }
+
+   <span class="reserved">if</span> (file.getLength() &lt; 128) {
+      throw <span class="literal">"file too short to be an MP3 file (&lt; 128 bytes)"</span>;
+   }
+   try {
+      var mp3File = new Packages.org.farng.mp3.MP3File(file.getAbsolutePath());
+   } catch (e) {
+      throw <span class="literal">"error parsing mp3 file: "</span> + e.toString();
+   }
+
+   <span class="comment">/**
+    * Returns a helma.File reference to the wrapped file.
+    * <span class="attrib">@type</span> helma.File
+    */</span>
+   <span class="reserved">this</span>.getFile = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> file;
+   };
+
+   <span class="comment">/**
+    * Returns the underlying java object
+    * <span class="attrib">@type</span> org.farng.mp3.MP3File
+    */</span>
+   <span class="reserved">this</span>.getJavaObject = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> mp3File;
+   };
+
+
+   <span class="comment">// map to remember tag objects</span>
+   var tagObjects = {};
+
+   <span class="reserved">if</span> (mp3File.hasID3v1Tag()) {
+      tagObjects[jala.Mp3.Id3v1] = new jala.Mp3.Id3v1(<span class="reserved">this</span>);
+   }
+   
+   <span class="reserved">if</span> (mp3File.hasID3v2Tag()) {
+      tagObjects[jala.Mp3.Id3v2] = new jala.Mp3.Id3v2(<span class="reserved">this</span>);
+   }
+
+   <span class="comment">/**
+    * This method creates a new tag object, attaches it
+    * to the file (thereby replacing an existing tag of
+    * this type) and returns it. Type is specified using 
+    * the class name in jala.Mp3.*. If a second 
+    * argument is provided, its values are copied into 
+    * the new tag.
+    *
+    * <span class="attrib">@param</span> {Object} tagClass
+    * <span class="attrib">@param</span> {Object} tagObject optional tag whose standard
+    *        properties are copied to the new tag.
+    * <span class="attrib">@type</span> Object
+    */</span>
+   <span class="reserved">this</span>.createTag = <span class="reserved">function</span>(tagClass, tagObject) {
+
+      <span class="reserved">this</span>.removeTag(tagClass);
+      tagObjects[tagClass] = new tagClass(<span class="reserved">this</span>);
+      <span class="comment">// we use zero as default value for empty track numbers.</span>
+      <span class="comment">// this is the same behaviour as with winamp and tag&amp;rename.</span>
+      tagObjects[tagClass].setTrackNumber(<span class="literal">"0"</span>);
+
+      <span class="reserved">if</span> (tagObject) {
+         tagObjects[tagClass].copyFrom(tagObject);
+      }
+      <span class="reserved">return</span> tagObjects[tagClass];
+   };
+
+   <span class="comment">/**
+    * Returns a tag object, type is specified using the class name
+    * in jala.Mp3.*.
+    * <span class="attrib">@type</span> Object
+    */</span>
+   <span class="reserved">this</span>.getTag = <span class="reserved">function</span>(tagClass) {
+      <span class="reserved">return</span> tagObjects[tagClass];
+   };
+
+   <span class="comment">/**
+    * Tells if the file contains a certain tag, type is specified
+    * using the class name in jala.Mp3.*
+    */</span>
+   <span class="reserved">this</span>.hasTag = <span class="reserved">function</span>(tagClass) {
+      <span class="reserved">return</span> (tagObjects[tagClass]) ? true : false;
+   };
+
+
+   <span class="comment">// field to remember a v2 tag that has to be deleted from the file in save()</span>
+   var v2JavaTagToDelete = null;
+
+   <span class="comment">/**
+    * Removes a tag from the file, type is specified using the
+    * class name in jala.Mp3.*
+    */</span>
+   <span class="reserved">this</span>.removeTag = <span class="reserved">function</span>(tagClass) {
+      <span class="reserved">if</span> (!tagObjects[tagClass]) {
+         <span class="reserved">return</span>;
+      }
+
+      <span class="comment">// remember v2 tag here to explicitly delete it from</span>
+      <span class="comment">// the audio file if save() is called ...</span>
+      <span class="comment">// this is a workaround for a bug in JavaMusicTag!</span>
+      v2JavaTagToDelete = tagObjects[tagClass].getJavaObject();
+
+      tagObjects[tagClass].removeFromAudio();
+      tagObjects[tagClass] = null;
+      <span class="reserved">return</span>;
+   };
+
+
+   <span class="comment">/**
+    * Writes changed metadata back to the source file or to a new file. 
+    * <span class="attrib">@param</span> {String|helma.File} outFile (optional) save the modified file
+    *                       to a different file
+    */</span>
+   <span class="reserved">this</span>.save = <span class="reserved">function</span>(outFile) {
+      <span class="comment">// turn off saving of backup-files:</span>
+      Packages.org.farng.mp3.TagOptionSingleton.getInstance().setOriginalSavedAfterAdjustingID3v2Padding(false);
+  
+      <span class="reserved">if</span> (v2JavaTagToDelete) {
+         <span class="comment">// this is a workaround for a bug in JavaMusicTag:</span>
+         <span class="comment">// MP3File.save() just tries to delete an ID3v2_4 tag,</span>
+         <span class="comment">// but omits 2_3 or 2_2 tags. To be on the safe side</span>
+         <span class="comment">// we have to explicitly remove the deleted v2 tag.</span>
+         var raf = new java.io.RandomAccessFile(mp3File.getMp3file(), <span class="literal">"rw"</span>);
+         v2JavaTagToDelete[<span class="literal">"delete"</span>](raf);
+         v2JavaTagToDelete = null;
+         raf.close();
+      }
+   
+      <span class="reserved">if</span>(outFile) {
+         var outFile = new helma.File(outFile);
+         <span class="comment">// MP3File.save(file) only saves the tags!</span>
+         <span class="comment">// Thus, we make a hardcopy first.</span>
+         file.hardCopy(outFile);
+      } <span class="reserved">else</span> {
+         outFile = file;
+      }
+      mp3File.save(outFile,
+         Packages.org.farng.mp3.TagConstant.MP3_FILE_SAVE_OVERWRITE
+      );
+      <span class="reserved">return</span>;
+   };
+
+
+
+   <span class="comment">// flag to remember if mp3 header has been read</span>
+   var mp3HeaderRead = false;   
+
+   <span class="comment">/**
+    * Makes sure that the mp3 header is read only once
+    * This takes a few milliseconds, so we only do it when a
+    * function that depends on header data is called.
+    * <span class="attrib">@private</span>
+    */</span>
+   <span class="reserved">this</span>.readMp3Header = <span class="reserved">function</span>() {
+      <span class="reserved">if</span> (!mp3HeaderRead) {
+         mp3File.seekMP3Frame();
+         mp3HeaderRead = true;
+      }
+      <span class="reserved">return</span>;
+   };
+
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.album;
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.artist;
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.comment;
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.genre;
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.title;
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.trackNumber;
+
+   <span class="comment">/**   <span class="attrib">@type</span> String   */</span>
+   <span class="reserved">this</span>.year;
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+<span class="comment">// define getter for standard fields:</span>
+try {
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"album"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"album"</span>);   });
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"artist"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"artist"</span>);   });
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"comment"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"comment"</span>);   });
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"genre"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"genre"</span>);   });
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"title"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"title"</span>);   });
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"trackNumber"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"trackNumber"</span>);   });
+   jala.Mp3.<span class="reserved">prototype</span>.__defineGetter__(<span class="literal">"year"</span>, <span class="reserved">function</span>() {   <span class="reserved">return</span> <span class="reserved">this</span>.getField(<span class="literal">"year"</span>);   });
+} catch (e) {
+   <span class="comment">// older helma versions can't handle __defineGetter__</span>
+}
+
+
+<span class="comment">/**
+ * Array defining valid genres in ID3v1
+ * <span class="attrib">@type</span> Array
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Mp3.GENRES = [<span class="literal">"Blues"</span>, <span class="literal">"Classic Rock"</span>, <span class="literal">"Country"</span>, <span class="literal">"Dance"</span>, <span class="literal">"Disco"</span>,
+   <span class="literal">"Funk"</span>, <span class="literal">"Grunge"</span>, <span class="literal">"Hip-Hop"</span>, <span class="literal">"Jazz"</span>, <span class="literal">"Metal"</span>, <span class="literal">"New Age"</span>, <span class="literal">"Oldies"</span>, <span class="literal">"Other"</span>,
+   <span class="literal">"Pop"</span>, <span class="literal">"R&amp;B"</span>, <span class="literal">"Rap"</span>, <span class="literal">"Reggae"</span>, <span class="literal">"Rock"</span>, <span class="literal">"Techno"</span>, <span class="literal">"Industrial"</span>, <span class="literal">"Alternative"</span>,
+   <span class="literal">"Ska"</span>, <span class="literal">"Death Metal"</span>, <span class="literal">"Pranks"</span>, <span class="literal">"Soundtrack"</span>, <span class="literal">"Euro-Techno"</span>, <span class="literal">"Ambient"</span>,
+   <span class="literal">"Trip-Hop"</span>, <span class="literal">"Vocal"</span>, <span class="literal">"Jazz+Funk"</span>, <span class="literal">"Fusion"</span>, <span class="literal">"Trance"</span>, <span class="literal">"Classical"</span>,
+   <span class="literal">"Instrumental"</span>, <span class="literal">"Acid"</span>, <span class="literal">"House"</span>, <span class="literal">"Game"</span>, <span class="literal">"Sound Clip"</span>, <span class="literal">"Gospel"</span>, <span class="literal">"Noise"</span>,
+   <span class="literal">"AlternRock"</span>, <span class="literal">"Bass"</span>, <span class="literal">"Soul"</span>, <span class="literal">"Punk"</span>, <span class="literal">"Space"</span>, <span class="literal">"Meditative"</span>, <span class="literal">"Instrumental Pop"</span>,
+   <span class="literal">"Instrumental Rock"</span>, <span class="literal">"Ethnic"</span>, <span class="literal">"Gothic"</span>, <span class="literal">"Darkwave"</span>, <span class="literal">"Techno-Industrial"</span>,
+   <span class="literal">"Electronic"</span>, <span class="literal">"Pop-Folk"</span>, <span class="literal">"Eurodance"</span>, <span class="literal">"Dream"</span>, <span class="literal">"Southern Rock"</span>, <span class="literal">"Comedy"</span>,
+   <span class="literal">"Cult"</span>, <span class="literal">"Gangsta"</span>, <span class="literal">"Top 40"</span>, <span class="literal">"Christian Rap"</span>, <span class="literal">"Pop/Funk"</span>, <span class="literal">"Jungle"</span>,
+   <span class="literal">"Native American"</span>, <span class="literal">"Cabaret"</span>, <span class="literal">"New Wave"</span>, <span class="literal">"Psychadelic"</span>, <span class="literal">"Rave"</span>,
+   <span class="literal">"Showtunes"</span>, <span class="literal">"Trailer"</span>, <span class="literal">"Lo-Fi"</span>, <span class="literal">"Tribal"</span>, <span class="literal">"Acid Punk"</span>, <span class="literal">"Acid Jazz"</span>, <span class="literal">"Polka"</span>,
+   <span class="literal">"Retro"</span>, <span class="literal">"Musical"</span>, <span class="literal">"Rock &amp; Roll"</span>, <span class="literal">"Hard Rock"</span>, <span class="literal">"Folk"</span>, <span class="literal">"Folk-Rock"</span>,
+   <span class="literal">"National Folk"</span>, <span class="literal">"Swing"</span>, <span class="literal">"Fast Fusion"</span>, <span class="literal">"Bebob"</span>, <span class="literal">"Latin"</span>, <span class="literal">"Revival"</span>, <span class="literal">"Celtic"</span>,
+   <span class="literal">"Bluegrass"</span>, <span class="literal">"Avantgarde"</span>, <span class="literal">"Gothic Rock"</span>, <span class="literal">"Progressive Rock"</span>,
+   <span class="literal">"Psychedelic Rock"</span>, <span class="literal">"Symphonic Rock"</span>, <span class="literal">"Slow Rock"</span>, <span class="literal">"Big Band"</span>, <span class="literal">"Chorus"</span>,
+   <span class="literal">"Easy Listening"</span>, <span class="literal">"Acoustic"</span>, <span class="literal">"Humour"</span>, <span class="literal">"Speech"</span>, <span class="literal">"Chanson"</span>, <span class="literal">"Opera"</span>,
+   <span class="literal">"Chamber Music"</span>, <span class="literal">"Sonata"</span>, <span class="literal">"Symphony"</span>, <span class="literal">"Booty Bass"</span>, <span class="literal">"Primus"</span>, <span class="literal">"Porn Groove"</span>,
+   <span class="literal">"Satire"</span>, <span class="literal">"Slow Jam"</span>, <span class="literal">"Club"</span>, <span class="literal">"Tango"</span>, <span class="literal">"Samba"</span>, <span class="literal">"Folklore"</span>, <span class="literal">"Ballad"</span>,
+   <span class="literal">"Power Ballad"</span>, <span class="literal">"Rhythmic Soul"</span>, <span class="literal">"Freestyle"</span>, <span class="literal">"Duet"</span>, <span class="literal">"Punk Rock"</span>, <span class="literal">"Drum Solo"</span>,
+   <span class="literal">"Acapella"</span>, <span class="literal">"Euro-House"</span>, <span class="literal">"Dance Hall"</span>];
+
+
+<span class="comment">/**
+ * Array defining mp3 modes.
+ * <span class="attrib">@type</span> Array
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Mp3.MODES = [<span class="literal">"Stereo"</span>, <span class="literal">"Joint stereo"</span>, <span class="literal">"Dual channel"</span>, <span class="literal">"Mono"</span>];
+
+
+<span class="comment">/**
+ * Array defining valid text encodings. Note: UTF-8 is valid for v2.4 only.
+ * UTF-16 with BOM doesn't work with Winamp etc - use UTF-16BE instead!
+ * The index position within the array defines the number used in the mp3 file.
+ * <span class="attrib">@type</span> Array
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Mp3.TEXT_ENCODINGS = [<span class="literal">"ISO-8859-1"</span>, <span class="literal">"UTF-16"</span>, <span class="literal">"UTF-16BE"</span>, <span class="literal">"UTF-8"</span>];
+
+
+<span class="comment">/**
+ * Array defining valid picture types. Note: Most image tagged files come with
+ * one picture of picture type null!
+ * The index position within the array defines the number used in the mp3 file.
+ * <span class="attrib">@type</span> Array
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Mp3.PICTURE_TYPES = [<span class="literal">"Other"</span>, <span class="literal">"32x32 pixels 'file icon' (PNG only)"</span>,
+   <span class="literal">"Other file icon"</span>, <span class="literal">"Cover (front)"</span>, <span class="literal">"Cover (back)"</span>, <span class="literal">"Leaflet page"</span>,
+   <span class="literal">"Media (e.g. label side of CD)"</span>, <span class="literal">"Lead artist/lead performer/soloist"</span>,
+   <span class="literal">"Artist/performer"</span>, <span class="literal">"Conductor"</span>, <span class="literal">"Band/Orchestra"</span>, <span class="literal">"Composer"</span>,
+   <span class="literal">"Lyricist/text writer"</span>, <span class="literal">"Recording Location"</span>, <span class="literal">"During recording"</span>,
+   <span class="literal">"During performance"</span>, <span class="literal">"Movie/video screen capture"</span>, <span class="literal">"A bright coloured fish"</span>,
+   <span class="literal">"Illustration"</span>, <span class="literal">"Band/artist logotype"</span>, <span class="literal">"Publisher/Studio logotype"</span>];
+
+
+<span class="comment">/**
+ * Maps the name of the standard fields to frame ids in the different versions
+ * of ID3v2.
+ * <span class="attrib">@type</span> Object
+ * <span class="attrib">@private</span>
+ * <span class="attrib">@final</span>
+ */</span>
+jala.Mp3.FIELD_MAPPING = {
+   <span class="literal">"album"</span>:    [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TAL"</span>, <span class="literal">"TALB"</span>, <span class="literal">"TALB"</span>],
+   <span class="literal">"artist"</span>:   [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TP1"</span>, <span class="literal">"TPE1"</span>, <span class="literal">"TPE1"</span>],
+   <span class="literal">"comment"</span>:  [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"COM"</span>, <span class="literal">"COMM"</span>, <span class="literal">"COMM"</span>],
+   <span class="literal">"genre"</span>:    [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TCO"</span>, <span class="literal">"TCON"</span>, <span class="literal">"TCON"</span>],
+   <span class="literal">"title"</span>:    [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TT2"</span>, <span class="literal">"TIT2"</span>, <span class="literal">"TIT2"</span>],
+   <span class="literal">"trackNumber"</span>: [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TRK"</span>, <span class="literal">"TRCK"</span>, <span class="literal">"TRCK"</span>],
+   <span class="literal">"year"</span>:     [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TYE"</span>, <span class="literal">"TYER"</span>, <span class="literal">"TDRC"</span>],
+   <span class="literal">"author"</span>:   [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TCM"</span>, <span class="literal">"TCOM"</span>, <span class="literal">"TCOM"</span>],
+   <span class="literal">"copyright"</span>:[<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"TCR"</span>, <span class="literal">"TCOP"</span>, <span class="literal">"TCOP"</span>],
+   <span class="literal">"url"</span>:      [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"WXX"</span>, <span class="literal">"WXXX"</span>, <span class="literal">"WXXX"</span>],
+   <span class="literal">"image"</span>:    [<span class="literal">""</span>, <span class="literal">""</span>, <span class="literal">"PIC"</span>, <span class="literal">"APIC"</span>, <span class="literal">"APIC"</span>]
+};
+
+
+<span class="comment">/**
+ * Helper method to copy the standard fields from one tag
+ * to another
+ * <span class="attrib">@param</span> {Object} src  object with setter methods for fields album, artist,
+ *                      comment, title, trackNumber, genre and year.
+ * <span class="attrib">@param</span> {Object} dest object with getter methods for fields album, artist,
+ *                      comment, title, trackNumber, genre and year.
+ * <span class="attrib">@returns</span> changed object
+ * <span class="attrib">@type</span> Object
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.copyFields = <span class="reserved">function</span>(src, dest) {
+   dest.setAlbum(src.getAlbum());
+   dest.setArtist(src.getArtist());
+   dest.setComment(src.getComment());
+   dest.setTitle(src.getTitle());
+   dest.setTrackNumber(src.getTrackNumber());
+   dest.setGenre(src.getGenre());
+   dest.setYear(src.getYear());
+   <span class="reserved">return</span> dest;
+};
+
+
+<span class="comment">/**
+ * Helper function to handle arguments that may either be a
+ * number or an object that matches a value in an array.
+ * In the first case the number itself is returned, in the latter
+ * case the index position within the array is returned.
+ * <span class="attrib">@param</span> {Number|Object} arg argument as number or object
+ * <span class="attrib">@param</span> {Array} values Array of objects.
+ * <span class="attrib">@returns</span> The number the argument represents
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.normalizeArg = <span class="reserved">function</span>(arg, values, defaultValue) {
+   <span class="reserved">if</span> (arg == null) {
+      <span class="reserved">return</span> defaultValue;
+   } <span class="reserved">else</span> <span class="reserved">if</span> (!isNaN(arg)) {
+      <span class="reserved">return</span> parseInt(arg);
+   } <span class="reserved">else</span> {
+      var idx = values.indexOf(arg);
+      <span class="reserved">if</span> (idx &gt; 0) {
+         <span class="reserved">return</span> idx;
+      }
+   }
+   <span class="reserved">return</span> null;
+};
+
+
+<span class="comment">/**
+ * The audio length of the file in seconds at best estimate
+ * from the file info (method returns immediately).
+ * This method calculates based on the bitrate. Therefore it
+ * has to produce wrong results for files encoded with variable
+ * bitrate (vbr). For these files parseDuration() can be used.
+ * <span class="attrib">@returns</span> length in seconds
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@see</span> #parseDuration
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getDuration = <span class="reserved">function</span>() {
+   var bitrate = <span class="reserved">this</span>.getBitRate();
+   <span class="reserved">if</span> (bitrate != 0) {
+      <span class="reserved">return</span> Math.round(<span class="reserved">this</span>.getSize() / (bitrate * 1000 / 8));
+   }
+   <span class="reserved">return</span> 0;
+};
+
+
+<span class="comment">/**
+ * Parses the audio file to extract the precise duration of the audio.
+ * The upside is that it works fine for files with variable bitrates.
+ * The downside is that this action may take a few seconds depending on
+ * the size of the audio file.
+ * <span class="attrib">@returns</span> length in seconds
+ * <span class="attrib">@type</span> Number
+ * <span class="attrib">@see</span> #getDuration
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.parseDuration = <span class="reserved">function</span>() {
+   try {
+      var reader = Packages.de.ueberdosis.mp3info.ID3Reader(<span class="reserved">this</span>.getFile().getAbsolutePath());
+      var tag = reader.getExtendedID3Tag();
+      <span class="reserved">return</span> tag.getRuntime();
+   } catch (e) {
+      throw <span class="literal">"jala.Mp3#parseDuration requires id3-1.6.0d9.jar"</span>
+      + <span class="literal">" in lib/ext or modules/jala/lib directory "</span>
+      + <span class="literal">"[http://sourceforge.net/projects/mp3info/]"</span>;
+   }
+};
+
+
+<span class="comment">/**
+ * Returns the file size in bytes.
+ * <span class="attrib">@type</span> Number
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getSize = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getFile().getLength();
+};
+
+
+<span class="comment">/**
+ * Returns the bit rate the file was encoded with.
+ * <span class="attrib">@type</span> Number
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getBitRate = <span class="reserved">function</span>() {
+   <span class="reserved">this</span>.readMp3Header()
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getBitRate();
+};
+
+
+<span class="comment">/**
+ * Returns the channel mode the file was encoded with.
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getChannelMode = <span class="reserved">function</span>() {
+   <span class="reserved">this</span>.readMp3Header()
+   <span class="reserved">return</span> jala.Mp3.MODES[<span class="reserved">this</span>.getJavaObject().getMode()];
+};
+
+
+<span class="comment">/**
+ * Returns the frequency the file was encoded with.
+ * <span class="attrib">@type</span> Number
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getFrequency = <span class="reserved">function</span>() {
+   <span class="reserved">this</span>.readMp3Header()
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getFrequency();
+};
+
+
+<span class="comment">/**
+ * Returns true if the file is (or seems to be) encoded with
+ * variable bit rate. FIXME: The current implementation returned
+ * true for all test files.
+ * <span class="attrib">@type</span> Boolean
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.isVariableBitRate = <span class="reserved">function</span>() {
+   <span class="reserved">this</span>.readMp3Header()
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().isVariableBitRate();
+};
+
+
+<span class="comment">/**
+ * Returns the information for a field from the tags: At first the ID3v2
+ * tag is checked. If it isn't present or doesn't contain the field,
+ * the ID3v1 tag is checked.
+ * <span class="attrib">@type</span> {String}
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getField = <span class="reserved">function</span>(fieldName) {
+   var funcName = <span class="literal">"get"</span> + fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
+   var tag, value;
+   var getValue = <span class="reserved">function</span>() {
+      <span class="reserved">if</span> (tag[funcName] != null &amp;&amp; tag[funcName] instanceof Function) {
+         <span class="reserved">return</span> tag[funcName]();
+      }
+      <span class="reserved">return</span> null;
+   };
+
+   <span class="reserved">if</span> ((tag = <span class="reserved">this</span>.getV2Tag()) != null &amp;&amp; (value = getValue()) != null) {
+      <span class="reserved">return</span> value;
+   }
+   <span class="reserved">if</span> ((tag = <span class="reserved">this</span>.getV1Tag()) != null &amp;&amp; (value = getValue()) != null) {
+      <span class="reserved">return</span> value;
+   }
+   <span class="reserved">return</span> null;
+};
+
+<span class="comment">/**
+ * Sets the value of the field with the given name to the value specified,
+ * in both ID3v1 and ID3v2 tags, but only if the appropriate setter method
+ * exists.
+ * <span class="attrib">@param</span> {String} fieldName The name of the field to set
+ * <span class="attrib">@param</span> {String} value The value of the field
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.setField = <span class="reserved">function</span>(fieldName, value) {
+   var funcName = <span class="literal">"set"</span> + fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
+   var tag, value;
+   var setValue = <span class="reserved">function</span>() {
+      <span class="reserved">if</span> (tag[funcName] != null &amp;&amp; tag[funcName] instanceof Function) {
+         tag[funcName](value);
+      }
+      <span class="reserved">return</span>;
+   };
+
+   <span class="reserved">if</span> ((tag = <span class="reserved">this</span>.getV2Tag()) != null) {
+      setValue();
+   }
+   <span class="reserved">if</span> ((tag = <span class="reserved">this</span>.getV1Tag()) != null) {
+      setValue();
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * If the file doesn't contain an ID3v1 tag, this method
+ * creates a new ID3v1 tag object, attaches it to the file
+ * and returns it. If a second argument is provided, its
+ * values are copied into the new tag.
+ *
+ * <span class="attrib">@param</span> {Object} tagObject optional tag whose standard
+ *        properties are copied to the new tag.
+ * <span class="attrib">@type</span> jala.Mp3.Id3v1
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.createV1Tag = <span class="reserved">function</span>(tagObject) {
+   <span class="reserved">return</span> <span class="reserved">this</span>.createTag(jala.Mp3.Id3v1, tagObject);
+};
+
+
+<span class="comment">/**
+ * If the file doesn't contain an ID3v2 tag, this method
+ * creates a new ID3v2 tag object, attaches it to the file
+ * and returns it. If a second argument is provided, its
+ * values are copied into the new tag.
+ *
+ * <span class="attrib">@param</span> {Object} tagObject optional tag whose standard
+ *        properties are copied to the new tag.
+ * <span class="attrib">@type</span> jala.Mp3.Id3v2
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.createV2Tag = <span class="reserved">function</span>(tagObject) {
+   <span class="reserved">return</span> <span class="reserved">this</span>.createTag(jala.Mp3.Id3v2, tagObject);
+};
+
+
+<span class="comment">/**
+ * <span class="attrib">@type</span> jala.Mp3.Id3v1
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getV1Tag = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTag(jala.Mp3.Id3v1);
+};
+
+
+<span class="comment">/**
+ * <span class="attrib">@type</span> jala.Mp3.Id3v2
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getV2Tag = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTag(jala.Mp3.Id3v2);
+};
+
+
+<span class="comment">/**
+ * Returns true if the file contains a ID3v1 tag.
+ * <span class="attrib">@type</span> Boolean
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.hasV1Tag = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.hasTag(jala.Mp3.Id3v1);
+};
+
+
+<span class="comment">/**
+ * Returns true if the file contains a ID3v2 tag.
+ * <span class="attrib">@type</span> Boolean
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.hasV2Tag = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.hasTag(jala.Mp3.Id3v2);
+};
+
+
+<span class="comment">/**
+ * Removes the ID3v1 tag from the file.
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.removeV1Tag = <span class="reserved">function</span>() {
+   <span class="reserved">this</span>.removeTag(jala.Mp3.Id3v1);
+};
+
+
+<span class="comment">/**
+ * Removes the ID3v2 tag from the file.
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.removeV2Tag = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.removeTag(jala.Mp3.Id3v2);
+};
+
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Mp3.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.Mp3 "</span> + <span class="reserved">this</span>.getFile() + <span class="literal">"]"</span>;
+};
+
+<span class="comment">/**
+ * Returns a plain JavaScript object containing the values of
+ * all fields stored in either the Id3 V1 or V2 tag
+ * <span class="attrib">@returns</span> An object containing the values of all fields
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.getMetadata = <span class="reserved">function</span>() {
+   var result = {};
+   <span class="comment">// generic metadata values</span>
+   result.size = <span class="reserved">this</span>.getSize();
+   result.isVariableBitRate = <span class="reserved">this</span>.isVariableBitRate();
+   result.bitRate = <span class="reserved">this</span>.getBitRate();
+   result.frequency = <span class="reserved">this</span>.getFrequency();
+   result.channelMode = <span class="reserved">this</span>.getChannelMode();
+   result.duration = <span class="reserved">this</span>.parseDuration();
+   <span class="comment">// Id3 tag values</span>
+   var fields = [
+      <span class="literal">"title"</span>,
+      <span class="literal">"author"</span>,
+      <span class="literal">"url"</span>,
+      <span class="literal">"trackNumber"</span>,
+      <span class="literal">"year"</span>,
+      <span class="literal">"album"</span>,
+      <span class="literal">"artist"</span>,
+      <span class="literal">"comment"</span>,
+      <span class="literal">"genre"</span>,
+      <span class="literal">"copyRight"</span>,
+   ];
+   var fieldName;
+   <span class="reserved">for</span> (var i=0; i&lt;fields.length; i++) {
+      fieldName = fields[i];
+      result[fieldName] = <span class="reserved">this</span>.getField(fieldName);
+   }
+   <span class="reserved">return</span> result;
+};
+
+
+<span class="comment">/**
+ * Stores the metadata passed as argument in the ID2 v1 and v2 tags
+ * of the wrapped MP3 file.
+ * <span class="attrib">@param</span> {Object} metadata An object containing the fields to set
+ * and their values.
+ */</span>
+jala.Mp3.<span class="reserved">prototype</span>.setMetadata = <span class="reserved">function</span>(metadata) {
+   <span class="reserved">for</span> (var propName in metadata) {
+      <span class="reserved">this</span>.setField(propName, metadata[propName]);
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Constructs a new Id3v1 tag from an Mp3 file
+ * <span class="attrib">@param</span> {jala.Mp3} mp3File
+ * <span class="attrib">@class</span> This class represents an Id3v1 tag.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Mp3.Id3v1 = <span class="reserved">function</span>(audioObj) {
+
+   var tag = audioObj.getJavaObject().getID3v1Tag();
+   <span class="reserved">if</span> (!tag) {
+      tag = new Packages.org.farng.mp3.id3.ID3v1_1();
+      audioObj.getJavaObject().setID3v1Tag(tag);
+   }
+
+   <span class="comment">/**
+    * Returns the wrapper for the underlying audio file.
+    * <span class="attrib">@type</span> jala.Mp3
+    */</span>
+   <span class="reserved">this</span>.getAudio = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> audioObj;
+   };
+
+   <span class="comment">/**
+    * Returns the java representation of the tag,
+    * class depends on the actual library used.
+    * <span class="attrib">@type</span> org.farng.mp3.id3.AbstractID3v1
+    */</span>
+   <span class="reserved">this</span>.getJavaObject = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> tag;
+   };   
+
+   <span class="comment">/**
+    * Removes the tag from the audio file and
+    * nulls out the wrapper.
+    * <span class="attrib">@private</span>
+    */</span>
+   <span class="reserved">this</span>.removeFromAudio = <span class="reserved">function</span>() {
+      audioObj.getJavaObject()[<span class="literal">"setID3v1Tag(org.farng.mp3.id3.ID3v1)"</span>](null);
+      tag = null;
+      audioObj = null;
+      <span class="reserved">return</span>;
+   };
+
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+
+<span class="comment">/**
+ * Copies standard fields from another tag.
+ * <span class="attrib">@param</span> {Object} src object with getter methods for fields album, artist,
+ *                     comment, title, trackNumber, genre and year.
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.copyFrom = <span class="reserved">function</span>(tag) {
+   jala.Mp3.copyFields(tag, <span class="reserved">this</span>);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Returns the album information of the tag.
+ * <span class="attrib">@returns</span> string containing album name
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getAlbum = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getAlbumTitle();
+};
+
+
+<span class="comment">/**
+ * Returns the artist information of the tag.
+ * <span class="attrib">@returns</span> string containing artist name
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getArtist = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getLeadArtist();
+};
+
+
+<span class="comment">/**
+ * Returns the comment information of the tag.
+ * <span class="attrib">@returns</span> string containing comment
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getComment = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getSongComment();
+};
+
+
+<span class="comment">/**
+ * Returns the title information of the tag.
+ * <span class="attrib">@returns</span> string containing title
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getTitle = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getSongTitle();
+};
+
+
+<span class="comment">/**
+ * Returns the track number information of the tag.
+ * <span class="attrib">@returns</span> string representing track number
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getTrackNumber = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getTrackNumberOnAlbum();
+};
+
+
+<span class="comment">/**
+ * Returns the genre information of the tag.
+ * <span class="attrib">@returns</span> string containing genre name
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getGenre = <span class="reserved">function</span>() {
+   var genre = <span class="reserved">this</span>.getJavaObject().getGenre();
+   <span class="reserved">return</span> jala.Mp3.GENRES[genre];
+};
+
+
+<span class="comment">/**
+ * Returns the year information of the tag.
+ * <span class="attrib">@returns</span> string representing year
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getYear = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getYearReleased();
+};
+
+
+<span class="comment">/**
+ * This method could be used to retrieve an arbitrary field
+ * of the underlying tag. For Id3v1 tags all information
+ * is available through getter and setter methods, so this
+ * implementation always returns null.
+ * <span class="attrib">@param</span> {String} id
+ * <span class="attrib">@returns</span> null
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.getTextContent = <span class="reserved">function</span>(id) {
+   <span class="reserved">return</span> null;
+}
+
+
+<span class="comment">/**
+ * Sets the album information.
+ * <span class="attrib">@param</span> {String} album
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setAlbum = <span class="reserved">function</span>(album) {
+   <span class="reserved">this</span>.getJavaObject().setAlbumTitle(album);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the artist information.
+ * <span class="attrib">@param</span> {String} artist
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setArtist = <span class="reserved">function</span>(artist) {
+   <span class="reserved">this</span>.getJavaObject().setLeadArtist(artist);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the comment
+ * <span class="attrib">@param</span> {String} comment
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setComment = <span class="reserved">function</span>(comment) {
+   <span class="reserved">this</span>.getJavaObject().setSongComment(comment);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the title information
+ * <span class="attrib">@param</span> {String} title
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setTitle = <span class="reserved">function</span>(title) {
+   <span class="reserved">this</span>.getJavaObject().setSongTitle(title);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the track number information.
+ * <span class="attrib">@param</span> {Number} trackNumber
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setTrackNumber = <span class="reserved">function</span>(trackNumber) {
+   <span class="reserved">if</span> (trackNumber == null || trackNumber.trim() == <span class="literal">""</span> || isNaN(trackNumber)) {
+      <span class="comment">// default value for empty track numbers in v1 is zero.</span>
+      trackNumber = <span class="literal">"0"</span>;
+   }
+   <span class="reserved">this</span>.getJavaObject().setTrackNumberOnAlbum(trackNumber);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the genre information. A list of genre names that are valid
+ * for ID3v1 tags is located in jala.Mp3.GENRES.
+ * <span class="attrib">@param</span> {String} genre
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setGenre = <span class="reserved">function</span>(genre) {
+   var genreByte = new java.lang.Long(jala.Mp3.GENRES.indexOf(genre));
+   <span class="reserved">this</span>.getJavaObject().setSongGenre(genreByte);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the year information.
+ * <span class="attrib">@param</span> {Number} year
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setYear = <span class="reserved">function</span>(year) {
+   <span class="reserved">this</span>.getJavaObject().setYearReleased(year);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * This method could be used to set an arbitrary field
+ * of the underlying tag. For Id3v1 tags all information
+ * is available through getter and setter methods, so this
+ * implementation does nothing.
+ * <span class="attrib">@param</span> {String} id
+ * <span class="attrib">@param</span> {String} value
+ */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.setTextContent = <span class="reserved">function</span>(id, val)  {
+};
+
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Mp3.Id3v1.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.Mp3.Id3v1]"</span>;
+};
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Mp3.Id3v1.<span class="reserved">prototype</span>.toString = jala.Mp3.Id3v1.toString;
+
+
+
+
+
+
+<span class="comment">/**
+ * Constructs a new Id3v2 tag from an Mp3 file
+ * <span class="attrib">@param</span> {jala.Mp3} mp3File
+ * <span class="attrib">@class</span> This class represents an Id3v2 tag.
+ * <span class="attrib">@constructor</span>
+ */</span>
+jala.Mp3.Id3v2 = <span class="reserved">function</span>(audioObj) {
+
+   var tag = audioObj.getJavaObject().getID3v2Tag();
+   <span class="reserved">if</span> (!tag) {
+      tag = new Packages.org.farng.mp3.id3.ID3v2_3();
+      audioObj.getJavaObject().setID3v2Tag(tag);
+   }
+
+   <span class="comment">/**
+    * Returns the wrapper for the underlying audio file.
+    * <span class="attrib">@type</span> jala.Mp3
+    */</span>
+   <span class="reserved">this</span>.getAudio = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> audioObj;
+   };
+
+   <span class="comment">/**
+    * returns the java representation of the tag,
+    * class depends on the actual library used.
+    * <span class="attrib">@type</span> org.farng.mp3.id3.AbstractID3v2
+    */</span>
+   <span class="reserved">this</span>.getJavaObject = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> tag;
+   };
+   
+   <span class="comment">/**
+    * Removes the tag from the audio file and
+    * nulls out the wrapper.
+    */</span>
+   <span class="reserved">this</span>.removeFromAudio = <span class="reserved">function</span>() {
+      audioObj.getJavaObject()[<span class="literal">"setID3v2Tag(org.farng.mp3.id3.AbstractID3v2)"</span>](null);
+      tag = null;
+      audioObj = null;
+      <span class="reserved">return</span>;
+   };
+
+
+   <span class="comment">// default encoding = ISO 8859-1</span>
+   var textEncoding = new java.lang.Long(0);
+
+   <span class="comment">/**
+    * sets the text encoding used when creating new frames
+    * (the encoding type of old frames can't be changed with
+    * JavaMusicTag)
+    * <span class="attrib">@param</span> {Number|String} encType the new encoding type
+    *       as number or string
+    * <span class="attrib">@see</span> jala.Mp3#TEXT_ENCODINGS
+    */</span>
+   <span class="reserved">this</span>.setTextEncoding = <span class="reserved">function</span>(encType) {
+      textEncoding = normalizeArg(encType, jala.Mp3.TEXT_ENCODINGS, new java.lang.Long(0));
+      <span class="reserved">return</span>;
+   };
+
+   <span class="comment">/**
+    * Returns the text encoding used when setting values.
+    * <span class="attrib">@returns</span> The text encoding
+    * <span class="attrib">@type</span> Number
+    */</span>
+   <span class="reserved">this</span>.getTextEncoding = <span class="reserved">function</span>() {
+      <span class="reserved">return</span> textEncoding;
+   };
+   
+   <span class="reserved">return</span> <span class="reserved">this</span>;
+};
+
+
+<span class="comment">/**
+ * Copies standard fields from another tag.
+ * <span class="attrib">@param</span> {Object} src object with getter methods for fields album, artist,
+ *                     comment, title, trackNumber, genre and year.
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.copyFrom = <span class="reserved">function</span>(tag) {
+   jala.Mp3.copyFields(tag, <span class="reserved">this</span>);
+};
+
+
+<span class="comment">/**
+ * Helper method that constructs an identifier string from the
+ * arguments array in which the arguments are separated by a 
+ * character of the value 0 and then returns the frame for this
+ * identifier string.
+ * <span class="attrib">@param</span> {String} idStr frame id (or for standard fields the 
+ *         name from jala.Mp3.FIELD_MAPPING can be used)
+ * <span class="attrib">@returns</span> frame object
+ * <span class="attrib">@type</span> org.farng.mp3.id3.AbstractID3v2
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getFrame = <span class="reserved">function</span>(idStr) {
+   var id = idStr;
+   <span class="reserved">if</span> (jala.Mp3.FIELD_MAPPING[idStr]) {
+      id = jala.Mp3.FIELD_MAPPING[idStr][<span class="reserved">this</span>.getSubtype()];
+   }
+   <span class="reserved">for</span> (var i=1; i&lt;arguments.length; i++) {
+      id += java.lang.Character(0) + arguments[i];
+   }
+   <span class="reserved">return</span> <span class="reserved">this</span>.getJavaObject().getFrame(id);
+};
+
+
+<span class="comment">/**
+ * Encodes a string using the given encoding.
+ * <span class="attrib">@param</span> {String} str string to encode
+ * <span class="attrib">@param</span> {String} encoding encoding to use
+ * <span class="attrib">@returns</span> decoded string
+ * <span class="attrib">@type</span> String
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.encodeText = <span class="reserved">function</span>(str, encoding) {
+   <span class="reserved">if</span> (!isNaN(encoding)) {
+      <span class="comment">// if encoding is the byte value -&gt; get the correct encoding string from constant</span>
+      encoding = jala.Mp3.TEXT_ENCODINGS[encoding]
+   }
+   <span class="reserved">return</span> new java.lang.String(new java.lang.String(str).getBytes(encoding));
+};
+
+
+<span class="comment">/**
+ * Decodes a string using the given encoding.
+ * <span class="attrib">@param</span> {String} str string to decode
+ * <span class="attrib">@param</span> {String} encoding encoding to use
+ * <span class="attrib">@returns</span> decoded string
+ * <span class="attrib">@type</span> String
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.decodeText = <span class="reserved">function</span>(str, encoding) {
+   <span class="reserved">if</span> (!isNaN(encoding)) {
+      <span class="comment">// if encoding is the byte value -&gt; get the correct encoding string from constant</span>
+      encoding = jala.Mp3.TEXT_ENCODINGS[encoding]
+   }
+   var rawStr = new java.lang.String(str);
+   <span class="reserved">return</span> <span class="literal">""</span> + new java.lang.String(rawStr.getBytes(), encoding);
+};
+
+
+<span class="comment">/**
+ * This method can be used to retrieve an arbitrary text frame
+ * of the underlying tag. For the list of valid identifiers
+ * and their meaning see http://www.id3.org/
+ * The identifiers vary across the sub versions of id3v2 tags,
+ * use getSubtype to make sure you use the correct version.
+ * <span class="attrib">@param</span> {String} id Frame identifier according to Id3v2 specification
+ *                   or shortcut as defined in jala.Mp3.FIELD_MAPPING.
+ * <span class="attrib">@returns</span> String contained in the frame
+ * <span class="attrib">@type</span> String
+ * <span class="attrib">@see</span> #getSubtype
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getTextContent = <span class="reserved">function</span>(idStr) {
+   var id = idStr;
+   <span class="reserved">if</span> (jala.Mp3.FIELD_MAPPING[idStr]) {
+      id = jala.Mp3.FIELD_MAPPING[idStr][<span class="reserved">this</span>.getSubtype()];
+   }
+   var frame = <span class="reserved">this</span>.getJavaObject().getFrame(id);
+   <span class="reserved">if</span> (frame) {
+      var body = frame.getBody();
+      <span class="reserved">if</span> (!(body instanceof Packages.org.farng.mp3.id3.FrameBodyUnsupported)) {
+         <span class="reserved">return</span> <span class="reserved">this</span>.decodeText(body.getText(), body.getObject(<span class="literal">"Text Encoding"</span>));
+      }
+   }
+   <span class="reserved">return</span> null;
+}
+
+
+<span class="comment">/**
+ * This method can be used to set an arbitrary field
+ * of the underlying tag. For the list of valid identifiers
+ * and their meaning see http://www.id3.org/
+ * The identifiers vary across the sub versions of id3v2 tags,
+ * use getSubtype to make sure you use the correct version.
+ * <span class="attrib">@param</span> {String} id Frame identifier according to Id3v2 specification
+ * <span class="attrib">@param</span> {String} value
+ * <span class="attrib">@type</span> String
+ * <span class="attrib">@see</span> #getSubtype
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setTextContent = <span class="reserved">function</span>(idStr, val)  {
+   var id = idStr;
+   <span class="reserved">if</span> (jala.Mp3.FIELD_MAPPING[idStr]) {
+      id = jala.Mp3.FIELD_MAPPING[idStr][<span class="reserved">this</span>.getSubtype()];
+   }
+   var frame = <span class="reserved">this</span>.getJavaObject().getFrame(id);
+   <span class="reserved">if</span> (frame) {
+      var body = frame.getBody();
+      <span class="comment">// frame already exists, use its encoding:</span>
+      body.setText(<span class="reserved">this</span>.encodeText(val, body.getObject(<span class="literal">"Text Encoding"</span>)));
+   } <span class="reserved">else</span> {
+      <span class="comment">// new frame is created, use our own encoding:</span>
+      var body = new Packages.org.farng.mp3.id3[<span class="literal">"FrameBody"</span> + id](
+         <span class="reserved">this</span>.getTextEncoding(), <span class="reserved">this</span>.encodeText(val, <span class="reserved">this</span>.getTextEncoding())
+      );
+      <span class="reserved">this</span>.getJavaObject().setFrame(<span class="reserved">this</span>.createFrameObject(body));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Creates a new frame object that fits to the tag version.
+ * <span class="attrib">@param</span> {org.farng.mp3.id3.AbstractID3v2FrameBody} body frame body object
+ * <span class="attrib">@returns</span> new frame object
+ * <span class="attrib">@type</span> org.farng.mp3.id.ID3v2_2
+ * <span class="attrib">@private</span>
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.createFrameObject = <span class="reserved">function</span>(body) {
+   var subtype = <span class="reserved">this</span>.getSubtype();
+   <span class="reserved">if</span> (subtype == 2) {
+      <span class="reserved">return</span> new Packages.org.farng.mp3.id3.ID3v2_2Frame(body);
+   } <span class="reserved">else</span> <span class="reserved">if</span> (subtype == 3) {
+      <span class="reserved">return</span> new Packages.org.farng.mp3.id3.ID3v2_3Frame(body);
+   } <span class="reserved">else</span> <span class="reserved">if</span> (subtype == 4 || subtype == 0) {
+      <span class="reserved">return</span> new Packages.org.farng.mp3.id3.ID3v2_4Frame(body);
+   }
+   <span class="reserved">return</span> null;
+};
+
+
+<span class="comment">/**
+ * Returns the version number of this id3v2 (values 2 to 4 for id3v2.2 to id3v2.4)
+ * <span class="attrib">@returns</span> The version number of this Id3v2 tag
+ * <span class="attrib">@type</span> Number
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getSubtype = <span class="reserved">function</span>() {
+   <span class="comment">// AbstractID3v2#getRevision() only works for newly constructed tag objects,</span>
+   <span class="comment">// but not for tag objects that have been read from a file.</span>
+   <span class="comment">// so we make a class comparison to find out the subtype:</span>
+   var obj = <span class="reserved">this</span>.getJavaObject();
+   <span class="reserved">if</span> (obj instanceof Packages.org.farng.mp3.id3.ID3v2_4) {
+      <span class="reserved">return</span> 4;
+   } <span class="reserved">else</span> <span class="reserved">if</span> (obj instanceof Packages.org.farng.mp3.id3.ID3v2_3) {
+      <span class="reserved">return</span> 3;
+   } <span class="reserved">else</span> <span class="reserved">if</span> (obj instanceof Packages.org.farng.mp3.id3.ID3v2_2) {
+      <span class="reserved">return</span> 2;
+   }
+   <span class="reserved">return</span> 0;
+};
+
+
+<span class="comment">/**
+ * Returns the album information of the tag.
+ * <span class="attrib">@returns</span> string containing album name
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getAlbum = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"album"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the artist information of the tag.
+ * <span class="attrib">@returns</span> string containing artist name
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getArtist = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"artist"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the comment information of the tag.
+ * <span class="attrib">@returns</span> string containing comment
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getComment = <span class="reserved">function</span>() {
+   var frame = <span class="reserved">this</span>.getFrame(<span class="literal">"comment"</span>, <span class="literal">"eng"</span>, <span class="literal">""</span>);
+   <span class="reserved">if</span> (frame) {
+      var str = frame.getBody().getText();
+      <span class="reserved">return</span> <span class="reserved">this</span>.decodeText(str, frame.getBody().getObject(<span class="literal">"Text Encoding"</span>));
+   }
+   <span class="reserved">return</span> null;
+};
+
+
+<span class="comment">/**
+ * Returns the title information of the tag.
+ * <span class="attrib">@returns</span> string containing title
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getTitle = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"title"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the track number information of the tag.
+ * <span class="attrib">@returns</span> string representing track number
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getTrackNumber = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"trackNumber"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the genre information of the tag.
+ * <span class="attrib">@returns</span> string containing genre name
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getGenre = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"genre"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the year information of the tag.
+ * <span class="attrib">@returns</span> string representing year
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getYear = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"year"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the author information of the tag.
+ * <span class="attrib">@returns</span> string containing author information
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getAuthor = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"author"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the copyright information of the tag.
+ * <span class="attrib">@returns</span> The copyright information of the tag
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getCopyright = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="reserved">this</span>.getTextContent(<span class="literal">"copyright"</span>);
+};
+
+
+<span class="comment">/**
+ * Returns the Url stored in this tag
+ * <span class="attrib">@returns</span> The url stored in this tag
+ * <span class="attrib">@type</span> String
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getUrl = <span class="reserved">function</span>() {
+   var frame = <span class="reserved">this</span>.getFrame(<span class="literal">"url"</span>, <span class="literal">""</span>);
+   <span class="reserved">if</span> (frame) {
+      <span class="reserved">return</span> frame.getBody().getUrlLink();
+   }
+   <span class="reserved">return</span> null;
+};
+
+
+<span class="comment">/**
+ * Sets the album information.
+ * <span class="attrib">@param</span> {String} album
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setAlbum = <span class="reserved">function</span>(album) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"album"</span>, album);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the artist information.
+ * <span class="attrib">@param</span> {String} artist
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setArtist = <span class="reserved">function</span>(artist) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"artist"</span>, artist);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the comment
+ * <span class="attrib">@param</span> {String} comment
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setComment = <span class="reserved">function</span>(comment) {
+   <span class="comment">// comment (COMM) isn't a text frame. it supports the getText()</span>
+   <span class="comment">// method but its constructor has a different signature.</span>
+   var frame = <span class="reserved">this</span>.getFrame(<span class="literal">"comment"</span>, <span class="literal">"eng"</span>, <span class="literal">""</span>);
+   <span class="reserved">if</span> (frame) {
+      frame.getBody().setText(<span class="reserved">this</span>.encodeText(comment, frame.getBody().getObject(<span class="literal">"Text Encoding"</span>)));
+   } <span class="reserved">else</span> {
+      var body = new Packages.org.farng.mp3.id3.FrameBodyCOMM(
+         <span class="reserved">this</span>.getTextEncoding(), <span class="literal">"eng"</span>, <span class="literal">""</span>, <span class="reserved">this</span>.encodeText(comment, <span class="reserved">this</span>.getTextEncoding())
+      );
+      <span class="reserved">this</span>.getJavaObject().setFrame(<span class="reserved">this</span>.createFrameObject(body));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the title information
+ * <span class="attrib">@param</span> {String} title
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setTitle = <span class="reserved">function</span>(title) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"title"</span>, title);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the track number information.
+ * <span class="attrib">@param</span> {Number} trackNumber
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setTrackNumber = <span class="reserved">function</span>(trackNumber) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"trackNumber"</span>, trackNumber);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the genre information. A list of genre names that are compatible
+ * with ID3v1 tags is located in jala.Mp3.GENRES.
+ * <span class="attrib">@param</span> {String} genre
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setGenre = <span class="reserved">function</span>(genre) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"genre"</span>, genre);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the year information.
+ * <span class="attrib">@param</span> {Number} year
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setYear = <span class="reserved">function</span>(year) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"year"</span>, year);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the author information in this tag
+ * <span class="attrib">@param</span> {String} author The author information to set
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setAuthor = <span class="reserved">function</span>(author) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"author"</span>, author);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Sets the copyright information in this tag
+ * <span class="attrib">@param</span> {String} copyright The copyright information to set
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setCopyright = <span class="reserved">function</span>(copyright) {
+   <span class="reserved">this</span>.setTextContent(<span class="literal">"copyright"</span>, copyright);
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Stores the Url passed as argument in this tag.
+ * <span class="attrib">@param</span> {String} url The url to store in this tag
+ * <span class="attrib">@param</span> {String} desc An optiona description of the Url
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setUrl = <span class="reserved">function</span>(url, desc) {
+   var frame = <span class="reserved">this</span>.getFrame(<span class="literal">"url"</span>, <span class="literal">""</span>);
+   <span class="reserved">if</span> (frame) {
+      frame.getBody().setUrlLink(url);
+   } <span class="reserved">else</span> {
+      var body = new Packages.org.farng.mp3.id3.FrameBodyWXXX(
+         <span class="reserved">this</span>.getTextEncoding(), desc, url
+      );
+      <span class="reserved">this</span>.getJavaObject().setFrame(<span class="reserved">this</span>.createFrameObject(body));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/**
+ * Extracts the image from the tag
+ * <span class="attrib">@param</span> {String} pictureType number describing picture type
+ *                (default is 3, describing a front cover).
+ * <span class="attrib">@returns</span> image as mime object
+ * <span class="attrib">@type</span> helma.util.MimePart
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.getImage = <span class="reserved">function</span>(pictureType) {
+   <span class="comment">// FIXME: maybe add description to arguments of getFrame?</span>
+   <span class="comment">// more testing needed...</span>
+   pictureType = jala.Mp3.normalizeArg(pictureType,
+      jala.Mp3.PICTURE_TYPES, 3);
+
+   var frame = <span class="reserved">this</span>.getFrame(<span class="literal">"image"</span>, new java.lang.Character(pictureType));
+   <span class="reserved">if</span> (frame) {
+      var body = frame.getBody();
+      var mimeType = body.getObject(<span class="literal">"MIME Type"</span>);
+      var imageType = mimeType.substring(6);
+      var imageName = <span class="reserved">this</span>.getAudio().getFile().getName().replace(/\.[^\.]+$/i, <span class="literal">""</span>) + <span class="literal">"."</span> + imageType;
+      <span class="reserved">return</span> new Packages.helma.util.MimePart(
+         imageName,
+         body.getObject(<span class="literal">"Picture Data"</span>),
+         mimeType
+      );
+   }
+   <span class="reserved">return</span> null;
+};
+
+
+<span class="comment">/**
+ * adds an image to the file.
+ * <span class="attrib">@param</span> {Number} pictureType number determining picture type
+ * <span class="attrib">@param</span> {String} mimeType mime type of image
+ * <span class="attrib">@param</span> {Array} byteArray image binary data
+ * <span class="attrib">@param</span> {String} desc optional description
+ * <span class="attrib">@see</span> jala.Mp3
+ */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.setImage = <span class="reserved">function</span>(pictureType, mimeType, byteArray) {
+   pictureType = jala.Mp3.normalizeArg(pictureType,
+      jala.Mp3.PICTURE_TYPES, 3);
+
+   var frame = <span class="reserved">this</span>.getFrame(<span class="literal">"image"</span>, new java.lang.Character(pictureType));
+   <span class="reserved">if</span> (frame) {
+      <span class="reserved">if</span> (mimeType &amp;&amp; byteArray) {
+         <span class="comment">// set new image data</span>
+         frame.getBody().setObject(<span class="literal">"MIME Type"</span>, mimeType);
+         frame.getBody().setObject(<span class="literal">"Picture Data"</span>, byteArray);
+      }
+   } <span class="reserved">else</span> {
+      <span class="comment">// add new image to tag</span>
+      var body = new Packages.org.farng.mp3.id3.FrameBodyAPIC(
+         <span class="reserved">this</span>.getTextEncoding(),
+         mimeType,
+         new java.lang.Long(pictureType),
+         new java.lang.Character(pictureType),
+         byteArray
+      );
+      <span class="reserved">this</span>.getJavaObject().setFrame(<span class="reserved">this</span>.createFrameObject(body));
+   }
+   <span class="reserved">return</span>;
+};
+
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.debug = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"&lt;pre&gt;"</span> + <span class="reserved">this</span>.getJavaObject().toString() + <span class="literal">"&lt;/pre&gt;"</span>;
+};
+
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Mp3.Id3v2.toString = <span class="reserved">function</span>() {
+   <span class="reserved">return</span> <span class="literal">"[jala.Mp3.Id3v2]"</span>;
+};
+
+<span class="comment">/** <span class="attrib">@ignore</span> */</span>
+jala.Mp3.Id3v2.<span class="reserved">prototype</span>.toString = jala.Mp3.Id3v2.toString;
+
+
+<span class="comment">// FIXME: report bug in JavaMusicTag:</span>
+<span class="comment">// if you delete a v2 tag and call save() JMT calls the delete method of an ID3v2_4 tag.</span>
+<span class="comment">// this way a 2_2 or 2_3 tag in the file isn't found and not deleted.</span>
+<span class="comment">// Mp3.save() has a workaround for this.</span>
+
+</pre>
+	<hr>
+
+
+
+<!-- ========== START OF NAVBAR ========== -->
+<a name="navbar_top"><!-- --></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td colspan=2 bgcolor="#EEEEFF" class="NavBarCell1">
+<a name="navbar_top_firstrow"><!-- --></a>
+<table border="0" cellpadding="0" cellspacing="3">
+  <tr align="center" valign="top">
+  
+  
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-summary.html"><font class="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td>
+  <td bgcolor="#FFFFFF" class="NavBarCell1Rev">	&nbsp;<font class="NavBarFont1Rev"><b>File</b></font>&nbsp;</td>
+  
+
+  <td bgcolor="#FFFFFF" class="NavBarCell1"> <font class="NavBarFont1">Class</font>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="overview-tree.html"><font class="NavBarFont1"><b>Tree</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="index-all.html"--><font class="NavBarFont1"><b>Index</b></font></a>&nbsp;</td>
+  <td bgcolor="#EEEEFF" class="NavBarCell1">    <a href="help-doc.html"><font class="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+  </tr>
+</table>
+</td>
+<td bgcolor="#EEEEFF" align="right" valign="top"><em>
+<b>Jala 1.0</b></em>
+</td>
+</tr>
+
+<tr>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+&nbsp;PREV&nbsp;
+&nbsp;NEXT</font></td>
+<td bgcolor="white" class="NavBarCell2"><font size="-2">
+  <a href="index.html" target="_top"><b>FRAMES</b></a>  &nbsp;
+&nbsp;<a href="overview-summary.html" target="_top"><b>NO FRAMES</b></a>
+&nbsp;&nbsp;
+<script>
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="allclasses-noframe.html" TARGET=""><B>All Classes</B></A>');
+  }
+  //-->
+</script>
+<noscript>
+<a href="allclasses-noframe.html" target=""><b>All Classes</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<!-- =========== END OF NAVBAR =========== -->
+
+<hr>
+<font size="-1">
+
+</font>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+</body>
+</html>

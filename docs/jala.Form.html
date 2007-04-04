@@ -44,7 +44,7 @@ parent.document.title="jala.Form";
 &nbsp;<A HREF="jala.ErrorTracker.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.History.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.CaptchaComponent.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="jala.Form.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -90,6 +90,19 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    
    <P>
    <BR/>A class that renders and parses forms
+
+ <p><b>Config options valid for jala.Form:</b><br/>
+ <li><code>name</code> Name of the form.</li>
+ <li><code>elements</code> Array of objects defining the form elements.</li>
+ <li><code>componentSkin</code> Name of skin located in the data object's prototype
+      used to render form elements.</li>
+ <li><code>mainErrorMessage</code> Error message rendered ahead of the elements
+      if any error occured while submitting the form.</li>
+ <li><code>beforeSave</code> Optional method at the store object called after
+      the user input has validated but before the element is saved.</li>
+ <li><code>title</code> Title of the form, printed as legend.</li>
+ <li><code>submit</code> Value of submit button.</li>
+ </p>
  <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
    </P>
    
@@ -97,11 +110,122 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- ======== NESTED CLASS SUMMARY ======== -->
 
+<A NAME="inner_classes"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TD>
+</TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.InputComponent.html">jala.Form.InputComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.TextComponent.html">jala.Form.TextComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.PasswordComponent.html">jala.Form.PasswordComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.TextareaComponent.html">jala.Form.TextareaComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.SelectComponent.html">jala.Form.SelectComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.RadioComponent.html">jala.Form.RadioComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.CheckboxComponent.html">jala.Form.CheckboxComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.TimestampComponent.html">jala.Form.TimestampComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.DateComponent.html">jala.Form.DateComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.TimeComponent.html">jala.Form.TimeComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.FileComponent.html">jala.Form.FileComponent</A></B></CODE></TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Form.CaptchaComponent.html">jala.Form.CaptchaComponent</A></B></CODE></TD>
+   </TR>
+
+</TABLE>
+&nbsp;
+
 <!-- ======== END NESTED CLASS SUMMARY ======== -->
 
 
 <!-- =========== FIELD SUMMARY =========== -->
 
+   <A NAME="field_summary"><!-- --></A>
+      <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+         <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+            <TD COLSPAN=2><FONT SIZE="+2">
+               <B>Field Summary</B></FONT></TD>
+         </TR>
+
+   <!-- This is one instance field summary -->
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#componentSkin">componentSkin</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+   </TR>
+   
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&gt; &nbsp;helma.Html</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#!s!html">html</A></B></CODE>
+   <BR>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The HTML renderer used by jala.Form</TD>
+   </TR>
+   
+
+   </TABLE>
+   &nbsp;
+   
 
    
 
@@ -122,7 +246,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="jala.Form.html#jala.Form()">jala.Form</A> 
 	 </B>
-	 (&lt;Object&gt; config, &lt;Object&gt; srcObj)
+	 (&lt;Object&gt; config, &lt;Object&gt; dataObj)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -165,24 +289,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#createElementAttributes">createElementAttributes</A></B>(&lt;Object&gt; configEl)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Creates a CSS class string based on the configuration element
- passed as argument.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
 	    <CODE>&nbsp;void</CODE>
 	 </FONT>
       </TD>
@@ -200,6 +306,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Array</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getComponents">getComponents</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the components of this jala.Form instance.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
 	    <CODE>&nbsp;Object</CODE>
 	 </FONT>
       </TD>
@@ -210,25 +333,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the config of this Form instance.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getOptions">getOptions</A></B>(&lt;Object&gt; configEl)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 create an array of options for a dropdown element or a
- group of radiobuttons.
+	 Returns the config of this jala.Form instance.
       </TD>
    </TR>
 
@@ -241,12 +346,29 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getSource">getSource</A></B>()
+	       <A HREF="#getDataObj">getDataObj</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the source object containing the values used
+	 Returns the data object containing the values used
  for rendering the form.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Object</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getRequestData">getRequestData</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the request-data object associated with this form.
       </TD>
    </TR>
 
@@ -263,20 +385,20 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the tracker associated with this Form instance.
+	 Returns the tracker associated with this jala.Form instance.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#handle">handle</A></B>(&lt;Object&gt; reqData, storeObj)
+	       <A HREF="#handle">handle</A></B>(&lt;Object&gt; reqData, &lt;Object&gt; storeObj)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -293,7 +415,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#processMessage">processMessage</A></B>(&lt;String&gt; msg )
+	       <A HREF="#processMessage">processMessage</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -311,11 +433,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#render">render</A></B>(&lt;Object&gt; param)
+	       <A HREF="#render">render</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Renders this form directly to response.
+	 Renders this form to the response.
       </TD>
    </TR>
 
@@ -356,35 +478,35 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
+	    <CODE>&nbsp;void</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#!s!followPath">followPath</A></B>(&lt;Object&gt; obj, &lt;Array&gt; pathArr)
+	       <A HREF="#setRequestData">setRequestData</A></B>(&lt;Object&gt; newReqData)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Helper method that follows a path array down, starting at the object
- passed as argument.
+	 Stores the request-data object once the form was submitted.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
+	    <CODE>&lt;static&gt;&nbsp;void</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#!s!getProperty">getProperty</A></B>(&lt;Object&gt; obj, &lt;String&gt; path, &lt;String&gt; name)
+	       <A HREF="#!s!extend">extend</A></B>(&lt;Function&gt; subClass, &lt;Function&gt; superClass)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Retrieves a property from the object passed as argument.
+	 Utility to set up the prototype, constructor, superclass and superconstructor
+ properties to support an inheritance strategy that can chain constructors and methods.
       </TD>
    </TR>
 
@@ -422,23 +544,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       </TD>
    </TR>
 
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;Boolean</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#!s!setProperty">setProperty</A></B>(&lt;Object&gt; obj, &lt;String&gt; path, &lt;String&gt; name, &lt;Object&gt; value)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets a property of the object passed as argument to the given value.
-      </TD>
-   </TR>
-
 
 </TABLE>
 
@@ -449,6 +554,33 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 
 <!-- ============ FIELD DETAIL START =========== -->
+
+   <A NAME="field_detail"><!-- --></A>
+   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+      <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+         <TD COLSPAN=1><FONT SIZE="+2"><B>Field Detail</B></FONT></TD>
+      </TR>
+   </TABLE>
+
+   
+   <A NAME="componentSkin"><!-- --></A>
+   <H3>componentSkin</H3>
+   <PRE>Object&nbsp;<B>componentSkin</B></PRE>
+   <UL>
+   
+   
+   </UL>
+   <HR>
+   
+   <A NAME="!s!html"><!-- --></A>
+   <H3>html</H3>
+   <PRE>&lt;static&gt;&nbsp;helma.Html&nbsp;<B>html</B></PRE>
+   <UL>
+   The HTML renderer used by jala.Form
+   
+   </UL>
+   <HR>
+   
 
 
 <!-- ============ FIELD DETAIL END =========== -->
@@ -466,7 +598,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="jala.Form()"><!-- --></A><H3>
 jala.Form</H3>
-<PRE><B>jala.Form</B>(&lt;Object&gt; config, &lt;Object&gt; srcObj)</PRE>
+<PRE><B>jala.Form</B>(&lt;Object&gt; config, &lt;Object&gt; dataObj)</PRE>
 
 
 
@@ -477,7 +609,7 @@ jala.Form</H3>
      <UL><CODE>config</CODE> -  An object tree holding the layout of the form.  
      </UL>
    
-     <UL><CODE>srcObj</CODE> -  The object which is being edited by this form.     For a commented example see at the end of this file  
+     <UL><CODE>dataObj</CODE> -  The object which is being edited by this form.     For a commented example see at the end of this file  
      </UL>
    
    
@@ -536,40 +668,6 @@ jala.Form</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="createElementAttributes"><!-- --></A>
-   <H3>createElementAttributes</H3>
-   <PRE>Object <B>createElementAttributes</B>(&lt;Object&gt; configEl)</PRE>
-   
-      <UL>Creates a CSS class string based on the configuration element
- passed as argument.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>configEl</CODE> -  The configuration element  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The CSS class string for this element 
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
    <A NAME="form_macro"><!-- --></A>
    <H3>form_macro</H3>
    <PRE>void <B>form_macro</B>(param)</PRE>
@@ -588,11 +686,36 @@ jala.Form</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="getComponents"><!-- --></A>
+   <H3>getComponents</H3>
+   <PRE>Array <B>getComponents</B>()</PRE>
+   
+      <UL>Returns the components of this jala.Form instance.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The components of this jala.Form instance.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="getConfig"><!-- --></A>
    <H3>getConfig</H3>
    <PRE>Object <B>getConfig</B>()</PRE>
    
-      <UL>Returns the config of this Form instance.</UL>
+      <UL>Returns the config of this jala.Form instance.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -603,7 +726,7 @@ jala.Form</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The config of this Form instance.   
+        The config of this jala.Form instance.   
         </UL>
    </UL>
    
@@ -613,47 +736,11 @@ jala.Form</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="getOptions"><!-- --></A>
-   <H3>getOptions</H3>
-   <PRE>Array <B>getOptions</B>(&lt;Object&gt; configEl)</PRE>
+   <A NAME="getDataObj"><!-- --></A>
+   <H3>getDataObj</H3>
+   <PRE>Object <B>getDataObj</B>()</PRE>
    
-      <UL>create an array of options for a dropdown element or a
- group of radiobuttons.
- configEl.options is returned if that value is an Array.
- If it's a Function, its return value is returned.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>configEl</CODE> -  a node from the config  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        array of options   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getSource"><!-- --></A>
-   <H3>getSource</H3>
-   <PRE>Object <B>getSource</B>()</PRE>
-   
-      <UL>Returns the source object containing the values used
+      <UL>Returns the data object containing the values used
  for rendering the form.</UL>
    
 
@@ -665,7 +752,32 @@ jala.Form</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The source object of this Form instance 
+        The data object of this jala.Form instance 
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getRequestData"><!-- --></A>
+   <H3>getRequestData</H3>
+   <PRE>Object <B>getRequestData</B>()</PRE>
+   
+      <UL>Returns the request-data object associated with this form.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        Object holding request data for this form.   
         </UL>
    </UL>
    
@@ -679,7 +791,7 @@ jala.Form</H3>
    <H3>getTracker</H3>
    <PRE><a href="jala.ErrorTracker.html">jala.ErrorTracker</a> <B>getTracker</B>()</PRE>
    
-      <UL>Returns the tracker associated with this Form instance.</UL>
+      <UL>Returns the tracker associated with this jala.Form instance.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -690,7 +802,7 @@ jala.Form</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The tracker of this Form instance.   
+        The tracker of this jala.Form instance.   
         </UL>
    </UL>
    
@@ -702,7 +814,7 @@ jala.Form</H3>
 
    <A NAME="handle"><!-- --></A>
    <H3>handle</H3>
-   <PRE>Object <B>handle</B>(&lt;Object&gt; reqData, storeObj)</PRE>
+   <PRE>Boolean <B>handle</B>(&lt;Object&gt; reqData, &lt;Object&gt; storeObj)</PRE>
    
       <UL>parses form input, applies check functions and stores the values</UL>
    
@@ -715,6 +827,9 @@ jala.Form</H3>
      <UL><CODE>reqData</CODE> -  input from form  
       </UL> 
    
+     <UL><CODE>storeObj</CODE> -  object to save data  
+      </UL> 
+   
    </UL>
    
    <!-- METHOD PARAMETERS END -->
@@ -723,7 +838,7 @@ jala.Form</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        false if one of the checks failed,           true if the element was saved correctly 
+        False if one of the checks failed,           true if the element was saved correctly.   
         </UL>
    </UL>
    
@@ -735,7 +850,7 @@ jala.Form</H3>
 
    <A NAME="processMessage"><!-- --></A>
    <H3>processMessage</H3>
-   <PRE>String <B>processMessage</B>(&lt;String&gt; msg )</PRE>
+   <PRE>String <B>processMessage</B>()</PRE>
    
       <UL>Process the message passed as argument by calling
  the message processor. All arguments to this method
@@ -770,20 +885,12 @@ jala.Form</H3>
 
    <A NAME="render"><!-- --></A>
    <H3>render</H3>
-   <PRE>void <B>render</B>(&lt;Object&gt; param)</PRE>
+   <PRE>void <B>render</B>()</PRE>
    
-      <UL>Renders this form directly to response.</UL>
+      <UL>Renders this form to the response.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  An optional parameter object containing macro attributes    
-      </UL> 
-   
-   </UL>
    
    <!-- METHOD PARAMETERS END -->
 
@@ -845,12 +952,12 @@ jala.Form</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="!s!followPath"><!-- --></A>
-   <H3>followPath</H3>
-   <PRE>&lt;static&gt; Object <B>followPath</B>(&lt;Object&gt; obj, &lt;Array&gt; pathArr)</PRE>
+   <A NAME="setRequestData"><!-- --></A>
+   <H3>setRequestData</H3>
+   <PRE>void <B>setRequestData</B>(&lt;Object&gt; newReqData)</PRE>
    
-      <UL>Helper method that follows a path array down, starting at the object
- passed as argument.</UL>
+      <UL>Stores the request-data object once the form was submitted.
+ Values will be used for re-printing the form if an error occurs.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -858,23 +965,13 @@ jala.Form</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>obj</CODE> -  The object to start at  
-      </UL> 
-   
-     <UL><CODE>pathArr</CODE> -  The array containing path elements to follow  
+     <UL><CODE>newReqData</CODE> -  Object holding request data.       
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The last object in the path, or null   
-        </UL>
-   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -882,16 +979,12 @@ jala.Form</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="!s!getProperty"><!-- --></A>
-   <H3>getProperty</H3>
-   <PRE>&lt;static&gt; Object <B>getProperty</B>(&lt;Object&gt; obj, &lt;String&gt; path, &lt;String&gt; name)</PRE>
+   <A NAME="!s!extend"><!-- --></A>
+   <H3>extend</H3>
+   <PRE>&lt;static&gt; void <B>extend</B>(&lt;Function&gt; subClass, &lt;Function&gt; superClass)</PRE>
    
-      <UL>Retrieves a property from the object passed as argument. If a
- path is given, this method follows the path down to the destination
- property, which can either be a function or a primitive property.
- For the former the method is called and the name argument is passed
- to it, and the result value of this method is returned. For the former
- this method directly returns the value of the primitive property.</UL>
+      <UL>Utility to set up the prototype, constructor, superclass and superconstructor
+ properties to support an inheritance strategy that can chain constructors and methods.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -899,26 +992,16 @@ jala.Form</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>obj</CODE> -  The object to start with in case a path is given,  or the object whose property "name" should be returned  
+     <UL><CODE>subClass</CODE> -  the object which inherits superClass' functions  
       </UL> 
    
-     <UL><CODE>path</CODE> -  A dot-delimited path to the destination property  
-      </UL> 
-   
-     <UL><CODE>name</CODE> -  The name of the property to retrieve. In case the  path is given, and it leads to a getter-function, it is passed to this  method as the single argument.  
+     <UL><CODE>superClass</CODE> -  the object to inherit    
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The value of the property   
-        </UL>
-   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -947,7 +1030,7 @@ jala.Form</H3>
      <UL><CODE>tracker</CODE> -  object holding error messages  
       </UL> 
    
-     <UL><CODE>reqData</CODE> -  the whole request-data-object,            in case properties depend on each other     
+     <UL><CODE>reqData</CODE> -  the whole request-data-object,            in case properties depend on each other    
       </UL> 
    
    </UL>
@@ -982,55 +1065,13 @@ jala.Form</H3>
      <UL><CODE>tracker</CODE> -  object holding error messages  
       </UL> 
    
-     <UL><CODE>reqData</CODE> -  the whole request-data-object,            in case properties depend on each other     
+     <UL><CODE>reqData</CODE> -  the whole request-data-object,            in case properties depend on each other    
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="!s!setProperty"><!-- --></A>
-   <H3>setProperty</H3>
-   <PRE>&lt;static&gt; Boolean <B>setProperty</B>(&lt;Object&gt; obj, &lt;String&gt; path, &lt;String&gt; name, &lt;Object&gt; value)</PRE>
-   
-      <UL>Sets a property of the object passed as argument to the given value.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>obj</CODE> -  The object to start with in case a path is given,  or the object whose property "name" should be returned  
-      </UL> 
-   
-     <UL><CODE>path</CODE> -  A dot-delimited path to the destination property  
-      </UL> 
-   
-     <UL><CODE>name</CODE> -  The name of the property to retrieve. In case the  path is given, and it leads to a setter-function, it is passed to this  method as the first argument.  
-      </UL> 
-   
-     <UL><CODE>value</CODE> -  The value to set the property to  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        True in case the update was successful, false otherwise.   
-        </UL>
-   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -1073,7 +1114,7 @@ jala.Form</H3>
 &nbsp;<A HREF="jala.ErrorTracker.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.History.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.CaptchaComponent.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="jala.Form.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -1104,6 +1145,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar 15 15:28:10 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
 </BODY>
 </HTML>
