@@ -54,11 +54,11 @@ var setup = function() {
  * Write a v1 tag to the file
  */
 var testId3v1Write = function() {
-   var mp3 = new jala.audio.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3File);
    assertFalse(mp3.hasV1Tag());
    var tag = mp3.createV1Tag();
    assertNotNull(tag);
-   tag.setArtist("v1 - jala.audio.Mp3");
+   tag.setArtist("v1 - jala.Mp3");
    tag.setTitle("v1 - Test");
    tag.setAlbum("v1 - Jala JavaScript Library");
    tag.setGenre("Electronic");
@@ -77,9 +77,9 @@ var testId3v1Write = function() {
  * Read a v1 tag from the file
  */
 var testId3v1Read = function() {
-   var mp3 = new jala.audio.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3File);
    var tag = mp3.getV1Tag();
-   assertEqual(tag.getArtist(), "v1 - jala.audio.Mp3");
+   assertEqual(tag.getArtist(), "v1 - jala.Mp3");
    assertEqual(tag.getTitle(), "v1 - Test");
    assertEqual(tag.getAlbum(), "v1 - Jala JavaScript Library");
    assertEqual(tag.getGenre(), "Electronic");
@@ -94,11 +94,11 @@ var testId3v1Read = function() {
  * Write a v2 tag to the file
  */
 var testId3v2Write = function() {
-   var mp3 = new jala.audio.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3File);
    assertFalse(mp3.hasV2Tag());
    var tag = mp3.createV2Tag();
    assertNotNull(tag);
-   tag.setArtist("v2 - jala.audio.Mp3");
+   tag.setArtist("v2 - jala.Mp3");
    tag.setTitle("v2 - Test");
    tag.setAlbum("v2 - Jala JavaScript Library");
    tag.setGenre("Electronic");
@@ -124,9 +124,9 @@ var testId3v2Write = function() {
  * Read a v2 tag from the file
  */
 var testId3v2Read = function() {
-   var mp3 = new jala.audio.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3File);
    var tag = mp3.getV2Tag();
-   assertEqual(tag.getArtist(), "v2 - jala.audio.Mp3");
+   assertEqual(tag.getArtist(), "v2 - jala.Mp3");
    assertEqual(tag.getTitle(), "v2 - Test");
    assertEqual(tag.getAlbum(), "v2 - Jala JavaScript Library");
    assertEqual(tag.getGenre(), "Electronic");
@@ -146,11 +146,11 @@ var testId3v2Read = function() {
 
 
 /**
- * A test of jala.audio.Mp3
+ * A test of jala.Mp3
  */
 var testMp3Read = function() {
-   var mp3 = new jala.audio.Mp3(mp3File);
-   assertEqual(mp3.artist, "v2 - jala.audio.Mp3");
+   var mp3 = new jala.Mp3(mp3File);
+   assertEqual(mp3.artist, "v2 - jala.Mp3");
    assertEqual(mp3.title, "v2 - Test");
    assertEqual(mp3.album, "v2 - Jala JavaScript Library");
    assertEqual(mp3.genre, "Electronic");
