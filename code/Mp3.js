@@ -736,6 +736,7 @@ jala.Mp3.Id3v1 = function(audioObj) {
       return;
    };
 
+   return this;
 };
 
 
@@ -995,12 +996,15 @@ jala.Mp3.Id3v2 = function(audioObj) {
    };
 
    /**
-    * sets the text encoding used when setting values.
+    * Returns the text encoding used when setting values.
+    * @returns The text encoding
+    * @type Number
     */
    this.getTextEncoding = function() {
       return textEncoding;
    };
-
+   
+   return this;
 };
 
 
@@ -1153,7 +1157,9 @@ jala.Mp3.Id3v2.prototype.createFrameObject = function(body) {
 
 
 /**
- * returns the version number of id3v2 tags used (values 2 to 4 for id3v2.2 to id3v2.4)
+ * Returns the version number of this id3v2 (values 2 to 4 for id3v2.2 to id3v2.4)
+ * @returns The version number of this Id3v2 tag
+ * @type Number
  */
 jala.Mp3.Id3v2.prototype.getSubtype = function() {
    // AbstractID3v2#getRevision() only works for newly constructed tag objects,
@@ -1247,7 +1253,9 @@ jala.Mp3.Id3v2.prototype.getYear = function() {
 
 
 /**
- * 
+ * Returns the author information of the tag.
+ * @returns string containing author information
+ * @type String
  */
 jala.Mp3.Id3v2.prototype.getAuthor = function() {
    return this.getTextContent("author");
@@ -1255,7 +1263,9 @@ jala.Mp3.Id3v2.prototype.getAuthor = function() {
 
 
 /**
- * 
+ * Returns the copyright information of the tag.
+ * @returns The copyright information of the tag
+ * @type String
  */
 jala.Mp3.Id3v2.prototype.getCopyright = function() {
    return this.getTextContent("copyright");
@@ -1263,7 +1273,9 @@ jala.Mp3.Id3v2.prototype.getCopyright = function() {
 
 
 /**
- * 
+ * Returns the Url stored in this tag
+ * @returns The url stored in this tag
+ * @type String
  */
 jala.Mp3.Id3v2.prototype.getUrl = function() {
    var frame = this.getFrame("url", "");
@@ -1356,7 +1368,8 @@ jala.Mp3.Id3v2.prototype.setYear = function(year) {
 
 
 /**
- * 
+ * Sets the author information in this tag
+ * @param {String} author The author information to set
  */
 jala.Mp3.Id3v2.prototype.setAuthor = function(author) {
    this.setTextContent("author", author);
@@ -1365,7 +1378,8 @@ jala.Mp3.Id3v2.prototype.setAuthor = function(author) {
 
 
 /**
- * 
+ * Sets the copyright information in this tag
+ * @param {String} copyright The copyright information to set
  */
 jala.Mp3.Id3v2.prototype.setCopyright = function(copyright) {
    this.setTextContent("copyright", copyright);
@@ -1374,7 +1388,9 @@ jala.Mp3.Id3v2.prototype.setCopyright = function(copyright) {
 
 
 /**
- * 
+ * Stores the Url passed as argument in this tag.
+ * @param {String} url The url to store in this tag
+ * @param {String} desc An optiona description of the Url
  */
 jala.Mp3.Id3v2.prototype.setUrl = function(url, desc) {
    var frame = this.getFrame("url", "");
@@ -1453,17 +1469,10 @@ jala.Mp3.Id3v2.prototype.setImage = function(pictureType, mimeType, byteArray) {
 };
 
 
-/**
- * returns an array of all image frames (APIC) in the tag
- * @type Array
- * @private
- */
+/** @ignore */
 jala.Mp3.Id3v2.prototype.debug = function() {
    return "<pre>" + this.getJavaObject().toString() + "</pre>";
 };
-
-
-
 
 
 /** @ignore */
