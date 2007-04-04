@@ -662,14 +662,7 @@ jala.audio.tag.Id3v1 = function(audioObj) {
     * @private
     */
    this.removeFromAudio = function() {
-      // unfortunately the arguments for the two variants of
-      // org.farng.mp3.MP3File#setID3v2Tag are ambigous so that
-      // rhino can't choose the proper function when the argument
-      // is null. java reflection helps us:
-      var clazz = audioObj.getJavaObject().getClass();
-      var method = clazz.getMethod("setID3v1Tag", [Packages.org.farng.mp3.id3.ID3v1]);
-      method.invoke(audioObj.getJavaObject(), [null]);
-
+      audioObj.getJavaObject()["setID3v1Tag(org.farng.mp3.id3.ID3v1)"](null);
       tag = null;
       audioObj = null;
    };
@@ -901,14 +894,7 @@ jala.audio.tag.Id3v2 = function(audioObj) {
     * nulls out the wrapper.
     */
    this.removeFromAudio = function() {
-      // unfortunately the arguments for the two variants of
-      // org.farng.mp3.MP3File#setID3v2Tag are ambigous so that
-      // rhino can't choose the proper function when the argument
-      // is null. java reflection helps us:
-      var clazz = audioObj.getJavaObject().getClass();
-      var method = clazz.getMethod("setID3v2Tag", [Packages.org.farng.mp3.id3.AbstractID3v2]);
-      method.invoke(audioObj.getJavaObject(), [null]);
-
+      audioObj.getJavaObject()["setID3v2Tag(org.farng.mp3.id3.AbstractID3v2)"](null);
       tag = null;
       audioObj = null;
    };
