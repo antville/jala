@@ -653,7 +653,7 @@ jala.Mp3.prototype.getMetadata = function() {
    // generic metadata values
    result.size = this.getSize();
    result.isVariableBitRate = this.isVariableBitRate();
-   result.bitRate = this.getBitRate();
+   result.bitrate = this.getBitRate();
    result.frequency = this.getFrequency();
    result.channelMode = this.getChannelMode();
    result.duration = this.parseDuration();
