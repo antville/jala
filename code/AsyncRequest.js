@@ -46,6 +46,9 @@ if (!global.jala) {
  * @constructor
  * @returns A new instance of AsyncRequest
  * @type AsyncRequest
+ * @deprecated Use the {@link http://helma.zumbrunn.net/reference/core/app.html#invokeAsync
+ * app.invokeAsync} method instead (built-in into Helma as 
+ * of version 1.6)
  */
 jala.AsyncRequest = function(obj, funcName, args) {
    /**

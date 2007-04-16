@@ -35,7 +35,6 @@ if (!global.jala) {
 
 (function() {
    var packages = [
-      "AsyncRequest",
       "Mp3",
       "Date",
       "DnsClient",
