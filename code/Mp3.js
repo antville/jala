@@ -539,20 +539,17 @@ jala.Mp3.prototype.getField = function(fieldName) {
  * @private
  */
 jala.Mp3.prototype.setField = function(fieldName, value) {
-   var funcName = "set" + fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
-   var tag, value;
-   var setValue = function() {
-      if (tag[funcName] != null && tag[funcName] instanceof Function) {
-         tag[funcName](value);
-      }
-      return;
-   };
-
-   if ((tag = this.getV2Tag()) != null) {
-      setValue();
-   }
-   if ((tag = this.getV1Tag()) != null) {
-      setValue();
+   if (value != null) {
+      var funcName = "set" + fieldName.charAt(0).toUpperCase() + fieldName.substring(1);
+      var setValue = function(tag) {
+         if (tag[funcName] != null && tag[funcName] instanceof Function) {
+            tag[funcName](value);
+         }
+         return;
+      };
+   
+      setValue(this.getV2Tag() || this.createV2Tag());
+      setValue(this.getV1Tag() || this.createV1Tag());
    }
    return;
 };
