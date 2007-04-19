@@ -95,3 +95,67 @@ HopObject.prototype.getAccessName = function(obj, maxLength) {
    
    return accessName;
 };
+
+
+/**
+ * Returns true if the internal state of this HopObject is TRANSIENT.
+ * @returns True if this HopObject is marked as <em>transient</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isTransient = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.TRANSIENT;
+};
+
+/**
+ * Returns true if the internal state of this HopObject is VIRTUAL.
+ * @returns True if this HopObject is marked as <em>virtual</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isVirtual = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.VIRTUAL;
+};
+
+/**
+ * Returns true if the internal state of this HopObject is INVALID.
+ * @returns True if this HopObject is marked as <em>invalid</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isInvalid = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.INVALID;
+};
+
+/**
+ * Returns true if the internal state of this HopObject is CLEAN.
+ * @returns True if this HopObject is marked as <em>clean</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isClean = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.CLEAN;
+};
+
+/**
+ * Returns true if the internal state of this HopObject is NEW.
+ * @returns True if this HopObject is marked as <em>new</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isNew = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.NEW;
+};
+
+/**
+ * Returns true if the internal state of this HopObject is MODIFIED.
+ * @returns True if this HopObject is marked as <em>modified</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isModified = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.MODIFIED;
+};
+
+/**
+ * Returns true if the internal state of this HopObject is DELETED.
+ * @returns True if this HopObject is marked as <em>deleted</em>, false otherwise.
+ * @type Boolean
+ */
+HopObject.prototype.isDeleted = function() {
+   return this.__node__.getState() === Packages.helma.objectmodel.INodeState.DELETED;
+};
