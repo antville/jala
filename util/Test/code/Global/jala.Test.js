@@ -931,7 +931,7 @@ jala.Test.prototype.assertMatch = function assertStringContains(val, rxp) {
  */
 jala.Test.HttpClient = function() {
    var client = new helma.Http();
-   var cookie = null;
+   var cookies = null;
 
    /**
     * Returns the http client used
@@ -944,18 +944,20 @@ jala.Test.HttpClient = function() {
    
    /**
     * Sets the cookie to use for subsequent requests using this client
-    * @param {Object} c The cookie object as received from helma.Http.getUrl
+    * @param {Array} arr The cookie object as received from helma.Http.getUrl
     */
-   this.setCookie = function(c) {
-      cookie = c;
+   this.setCookies = function(arr) {
+      cookies = arr;
       return;
    };
 
    /**
-    * Returns the cookie set for this http client
+    * Returns the cookies set for this http client
+    * @returns The cookies to use for subsequent requests
+    * @type Array
     */
-   this.getCookie = function() {
-      return cookie;
+   this.getCookies = function() {
+      return cookies;
    };
 
    return this;
@@ -972,10 +974,7 @@ jala.Test.HttpClient = function() {
 jala.Test.HttpClient.prototype.executeRequest = function(method, url, param) {
    var client = this.getClient();
    client.setMethod(method);
-   var cookie = this.getCookie();
-   if (cookie != null) {
-       client.setCookie(cookie.name, cookie.value);
-   }
+   client.setCookies(this.getCookies());
    // prevent any caching at the remote server or any intermediate proxy
    client.setHeader("Cache-control", "no-cache,max-age=0");
    client.setContent(param);
@@ -983,8 +982,8 @@ jala.Test.HttpClient.prototype.executeRequest = function(method, url, param) {
    // instead, handle a resulting redirect manually
    client.setFollowRedirects(false);
    var result = client.getUrl(url);
-   if (result.cookie != null) {
-      this.setCookie(result.cookie);
+   if (result.cookies != null) {
+      this.setCookies(result.cookies);
    }
    if (result.location != null) {
       // received a redirect location, so follow it
