@@ -58,11 +58,8 @@ jala.Form = function(name) {
     * Readonly reference to the name of the form
     * @type String
     */
-   this.name = name;
-
-   // make reference to name readonly
+   this.name;     // for doc purposes only, readonly-access through the getter function
    this.__defineGetter__("name", function() {   return name;   });
-   this.__defineSetter__("name", function() {   return;  });
 
    // The default component skin
    this.componentSkin = createSkin("<% param.error %><% param.label %><div class=\"element\"><% param.controls %><% param.help %></div>");
@@ -168,33 +165,6 @@ jala.Form = function(name) {
    };
 
 
-   // Default message processor: gettext() from jala.I18n-package
-   var messageProcessor = gettext;
-
-   /**
-    * Sets the message processor to the function passed as argument.
-    * @param {Function} functionObj The message processor function. It is
-    * expected to accept a single argument (the message to process) and
-    * to return the processed message.
-    */
-   this.setMessageProcessor = function(functionObj) {
-      messageProcessor = functionObj;
-      return;
-   };
-
-   /**
-    * Process the message passed as argument by calling
-    * the message processor. All arguments to this method
-    * are directly passed to the message processor.
-    * @param {String} msg The message to process
-    * @param {String} arg2 optional further arguments to the message processor
-    * @returns The processed message
-    * @type String
-    */
-   this.processMessage = function() {
-      return messageProcessor.apply(null, arguments);
-   };
-
 
    var dataObj = {};
 
@@ -238,16 +208,17 @@ jala.Form.prototype.toString = function() {
    return "[jala.Form]";
 };
 
+
 /**
  * The HTML renderer used by jala.Form
  * @type helma.Html
  */
 jala.Form.html = new helma.Html();
 
+
 /**
  * Utility to set up the prototype, constructor, superclass and superconstructor
  * properties to support an inheritance strategy that can chain constructors and methods.
- *
  * @param {Function} subClass the object which inherits superClass' functions
  * @param {Function} superClass the object to inherit
  */
@@ -263,6 +234,16 @@ jala.Form.extend = function(subClass, superClass) {
 };
 
 
+/**
+ * Parses an object tree and configures a new jala.Form instance
+ * according to the properties.
+ * Propertynames are matched with setter-functions and
+ * the property "class" is used to instanciate new
+ * components.
+ * @param {Object} config object tree containing config
+ * @returns jala.Form instance
+ * @type jala.Form
+ */
 jala.Form.parseConfig = function(config) {
    if (!config || !config.name || !config.elements) {
       return null;
@@ -303,6 +284,184 @@ jala.Form.parseConfig = function(config) {
 };
 
 
+/**
+ * Renders this form to the response.
+ */
+jala.Form.prototype.render = function() {
+
+   // open the form tag
+   var formAttr = {
+      id     : this.name,
+      name   : this.name,
+      "class": "form",
+      action : req.action,
+      method : "post"
+   };
+   if (this.containsFileUpload()) {
+      // if there is an upload element, use multipart-enctype
+      formAttr.enctype = "multipart/form-data";
+   }
+   jala.Form.html.openTag("form", formAttr);
+
+   // print optional general error message
+   var errorMessage = this.getErrorMessage();
+   if (this.hasError() && errorMessage) {
+      jala.Form.html.element("div", errorMessage,
+                   {id: this.createDomId("error"), "class": "form_error"});
+   }
+
+   jala.Form.html.openTag("fieldset");
+
+   // optional legend
+   if (this.getLegend() != null) {
+      jala.Form.html.element("legend", this.getLegend());
+   }
+
+   // loop through elements
+   var components  = this.listComponents();
+   for (var i=0; i<components.length; i++) {
+      components[i].render();
+   }
+
+   // submit button
+   jala.Form.html.openTag("div");
+   jala.Form.html.element("label", "", {id: this.createDomId("label", "submit")});
+   jala.Form.html.submit({id: this.createDomId("submit"),
+                name: this.createDomId("submit"),
+                "class": "submit",
+                "value": this.getSubmitCaption() || "Submit"});
+   jala.Form.html.closeTag("div");
+   jala.Form.html.closeTag("fieldset");
+   jala.Form.html.closeTag("form");
+   return;
+};
+
+
+/**
+ * renders the form as a string
+ * @returns rendered form
+ * @type String
+ */
+jala.Form.prototype.renderAsString = function(param) {
+   res.push();
+   this.render(param);
+   return res.pop();
+};
+
+/**
+ * Creates a DOM identifier based on the arguments passed. The
+ * resulting Id will be prefixed with the name of the form config,
+ * and all arguments will be separated by an underscore.
+ * @returns The DOM Id
+ * @type String
+ */
+jala.Form.prototype.createDomId = function(/* [part1][, part2][, ...] */) {
+   res.push();
+   res.write(this.name);
+   for (var i=0;i<arguments.length;i++) {
+      if (arguments[i]) {
+         if (i < arguments.length) {
+            res.write("_");
+         }
+         res.write(arguments[i]);
+      }
+   }
+   return res.pop();
+};
+
+
+
+/**
+ * Checks and validates user input from a submitted form.
+ * First each component's checkSyntax method is called.
+ * If it succeeds, the input is parsed and validated if
+ * an optional validator function is set.
+ * The tracker is stored as data object of the form.
+ * @see #setValidator
+ * @param {Object} reqData request data after a submit
+ * @type jala.Form.Tracker
+ */
+jala.Form.prototype.check = function(reqData) {
+   var tracker = new jala.Form.Tracker(reqData);
+   var components = this.listComponents();
+   for (var i=0; i<components.length; i++) {
+      var name = components[i].name;
+      var error = components[i].checkSyntax(reqData);
+      if (error != null) {
+         tracker.errors[name] = error;
+      } else {
+         tracker.values[name] = components[i].parseValue(reqData);
+         if (components[i].getValidator()) {
+            error = components[i].getValidator()(name, tracker.values[name], reqData, this);
+            if (error != null) {
+               tracker.errors[name] = error;
+            }
+         }
+      }
+   }
+   this.setDataObj(tracker);
+   return tracker;
+};
+
+
+
+/**
+ * Sets the parsed values on an object, according to the 
+ * according to the provisions made through setSetter.
+ * @see #setSetter
+ * @param {jala.Form.Tracker} tracker tracker object holding parsed
+ *             data from form input.
+ * @param {Object} destObj object whose values should be changed.
+ */
+jala.Form.prototype.save = function(tracker, destObj) {
+   var components = this.listComponents();
+   for (var i=0; i<components.length; i++) {
+      components[i].setValue(destObj, tracker.values[components[i].name]);
+   }
+   return;
+};
+
+
+
+
+/**
+ * Parses form input, applies check functions and stores the values
+ * if the form does validate. Otherwise this method returns false
+ * without saving so that the form can be reprinted with error messages.
+ * @param {Object} reqData input from form
+ * @param {Object} destObj object whose values should be chanegd
+ * @returns False if one of the checks failed,
+ *          true if the element was saved correctly.
+ * @type Boolean
+ */
+jala.Form.prototype.handle = function(reqData, destObj) {
+   var tracker = form.check(reqData);
+   if (tracker.hasError()) {
+      return false;
+   } else {
+      form.save(tracker, destObj);
+      return true;
+   }
+};
+
+
+/**
+ * macro to render the form
+ */
+jala.Form.prototype.render_macro = function(param) {
+   this.render(param);
+   return;
+};
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @class Class for rendering and validating input form elements.
@@ -315,22 +474,16 @@ jala.Form.InputComponent = function InputComponent(name) {
     * Readonly reference to name of component
     * @type String
     */
-   this.name = name;
-
-   // make reference to name readonly
+   this.name;     // for doc purposes only, readonly-access is through the getter function
    this.__defineGetter__("name", function() {   return name;   });
-   this.__defineSetter__("name", function() {   return;  });
 
    
    /**
     * Readonly reference to instance of jala.Form.
     * @type jala.Form
     */
-   this.form = undefined;
-
-   // make reference to form readonly
+   this.form;     // for doc purposes only, readonly-access through the getter function
    this.__defineGetter__("form", function() {   return form;   });
-   this.__defineSetter__("form", function() {   return;  });
    
    /**
     * Attaches this component to an instance of jala.Form.
@@ -481,7 +634,7 @@ jala.Form.InputComponent = function InputComponent(name) {
     * <li>the parsed value of the element if the user input is
     *     syntactically correct. For a date editor, the parsed value would
     *     be a date object.
-    * <li>the map containing all user inputs a string (req.data)
+    * <li>the map containing all user inputs as string (req.data)
     * <li>form object
     * @see #check
     * @param {Function} newValidator new validator function
@@ -551,6 +704,39 @@ jala.Form.InputComponent = function InputComponent(name) {
       maxLength = newMaxLength;
       return;
    };
+  
+  
+   var messages = {};
+  
+   /**
+    * Returns a specific message for a config element.
+    * @param {String} key The key of the message
+    **               (e.g. "missing", "tooLong", "tooShort", "invalid").
+    * @param {String} defaultMsg the message to use when no message was defined 
+    *                in the config.
+    * @param {Object} args One or more arguments passed to the gettext
+    * message processor which will replace {0}, {1} etc.
+    * @returns rendered message
+    * @type String
+    * @private
+    */
+   this.getMessage = function(key, defaultMsg, args) {
+      var arr = [(messages[key]) ? messages[key] : defaultMsg];
+      for (var i=2; i<arguments.length; i++) {
+         arr.push(arguments[i]);
+      }
+      return gettext.apply(null, arr);
+   };
+  
+
+   /**
+    * Sets a custom error message
+    */
+   this.setMessage = function(key, msg) {
+      messages[key] = msg;
+      return;
+   };
+  
   
    return this;
 };
@@ -644,7 +830,7 @@ jala.Form.InputComponent.prototype.renderError = function() {
    var dataObj = this.form.getDataObj();
    if ((dataObj instanceof jala.Form.Tracker) && dataObj.errors[this.name]) {
       return jala.Form.html.elementAsString("div",
-         this.form.processMessage(dataObj.errors[this.name]),  // FIXME: das dürfte doppelt gemoppelt sein, die texte werden schon in der check funktion processt
+         dataObj.errors[this.name],
          {id: this.form.createDomId("error", this.name),
           "class": "error"});
    }
@@ -663,7 +849,7 @@ jala.Form.InputComponent.prototype.renderLabel = function() {
    var name = this.name;
    return jala.Form.html.elementAsString(
       "label",
-      this.form.processMessage(this.getLabel() || ""),
+      this.getLabel() || "",
       {id: this.form.createDomId("label", name),
        "for": this.form.createDomId(name)
       }
@@ -682,7 +868,7 @@ jala.Form.InputComponent.prototype.renderHelp = function() {
    if (this.getHelp()) {
       return jala.Form.html.elementAsString(
          "div",
-         this.form.processMessage(this.getHelp()),
+         this.getHelp(),
          {id: this.form.createDomId("help", this.name),
           "class": "help"
          }
@@ -756,38 +942,20 @@ jala.Form.InputComponent.prototype.checkLength = function(reqData) {
    var maxLength = this.getMaxLength();
    
    if (required && (reqData[this.name] == null || reqData[this.name].trim() == "")) {
-      return this.form.processMessage(this.getMessage("missing", "Please enter text into this field!"));
+      return this.getMessage("missing", "Please enter text into this field!");
    } else if (maxLength && reqData[this.name].length > maxLength) {
-      return this.form.processMessage(this.getMessage("tooLong", "Input for this field is too long ({0} characters). Please enter no more than {1} characters!"),
+      return this.getMessage("tooLong", "Input for this field is too long ({0} characters). Please enter no more than {1} characters!",
                                  reqData[this.name].length, maxLength);
    } else if (minLength) {
       // set an error if the element is required but the input is too short
       // but don't throw an error if the element is optional and empty
       if (reqData[this.name].length < minLength &&
           (required || (!required && reqData[this.name].length > 0))) {
-         return this.form.processMessage(this.getMessage("tooShort", "Input for this field is too short ({0} characters). Please enter at least {1} characters!"),
+         return this.getMessage("tooShort", "Input for this field is too short ({0} characters). Please enter at least {1} characters!",
                reqData[this.name].length, minLength);
       }
    }
    return null;
-};
-
-
-/**
- * Returns a specific message for a config element.
- * @param {String} key The key of message (e.g. "missing", "toolong", "tooshort").
- * @param {String} defaultMsg the message to use when no message was defined 
- *        in the config.
- * @returns message
- * @type String
- * @private
- */
-jala.Form.InputComponent.prototype.getMessage = function(key, defaultMsg) {
-   if (this.messages && this.messages[key]) {
-      return this.messages[key];
-   } else {
-      return defaultMsg;
-   }
 };
 
 
@@ -1071,8 +1239,7 @@ jala.Form.extend(jala.Form.SelectComponent, jala.Form.InputComponent);
  */
 jala.Form.SelectComponent.prototype.renderControls = function(attr, value, reqData) {
    value = (reqData) ? reqData[this.name] : value;
-   jala.Form.html.dropDown(attr, this.parseOptions(), value,
-                           this.form.processMessage(this.getFirstOption()));
+   jala.Form.html.dropDown(attr, this.parseOptions(), value, this.getFirstOption());
    return;
 };
 
@@ -1143,7 +1310,7 @@ jala.Form.SelectComponent.prototype.checkOptions = function(reqData) {
       }
    }
    if (!found) {
-      return this.form.processMessage("Please select a valid option!");
+      return "Please select a valid option!";
    }
    return null;
 };
@@ -1190,7 +1357,7 @@ jala.Form.RadioComponent.prototype.renderControls = function(attr, value) {
          optionAttr.checked = "checked";
       }
       jala.Form.html.radioButton(optionAttr);
-      res.write(this.form.processMessage(optionDisplay));
+      res.write(optionDisplay);
       jala.Form.html.tag("br");
    }
    return;
@@ -1364,7 +1531,7 @@ jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
    if (reqData[this.name].contentLength == 0) {
       // no upload
       if (this.getRequired() == true) {
-         return this.form.processMessage("File upload is required.");
+         return "File upload is required.";
       } else {
          // no further checks necessary, exit here
          return null;
@@ -1373,7 +1540,7 @@ jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
 
    var maxLength = this.getMaxLength();
    if (maxLength && reqData[this.name].contentLength > maxLength) {
-      return this.form.processMessage(this.getMessage("tooLong", "This file is too big ({0} bytes), maximum allowed size {1} bytes."),
+      return this.getMessage("tooLong", "This file is too big ({0} bytes), maximum allowed size {1} bytes.",
             reqData[this.name].contentLength, maxLength);
    }
    
@@ -1381,7 +1548,8 @@ jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
    if (contentType) {
       var arr = (contentType instanceof Array) ? contentType : [contentType];
       if (arr.indexOf(reqData[this.name].contentType) == -1) {
-         return this.form.processMessage(this.getMessage("invalid", "This file type is not allowed."));
+         return this.getMessage("wrongType", "The file type {0} is not allowed.",
+            reqData[this.name].contentType);
       }
    }
    
@@ -1389,7 +1557,7 @@ jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
       try {
          var helmaImg = new Image(reqData[this.name]);
       } catch (imgError) {
-         return this.form.processMessage("This image file can't be processed.");
+         return this.getMessage("invalid", "This image file can't be processed.");
       }
    }
 
@@ -1404,212 +1572,38 @@ jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
 
 
 
-
-
-
-
-
 /**
- * Renders this form to the response.
- */
-jala.Form.prototype.render = function() {
-
-   // open the form tag
-   var formAttr = {
-      id     : this.name,
-      name   : this.name,
-      "class": "form",
-      action : req.action,
-      method : "post"
-   };
-   if (this.containsFileUpload()) {
-      // if there is an upload element, use multipart-enctype
-      formAttr.enctype = "multipart/form-data";
-   }
-   jala.Form.html.openTag("form", formAttr);
-
-   // print optional general error message
-   var errorMessage = this.getErrorMessage();
-   if (this.hasError() && errorMessage) {
-      jala.Form.html.element("div", this.processMessage(errorMessage),
-                   {id: this.createDomId("error"), "class": "form_error"});
-   }
-
-   jala.Form.html.openTag("fieldset");
-
-   // optional legend
-   if (this.getLegend() != null) {
-      jala.Form.html.element("legend", this.processMessage(this.getLegend()));
-   }
-
-   // loop through elements
-   var components  = this.listComponents();
-   for (var i=0; i<components.length; i++) {
-      components[i].render();
-   }
-
-   // submit button
-   jala.Form.html.openTag("div");
-   jala.Form.html.element("label", "", {id: this.createDomId("label", "submit")});
-   jala.Form.html.submit({id: this.createDomId("submit"),
-                name: this.createDomId("submit"),
-                "class": "submit",
-                "value": this.processMessage(this.getSubmitCaption() || "Submit")});
-   jala.Form.html.closeTag("div");
-   jala.Form.html.closeTag("fieldset");
-   jala.Form.html.closeTag("form");
-   return;
-};
-
-
-/**
- * renders the form as a string
- * @returns rendered form
- * @type String
- */
-jala.Form.prototype.renderAsString = function(param) {
-   res.push();
-   this.render(param);
-   return res.pop();
-};
-
-/**
- * Creates a DOM identifier based on the arguments passed. The
- * resulting Id will be prefixed with the name of the form config,
- * and all arguments will be separated by an underscore.
- * @returns The DOM Id
- * @type String
- */
-jala.Form.prototype.createDomId = function(/* [part1][, part2][, ...] */) {
-   res.push();
-   res.write(this.name);
-   for (var i=0;i<arguments.length;i++) {
-      if (arguments[i]) {
-         if (i < arguments.length) {
-            res.write("_");
-         }
-         res.write(arguments[i]);
-      }
-   }
-   return res.pop();
-};
-
-
-
-/**
- * Checks and validates user input from a submitted form.
- * First each component's checkSyntax method is called.
- * If it succeeds, the input is parsed and validated if
- * an optional validator function is set.
- * @see #setValidator
- * @param {Object} reqData request data after a submit
- * @type jala.Form.Tracker
- */
-jala.Form.prototype.check = function(reqData) {
-   var tracker = new jala.Form.Tracker(reqData);
-   var components = this.listComponents();
-   for (var i=0; i<components.length; i++) {
-      var name = components[i].name;
-      
-      var error = components[i].checkSyntax(reqData);
-      if (error != null) {
-         tracker.errors[name] = error;
-      } else {
-         if (tracker.errors[name] == null) {
-            tracker.values[name] = components[i].parseValue(reqData);
-         }
-         if (components[i].getValidator()) {
-            error = components[i].getValidator()(name, tracker.values[name], reqData, this);
-            if (error != null) {
-               tracker.errors[name] = error;
-            }
-         }
-      }
-   }
-   return tracker;
-};
-
-
-
-/**
- * Sets the parsed values on an object, according to the 
- * according to the provisions made through setSetter.
- * @see #setSetter
- * @param {jala.Form.Tracker} tracker tracker object holding parsed
- *             data from form input.
- * @param {Object} destObj object whose values should be changed.
- */
-jala.Form.prototype.save = function(tracker, destObj) {
-   var components = this.listComponents();
-   for (var i=0; i<components.length; i++) {
-      components[i].setValue(destObj, tracker.values[components[i].name]);
-   }
-   return;
-};
-
-
-
-
-/**
- * Parses form input, applies check functions and stores the values
- * if the form does validate. Otherwise this method returns false
- * without saving so that the form can be reprinted with error messages.
- * @param {Object} reqData input from form
- * @param {Object} destObj object whose values should be chanegd
- * @returns False if one of the checks failed,
- *          true if the element was saved correctly.
- * @type Boolean
- */
-jala.Form.prototype.handle = function(reqData, destObj) {
-   var tracker = form.check(reqData);
-   if (tracker.hasError()) {
-      // store tracker with error messages for re-rendering the form
-      form.setDataObj(tracker);
-      return false;
-   } else {
-      form.save(tracker, destObj);
-      return true;
-   }
-};
-
-
-/**
- * macro to render the form
- */
-jala.Form.prototype.render_macro = function(param) {
-   this.render(param);
-   return;
-};
-
-
-/**
- * static helper function to test values for being a valid email address.
+ * static validator function to test values for being a valid email address.
  * @param {String} name name of the property being validated.
  * @param {String} value value in form input
- * @param {jala.Form.Tracker} tracker object holding error messages
  * @param {Object} reqData the whole request-data-object,
            in case properties depend on each other
+ * @param {jala.Form} formObj instance of jala.Form
+ * @returns Error message or null
+ * @type String
  */
-jala.Form.isEmail = function(name, value, tracker, reqData) {
+jala.Form.isEmail = function(name, value, reqData, formObj) {
    if (!value.isEmail()) {
-      tracker.setError(name, gettext("Please enter a valid email address!"));
+      return "Please enter a valid email address!";
    }
-   return;
+   return null;
 };
 
 /**
- * static helper function to test values for being a valid url.
+ * static validator function to test values for being a valid url.
  * @param {String} name name of the property being validated.
  * @param {String} value value in form input
- * @param {jala.Form.Tracker} tracker object holding error messages
  * @param {Object} reqData the whole request-data-object,
            in case properties depend on each other
+ * @param {jala.Form} formObj instance of jala.Form
+ * @returns Error message or null
+ * @type String
  */
-jala.Form.isUrl = function(name, value, tracker, reqData) {
+jala.Form.isUrl = function(name, value, reqData, formObj) {
    if (value && !helma.Http.evalUrl(value)) {
-      tracker.setError(name, gettext("Please enter a valid URL (web address)!"));
+      return "Please enter a valid URL (web address)!";
    }
-   return;
+   return null;
 };
 
 
@@ -1656,12 +1650,16 @@ jala.Form.Tracker.prototype.hasError = function() {
    return false;
 };
 
-
+/**
+ * Helper method.
+ * @private
+ */
 jala.Form.Tracker.prototype.debug = function() {
    for (var key in this.errors) {
       res.debug(key + ":" + this.errors[key]);
    }
    return;
 };
+
 
 
