@@ -1188,6 +1188,94 @@ jala.Form.TextareaComponent.prototype.renderControls = function(attr, value, req
 
 /**
  * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * date editor.
+ * @base jala.Form.InputComponent
+ * @param {String} name Name of the component, used as name of the html controls.
+ * @constructor
+ */
+jala.Form.DateComponent = function DateComponent(name) {
+   jala.Form.DateComponent.superConstructor.apply(this, arguments);
+
+   var dateFormat = "d.M.yyyy H:m";
+   var dateFormatObj;
+
+   /**
+    * Returns the date format for this component.
+    * @returns date format object
+    * @type java.text.SimpleDateFormat
+    */
+   this.getDateFormat = function() {
+      if (!dateFormatObj || dateFormatObj.toPattern() != dateFormat) {
+         dateFormatObj = new java.text.SimpleDateFormat(dateFormat);
+      }
+      return dateFormatObj;
+   };
+
+   /**
+    * Sets the date format for this component.
+    * @param {String} newDateFormat new date format
+    */
+   this.setDateFormat = function(newDateFormat) {
+      dateFormat = newDateFormat;
+      return;
+   };
+
+   return this;
+};
+// extend InputComponent
+jala.Form.extend(jala.Form.DateComponent, jala.Form.InputComponent);
+
+/**
+ * Renders a textarea tag to the response.
+ * @param {Object} attr Basic attributes for this element.
+ * @param {Object} value Value to be used for rendering this element.
+ * @param {Object} reqData Request data for the whole form. This argument is
+ *       passed only if the form is re-rendered after an error occured.
+ */
+jala.Form.DateComponent.prototype.renderControls = function(attr, value, reqData) {
+   attr.value = (reqData) ? reqData[this.name] : this.getDateFormat().format(value);
+   if (this.getMaxLength()) {
+      attr.maxlength = this.getMaxLength();
+   }
+   if (this.getSize()) {
+      attr.size = this.getSize();
+   }
+   jala.Form.html.input(attr);
+   return;
+};
+
+
+/**
+ * Validates user input from a date editor.
+ * @param {Object} reqData request data
+ * @returns null if everything is ok or string containing error message
+ * @type String
+ */
+jala.Form.DateComponent.prototype.checkSyntax = function(reqData) {
+   try {
+      this.parseValue(reqData);
+      return null;
+   } catch(e) {
+      return this.getMessage("invalid", "This date cannot be parsed.");
+   }
+};
+
+
+/**
+ * Parses the string input from the form and converts it to a date object.
+ * Throws an error if the string cannot be parsed.
+ * @param {Object} reqData request data
+ * @returns parsed date value
+ * @type Date
+ */
+jala.Form.DateComponent.prototype.parseValue = function(reqData) {
+   return this.getDateFormat().parse(reqData[this.name]);
+};
+
+
+
+/**
+ * @class Subclass of jala.Form.InputComponent which renders and validates a
  * dropdown element.
  * @base jala.Form.InputComponent
  * @param {String} name Name of the component, used as name of the html controls.
@@ -1459,37 +1547,55 @@ jala.Form.FileComponent = function FileComponent(name) {
    
    var contentType, maxLength, validateImage = undefined;
 
-// * <li><code>required</code> If set to true, upload is mandatory for this form.
-// * <li><code>contentType</code> Mime-Types accepted as upload
-// *          (String or Array of Strings, no wildcards!)</li>
-// * <li><code>maxlength</code> Maximum length of file in bytes</li>
-// * <li><code>validateImage</code> If set to true, Helma will try to
-// *          create an image with the uploaded data and print an
-// *          error if this fails.</li>
-
-   
+   /**
+    * Returns the mime types accepted as upload (string 
+    * or array of strings)
+    * @type String | Array
+    */
    this.getContentType = function() {
       return contentType;
    };
    
+   /**
+    * Sets the mime types accepted as upload (string 
+    * or array of strings)
+    * @param {String | Array} newContentType
+    */
    this.setContentType = function(newContentType) {
       contentType = newContentType;
       return;
    };
    
+   /**
+    * Returns the maximum length of uploaded files in bytes.
+    * @type Number
+    */
    this.getMaxLength = function() {
       return maxLength;
    };
    
+   /**
+    * Sets the maximum length of uploaded files
+    * @param {Number} newMaxLength maximum length in bytes
+    */
    this.setMaxLength = function(newMaxLength) {
       maxLength = newMaxLength;
       return;
    };
    
+   /**
+    * Returns true if uploaded data should be checked for an image.
+    * @type Boolean
+    */
    this.getValidateImage = function() {
       return validateImage;
    };
    
+   /**
+    * If set to true, Helma will try to create an image with
+    * the uploaded data and print an error if this fails.
+    * @param {Boolean} newValidateImage
+    */
    this.setValidateImage = function(newValidateImage) {
       validateImage = newValidateImage;
       return;
