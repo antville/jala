@@ -587,6 +587,9 @@ jala.Form.InputComponent = function InputComponent(name) {
 
    /**
     * Sets the getter function for this component
+    * Function is called with two arguments and global scope:
+    * <li>the object which is provided the defaults for the form
+    * <li>the name of the component
     * @param {Function} newGetter new getter function
     */
    this.setGetter = function(newGetter) {
@@ -757,7 +760,7 @@ jala.Form.InputComponent.prototype.getValue = function() {
    if (dataObj instanceof jala.Form.Tracker) {
       // handling re-rendering
       return null;
-   } else if (this.getter instanceof Function) {
+   } else if (this.getGetter() instanceof Function) {
       return this.getGetter().apply(null, [dataObj, this.name]);
    } else {
       return dataObj[this.name];
@@ -1470,28 +1473,25 @@ jala.Form.RadioComponent.prototype.checkSyntax = function(reqData) {
 
 /**
  * @class Subclass of jala.Form.InputComponent which renders and validates a
- * checkbox.
+ * checkbox based on a flag with the values 0 and 1.
  * @base jala.Form.InputComponent
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.CheckboxComponent = function CheckboxComponent(name) {
-   jala.Form.CheckboxComponent.superConstructor.apply(this, arguments);
-   
-   // FIXME: this component requires some work..
-   
+jala.Form.FlagComponent = function BooleanComponent(name) {
+   jala.Form.FlagComponent.superConstructor.apply(this, arguments);
    return this;
 };
 // extend InputComponent
-jala.Form.extend(jala.Form.CheckboxComponent, jala.Form.InputComponent);
+jala.Form.extend(jala.Form.FlagComponent, jala.Form.InputComponent);
 
 /**
  * Renders an checkbox to the response.
  * @param {Object} attr Basic attributes for this element.
  * @param {Object} value Value to be used for rendering this element.
  */
-jala.Form.CheckboxComponent.prototype.renderControls = function(attr, value) {
-   if ((this.checked && value == this.checked) || value == "1") {
+jala.Form.FlagComponent.prototype.renderControls = function(attr, value, reqData) {
+   if (value == 1 || (reqData && reqData[this.name] == "1")) {
       attr.checked = "checked";
    }
    attr.value = "1";
@@ -1500,30 +1500,26 @@ jala.Form.CheckboxComponent.prototype.renderControls = function(attr, value) {
 };
 
 /**
- * Parses the string input from the form.
+ * Parses the string input from the form. For a checked box, the value is 1,
+ * for an unchecked box the value is 0.
  * @param {Object} reqData request data
  * @returns parsed value
- * @type Object
+ * @type Number
  */
-jala.Form.CheckboxComponent.prototype.parseValue = function(reqData) {
-   return reqData[this.name];
+jala.Form.FlagComponent.prototype.parseValue = function(reqData) {
+   return (reqData[this.name] == "1") ? 1 : 0;
 };
 
 
 /**
- * Validates user input from checkbox. This method translates the "1" value
- * of the checkbox back into the checked/unchecked values defined by the
- * config.
+ * Validates user input from checkbox.
  * @param {Object} reqData request data
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.CheckboxComponent.prototype.checkSyntax = function(reqData) {
-   // FIXME: das sollte nach parseValue!!!!
-   if (reqData[this.name] == "1") {
-      reqData[this.name] = (this.checked) ? this.checked : "1";
-   } else {
-      reqData[this.name] = (this.unchecked) ? this.unchecked : "0";
+jala.Form.FlagComponent.prototype.checkSyntax = function(reqData) {
+   if (reqData[this.name] && reqData[this.name] != "1") {
+      return this.getMessage("invalid", "The value of this checkbox is invalid.");
    }
    return null;
 };
