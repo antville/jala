@@ -36,6 +36,7 @@ if (!global.jala) {
 /**
  * HelmaLib dependencies
  */
+app.addRepository("modules/core/String.js");
 app.addRepository("modules/helma/Http.js");
 
 /**
@@ -121,7 +122,7 @@ jala.Test.valueToString = function(val) {
       res.write("undefined");
    } else {
       if (val.constructor && val.constructor == String) {
-         res.write('"' + val.toString() + '"');
+         res.write('"' + encode(val.head(200)) + '"');
       } else {
          res.write(val.toString());
       }
