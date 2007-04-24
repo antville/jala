@@ -385,8 +385,11 @@ jala.Form.prototype.check = function(reqData) {
    var tracker = new jala.Form.Tracker(reqData);
    var components = this.listComponents();
    for (var i=0; i<components.length; i++) {
+      var error = null;
       var name = components[i].name;
-      var error = components[i].checkSyntax(reqData);
+      if (components[i].getCheckSyntax() == true) {
+         error = components[i].checkSyntax(reqData);
+      }
       if (error != null) {
          tracker.errors[name] = error;
       } else {
@@ -453,6 +456,10 @@ jala.Form.prototype.render_macro = function(param) {
    return;
 };
 
+jala.Form.prototype.id_macro = function(param) {
+   res.write(this.name);
+}
+
 
 
 
@@ -500,6 +507,30 @@ jala.Form.InputComponent = function InputComponent(name) {
       return this.constructor.name.toLowerCase().replace(/component$/, "");
    };
 
+   
+   var checkSyntax = true;
+   
+   /**
+    * Returns true if this component should do a syntax check of the user's input.
+    * False if it has been deactivated for this component (e.g. if the controls
+    * are modified by client javascript).
+    * @type Boolean
+    */
+   this.getCheckSyntax = function() {
+      return checkSyntax;
+   };
+
+   /**
+    * Turns syntax check for this component on or off.
+    * Default is on.
+    * @param {Boolean} newCheckSyntax value defining wheter syntax should be checked or not.
+    */
+   this.setCheckSyntax = function(newCheckSyntax) {
+      res.debug("newCheckSyntax="+newCheckSyntax);
+      checkSyntax = newCheckSyntax;
+      return;
+   };
+   
    
 
    var className, label, help, required, getter, setter, validator = undefined;
