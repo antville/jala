@@ -911,6 +911,10 @@ jala.Form.InputComponent.prototype.help_macro = function(param) {
    return;
 };
 
+jala.Form.InputComponent.prototype.id_macro = function(param) {
+   res.write(this.form.createDomId(this.name));
+   return;
+};
 
 /**
  * Creates a new attribute object for this element.
