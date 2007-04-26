@@ -32,7 +32,10 @@ var tests = [
    "testArgsContainComment",
    "testGetComment",
    "testGetValue",
-   "testAssertionFunctions",
+   "testBasicAssertionFunctions",
+   "testAssertThrows",
+   "testAssertEqualFile",
+   "testInclude",
 ];
 
 /**
@@ -86,7 +89,7 @@ var testGetValue = function testGetValue() {
 /**
  * Testing assertion functions
  */
-var testAssertionFunctions = function testAssertionFunctions() {
+var testBasicAssertionFunctions = function testAssertionFunctions() {
    assertTrue("just a comment", true);
    assertFalse("just a comment", false);
    assertEqual(1, 1);
@@ -99,5 +102,76 @@ var testAssertionFunctions = function testAssertionFunctions() {
    assertNotNaN(1);
    assertStringContains("just a self test", "self");
    assertMatch("just a self test", /^just/);
+   return;
+};
+
+/**
+ * Testing assertThrows
+ */
+var testAssertThrows = function testAssertThrows() {
+   // throw undefined (yes, you can do that...)
+   assertThrows(function() {
+      throw undefined;
+   }, undefined);
+   // throw custom javascript object
+   assertThrows(function() {
+      throw new jala.Test.TestException("", "message");
+   }, jala.Test.TestException);
+   // throw string
+   assertThrows(function() {
+      throw "my message";
+   }, "my message");
+   // throw java exception
+   assertThrows(function() {
+      var x = new java.util.Vector(0);
+      res.debug(x.get(1));
+   }, java.lang.ArrayIndexOutOfBoundsException);
+   // throw anything, but don't check further
+   assertThrows(function() {
+      throw new Date();
+   });
+   // don't throw an expected exception
+   assertThrows(function() {
+      assertThrows(function() {
+         return;
+      }, "oy");
+   }, jala.Test.TestException);
+   return;
+};
+
+var testInclude = function() {
+   var dir = java.lang.System.getProperty("java.io.tmpdir");
+   var content = "var INCLUDED = true;";
+   // create include file with the above content
+   var file = new helma.File(dir, "testInclude." + (new Date()).getTime());
+   file.open();
+   file.write(content);
+   file.close();
+   include(file);
+   // now include the file and test if everything works
+   assertTrue(global["INCLUDED"]);
+   // finally remove the include file again
+   file.remove();
+   return;
+};
+
+/**
+ * Testing testAssertEqualFile
+ */
+var testAssertEqualFile = function testAssertEqualFile() {
+   var str = "This is just a simple test\r\n";
+   var dir = java.lang.System.getProperty("java.io.tmpdir");
+   // create test file and write the string into the file
+   var testFile = new helma.File(dir, "testAssertEqualFile." + (new Date()).getTime());
+   testFile.open();
+   testFile.write(str);
+   testFile.close();
+   // test string comparison
+   assertEqualFile(str, testFile);
+   // test byte array comparison
+   var arr = new java.lang.String(str).getBytes();
+   assertEqualFile(arr, testFile);
+   // finally, remove testFile again
+   testFile.remove();
    return;
 };
