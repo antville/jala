@@ -121,18 +121,28 @@ jala.Test.valueToString = function(val) {
    } else if (val === undefined) {
       res.write("undefined");
    } else {
-      if (val.constructor && val.constructor == String) {
-         res.write('"' + encode(val.head(200)) + '"');
+      if (typeof(val) == "function") {
+         // functions can be either JS methods or Java classes
+         // the latter throws an exception when trying to access a property
+         try {
+            res.write(val.name || val);
+         } catch (e) {
+            res.write(val);
+         }
       } else {
-         res.write(val.toString());
+         if (val.constructor && val.constructor == String) {
+            res.write('"' + encode(val.head(200)) + '"');
+         } else {
+            res.write(val.toString());
+         }
+         res.write(" (");
+         if (val.constructor && val.constructor.name != null) {
+            res.write(val.constructor.name);
+         } else {
+            res.write(typeof(val));
+         }
+         res.write(")");
       }
-      res.write(" (");
-      if (val.constructor && val.constructor.name != null) {
-         res.write(val.constructor.name);
-      } else {
-         res.write(typeof(val));
-      }
-      res.write(")");
    }
    return res.pop();
 };
@@ -212,7 +222,7 @@ jala.Test.evalArguments = function(args, argsExpected) {
  * @type Boolean
  */
 jala.Test.argsContainComment = function(args, argsExpected) {
-   return !(args.length == argsExpected
+   return !(args.length <= argsExpected
                || (args.length == argsExpected + 1 && typeof(args[0]) != "string"))
 };
 
@@ -307,12 +317,35 @@ jala.Test.getTestScope = function() {
          scope[i] = jala.Test.prototype[i];
       }
    }
+   // add global include method
+   scope.include = function(file) {
+      jala.Test.include(scope, file);
+      return;
+   };
    // instantiate a global HttpClient
    scope.httpClient = new jala.Test.HttpClient();
    // instantiate the test database manager
    scope.testDatabases = new jala.Test.DatabaseMgr();
    return scope;
-}
+};
+
+/**
+ * Evaluates a javascript file in the global test scope. This method can be used
+ * to include generic testing code in test files. This method is available as
+ * global method "include" for all test methods
+ * @param {Object} scope The scope in which the file should be evaluated
+ * @param {String} fileName The name of the file to include, including the path
+ */
+jala.Test.include = function(scope, file) {
+   var file = new helma.File(file);
+   var fileName = file.getName();
+   if (file.canRead() && file.exists()) {
+      var cx = Packages.org.mozilla.javascript.Context.enter();
+      var code = new java.lang.String(file.readAll() || "");
+      cx.evaluateString(scope, code, fileName, 1, null);
+   }
+   return;
+};
 
 
 
@@ -646,9 +679,9 @@ jala.Test.prototype.results_macro = function() {
 
 
 
-/*************************************************
- ***** A S S E R T I O N   F U N C T I O N S *****
- *************************************************/
+/***********************************************************************
+ ***** A S S E R T I O N   A N D   H E L P E R   F U N C T I O N S *****
+ ***********************************************************************/
 
 
 /**
@@ -715,6 +748,41 @@ jala.Test.prototype.assertEqual = function assertEqual(val1, val2) {
       throw new jala.Test.TestException(comment,
                       "Expected " + jala.Test.valueToString(value1) +
                       " to be equal to " + jala.Test.valueToString(value2));
+   }
+   return;
+};
+
+/**
+ * Checks if the value passed as argument equals the content of a file on disk.
+ * @param {Object} val The value that should be compared with the content of
+ * the file on disk.
+ * @param {String|helma.File} file Either a file name (including a path), or
+ * an instance of helma.File representing the file to use for comparison.
+ * @throws jala.Test.ArgumentsException
+ * @throws jala.Test.TestException
+ */
+jala.Test.prototype.assertEqualFile = function assertEqualFile(val, file) {
+   var functionName = arguments.callee.name;
+   var argsExpected = arguments.callee.length;
+   jala.Test.evalArguments(arguments, argsExpected);
+   var comment = jala.Test.getComment(arguments, argsExpected);
+   var value1 = jala.Test.getValue(arguments, argsExpected, 0);
+   var file = new helma.File(jala.Test.getValue(arguments, argsExpected, 1));
+   var equals;
+   if (value1.getClass && value1.getClass().isArray() &&
+          value1.getClass().getComponentType() === java.lang.Byte.TYPE) {
+      equals = java.util.Arrays.equals(value1, file.toByteArray());
+   } else {
+      // remove the last linefeed in value1, since readAll() removes
+      // the last linefeed in a file too
+      var str = value1.replace(/\r?\n$/g, "");
+      equals = str === file.readAll();
+   }      
+   if (!equals) {
+      throw new jala.Test.TestException(comment,
+                      "Expected " + jala.Test.valueToString(value1) +
+                      " to be equal to the contents of the file " +
+                      file.getAbsolutePath());
    }
    return;
 };
@@ -894,7 +962,7 @@ jala.Test.prototype.assertStringContains = function assertStringContains(val, st
  * @throws jala.Test.ArgumentsException
  * @throws jala.Test.TestException
  */
-jala.Test.prototype.assertMatch = function assertStringContains(val, rxp) {
+jala.Test.prototype.assertMatch = function assertMatch(val, rxp) {
    var functionName = arguments.callee.name;
    var argsExpected = arguments.callee.length;
    jala.Test.evalArguments(arguments, argsExpected);
@@ -911,6 +979,62 @@ jala.Test.prototype.assertMatch = function assertStringContains(val, rxp) {
       throw new jala.Test.ArgumentsException("Invalid argument to assertMatch(string, regexp): " +
                       jala.Test.valueToString(pattern));
    }
+   return;
+};
+
+/**
+ * Checks if the function passed as argument throws a defined exception.
+ * @param {Object} func The function to call
+ * @param {Object} exception Optional object expected to be thrown when executing
+ * the function
+ * @throws jala.Test.ArgumentsException
+ * @throws jala.Test.TestException
+ */
+jala.Test.prototype.assertThrows = function assertThrows(func, exception) {
+   var functionName = arguments.callee.name;
+   var argsExpected = arguments.callee.length;
+   if (!func || !(func instanceof Function)) {
+      throw new jala.Test.ArgumentsException("Insufficient arguments passed to assertion function");
+   }
+   var comment = jala.Test.getComment(arguments, argsExpected);
+   var func = jala.Test.getValue(arguments, argsExpected, 0);
+   var expected = jala.Test.getValue(arguments, argsExpected, 1);
+
+   try {
+      func();
+   } catch (e) {
+      var isExpected = false;
+      var thrown = e;
+      if (expected == null) {
+         // didn't expect an exception, so accept everything
+         isExpected = true;
+      } else if (expected != null && e != null) {
+         // check if exception is the one expected
+         switch (typeof(expected)) {
+            case "string":
+               isExpected = (e.name === expected || e === expected);
+               break;
+            case "function":
+               // this is true for all JS constructors and Java classes!
+               isExpected = (e instanceof expected ||
+                             (thrown = e.rhinoException) instanceof expected ||
+                             (thrown = e.javaException) instanceof expected);
+               break;
+            case "number":
+            case "boolean":
+            default:
+               isExpected = (e === expected);
+               break;
+         }
+      }
+      if (!isExpected) {
+         throw new jala.Test.TestException(comment, "Expected " + jala.Test.valueToString(expected) +
+                                   " being thrown, but got '" + jala.Test.valueToString(thrown) + "' instead");
+      }
+      return;
+   }
+   throw new jala.Test.TestException(comment, "Expected exception " +
+                             jala.Test.valueToString(expected) + " being thrown");
    return;
 };
 
