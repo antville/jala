@@ -39,7 +39,7 @@ Root.prototype.jala_test_action = function() {
    } else if (req.isPost() && (req.data.test_array || req.data.test)) {
       res.handlers.test.execute(req.data.test_array || req.data.test);
    }
-   renderSkin("jala.Test.main");
+   renderSkin("jala.Test");
    return;
 };
 
@@ -48,6 +48,6 @@ Root.prototype.jala_test_action = function() {
  */
 Root.prototype.jala_test_css_action = function() {
    res.contentType = "text/css";
-   renderSkin("jala.Test.stylesheet");
+   renderSkin("jala.Test#stylesheet");
    return;
 };

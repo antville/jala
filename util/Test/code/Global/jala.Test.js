@@ -618,7 +618,7 @@ jala.Test.prototype.renderResults = function() {
 };
 
 /**
- * Renders a single the result of a single test
+ * Renders the result of a single test
  * @param {jala.Test.TestResult} The result to render
  */
 jala.Test.prototype.renderResult = function(result) {
@@ -627,9 +627,9 @@ jala.Test.prototype.renderResult = function(result) {
    for (var i=0;i<result.log.length;i++) {
       logItem = result.log[i];
       if (logItem instanceof jala.Test.Exception) {
-         renderSkin("jala.Test.log.failed", logItem);
+         renderSkin("jala.Test#logFailed", logItem);
       } else {
-         renderSkin("jala.Test.log.passed", logItem);
+         renderSkin("jala.Test#logPassed", logItem);
       }
    }
    var param = {
@@ -638,7 +638,7 @@ jala.Test.prototype.renderResult = function(result) {
       status: result.status,
       log: res.pop()
    }
-   renderSkin("jala.Test.result", param);
+   renderSkin("jala.Test#result", param);
    return;
 };
 
@@ -663,7 +663,7 @@ jala.Test.prototype.list_macro = function() {
                    (req.data.test_array && req.data.test_array.contains(fileName))) {
             skinParam.checked = "checked";
          }
-         renderSkin("jala.Test.item", skinParam);
+         renderSkin("jala.Test#item", skinParam);
       }
    }
    return;
