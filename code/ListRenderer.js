@@ -39,358 +39,641 @@ if (!global.jala) {
 app.addRepository("modules/helma/Html.js");
 
 /**
- * Construct a list renderer.
- * @class This class eases the rendering of arbitrary lists.
- * Such lists can be represented by HopObject collections or 
- * Arrays of HopObjects. Various arguments provide customization
- * of the number of items per page, the maximum of pages and so on.
- * @param {Object} listParam Customization parameters:
- * <ul>
- * <li>collection - Collection or Array of HopObjects.</li>
- * <li>currentPage - Optional index of the current page 
- * (<code>req.data.page</code>)</li>
- * <li>itemsPerPage - The optional number of items per list page.</li>
- * <li>maxPages - The optional maximum number of pages.</li>
- * <li>href - An optional URL string to link to.</li>
- * <li>urlParams - Optional extra URL parameters.</li>
- * </ul>
- * @param {Object} renderers The list types and renderer methods 
- * used to render the single items in a list.
- * @returns A new list renderer instance.       
- * @throws Exception if an ArrayList containing a subset of a bigger 
- * Array and has too view elements for one page or the last page.       
+ * @class
+ * @param {HopObject|ArrayList} coll The collection this ListRenderer
+ * operates on, or - for backwards compatibility only - a parameter object containing
+ * the collection and any other optional configuration parameters.
+ * @param {Object} renderer An optional renderer to use. If this is set,
+ * any rendering method defined in this renderer overrides the default renderer.
  * @constructor
  */
-jala.ListRenderer = function(listParam, renderers) {
-   var collectionSize;
-   var collection;
-   var currentPage;
-   var itemsPerPage;
-   var maxPages;
-   var totalPages;
-   var href;
-   var urlParams;
-   var urlParamName;
-   var listItemSkin;
+jala.ListRenderer = function(coll, renderer) {
+   
+   /**
+    * The collection this ListRenderer operates on
+    * @type HopObject|ArrayList
+    * @private
+    */
+   var collection = null;
 
-   var cache = {
+   /**
+    * Private variable containing the number of items to display
+    * on one page. Defaults to 10.
+    * @type Number
+    * @private
+    */
+   var pageSize = 10;
+   
+   /**
+    * Private variable containing the maximum number of pages to display
+    * within this ListRenderer instance
+    * @type Number
+    * @private
+    */
+   var maxPages = Number.MAX_VALUE;
+
+   /**
+    * Private variable containing the base href of this ListRenderer
+    * @type String
+    * @private
+    */
+   var baseHref = null;
+
+   /**
+    * Private variable containing the name of the skin to render for
+    * a single list item
+    * @type String
+    * @private
+    */
+   var itemSkin = null;
+
+   /**
+    * Private variable containing any optional url parameters to append to
+    * every navigation link rendered by this ListRenderer instance.
+    * @type String
+    * @private
+    */
+   var urlParameters = null;
+
+   /**
+    * Private variable containing the name of the url parameter containing
+    * the page number to display. Defaults to "page".
+    * @type String
+    * @private
+    */
+   var urlParameterName = "page";
+
+   /**
+    * Internal cache for rendered navigation elements
+    * @private
+    */
+   this.cache = {
       pageNavigation: null,
       prevLink: null,
-      nextLink: null
+      nextLink: null,
+   };
+   
+   /**
+    * Returns the collection this ListRenderer instance operates on
+    * @returns The collection of this ListRenderer
+    * @type HopObject|Array
+    */
+   this.getCollection = function() {
+      return collection;
    };
 
-   var setTotalPages = function() {
-      if (maxPages)
-         totalPages = Math.min(maxPages, Math.ceil(collectionSize / itemsPerPage));
-      else
-         totalPages = Math.ceil(collectionSize / itemsPerPage);
-      return;
-   };
-
-   var getRenderFunction = function(handlerName, fName) {
-      if (!fName)
-         fName = "default";
-      var handler;
-      if (renderers != null && (handler = renderers[handlerName]) != null) {
-         if (handler[fName] instanceof Function) {
-            return handler[fName];
+   /**
+    * Sets the collection of this ListRenderer
+    * @param {HopObject|Array} coll The collection this ListRenderer instance
+    * should operate on
+    */
+   this.setCollection = function(coll) {
+      if (coll != null) {
+         if (coll instanceof HopObject) {
+            collection = coll;
+         } else if (!(coll instanceof jala.ListRenderer.ArrayList)) {
+            // wrap all other collection types in an ArrayList
+            collection = new jala.ListRenderer.ArrayList(coll);
          }
       }
-      // no renderer found, try to find a default renderer
-      if ((handler = jala.ListRenderer.defaultRenderer[handlerName]) != null) {
-         return handler[fName];
-      }
-      return null;
-   };
-
-   var getHref = function(page) {
-      if (urlParams) {
-         if (page)
-            return String.compose(href, "?", urlParams, "&", urlParamName, "=", page);
-         else
-            return String.compose(href, "?", urlParams);
-      } else {
-         if (page)
-            return String.compose(href, "?", urlParamName, "=", page);
-         else
-            return href;
-      }
+      return;
    };
 
    /**
-    * Returns true if this ListRenderer instance
-    * has already a listItemSkin set.
+    * Returns the number of items displayed on one page
+    * @returns The number of items displayed on a single page
+    * @type Number
     */
-   this.hasListItemSkin = function() {
-      return listItemSkin != null;
+   this.getPageSize = function() {
+      return pageSize;
+   };
+
+   /**
+    * Sets the number of items to display on a single page
+    * @param {Number} size The number of items to display on one page
+    */
+   this.setPageSize = function(size) {
+      if (size != null && !isNaN(size)) {
+         pageSize = parseInt(size, 10);
+      }
+      return;
+   };
+
+   /**
+    * Returns the current page index. This is either the page url parameter
+    * or the page number 1.
+    * @returns The current page number (starts with 1).
+    * @type Number
+    * @see #setUrlParameterName
+    */
+   this.getCurrentPage = function() {
+      var pageNr = parseInt(req.data[this.getUrlParameterName()], 10);
+      if (!pageNr || isNaN(pageNr)) {
+         pageNr = 1;
+      }
+      return Math.min(Math.max(1, pageNr), this.getTotalPages());
+   };
+
+   /**
+    * Returns the maximum number of pages handled by this ListRenderer instance
+    * @returns The maximum number of pages
+    * @type Number
+    */
+   this.getMaxPages = function() {
+      return maxPages;
+   };
+
+   /**
+    * Sets the maximum number of pages to display
+    * @param {Number} pages The maximum number of pages to display
+    */
+   this.setMaxPages = function(pages) {
+      if (pages != null && !isNaN(pages)) {
+         maxPages = parseInt(pages, 10);
+      }
+      return;
+   };
+
+   /**
+    * Returns the total number of pages handled by this ListRenderer instance
+    * (which is the collection size divided by the page size).
+    * @returns The total number of pages
+    * @type Number
+    */
+   this.getTotalPages = function() {
+      var collectionSize = collection.size();
+      var pages = Math.ceil(collectionSize / pageSize);
+      if (maxPages > 0) {
+         return Math.min(maxPages, pages);
+      }
+      return pages;
+   };
+
+   /**
+    * Returns the base href of this ListRenderer instance
+    * @returns The base href of this ListRenderer instance
+    * @type String
+    */
+   this.getBaseHref = function() {
+      return baseHref;
+   };
+
+   /**
+    * Sets the base href of this ListRenderer instance. All links rendered
+    * will start with the href passed as argument
+    * @param {String} href The base href to use for rendering links
+    */
+   this.setBaseHref = function(href) {
+      if (href != null) {
+         baseHref = href;
+      }
+      return;
    };
    
    /**
-    * Set the amount of items shown per page.
-    * @param {int} limit The maximum number of items per page.
+    * Returns the name of the skin rendered for a single list item
+    * @returns The name of the list item skin
+    * @type Number
     */
-   this.setPageSize = function(limit) {
-      if (collectionSize == 0)
-         return;
-      if (limit && !isNaN(limit)) {
-         // got a different itemsPerPage count, so recalculate
-         itemsPerPage = parseInt(limit, 10);
-         setTotalPages();
-      }
-      // correct currentPage if necessary
-      currentPage = Math.min(Math.max(1, currentPage), totalPages);
-      return;
-   };
-   
-   /**
-    * Set the current Page.
-    * @param (int) the current Page
-    */
-   this.setCurrentPage = function (page) {
-      currentPage = page;
-   };
-   
-   /**
-    * Returns the current Page.
-    * @returns the current Page.
-    */
-   this.getCurrentPage = function () {
-      return currentPage;
-   };
-   
-   this.getSize = function () {
-      return collectionSize;
+   this.getItemSkin = function() {
+      return itemSkin;
    };
 
    /**
-    * Render the list.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
+    * Sets the name of the skin to render for every list item
+    * @param {String} name The name of the skin to render for every list item
     */
-   this.renderList = function(param) {
-      if (collectionSize == 0 || totalPages == 0)
-         return null;
-      var idx, stop;
-      this.setPageSize();
-      if (itemsPerPage) {
-         idx = ((currentPage -1) * itemsPerPage);
-         stop = Math.min(idx + itemsPerPage, collectionSize);
-      } else {
-         idx = 0;
-         stop = collectionSize;
-         itemsPerPage = stop;
-      }
-      // preload objects if collection is a HopObject one
-      if (collection instanceof HopObject) {
-         collection.prefetchChildren(idx, stop - idx);
-      }
-
-      var prevItem = null;
-      if (!param)
-         var param = {};
-      var renderFunc = getRenderFunction("list", param.type);
-      param.counter = 1;
-      param.index = idx + 1;
-      param.stop = stop;
-      param.itemsPerPage = itemsPerPage;
-      param.collectionSize = collectionSize;
-      if (!param.skin && listItemSkin)
-         param.skin = listItemSkin;
-      while (idx < stop) {
-         var item = collection.get(idx++);
-         renderFunc(item, prevItem, param);
-         prevItem = item;
-         param.counter += 1;
-         param.index += 1;
+   this.setItemSkin = function(name) {
+      if (name != null) {
+         itemSkin = name;
       }
       return;
    };
 
    /**
-    * Render the list as string.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @returns The rendered list.
-    * @type String
-    * @see jala.ListRenderer#renderList
-    */
-   this.renderListAsString = function(param) {
-      res.push();
-      this.renderList(param);
-      return res.pop();
-   };
-
-   /**
-    * Render a link to the previous page as string.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @returns The rendered link to the previous page.
+    * Returns the name of the URL parameter name containing the index
+    * of the page to display
+    * @returns The name of the page URL parameter name
     * @type String
     */
-   this.renderPrevLinkAsString = function(param) {
-      if (collectionSize == 0 || currentPage <= 1)
-         return null;
-      if (!cache.prevLink) {
-         res.push();
-         param.index = currentPage -1;
-         param.href = getHref(param.index);
-         var renderFunc = getRenderFunction("pageLink", param.type);
-         if (!renderFunc)
-            return "[render function missing]";
-         renderFunc("prev", param);
-         cache.prevLink = res.pop();
-      }
-      return cache.prevLink;
+   this.getUrlParameterName = function() {
+      return urlParameterName;
    };
 
    /**
-    * Render a link to the previous page.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @see jala.ListRenderer#renderPrevLink
+    * Sets the name of the URL parameter name containing the index of the page
+    * to display
+    * @param {String} name The name of the page URL parameter
     */
-   this.renderPrevLink = function(param) {
-      res.write(this.renderPrevLinkAsString(param));
+   this.setUrlParameterName = function(name) {
+      if (name != null) {
+         urlParameterName = name;
+      }
       return;
    };
 
    /**
-    * Render a link to the next page as string.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @returns The rendered link to the next page.
+    * Returns any additional URL parameters included in every navigation link
+    * rendered by this ListRenderer instance.
+    * @returns A string containing additional URL parameters
     * @type String
     */
-   this.renderNextLinkAsString = function(param) {
-      if (collectionSize == 0 || currentPage >= totalPages)
-         return null;
-      if (!cache.nextLink) {
-         res.push();
-         param.index = currentPage +1;
-         param.href = getHref(param.index);
-         var renderFunc = getRenderFunction("pageLink", param.type);
-         if (!renderFunc)
-            return "[render function missing]";
-         renderFunc("next", param);
-         cache.nextLink = res.pop();
-      }
-      return cache.nextLink;
+   this.getUrlParameters = function() {
+      return urlParameters;
    };
 
    /**
-    * Render a link to the next page.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @see jala.ListRenderer#renderNextLink
+    * Sets additional parameters to include in every navigation link
+    * @param {String} params A string to append to every navigation URL
     */
-   this.renderNextLink = function(param) {
-      res.write(this.renderNextLinkAsString(param));
+   this.setUrlParameters = function(params) {
+      if (params != null) {
+         urlParameters = params;
+      }
       return;
    };
 
    /**
-    * Render a page navigation bar.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @see jala.ListRenderer#renderPageNavigationAsString
+    * Returns the renderer used by this ListRenderer instance
     */
-   this.renderPageNavigation = function(param) {
-      res.write(this.renderPageNavigationAsString(param));
+   this.getRenderer = function() {
+      return renderer;
+   };
+
+   /**
+    * Sets the renderer to be used by this ListRenderer instance
+    * @param {Object} r The renderer to use
+    */
+   this.setRenderer = function(r) {
+      if (r != null) {
+         renderer = r;
+      }
       return;
    };
 
    /**
-    * Render a page navigation bar as string.
-    * @param {Object} param Object containing
-    * extra parameters (e.g. from a Hop macro call).
-    * @returns The rendered page navigation bar.
-    * @type String
+    * Main constructor body
     */
-   this.renderPageNavigationAsString = function(param) {
-      /**
-       * Private method for rendering a single navigation item
-       */
-      var renderItem = function(text, currPage, selected) {
-         renderFunc("item", {text: text,
-                             url: getHref(currPage),
-                             selected: selected});
-         return;
-      };
-
-      if (collectionSize == 0 || totalPages <= 1)
-         return null;
-      if (!cache.pageNavigation) {
-         var renderFunc = getRenderFunction("pageNavigation", param.type);
-         if (!renderFunc)
-            return "[Render function missing]";
-
-         var navLength = parseInt(param.length, 10) || 10;
-         // correct currentPage if necessary
-         this.setPageSize();
-         var navParam = {
-            from: ((currentPage -1) * itemsPerPage) +1,
-            to: Math.min(((currentPage -1) * itemsPerPage) + itemsPerPage, collectionSize),
-            total: collectionSize
-         }
-      
-         // render the navigation-bar
-         res.push();
-         if (currentPage > 1)
-            renderItem((param.previous || "prev"), currentPage -1);
-         var pageNr = 1 + Math.floor((currentPage -1) / navLength) * navLength;
-         if (pageNr > 1)
-            renderItem((param.previousN || "[..]"), pageNr - navLength);
-         var stop = Math.min(pageNr + navLength, totalPages +1);
-      
-         while (pageNr < stop) {
-            renderItem((param.itemPrefix || "") + pageNr + (param.itemSuffix || ""),
-                       pageNr,
-                       pageNr == currentPage);
-            pageNr++;
-         }
-         if (pageNr < totalPages)
-            renderItem((param.nextN || "[..]"), pageNr);
-         if (currentPage < totalPages)
-            renderItem((param.next || "next"), (currentPage +1));
-         navParam.pageNavigation = res.pop();
-         res.push();
-         renderFunc("navigation", navParam);
-         cache.pageNavigation = res.pop();
-      }
-      return cache.pageNavigation;
-   };
-
-   // object initialization
-   // FIXME: this is for backwards compatibility only
-   if (listParam.collection instanceof Array) {
-      collection = new jala.ListRenderer.ArrayList(listParam.collection);
+   if (!coll) {
+      throw "jala.ListRenderer: insufficient arguments";
+   } else if (coll instanceof Array || coll instanceof HopObject) {
+      this.setCollection(coll);
    } else {
-      collection = listParam.collection;
+      // this is for backwards compatibility only - the former ListRenderer
+      // signature allowed just one parameter object as argument
+      this.setCollection(coll.collection);
+      this.setBaseHref(coll.href);
+      this.setUrlParameters(coll.urlParams);
+      this.setUrlParameterName(coll.urlParamName);
+      this.setPageSize(coll.itemsPerPage);
+      this.setMaxPages(coll.maxPages);
+      this.setItemSkin(coll.itemSkin);
    }
-   
-   collectionSize = collection.size();
-   href = listParam.href || "";
-   urlParams = listParam.urlParams;
-   urlParamName = listParam.urlParamName || "page";
-   currentPage = (!listParam.currentPage || isNaN(listParam.currentPage)) ? 1 : parseInt(listParam.currentPage, 10);
-   itemsPerPage = !listParam.itemsPerPage ? collectionSize : parseInt(listParam.itemsPerPage, 10);
-   maxPages = listParam.maxPages;
-   listItemSkin = listParam.itemSkin;
-   // calculate the number of pages
-   setTotalPages();
-
    return this;
 };
 
 /**
  * Static instance of helma.Html
  * @type helma.Html
+ * @private
  */
 jala.ListRenderer.html = new helma.Html();
 
 /** @ignore */
 jala.ListRenderer.prototype.toString = function() {
    return "[jala.ListRenderer]";
+};
+
+/**
+ * Returns the href of a page. If no argument is given, the href
+ * of the current page is returned. Any URL parameters set with
+ * {@link #setUrlParameters} are added to the href.
+ * @param {Number} page The optional page number to include in the href.
+ * @returns The href of the page
+ * @type String 
+ * @see #setUrlParameters
+ * @see #setUrlParameterName
+ */
+jala.ListRenderer.prototype.getPageHref = function(page) {
+   var pageNr = (page != null && !isNaN(page)) ? page : this.getCurrentPage();
+   var urlParams = this.getUrlParameters();
+   res.push();
+   res.write(this.getBaseHref());
+   if (pageNr || urlParams) {
+      res.write("?");
+      if (urlParams) {
+         res.write(urlParams);
+         res.write("&");
+      }
+      if (pageNr) {
+         res.write(this.getUrlParameterName());
+         res.write("=");
+         res.write(pageNr);
+      }
+   }
+   return res.pop();
+};
+
+/**
+ * Returns the zero-based index position of the first item of the current page
+ * in the collection this ListRenderer operates on.
+ * @returns The index position of the first item in the list
+ * @type Number
+ */
+jala.ListRenderer.prototype.getStartIndex = function() {
+   return (this.getCurrentPage() -1) * this.getPageSize();
+};
+
+/**
+ * Returns the zero-based index position of the last item of the current page
+ * in the collection this ListRenderer operates on.
+ * @returns The index position of the last item in the list
+ * @type Number
+ */
+jala.ListRenderer.prototype.getEndIndex = function() {
+   var start = this.getStartIndex();
+   return Math.min(start + this.getPageSize(), this.getCollection().size()) - 1;
+};
+
+/**
+ * Returns the render function to use for a given part of the list. If this
+ * ListRenderer doesn't have a renderer attached, or if the renderer doesn't
+ * have the appropriate rendering function, the default renderer is used.
+ * @param {String} part The part of the page. Valid arguments are
+ * "list", "pageNavigation" and "pageLink".
+ * @param {String} fName The name of the rendering function to return
+ * @returns The function to call for rendering the desired part of the list
+ * @type Function
+ * @private
+ * @see jala.ListRenderer#defaultRenderer
+ */
+jala.ListRenderer.prototype.getRenderFunction = function(part, fName) {
+   var renderer = this.getRenderer();
+   if (!fName)
+      fName = "default";
+   var handler;
+   if (renderer != null && (handler = renderer[part]) != null) {
+      if (handler[fName] instanceof Function) {
+         return handler[fName];
+      }
+   }
+   // return the default renderer
+   return jala.ListRenderer.defaultRenderer[part][fName];
+};
+
+/**
+ * Renders the list of items for one page directly to response.
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @see #getList
+ */
+jala.ListRenderer.prototype.renderList = function(param) {
+   var collection = this.getCollection();
+   var totalPages = this.getTotalPages();
+   var currentPage = this.getCurrentPage();
+   var pageSize = this.getPageSize();
+   var itemSkin = this.getItemSkin();
+
+   if (totalPages > 0) {
+      if (!param) {
+         param = {};
+      }
+      var idx = this.getStartIndex();
+      var stop = this.getEndIndex();
+      // preload objects if collection is a HopObject one
+      if (collection instanceof HopObject) {
+         collection.prefetchChildren(idx, stop - idx);
+      }
+      // add various item and list related properties to the parameter object
+      param.counter = 1;
+      param.index = idx + 1;
+      param.stop = stop;
+      param.itemsPerPage = pageSize;
+      param.collectionSize = collection.size();
+      if (!param.skin && itemSkin) {
+         param.skin = itemSkin;
+      }
+
+      var renderFunc = this.getRenderFunction("list", param.type);
+      var item, prevItem;
+      while (idx <= stop) {
+         item = collection.get(idx++);
+         renderFunc(item, prevItem, param);
+         prevItem = item;
+         param.counter += 1;
+         param.index += 1;
+      }
+   }
+   return;
+};
+
+/**
+ * Returns the rendered list of collection items as string
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @returns The rendered list
+ * @type String
+ * @see #renderList
+ */
+jala.ListRenderer.prototype.getList = function(param) {
+   res.push();
+   this.renderList(param);
+   return res.pop() || null;
+};
+
+/**
+ * Returns the rendered list of collection items as string
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @returns The rendered list
+ * @type String
+ * @see #renderList
+ * @deprecated Use {@link #getList} instead
+ */
+jala.ListRenderer.prototype.renderListAsString = function(param) {
+   return this.getList(param);
+};
+
+/**
+ * Renders a link to the previous page directly to response.
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @see #getPrevLink
+ */
+jala.ListRenderer.prototype.renderPrevLink = function(param) {
+   res.write(this.getPrevLink(param));
+   return;
+};
+
+/**
+ * Returns a rendered link to the previous page as string. For performance
+ * reasons this method caches the rendered link in the local cache of this
+ * ListRenderer instance.
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @returns A rendered link to the previous page
+ * @type String
+ * @see #renderPrevLink
+ */
+jala.ListRenderer.prototype.getPrevLink = function(param) {
+   if (!this.cache.prevLink) {
+      res.push();
+      var collection = this.getCollection();
+      var currentPage = this.getCurrentPage();
+      if (collection.size() && currentPage > 1) {
+         param.index = currentPage - 1;
+         param.href = this.getPageHref(param.index);
+         this.getRenderFunction("pageLink", param.type)("prev", param);
+      }
+      this.cache.prevLink = res.pop();
+   }
+   return this.cache.prevLink || null;
+};
+
+/**
+ * Returns a rendered link to the previous page as string
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @returns A rendered link to the previous page
+ * @type String
+ * @deprecated Use {@link #getPrevLink} instead
+ */
+jala.ListRenderer.prototype.renderPrevLinkAsString = function(param) {
+   return this.getPrevLink(param);
+};
+
+/**
+ * Renders a link to the next page directly to response.
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @see #getNextLink
+ */
+jala.ListRenderer.prototype.renderNextLink = function(param) {
+   res.write(this.getNextLink(param));
+   return;
+};
+
+/**
+ * Returns a rendered link to the previous page as string. For performance
+ * reasons this method caches the rendered link in the local cache of this
+ * ListRenderer instance.
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @returns A rendered link to the previous page
+ * @type String
+ * @see #renderNextLink
+ */
+jala.ListRenderer.prototype.getNextLink = function(param) {
+   if (!this.cache.nextLink) {
+      res.push();
+      var collection = this.getCollection();
+      var currentPage = this.getCurrentPage();
+      var totalPages = this.getTotalPages();
+      if (collection.size() && currentPage < totalPages) {
+         param.index = currentPage + 1;
+         param.href = this.getPageHref(param.index);
+         this.getRenderFunction("pageLink", param.type)("next", param);
+      }
+      this.cache.nextLink = res.pop();
+   }
+   return this.cache.nextLink || null;
+};
+
+/**
+ * Returns a rendered link to the previous page as string
+ * @returns A rendered link to the next page
+ * @type String
+ * @deprecated Use {@link #getNextLink} instead
+ */
+jala.ListRenderer.prototype.renderNextLinkAsString = function(param) {
+   return this.getNextLink(param);
+};
+
+/**
+ * Renders the page navigation bar directly to response. For performance reasons
+ * this method caches the rendered page navigation in the local cache of this
+ * ListRenderer instance.
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @see #getPageNavigation
+ */
+jala.ListRenderer.prototype.renderPageNavigation = function(param) {
+   if (!this.cache.pageNavigation) {
+      var collection = this.getCollection();
+      var totalPages = this.getTotalPages();
+      var currentPage = this.getCurrentPage();
+      var pageSize = this.getPageSize();
+   
+      if (totalPages > 1) {
+         var renderFunc = this.getRenderFunction("pageNavigation", param.type);
+         if (!renderFunc) {
+            return "[Render function missing]";
+         }
+   
+         // render the navigation-bar
+         res.push();
+         if (currentPage > 1) {
+            renderFunc("item", {
+               text: param.previous || "prev",
+               url: this.getPageHref(currentPage -1),
+            });
+         }
+         var navLength = parseInt(param.length, 10) || 10;
+         var pageNr = 1 + Math.floor((currentPage -1) / navLength) * navLength;
+         if (pageNr > 1) {
+            renderFunc("item", {
+               text: param.previousN || "[..]",
+               url: this.getPageHref(pageNr - navLength),
+            });
+         }
+         var stop = Math.min(pageNr + navLength, totalPages +1);
+         do {
+            renderFunc("item", {
+               text: (param.itemPrefix || "") + pageNr + (param.itemSuffix || ""),
+               url: this.getPageHref(pageNr),
+               selected: pageNr == currentPage
+            });
+         } while ((pageNr += 1) < stop);
+
+         if (pageNr <= totalPages) {
+            renderFunc("item", {
+               text: param.nextN || "[..]",
+               url: this.getPageHref(pageNr),
+            });
+         }
+         if (currentPage < totalPages) {
+            renderFunc("item", {
+               text: param.next || "next",
+               url: this.getPageHref(currentPage +1),
+            });
+         }
+         var navigation = res.pop();
+         res.push();
+         renderFunc("navigation", {
+            from: ((currentPage -1) * pageSize) +1,
+            to: Math.min(((currentPage -1) * pageSize) + pageSize, collection.size()),
+            total: collection.size(),
+            pageNavigation: navigation,
+         });
+         this.cache.pageNavigation = res.pop();
+      }
+   }
+   res.write(this.cache.pageNavigation);
+   return;
+};
+
+/**
+ * Returns the rendered page navigation bar as string
+ * @param {Object} param Object containing extra parameters (e.g. from a macro call).
+ * @returns The rendered page navigation
+ * @type String
+ * @see #renderPageNavigation
+ */
+jala.ListRenderer.prototype.getPageNavigation = function(param) {
+   res.push();
+   this.renderPageNavigation(param);
+   return res.pop() || null;
+};
+
+/**
+ * Returns the rendered page navigation bar as string
+ * @returns The rendered page navigation bar
+ * @type String
+ * @deprecated Use {@link #getPageNavigation} instead
+ */
+jala.ListRenderer.prototype.renderPageNavigationAsString = function(param) {
+   return this.getPageNavigation(param);
 };
 
 
@@ -401,89 +684,130 @@ jala.ListRenderer.prototype.toString = function() {
 
 
 /**
- * Render the maximum number of items per page.
- * @param {Object} param Extra Hop macro parameters:
+ * Either renders the maximum number of items per page, or
+ * sets the limit to a given number.
+ * @param {Object} param Extra macro parameters:
  * <ul>
  * <li>to - The maximum number of items per page to be set.
  * </ul>
+ * If no limit is set, this macro returns the current number
+ * of items per page.
+ * @returns The current maximum number of items per page
+ * @type Number
  */
 jala.ListRenderer.prototype.limit_macro = function(param) {
-   if (param.to)
+   if (param.to) {
       this.setPageSize(param.to);
-   // FIXME: we should implement this:
-   //else
-   //   res.write(this.getPageSize());
-   return;
+      return;
+   } else {
+      return this.getPageSize();
+   }
 };
 
-
 /**
- * Render the link to the previous page.
- * @param {Object} param Extra Hop macro parameters:
+ * Returns a rendered link to the previous page.
+ * @param {Object} param Extra macro parameters:
  * <ul>
  * <li>type - The type of renderer to be applied.</li>
  * </ul>
- * @see jala.ListRenderer#renderPrevLink
+ * @returns A rendered link to the previous page
+ * @type String
+ * @see #renderPrevLink
  */
 jala.ListRenderer.prototype.prevLink_macro = function(param) {
-   this.renderPrevLink(param);
-   return;
+   return this.getPrevLink(param);
 };
 
 /**
- * Render the link to the next page.
- * @param {Object} param Extra Hop macro parameters:
+ * Returns a rendered link to the next page.
+ * @param {Object} param Extra macro parameters:
  * <ul>
  * <li>type - The type of renderer to be applied.</li>
  * </ul>
- * @see jala.ListRenderer#renderNextLink
+ * @returns A rendered link to the next page
+ * @type String
+ * @see #renderNextLink
  */
 jala.ListRenderer.prototype.nextLink_macro = function(param) {
-   this.renderNextLink(param);
-   return;
+   return this.getNextLink(param);
 };
 
-
 /**
- * Render the page navigation bar.
- * @param {Object} param Extra Hop macro parameters:
+ * Returns the rendered page navigation bar.
+ * @param {Object} param Extra macro parameters:
  * <ul>
  * <li>type - The type of renderer to be applied.</li>
  * </ul>
- * @see jala.ListRenderer#renderPageNavigationAsString
+ * @returns The rendered page navigation bar
+ * @type String
+ * @see #getPageNavigation
  */
 jala.ListRenderer.prototype.pageNavigation_macro = function(param) {
-   this.renderPageNavigation(param);
-   return;
+   return this.getPageNavigation(param);
 };
 
 /**
- * Return the current page
+ * Returns the total number of items
+ * @returns The total number of items in the collection this ListRenderer
+ * instance is working on
+ * @type Number
  */
-jala.ListRenderer.prototype.currentPage_macro = function (param) {
+jala.ListRenderer.prototype.size_macro = function() {
+   return this.getCollection().size();
+};
+
+/**
+ * Returns the total number of pages
+ * @returns The total number of pages available
+ * @type Number
+ */
+jala.ListRenderer.prototype.totalPages_macro = function() {
+   return this.getTotalPages();
+};
+
+/**
+ * Returns the current page number
+ * @returns The current page number
+ * @type Number
+ */
+jala.ListRenderer.prototype.currentPage_macro = function() {
    return this.getCurrentPage();
-}
+};
 
 /**
- * Return the total number of items
+ * Returns the start item number in the current page
+ * @returns The start item number in the current page
+ * @type Number
  */
-jala.ListRenderer.prototype.size_macro = function (param) {
-   return this.getSize();
-}
+jala.ListRenderer.prototype.currentStart_macro = function() {
+   return this.getStartIndex() + 1;
+};
 
 /**
- * Render the list.
- * @param {Object} param Extra Hop macro parameters:
+ * Returns the end item number in the current page
+ * @returns The end item number in the current page
+ * @type Number
+ */
+jala.ListRenderer.prototype.currentEnd_macro = function() {
+   return this.getEndIndex() + 1;
+};
+
+/**
+ * Renders the current page of this list.
+ * @param {Object} param Extra macro parameters:
  * <ul>
- * <li>skin - The name of the main list skin.</li>
+ * <li>skin - The name of the list skin to render for each item in the list.</li>
  * <li>type - The type of renderer to be applied.</li>
  * </ul>
- * @see jala.ListRenderer#renderList
+ * @see #renderList
  */
 jala.ListRenderer.prototype.render_macro = function(param) {
-   if (!param.skin && !this.hasListItemSkin())
-      return "[Name of skin missing]";
-   this.renderList(param);
+   var skinName;
+   if (!(skinName = param.skin || this.getItemSkin())) {
+      res.write("[Name of skin missing]");
+   } else {
+      this.renderList(param);
+   }
    return;
 };
 
@@ -500,115 +824,114 @@ jala.ListRenderer.prototype.render_macro = function(param) {
  * prev/next links and list items).
  * @final
  */
-jala.ListRenderer.defaultRenderer = {
-   /**
-    * List renderer object
-    */
-   list: {
-      /**
-       * Default renderer method for a list
-       * @param {Object} item The current list item to render.
-       * @param {Object} prevItem The previous list item
-       * @param {Object} param A parameter object containing macro attributes
-       * and some parameters set by the ListRenderer.
-       */
-      "default": function(item, prevItem, param) {
-         var p = {"class": (param.index % 2 == 0 ? "even" : "odd")};
-         item.renderSkin(param.skin, p);
-         return;
-      }
-   },
+jala.ListRenderer.defaultRenderer = {};
 
-   /**
-    * Pagenavigation renderer object
-    */
-   pageNavigation: {
-      /**
-       * Default renderer method for a pagenavigation bar.
-       * @param {String} what A string indicating what should be rendered. Can be
-       * either "item" or "navigation" (the former is a single page link, the latter
-       * is the whole navigation.
-       * @param {Object} A parameter object containing the macro attributes and some
-       * attributes set by the ListRenderer.
-       */
-      "default": function(what, param) {
-         var skin;
-         switch (what) {
-            case "item":
-               if (param.selected == true) {
-                  param["class"] = "selected";
-               } else {
-                  delete param["class"];
-               }
-               param.text = jala.ListRenderer.html.linkAsString({href: param.url}, param.text);
-               if (param.skin != null) {
-                  renderSkin(param.skin, param);
-               } else if ((skin = app.getSkin("Global", "pageNavigationItem", res.skinpath)) != null) {
-                  renderSkin(skin, param);
-               } else {
-                  if (param["class"]) {
-                     res.write('<span class="' + param["class"] + '">[');
-                  } else {
-                     res.write("<span>[");
-                  }
-                  res.write(param.text);
-                  res.write(']</span>');
-               }
-               break;
+/**
+ * List renderer object
+ */
+jala.ListRenderer.defaultRenderer.list = {};
 
-            case "navigation":
-               if (param.skin != null) {
-                  renderSkin(param.skin, param);
-               } else if ((skin = app.getSkin("Global", "pageNavigation", res.skinpath)) != null) {
-                  renderSkin(skin, param);
-               } else {
-                  res.write('<div class="pageNavigation">');
-                  res.write('<span class="summary">displaying ');
-                  res.write(param.from);
-                  res.write("-");
-                  res.write(param.to);
-                  res.write(" (of ");
-                  res.write(param.total);
-                  res.write(")</span>");
-                  res.write('<span class="pages">');
-                  res.write(param.pageNavigation);
-                  res.write("</span></div>");
-               }
-               break;
-         }
-         return;
-      }
-   },
+/**
+ * Default renderer method for a list
+ * @param {Object} item The current list item to render.
+ * @param {Object} prevItem The previous list item
+ * @param {Object} param A parameter object containing macro attributes
+ * and some parameters set by the ListRenderer.
+ */
+jala.ListRenderer.defaultRenderer.list["default"] = function(item, prevItem, param) {
+   var p = {"class": (param.index % 2 == 0 ? "even" : "odd")};
+   item.renderSkin(param.skin, p);
+   return;
+};
 
-   /**
-    * Pagelink renderer object
-    */
-   pageLink: {
-      /**
-       * Default rendering method for a page link (aka "prev/next" link)
-       * @param {String} what A string indicating what should be rendered. Can be
-       * either "prev" or "next"
-       * @param {Object} param A parameter object containing macro attributes and
-       * some set by the ListRenderer.
-       */
-      "default": function(what, param) {
-         delete param.index;
-         if (param.skin) {
-            renderSkin(param.skin, param);
+/**
+ * Pagenavigation renderer object
+ */
+jala.ListRenderer.defaultRenderer.pageNavigation = {};
+
+/**
+ * Default renderer method for a page navigation bar.
+ * @param {String} what A string indicating what should be rendered. Can be
+ * either "item" or "navigation" (the former is a single page link, the latter
+ * is the whole navigation.
+ * @param {Object} A parameter object containing the macro attributes and some
+ * attributes set by the ListRenderer.
+ */
+jala.ListRenderer.defaultRenderer.pageNavigation["default"] = function(what, param) {
+   var skin;
+   switch (what) {
+      case "item":
+         if (param.selected == true) {
+            param["class"] = "selected";
          } else {
-            jala.ListRenderer.html.link(param, param.text || what);
+            delete param["class"];
          }
-         return;
-      }
+         param.text = jala.ListRenderer.html.linkAsString({href: param.url}, param.text);
+         if (param.skin != null) {
+            renderSkin(param.skin, param);
+         } else if ((skin = app.getSkin("Global", "pageNavigationItem", res.skinpath)) != null) {
+            renderSkin(skin, param);
+         } else {
+            if (param["class"]) {
+               res.write('<span class="' + param["class"] + '">');
+            } else {
+               res.write("<span>");
+            }
+            res.write(param.text);
+            res.write('</span>');
+         }
+         break;
+
+      case "navigation":
+         if (param.skin != null) {
+            renderSkin(param.skin, param);
+         } else if ((skin = app.getSkin("Global", "pageNavigation", res.skinpath)) != null) {
+            renderSkin(skin, param);
+         } else {
+            res.write('<div class="pageNavigation">');
+            res.write('<span class="summary">displaying ');
+            res.write(param.from);
+            res.write("-");
+            res.write(param.to);
+            res.write(" (of ");
+            res.write(param.total);
+            res.write(")</span>");
+            res.write('<span class="pages">');
+            res.write(param.pageNavigation);
+            res.write("</span></div>");
+         }
+         break;
    }
+   return;
+};
+
+/**
+ * Pagelink renderer object
+ */
+jala.ListRenderer.defaultRenderer.pageLink = {};
+
+/**
+ * Default rendering method for a page link (aka "prev/next" link)
+ * @param {String} what A string indicating what should be rendered. Can be
+ * either "prev" or "next"
+ * @param {Object} param A parameter object containing macro attributes and
+ * some set by the ListRenderer.
+ */
+jala.ListRenderer.defaultRenderer.pageLink["default"] = function(what, param) {
+   delete param.index;
+   if (param.skin) {
+      renderSkin(param.skin, param);
+   } else {
+      jala.ListRenderer.html.link(param, param.text || what);
+   }
+   return;
 };
 
 
 
-/*****************************************************
- ********** D E F A U L T   R E N D E R E R **********
- *****************************************************/
-
+/*****************************************
+ ********** A R R A Y   L I S T **********
+ *****************************************/
 
 
 /**
@@ -620,17 +943,26 @@ jala.ListRenderer.defaultRenderer = {
  * @param {Array} arr The array (or a subsection of an array) to wrap
  * @param {Number} offset An optional offset to use (mandatory if the array
  * is just a subsection).
- * @param {Number} total An optional total size of the array. This argument is mandatory
- * if the wrapped array is just a subsection.
+ * @param {Number} total An optional total size of the array. This argument is
+ * mandatory if the wrapped array is just a subsection.
  * @returns A newly created ArrayList instance
  * @constructor
  */
 jala.ListRenderer.ArrayList = function(arr, offset, total) {
+   /**
+    * The offset of this ArrayList instance. This might be > zero for
+    * ArrayList instances wrapping just a subsection, that is
+    * mimicking a bigger list.
+    * @type Number
+    */
    this.offset = offset || 0;
+
+   /**
+    * The length of this ArrayList instance.
+    * @type Number
+    */
    this.length = total || arr.length;
    
-   var isArraySubset = offset || total ? true : false;
-
    /**
     * Returns the element at the index position passed
     * as argument. If the wrapped array is just a subsection
@@ -658,19 +990,21 @@ jala.ListRenderer.ArrayList = function(arr, offset, total) {
    
    /**
     * Returns true if this ArrayList is a subsection of a bigger array
-    * @returns true or false. true if this ArrayList is a subsection of a bigger array
+    * @returns True if this ArrayList is a subsection of a bigger array
+    * @type Boolean
     */
    this.isSubset = function() {
-      return isArraySubset;
-   }
+      return offset || total ? true : false;
+   };
    
    /**
     * Returns the actual size of this ArrayList's wrapped array.
-    * @returns the actual size of this ArrayList's wrapped array.
+    * @returns The actual size of this ArrayList's wrapped array.
+    * @type Number
     */
    this.subsetSize = function() {
       return arr.length;
-   }
+   };
 
    return this;
 };
