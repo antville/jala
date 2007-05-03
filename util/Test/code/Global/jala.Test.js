@@ -281,7 +281,7 @@ jala.Test.getStackTrace = function(message) {
          if (fileName.endsWith("jala.Test.js")) {
             continue;
          }
-         stack[stack.length] = "at " + fileName + ", line " + lineNumber;
+         stack.push("at " + fileName + ", line " + lineNumber);
          if (fileName.endsWith(res.meta.currentTest)) {
             break;
          }
@@ -508,7 +508,7 @@ jala.Test.prototype.executeTest = function(testFile) {
       try {
          if (scope.setup != null && scope.setup instanceof Function) {
             // setup function exists, so call it
-            testResult.log[testResult.log.length] = this.executeTestFunction("setup", scope);
+            testResult.log.push(this.executeTestFunction("setup", scope));
          }
          // run all test methods defined in the array "tests"
          var functionName;
@@ -518,22 +518,23 @@ jala.Test.prototype.executeTest = function(testFile) {
                throw new jala.Test.EvaluatorException("Test function '" +
                                          functionName + "' is not defined.");
             }
-            testResult.log[testResult.log.length] = this.executeTestFunction(functionName, scope);
+            testResult.log.push(this.executeTestFunction(functionName, scope));
          }
       } catch (e) {
          this.testsFailed += 1;
          testResult.status = jala.Test.FAILED;
-         testResult.log[testResult.log.length] = e;
+         testResult.log.push(e);
       } finally {
          // call any existing "cleanup" method
          if (scope.cleanup != null && scope.cleanup instanceof Function) {
-            testResult.log[testResult.log.length] = this.executeTestFunction("cleanup", scope);
+            testResult.log.push(this.executeTestFunction("cleanup", scope));
          }
       }
    } catch (e) {
       this.testsFailed += 1;
       testResult.status = jala.Test.FAILED;
-      testResult.log[testResult.log.length] = new jala.Test.EvaluatorException(e.toString());
+      var msg = e.toString() + " (" + e.fileName + "#" + e.lineNumber + ")";
+      testResult.log.push(new jala.Test.EvaluatorException(msg));
    } finally {
       // exit the js context created above
       cx.exit();
@@ -541,7 +542,7 @@ jala.Test.prototype.executeTest = function(testFile) {
       res.meta.currentTest = null;
    }
    testResult.elapsed = (new Date()) - start;
-   this.results[this.results.length] = testResult;
+   this.results.push(testResult);
    return;
 };
 
