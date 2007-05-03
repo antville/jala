@@ -40,7 +40,7 @@ app.addRepository("modules/helma/Html.js");
 
 /**
  * @class
- * @param {HopObject|ArrayList} coll The collection this ListRenderer
+ * @param {HopObject|ArrayList|Array} coll The collection this ListRenderer
  * operates on, or - for backwards compatibility only - a parameter object containing
  * the collection and any other optional configuration parameters.
  * @param {Object} renderer An optional renderer to use. If this is set,
@@ -124,12 +124,12 @@ jala.ListRenderer = function(coll, renderer) {
 
    /**
     * Sets the collection of this ListRenderer
-    * @param {HopObject|Array} coll The collection this ListRenderer instance
+    * @param {HopObject|ArrayList|Array} coll The collection this ListRenderer instance
     * should operate on
     */
    this.setCollection = function(coll) {
       if (coll != null) {
-         if (coll instanceof HopObject) {
+         if (coll instanceof HopObject|| coll instanceof jala.ListRenderer.ArrayList) {
             collection = coll;
          } else if (!(coll instanceof jala.ListRenderer.ArrayList)) {
             // wrap all other collection types in an ArrayList
@@ -316,9 +316,11 @@ jala.ListRenderer = function(coll, renderer) {
     */
    if (!coll) {
       throw "jala.ListRenderer: insufficient arguments";
-   } else if (coll instanceof Array || coll instanceof HopObject) {
+   } else if (coll instanceof jala.ListRenderer.ArrayList ||
+              coll instanceof Array ||
+              coll instanceof HopObject) {
       this.setCollection(coll);
-   } else {
+   } else if (coll.collection != null) {
       // this is for backwards compatibility only - the former ListRenderer
       // signature allowed just one parameter object as argument
       this.setCollection(coll.collection);
@@ -328,6 +330,8 @@ jala.ListRenderer = function(coll, renderer) {
       this.setPageSize(coll.itemsPerPage);
       this.setMaxPages(coll.maxPages);
       this.setItemSkin(coll.itemSkin);
+   } else {
+      throw "jala.ListRenderer: invalid argument " + coll;
    }
    return this;
 };
@@ -753,7 +757,8 @@ jala.ListRenderer.prototype.pageNavigation_macro = function(param) {
  * @type Number
  */
 jala.ListRenderer.prototype.size_macro = function() {
-   return this.getCollection().size();
+   return Math.min(this.getMaxPages() * this.getPageSize(),
+                   this.getCollection().size());
 };
 
 /**
