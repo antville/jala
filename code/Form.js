@@ -25,7 +25,7 @@
 /**
  * @fileoverview This class can be used to render forms and to validate
  *    and store user submits. Further types of form elements can be added
- *    by subclassing jala.Form.InputComponent.
+ *    by subclassing jala.Form.Component.Input.
  *
  **/
 
@@ -88,7 +88,7 @@ jala.Form = function(name) {
 
    /**
     * Adds a component to this jala.Form instance
-    * @param {jala.InputComponent} component
+    * @param {jala.Form.Component.Input} component
     */
    this.addComponent = function(component) {
       component.setForm(this);
@@ -260,22 +260,27 @@ jala.Form.parseConfig = function(config) {
    }
    for (var i=0; i<config.elements.length; i++) {
       element = config.elements[i];
-      var constr = jala.Form[element["class"]];
+      var constr = jala.Form.Component[element["type"].titleize()];
       if (!constr) {
          continue;
       }
       var component = new constr(element.name);
       // call setter functions for all fields from config object:
       for (var key in element) {
-         if (key == "name" || key == "class") {
+         if (key == "name" || key == "type") {
             continue;
          }
          // note: String.prototype.titleize from the helma.core module
          // would uppercase the first letter, but lowercases all ensuing
          // characters (maxLength would become Maxlength).
-         var func = component["set" + key.charAt(0).toUpperCase() + key.substring(1)];
-         if (func) {
-            func.apply(component, [element[key]]);
+         // note: use try/catch to detect if the setter method really exists
+         // because a check using if(component[method]) would fail for
+         // inherited methods although executing the inherited method works.
+         try {
+            component["set" + key.charAt(0).toUpperCase() + key.substring(1)](element[key]);
+         } catch (e) {
+            // invalid field for this component
+            // FIXME: log this?
          }
       }
       form.addComponent(component);
@@ -467,7 +472,7 @@ jala.Form.prototype.id_macro = function(param) {
 
 
 
-
+jala.Form.Component = {};
 
 
 /**
@@ -475,7 +480,7 @@ jala.Form.prototype.id_macro = function(param) {
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.InputComponent = function InputComponent(name) {
+jala.Form.Component.Input = function Input(name) {
 
    /**
     * Readonly reference to name of component
@@ -504,6 +509,7 @@ jala.Form.InputComponent = function InputComponent(name) {
 
 
    this.getType = function() {
+      // FIXME: lowercase should be enough
       return this.constructor.name.toLowerCase().replace(/component$/, "");
    };
 
@@ -526,7 +532,6 @@ jala.Form.InputComponent = function InputComponent(name) {
     * @param {Boolean} newCheckSyntax value defining wheter syntax should be checked or not.
     */
    this.setCheckSyntax = function(newCheckSyntax) {
-      res.debug("newCheckSyntax="+newCheckSyntax);
       checkSyntax = newCheckSyntax;
       return;
    };
@@ -644,7 +649,7 @@ jala.Form.InputComponent = function InputComponent(name) {
     * <li>the object which is being handled by save method.
     * <li>name of the component
     * <li>new value to save
-    * @see jala.Form.InputComponent#setValue
+    * @see jala.Form.Component.Input#setValue
     * @param {Function} newSetter new setter function
     */
    this.setSetter = function(newSetter) {
@@ -786,7 +791,7 @@ jala.Form.InputComponent = function InputComponent(name) {
  * @type String Number Date
  * @final
  */
-jala.Form.InputComponent.prototype.getValue = function() {
+jala.Form.Component.Input.prototype.getValue = function() {
    var dataObj = this.form.getDataObj();
    if (dataObj instanceof jala.Form.Tracker) {
       // handling re-rendering
@@ -812,7 +817,7 @@ jala.Form.InputComponent.prototype.getValue = function() {
  * @final
  * @see jala.Form#setSetter
  */
-jala.Form.InputComponent.prototype.setValue = function(destObj, value) {
+jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
    // default value for the setter is undefined, so if it has been
    // set to explicitly null, we don't save the value. in this case,
    // we assume, the property is handled outside of jala.Form or purposely
@@ -833,7 +838,7 @@ jala.Form.InputComponent.prototype.setValue = function(destObj, value) {
 /**
  * Renders an element including label, error and help messages.
  */
-jala.Form.InputComponent.prototype.render = function() {
+jala.Form.Component.Input.prototype.render = function() {
    var className = (this.required == true) ? "required" : "optional";
    if (this.getClassName()) {
       className += " " + this.getClassName();
@@ -860,7 +865,7 @@ jala.Form.InputComponent.prototype.render = function() {
  * @returns Rendered string
  * @type String
  */
-jala.Form.InputComponent.prototype.renderError = function() {
+jala.Form.Component.Input.prototype.renderError = function() {
    var dataObj = this.form.getDataObj();
    if ((dataObj instanceof jala.Form.Tracker) && dataObj.errors[this.name]) {
       return jala.Form.html.elementAsString("div",
@@ -879,7 +884,7 @@ jala.Form.InputComponent.prototype.renderError = function() {
  * @returns Rendered string
  * @type String
  */
-jala.Form.InputComponent.prototype.renderLabel = function() {
+jala.Form.Component.Input.prototype.renderLabel = function() {
    var name = this.name;
    return jala.Form.html.elementAsString(
       "label",
@@ -898,7 +903,7 @@ jala.Form.InputComponent.prototype.renderLabel = function() {
  * @returns Rendered string
  * @type String
  */
-jala.Form.InputComponent.prototype.renderHelp = function() {
+jala.Form.Component.Input.prototype.renderHelp = function() {
    if (this.getHelp()) {
       return jala.Form.html.elementAsString(
          "div",
@@ -912,11 +917,11 @@ jala.Form.InputComponent.prototype.renderHelp = function() {
 };
 
 
-jala.Form.InputComponent.prototype.render_macro = function(param) {
+jala.Form.Component.Input.prototype.render_macro = function(param) {
    this.render();
 };
 
-jala.Form.InputComponent.prototype.controls_macro = function(param) {
+jala.Form.Component.Input.prototype.controls_macro = function(param) {
    var attr = this.getControlAttributes();
    var dataObj = this.form.getDataObj();
    if (dataObj instanceof jala.Form.Tracker) {
@@ -927,22 +932,22 @@ jala.Form.InputComponent.prototype.controls_macro = function(param) {
    return;
 };
 
-jala.Form.InputComponent.prototype.error_macro = function(param) {
+jala.Form.Component.Input.prototype.error_macro = function(param) {
    res.write(this.renderError());
    return;
 };
 
-jala.Form.InputComponent.prototype.label_macro = function(param) {
+jala.Form.Component.Input.prototype.label_macro = function(param) {
    res.write(this.renderLabel());
    return;
 };
 
-jala.Form.InputComponent.prototype.help_macro = function(param) {
+jala.Form.Component.Input.prototype.help_macro = function(param) {
    res.write(this.renderHelp());
    return;
 };
 
-jala.Form.InputComponent.prototype.id_macro = function(param) {
+jala.Form.Component.Input.prototype.id_macro = function(param) {
    res.write(this.form.createDomId(this.name));
    return;
 };
@@ -952,7 +957,7 @@ jala.Form.InputComponent.prototype.id_macro = function(param) {
  * @returns Object with properties id, name, class
  * @type Object
  */
-jala.Form.InputComponent.prototype.getControlAttributes = function() {
+jala.Form.Component.Input.prototype.getControlAttributes = function() {
    var attr = {
       id: this.form.createDomId(this.name),
       name: this.name,
@@ -974,7 +979,7 @@ jala.Form.InputComponent.prototype.getControlAttributes = function() {
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.InputComponent.prototype.checkLength = function(reqData) {
+jala.Form.Component.Input.prototype.checkLength = function(reqData) {
    var required  = this.getRequired();
    var minLength = this.getMinLength();
    var maxLength = this.getMaxLength();
@@ -1000,12 +1005,12 @@ jala.Form.InputComponent.prototype.checkLength = function(reqData) {
 
 /**
  * Validates user input from an input tag.
- * @see jala.Form.InputComponent#checkLength
+ * @see jala.Form.Component.Input#checkLength
  * @param {Object} reqData request data
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.InputComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Input.prototype.checkSyntax = function(reqData) {
    return this.checkLength(reqData);
 };
 
@@ -1018,7 +1023,7 @@ jala.Form.InputComponent.prototype.checkSyntax = function(reqData) {
  * @returns parsed value
  * @type Object
  */
-jala.Form.InputComponent.prototype.parseValue = function(reqData) {
+jala.Form.Component.Input.prototype.parseValue = function(reqData) {
    return reqData[this.name];
 };
 
@@ -1030,7 +1035,7 @@ jala.Form.InputComponent.prototype.parseValue = function(reqData) {
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.InputComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Input.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : value;
    if (this.getMaxLength()) {
       attr.maxlength = this.getMaxLength();
@@ -1046,13 +1051,13 @@ jala.Form.InputComponent.prototype.renderControls = function(attr, value, reqDat
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders plain text or skins.
- * @base jala.Form.InputComponent
+ * @class Subclass of jala.Form.Component.Input which renders plain text or skins.
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.SkinComponent = function SkinComponent(name) {
-   jala.Form.SkinComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Skin = function Skin(name) {
+   jala.Form.Component.Skin.superConstructor.apply(this, arguments);
    
    var source = undefined;
    
@@ -1078,8 +1083,8 @@ jala.Form.SkinComponent = function SkinComponent(name) {
    
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.SkinComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Skin, jala.Form.Component.Input);
 
 /**
  * Renders an input tag to the response.
@@ -1088,7 +1093,7 @@ jala.Form.extend(jala.Form.SkinComponent, jala.Form.InputComponent);
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.SkinComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Skin.prototype.renderControls = function(attr, value, reqData) {
    if (this.getSource()) {
       renderSkin(createSkin(this.getSource()));
    }      
@@ -1096,13 +1101,13 @@ jala.Form.SkinComponent.prototype.renderControls = function(attr, value, reqData
 };
 
 /**
- * Not used in jala.Form.SkinComponent prototype.
- * @see jala.Form.InputComponent#checkLength
+ * Not used in jala.Form.Component.Skin prototype.
+ * @see jala.Form.Component.Input#checkLength
  * @param {Object} reqData request data
  * @param {jala.Form.Tracker} tracker jala.Form.Tracker object storing possible error messages
  * @returns null
  */
-jala.Form.SkinComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Skin.prototype.checkSyntax = function(reqData) {
    return null;
 };
 
@@ -1111,18 +1116,18 @@ jala.Form.SkinComponent.prototype.checkSyntax = function(reqData) {
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * password input tag.
- * @base jala.Form.InputComponent
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.PasswordComponent = function PasswordComponent(name) {
-   jala.Form.PasswordComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Password = function Password(name) {
+   jala.Form.Component.Password.superConstructor.apply(this, arguments);
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.PasswordComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Password, jala.Form.Component.Input);
 
 
 /**
@@ -1132,7 +1137,7 @@ jala.Form.extend(jala.Form.PasswordComponent, jala.Form.InputComponent);
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.PasswordComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Password.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : value;
    if (this.getMaxLength()) {
       attr.maxlength = this.getMaxLength();
@@ -1147,14 +1152,14 @@ jala.Form.PasswordComponent.prototype.renderControls = function(attr, value, req
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * textarea tag.
- * @base jala.Form.InputComponent
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.TextareaComponent = function TextareaComponent(name) {
-   jala.Form.TextareaComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Textarea = function Textarea(name) {
+   jala.Form.Component.Textarea.superConstructor.apply(this, arguments);
 
    var rows, cols = undefined;
 
@@ -1196,8 +1201,8 @@ jala.Form.TextareaComponent = function TextareaComponent(name) {
    
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.TextareaComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Textarea, jala.Form.Component.Input);
 
 /**
  * Renders a textarea tag to the response.
@@ -1206,7 +1211,7 @@ jala.Form.extend(jala.Form.TextareaComponent, jala.Form.InputComponent);
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.TextareaComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Textarea.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : value;
    if (this.getRows()) {
       attr.rows = this.getRows();
@@ -1225,14 +1230,14 @@ jala.Form.TextareaComponent.prototype.renderControls = function(attr, value, req
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * date editor.
- * @base jala.Form.InputComponent
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.DateComponent = function DateComponent(name) {
-   jala.Form.DateComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Date = function Date(name) {
+   jala.Form.Component.Date.superConstructor.apply(this, arguments);
 
    var dateFormat = "d.M.yyyy H:m";
    var dateFormatObj;
@@ -1260,8 +1265,8 @@ jala.Form.DateComponent = function DateComponent(name) {
 
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.DateComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Date, jala.Form.Component.Input);
 
 /**
  * Renders a textarea tag to the response.
@@ -1270,7 +1275,7 @@ jala.Form.extend(jala.Form.DateComponent, jala.Form.InputComponent);
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.DateComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Date.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : this.getDateFormat().format(value);
    if (this.getMaxLength()) {
       attr.maxlength = this.getMaxLength();
@@ -1289,7 +1294,7 @@ jala.Form.DateComponent.prototype.renderControls = function(attr, value, reqData
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.DateComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Date.prototype.checkSyntax = function(reqData) {
    try {
       this.parseValue(reqData);
       return null;
@@ -1306,21 +1311,21 @@ jala.Form.DateComponent.prototype.checkSyntax = function(reqData) {
  * @returns parsed date value
  * @type Date
  */
-jala.Form.DateComponent.prototype.parseValue = function(reqData) {
+jala.Form.Component.Date.prototype.parseValue = function(reqData) {
    return this.getDateFormat().parse(reqData[this.name]);
 };
 
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * dropdown element.
- * @base jala.Form.InputComponent
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.SelectComponent = function SelectComponent(name) {
-   jala.Form.SelectComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Select = function Select(name) {
+   jala.Form.Component.Select.superConstructor.apply(this, arguments);
    
    var options, firstOption = undefined;
    
@@ -1353,8 +1358,8 @@ jala.Form.SelectComponent = function SelectComponent(name) {
    
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.SelectComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Select, jala.Form.Component.Input);
 
 /**
  * Renders a dropdown element to the response.
@@ -1363,7 +1368,7 @@ jala.Form.extend(jala.Form.SelectComponent, jala.Form.InputComponent);
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.SelectComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Select.prototype.renderControls = function(attr, value, reqData) {
    value = (reqData) ? reqData[this.name] : value;
    jala.Form.html.dropDown(attr, this.parseOptions(), value, this.getFirstOption());
    return;
@@ -1372,12 +1377,12 @@ jala.Form.SelectComponent.prototype.renderControls = function(attr, value, reqDa
 /**
  * Validates user input from a dropdown element and makes sure that
  * option value list contains the user input.
- * @see jala.Form.SelectComponent#checkOptions
+ * @see jala.Form.Component.Select#checkOptions
  * @param {Object} reqData request data
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.SelectComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Select.prototype.checkSyntax = function(reqData) {
    return this.checkOptions(reqData);
 };
 
@@ -1389,7 +1394,7 @@ jala.Form.SelectComponent.prototype.checkSyntax = function(reqData) {
  * @returns array of options
  * @type Array
  */
-jala.Form.SelectComponent.prototype.parseOptions = function() {
+jala.Form.Component.Select.prototype.parseOptions = function() {
    var options = this.getOptions();
    if (options != null) {
       if (options instanceof Array) {
@@ -1407,7 +1412,7 @@ jala.Form.SelectComponent.prototype.parseOptions = function() {
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.SelectComponent.prototype.checkOptions = function(reqData) {
+jala.Form.Component.Select.prototype.checkOptions = function(reqData) {
    // if field is required, an empty option is not allowed:
    var found = (!this.getRequired() && !reqData[this.name]);
    if (!found) {
@@ -1445,25 +1450,25 @@ jala.Form.SelectComponent.prototype.checkOptions = function(reqData) {
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * set of radio buttons.
- * @base jala.Form.SelectComponent
+ * @base jala.Form.Component.Select
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.RadioComponent = function RadioComponent(name) {
-   jala.Form.RadioComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Radio = function Radio(name) {
+   jala.Form.Component.Radio.superConstructor.apply(this, arguments);
    return this;
 };
-// extend SelectComponent
-jala.Form.extend(jala.Form.RadioComponent, jala.Form.SelectComponent);
+// extend jala.Form.Component.Select
+jala.Form.extend(jala.Form.Component.Radio, jala.Form.Component.Select);
 
 /**
  * Renders a set of radio buttons to the response.
  * @param {Object} attr Basic attributes for this element.
  * @param {Object} value Value to be used for rendering this element.
  */
-jala.Form.RadioComponent.prototype.renderControls = function(attr, value) {
+jala.Form.Component.Radio.prototype.renderControls = function(attr, value) {
    var options = this.parseOptions();
    var optionAttr, optionDisplay;
    for (var i=0; i<options.length; i++) {
@@ -1492,12 +1497,12 @@ jala.Form.RadioComponent.prototype.renderControls = function(attr, value) {
 /**
  * Validates user input from a set of radio buttons and makes sure that
  * option value list contains the user input.
- * @see jala.Form.SelectComponent#checkOptions
+ * @see jala.Form.Component.Select#checkOptions
  * @param {Object} reqData request data
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.RadioComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Radio.prototype.checkSyntax = function(reqData) {
    return this.checkOptions(reqData);
 };
 
@@ -1507,25 +1512,25 @@ jala.Form.RadioComponent.prototype.checkSyntax = function(reqData) {
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * checkbox based on a flag with the values 0 and 1.
- * @base jala.Form.InputComponent
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.FlagComponent = function BooleanComponent(name) {
-   jala.Form.FlagComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.Flag = function Flag(name) {
+   jala.Form.Component.Flag.superConstructor.apply(this, arguments);
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.FlagComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Flag, jala.Form.Component.Input);
 
 /**
  * Renders an checkbox to the response.
  * @param {Object} attr Basic attributes for this element.
  * @param {Object} value Value to be used for rendering this element.
  */
-jala.Form.FlagComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Flag.prototype.renderControls = function(attr, value, reqData) {
    if (value == 1 || (reqData && reqData[this.name] == "1")) {
       attr.checked = "checked";
    }
@@ -1541,7 +1546,7 @@ jala.Form.FlagComponent.prototype.renderControls = function(attr, value, reqData
  * @returns parsed value
  * @type Number
  */
-jala.Form.FlagComponent.prototype.parseValue = function(reqData) {
+jala.Form.Component.Flag.prototype.parseValue = function(reqData) {
    return (reqData[this.name] == "1") ? 1 : 0;
 };
 
@@ -1552,7 +1557,7 @@ jala.Form.FlagComponent.prototype.parseValue = function(reqData) {
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.FlagComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Flag.prototype.checkSyntax = function(reqData) {
    if (reqData[this.name] && reqData[this.name] != "1") {
       return this.getMessage("invalid", "The value of this checkbox is invalid.");
    }
@@ -1567,16 +1572,16 @@ jala.Form.FlagComponent.prototype.checkSyntax = function(reqData) {
 
 
 /**
- * @class Subclass of jala.Form.InputComponent which renders and validates a
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
  * file upload. Note that the file is not saved. Use req.data[field].writeToFile(dir, name).
- * @base jala.Form.InputComponent
+ * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.FileComponent = function FileComponent(name) {
-   jala.Form.FileComponent.superConstructor.apply(this, arguments);
+jala.Form.Component.File = function File(name) {
+   jala.Form.Component.File.superConstructor.apply(this, arguments);
    
-   var contentType, maxLength, validateImage = undefined;
+   var contentType, maxLength = undefined;
 
    /**
     * Returns the mime types accepted as upload (string 
@@ -1614,30 +1619,13 @@ jala.Form.FileComponent = function FileComponent(name) {
       return;
    };
    
-   /**
-    * Returns true if uploaded data should be checked for an image.
-    * @type Boolean
-    */
-   this.getValidateImage = function() {
-      return validateImage;
-   };
-   
-   /**
-    * If set to true, Helma will try to create an image with
-    * the uploaded data and print an error if this fails.
-    * @param {Boolean} newValidateImage
-    */
-   this.setValidateImage = function(newValidateImage) {
-      validateImage = newValidateImage;
-      return;
-   };
    
    return this;
 };
-// extend InputComponent
-jala.Form.extend(jala.Form.FileComponent, jala.Form.InputComponent);
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.File, jala.Form.Component.Input);
 
-jala.Form.FileComponent.containsFileUpload = true;
+jala.Form.Component.File.containsFileUpload = true;
 
 /**
  * Renders a file input tag to the response.
@@ -1646,7 +1634,7 @@ jala.Form.FileComponent.containsFileUpload = true;
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
  */
-jala.Form.FileComponent.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.File.prototype.renderControls = function(attr, value, reqData) {
    var contentType = this.getContentType();
    if (contentType) {
       attr.accept = (contentType instanceof Array) ? contentType.join(",") : contentType;
@@ -1663,7 +1651,7 @@ jala.Form.FileComponent.prototype.renderControls = function(attr, value, reqData
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.File.prototype.checkSyntax = function(reqData) {
 
    if (reqData[this.name].contentLength == 0) {
       // no upload
@@ -1690,14 +1678,6 @@ jala.Form.FileComponent.prototype.checkSyntax = function(reqData) {
       }
    }
    
-   if (this.getValidateImage()) {
-      try {
-         var helmaImg = new Image(reqData[this.name]);
-      } catch (imgError) {
-         return this.getMessage("invalid", "This image file can't be processed.");
-      }
-   }
-
    return null;
 };
 
