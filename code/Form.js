@@ -260,27 +260,56 @@ jala.Form.parseConfig = function(config) {
    }
    for (var i=0; i<config.elements.length; i++) {
       element = config.elements[i];
-      var constr = jala.Form.Component[element["type"].titleize()];
+      var clazzName = (element["type"]) ? element["type"].titleize() : "Input";
+      var constr = jala.Form.Component[clazzName];
       if (!constr) {
          continue;
       }
       var component = new constr(element.name);
       // call setter functions for all fields from config object:
       for (var key in element) {
-         if (key == "name" || key == "type") {
-            continue;
+         switch(key) {
+            case "name":
+            case "type":
+            case "messages":
+               break;
+            case jala.Form.REQUIRED:
+               component.require(key, true);
+               break;
+            case jala.Form.MAXLENGTH:
+               component.require(key, element[key]);
+               break;
+            case jala.Form.MINLENGTH:
+               component.require(key, element[key]);
+               break;
+            case jala.Form.CONTENTTYPE:
+               component.require(key, element[key]);
+               break;
+            case "getter":
+            case "setter":
+            case "validator":
+               component[key] = element[key];
+               break;
+            default:
+               // note: String.prototype.titleize from the helma.core module
+               // would uppercase the first letter, but lowercases all ensuing
+               // characters (maxLength would become Maxlength).
+               // note: use try/catch to detect if the setter method really exists
+               // because a check using if(component[method]) would fail for
+               // inherited methods although executing the inherited method works.
+               try {
+                  component["set" + key.charAt(0).toUpperCase() + key.substring(1)](element[key]);
+               } catch (e) {
+                  // invalid field for this component
+                  // FIXME: log this to app.log?
+                  res.debug("e="+e);
+               }
+               break;
          }
-         // note: String.prototype.titleize from the helma.core module
-         // would uppercase the first letter, but lowercases all ensuing
-         // characters (maxLength would become Maxlength).
-         // note: use try/catch to detect if the setter method really exists
-         // because a check using if(component[method]) would fail for
-         // inherited methods although executing the inherited method works.
-         try {
-            component["set" + key.charAt(0).toUpperCase() + key.substring(1)](element[key]);
-         } catch (e) {
-            // invalid field for this component
-            // FIXME: log this?
+      }
+      if (element.messages) {
+         for (var key in element.messages) {
+            component.setMessage(key, element.messages[key]);
          }
       }
       form.addComponent(component);
@@ -330,7 +359,7 @@ jala.Form.prototype.render = function() {
 
    // submit button
    jala.Form.html.openTag("div");
-   jala.Form.html.element("label", "", {id: this.createDomId("label", "submit")});
+   jala.Form.html.element("label", "", {id: this.createDomId("submit", "label")});
    jala.Form.html.submit({id: this.createDomId("submit"),
                 name: this.createDomId("submit"),
                 "class": "submit",
@@ -377,8 +406,8 @@ jala.Form.prototype.createDomId = function(/* [part1][, part2][, ...] */) {
 
 
 /**
- * Checks and validates user input from a submitted form.
- * First each component's checkSyntax method is called.
+ * Validates user input from a submitted form.
+ * First each component's checkRequirements method is called.
  * If it succeeds, the input is parsed and validated if
  * an optional validator function is set.
  * The tracker is stored as data object of the form.
@@ -386,21 +415,19 @@ jala.Form.prototype.createDomId = function(/* [part1][, part2][, ...] */) {
  * @param {Object} reqData request data after a submit
  * @type jala.Form.Tracker
  */
-jala.Form.prototype.check = function(reqData) {
+jala.Form.prototype.validate = function(reqData) {
    var tracker = new jala.Form.Tracker(reqData);
    var components = this.listComponents();
    for (var i=0; i<components.length; i++) {
       var error = null;
       var name = components[i].name;
-      if (components[i].getCheckSyntax() == true) {
-         error = components[i].checkSyntax(reqData);
-      }
+      error = components[i].checkRequirements(reqData);
       if (error != null) {
          tracker.errors[name] = error;
       } else {
          tracker.values[name] = components[i].parseValue(reqData);
-         if (components[i].getValidator()) {
-            error = components[i].getValidator()(name, tracker.values[name], reqData, this);
+         if (components[i].validator) {
+            error = components[i].validator.call(this.getDataObj(), name, tracker.values[name], reqData, this);
             if (error != null) {
                tracker.errors[name] = error;
             }
@@ -443,7 +470,7 @@ jala.Form.prototype.save = function(tracker, destObj) {
  * @type Boolean
  */
 jala.Form.prototype.handle = function(reqData, destObj) {
-   var tracker = form.check(reqData);
+   var tracker = form.validate(reqData);
    if (tracker.hasError()) {
       return false;
    } else {
@@ -467,10 +494,10 @@ jala.Form.prototype.id_macro = function(param) {
 
 
 
-
-
-
-
+jala.Form.MINLENGTH     = "minlength";
+jala.Form.MAXLENGTH     = "maxlength";
+jala.Form.REQUIRED      = "required";
+jala.Form.CONTENTTYPE   = "contenttype"; 
 
 jala.Form.Component = {};
 
@@ -509,36 +536,85 @@ jala.Form.Component.Input = function Input(name) {
 
 
    this.getType = function() {
-      // FIXME: lowercase should be enough
-      return this.constructor.name.toLowerCase().replace(/component$/, "");
+      return this.constructor.name.toLowerCase();
    };
 
    
-   var checkSyntax = true;
+//   var checkSyntax = true;
+//   
+//   /**
+//    * Returns true if this component should do a syntax check of the user's input.
+//    * False if it has been deactivated for this component (e.g. if the controls
+//    * are modified by client javascript).
+//    * @type Boolean
+//    */
+//   this.getCheckSyntax = function() {
+//      return checkSyntax;
+//   };
+//
+//   /**
+//    * Turns syntax check for this component on or off.
+//    * Default is on.
+//    * @param {Boolean} newCheckSyntax value defining wheter syntax should be checked or not.
+//    */
+//   this.setCheckSyntax = function(newCheckSyntax) {
+//      checkSyntax = newCheckSyntax;
+//      return;
+//   };
    
-   /**
-    * Returns true if this component should do a syntax check of the user's input.
-    * False if it has been deactivated for this component (e.g. if the controls
-    * are modified by client javascript).
-    * @type Boolean
-    */
-   this.getCheckSyntax = function() {
-      return checkSyntax;
+   var requirements = {};
+   
+   var messages = {};
+
+
+   this.require = function(key, val, msg) {
+      if (arguments.length == 0) {
+         // set default value for arguments
+         key = jala.Form.REQUIRED;
+         val = true;
+      }
+      requirements[key] = val;
+      if (msg) {
+         this.setMessage(key, msg);
+      }
+   };
+
+   this.getRequirement = function(key) {
+      return requirements[key];
    };
 
    /**
-    * Turns syntax check for this component on or off.
-    * Default is on.
-    * @param {Boolean} newCheckSyntax value defining wheter syntax should be checked or not.
+    * Sets a custom error message
     */
-   this.setCheckSyntax = function(newCheckSyntax) {
-      checkSyntax = newCheckSyntax;
+   this.setMessage = function(key, msg) {
+      messages[key] = msg;
       return;
    };
-   
-   
+  
+   /**
+    * Returns a specific message for a config element.
+    * @param {String} key The key of the message
+    **               (e.g. "missing", "tooLong", "tooShort", "invalid").
+    * @param {String} defaultMsg the message to use when no message was defined 
+    *                in the config.
+    * @param {Object} args One or more arguments passed to the gettext
+    * message processor which will replace {0}, {1} etc.
+    * @returns rendered message
+    * @type String
+    * @private
+    */
+   this.getMessage = function(key, defaultMsg, args) {
+      var arr = [(messages[key]) ? messages[key] : defaultMsg];
+      for (var i=2; i<arguments.length; i++) {
+         arr.push(arguments[i]);
+      }
+      return gettext.apply(null, arr);
+   };
 
-   var className, label, help, required, getter, setter, validator = undefined;
+
+
+
+   var className, label, help = undefined;
    
    /**
     * Returns the class name set for this component.
@@ -594,189 +670,53 @@ jala.Form.Component.Input = function Input(name) {
       return;
    };
 
-   /**
-    * Returns whether this component requires input
-    * @returns true if component requires input
-    * @type Boolean
-    */
-   this.getRequired = function() {
-      return required;
-   };
-
-   /**
-    * Sets the required status of this component
-    * @param {Boolean} newRequired new required status
-    */
-   this.setRequired = function(newRequired) {
-      required = newRequired;
-      return;
-   };
-
-   /**
-    * Returns a possible getter function for this component.
-    * @returns getter function
-    * @type Function
-    */
-   this.getGetter = function() {
-      return getter;
-   };
-
-   /**
-    * Sets the getter function for this component
-    * Function is called with two arguments and global scope:
-    * <li>the object which is provided the defaults for the form
-    * <li>the name of the component
-    * @param {Function} newGetter new getter function
-    */
-   this.setGetter = function(newGetter) {
-      getter = newGetter;
-      return;
-   };
-
-   /**
-    * Returns a possible setter function for this component.
-    * @returns setter function
-    * @type Function
-    */
-   this.getSetter = function() {
-      return setter;
-   };
-
-   /**
-    * Sets the setter function for this component. If set, the
-    * function is called from the component's setValue-method
-    * with three arguments and global scope:
-    * <li>the object which is being handled by save method.
-    * <li>name of the component
-    * <li>new value to save
-    * @see jala.Form.Component.Input#setValue
-    * @param {Function} newSetter new setter function
-    */
-   this.setSetter = function(newSetter) {
-      setter = newSetter;
-      return;
-   };
-
-   /**
-    * Returns the validator function for this component.
-    * @returns validator function
-    * @type Function
-    */
-   this.getValidator = function() {
-      return validator;
-   };
-
-   /**
-    * Sets the validator function for this component. If set, the
-    * function is called from the check-method with four arguments:
-    * <li>the name of the element
-    * <li>the parsed value of the element if the user input is
-    *     syntactically correct. For a date editor, the parsed value would
-    *     be a date object.
-    * <li>the map containing all user inputs as string (req.data)
-    * <li>form object
-    * @see #check
-    * @param {Function} newValidator new validator function
-    */
-   this.setValidator = function(newValidator) {
-      validator = newValidator;
-      return;
-   };
- 
- 
- 
- 
-   var size, minLength, maxLength = undefined;
-
-   /**
-    * Returns the size set for this component.
-    * @returns size
-    * @type String
-    */
-   this.getSize = function() {
-      return size;
-   };
-
-   /**
-    * Sets the size of this input box
-    * @param {String} newSize new size
-    */
-   this.setSize = function(newSize) {
-      size = newSize;
-      return;
-   };
 
 
-   /**
-    * Returns the minimum length of this component.
-    * @returns minimum length
-    * @type String
-    */
-   this.getMinLength = function() {
-      return minLength;
-   };
+   this.getter;      // for doc purposes only
 
-   /**
-    * Sets the minimum length of this input box
-    * @param {String} newMinLength new minimum length
-    */
-   this.setMinLength = function(newMinLength) {
-      minLength = newMinLength;
-      return;
-   };
+   // that's where the values really are stored:
+   var getter, setter, validator = undefined;
 
-
-   /**
-    * Returns the maximum length of this component.
-    * @returns maximum length
-    * @type String
-    */
-   this.getMaxLength = function() {
-      return maxLength;
-   };
-
-   /**
-    * Sets the maximum length of this input box
-    * @param {String} newMaxLength new maximum  length
-    */
-   this.setMaxLength = function(newMaxLength) {
-      maxLength = newMaxLength;
-      return;
-   };
-  
-  
-   var messages = {};
-  
-   /**
-    * Returns a specific message for a config element.
-    * @param {String} key The key of the message
-    **               (e.g. "missing", "tooLong", "tooShort", "invalid").
-    * @param {String} defaultMsg the message to use when no message was defined 
-    *                in the config.
-    * @param {Object} args One or more arguments passed to the gettext
-    * message processor which will replace {0}, {1} etc.
-    * @returns rendered message
-    * @type String
-    * @private
-    */
-   this.getMessage = function(key, defaultMsg, args) {
-      var arr = [(messages[key]) ? messages[key] : defaultMsg];
-      for (var i=2; i<arguments.length; i++) {
-         arr.push(arguments[i]);
+   this.__defineGetter__("getter", function() {   return getter;   });
+   this.__defineSetter__("getter", function(newGetter) {
+      if (newGetter instanceof Function) {
+         getter = newGetter;
       }
-      return gettext.apply(null, arr);
-   };
-  
+   });
 
-   /**
-    * Sets a custom error message
-    */
-   this.setMessage = function(key, msg) {
-      messages[key] = msg;
-      return;
-   };
-  
-  
+
+
+   this.setter;   
+
+   this.__defineGetter__("setter", function() {   return setter;   });
+   this.__defineSetter__("setter", function(newSetter) {
+      if (newSetter instanceof Function) {
+         setter = newSetter;
+      }
+   });
+
+
+//   /**
+//    * Sets the validator function for this component. If set, the
+//    * function is called from the check-method with four arguments:
+//    * <li>the name of the element
+//    * <li>the parsed value of the element if the user input is
+//    *     syntactically correct. For a date editor, the parsed value would
+//    *     be a date object.
+//    * <li>the map containing all user inputs as string (req.data)
+//    * <li>form object
+//    * @see #validate
+//    * @param {Function} newValidator new validator function
+//    */
+   this.validator;
+
+   this.__defineGetter__("validator", function() {   return validator;   });
+   this.__defineSetter__("validator", function(newValidator) {
+      if (newValidator instanceof Function) {
+         validator = newValidator;
+      }
+   });
+
    return this;
 };
 
@@ -796,8 +736,8 @@ jala.Form.Component.Input.prototype.getValue = function() {
    if (dataObj instanceof jala.Form.Tracker) {
       // handling re-rendering
       return null;
-   } else if (this.getGetter() instanceof Function) {
-      return this.getGetter().apply(null, [dataObj, this.name]);
+   } else if (this.getter) {
+      return this.getter.call(dataObj, this.name);
    } else {
       return dataObj[this.name];
    }
@@ -822,10 +762,9 @@ jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
    // set to explicitly null, we don't save the value. in this case,
    // we assume, the property is handled outside of jala.Form or purposely
    // ignored at all.
-   var setter = this.getSetter();
-   if (setter !== null) {
-      if (setter instanceof Function) {
-         setter.apply(null, [destObj, this.name, value]);
+   if (this.setter !== null) {
+      if (this.setter) {
+         this.setter.call(destObj, this.name, value);
       } else {
          destObj[this.name] = value;
       }
@@ -845,7 +784,7 @@ jala.Form.Component.Input.prototype.render = function() {
    }
 
    jala.Form.html.openTag("div",
-      {id: this.form.name + "_row_" + this.name,
+      {id: this.form.createDomId(this.name, "row"),
        "class": "row " + className
       }
    );
@@ -870,7 +809,7 @@ jala.Form.Component.Input.prototype.renderError = function() {
    if ((dataObj instanceof jala.Form.Tracker) && dataObj.errors[this.name]) {
       return jala.Form.html.elementAsString("div",
          dataObj.errors[this.name],
-         {id: this.form.createDomId("error", this.name),
+         {id: this.form.createDomId(this.name, "error"),
           "class": "error"});
    }
    return null;
@@ -885,12 +824,11 @@ jala.Form.Component.Input.prototype.renderError = function() {
  * @type String
  */
 jala.Form.Component.Input.prototype.renderLabel = function() {
-   var name = this.name;
    return jala.Form.html.elementAsString(
       "label",
       this.getLabel() || "",
-      {id: this.form.createDomId("label", name),
-       "for": this.form.createDomId(name)
+      {id: this.form.createDomId(this.name, "label"),
+       "for": this.form.createDomId(this.name)
       }
    );
 };
@@ -908,7 +846,7 @@ jala.Form.Component.Input.prototype.renderHelp = function() {
       return jala.Form.html.elementAsString(
          "div",
          this.getHelp(),
-         {id: this.form.createDomId("help", this.name),
+         {id: this.form.createDomId(this.name, "help"),
           "class": "help"
          }
       );
@@ -980,21 +918,21 @@ jala.Form.Component.Input.prototype.getControlAttributes = function() {
  * @type String
  */
 jala.Form.Component.Input.prototype.checkLength = function(reqData) {
-   var required  = this.getRequired();
-   var minLength = this.getMinLength();
-   var maxLength = this.getMaxLength();
+   var required  = this.getRequirement(jala.Form.REQUIRED);
+   var minLength = this.getRequirement(jala.Form.MINLENGTH);
+   var maxLength = this.getRequirement(jala.Form.MAXLENGTH);
    
    if (required && (reqData[this.name] == null || reqData[this.name].trim() == "")) {
-      return this.getMessage("missing", "Please enter text into this field!");
+      return this.getMessage(jala.Form.REQUIRED, "Please enter text into this field!");
    } else if (maxLength && reqData[this.name].length > maxLength) {
-      return this.getMessage("tooLong", "Input for this field is too long ({0} characters). Please enter no more than {1} characters!",
+      return this.getMessage(jala.Form.MAXLENGTH, "Input for this field is too long ({0} characters). Please enter no more than {1} characters!",
                                  reqData[this.name].length, maxLength);
    } else if (minLength) {
       // set an error if the element is required but the input is too short
       // but don't throw an error if the element is optional and empty
       if (reqData[this.name].length < minLength &&
           (required || (!required && reqData[this.name].length > 0))) {
-         return this.getMessage("tooShort", "Input for this field is too short ({0} characters). Please enter at least {1} characters!",
+         return this.getMessage(jala.Form.MINLENGTH, "Input for this field is too short ({0} characters). Please enter at least {1} characters!",
                reqData[this.name].length, minLength);
       }
    }
@@ -1010,7 +948,7 @@ jala.Form.Component.Input.prototype.checkLength = function(reqData) {
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.Component.Input.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Input.prototype.checkRequirements = function(reqData) {
    return this.checkLength(reqData);
 };
 
@@ -1037,11 +975,8 @@ jala.Form.Component.Input.prototype.parseValue = function(reqData) {
  */
 jala.Form.Component.Input.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : value;
-   if (this.getMaxLength()) {
-      attr.maxlength = this.getMaxLength();
-   }
-   if (this.getSize()) {
-      attr.size = this.getSize();
+   if (this.getRequirement(jala.Form.MAXLENGTH)) {
+      attr.maxlength = this.getRequirement(jala.Form.MAXLENGTH);
    }
    jala.Form.html.input(attr);
    return;
@@ -1107,7 +1042,7 @@ jala.Form.Component.Skin.prototype.renderControls = function(attr, value, reqDat
  * @param {jala.Form.Tracker} tracker jala.Form.Tracker object storing possible error messages
  * @returns null
  */
-jala.Form.Component.Skin.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Skin.prototype.checkRequirements = function(reqData) {
    return null;
 };
 
@@ -1139,11 +1074,8 @@ jala.Form.extend(jala.Form.Component.Password, jala.Form.Component.Input);
  */
 jala.Form.Component.Password.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : value;
-   if (this.getMaxLength()) {
-      attr.maxlength = this.getMaxLength();
-   }
-   if (this.getSize()) {
-      attr.size = this.getSize();
+   if (this.getRequirement(jala.Form.MAXLENGTH)) {
+      attr.maxlength = this.getRequirement(jala.Form.MAXLENGTH);
    }
    jala.Form.html.password(attr);
    return;
@@ -1277,11 +1209,8 @@ jala.Form.extend(jala.Form.Component.Date, jala.Form.Component.Input);
  */
 jala.Form.Component.Date.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : this.getDateFormat().format(value);
-   if (this.getMaxLength()) {
-      attr.maxlength = this.getMaxLength();
-   }
-   if (this.getSize()) {
-      attr.size = this.getSize();
+   if (this.getRequirement(jala.Form.MAXLENGTH)) {
+      attr.maxlength = this.getRequirement(jala.Form.MAXLENGTH);
    }
    jala.Form.html.input(attr);
    return;
@@ -1294,7 +1223,7 @@ jala.Form.Component.Date.prototype.renderControls = function(attr, value, reqDat
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.Component.Date.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Date.prototype.checkRequirements = function(reqData) {
    try {
       this.parseValue(reqData);
       return null;
@@ -1382,7 +1311,7 @@ jala.Form.Component.Select.prototype.renderControls = function(attr, value, reqD
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.Component.Select.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Select.prototype.checkRequirements = function(reqData) {
    return this.checkOptions(reqData);
 };
 
@@ -1400,7 +1329,7 @@ jala.Form.Component.Select.prototype.parseOptions = function() {
       if (options instanceof Array) {
          return options;
       } else if (options instanceof Function) {
-         return options.apply(null, [this.form.getDataObj(), this.name]);
+         return options.call(this.form.getDataObj(), this.name);
       }
    }
    return [];
@@ -1414,7 +1343,7 @@ jala.Form.Component.Select.prototype.parseOptions = function() {
  */
 jala.Form.Component.Select.prototype.checkOptions = function(reqData) {
    // if field is required, an empty option is not allowed:
-   var found = (!this.getRequired() && !reqData[this.name]);
+   var found = (!this.getRequirement(jala.Form.REQUIRED) && !reqData[this.name]);
    if (!found) {
       var options = this.parseOptions();
       var val = reqData[this.name];
@@ -1502,7 +1431,7 @@ jala.Form.Component.Radio.prototype.renderControls = function(attr, value) {
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.Component.Radio.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Radio.prototype.checkRequirements = function(reqData) {
    return this.checkOptions(reqData);
 };
 
@@ -1513,24 +1442,24 @@ jala.Form.Component.Radio.prototype.checkSyntax = function(reqData) {
 
 /**
  * @class Subclass of jala.Form.Component.Input which renders and validates a
- * checkbox based on a flag with the values 0 and 1.
+ * checkbox.
  * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @constructor
  */
-jala.Form.Component.Flag = function Flag(name) {
-   jala.Form.Component.Flag.superConstructor.apply(this, arguments);
+jala.Form.Component.Checkbox = function Checkbox(name) {
+   jala.Form.Component.Checkbox.superConstructor.apply(this, arguments);
    return this;
 };
 // extend jala.Form.Component.Input
-jala.Form.extend(jala.Form.Component.Flag, jala.Form.Component.Input);
+jala.Form.extend(jala.Form.Component.Checkbox, jala.Form.Component.Input);
 
 /**
  * Renders an checkbox to the response.
  * @param {Object} attr Basic attributes for this element.
  * @param {Object} value Value to be used for rendering this element.
  */
-jala.Form.Component.Flag.prototype.renderControls = function(attr, value, reqData) {
+jala.Form.Component.Checkbox.prototype.renderControls = function(attr, value, reqData) {
    if (value == 1 || (reqData && reqData[this.name] == "1")) {
       attr.checked = "checked";
    }
@@ -1546,7 +1475,7 @@ jala.Form.Component.Flag.prototype.renderControls = function(attr, value, reqDat
  * @returns parsed value
  * @type Number
  */
-jala.Form.Component.Flag.prototype.parseValue = function(reqData) {
+jala.Form.Component.Checkbox.prototype.parseValue = function(reqData) {
    return (reqData[this.name] == "1") ? 1 : 0;
 };
 
@@ -1557,7 +1486,7 @@ jala.Form.Component.Flag.prototype.parseValue = function(reqData) {
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.Component.Flag.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.Checkbox.prototype.checkRequirements = function(reqData) {
    if (reqData[this.name] && reqData[this.name] != "1") {
       return this.getMessage("invalid", "The value of this checkbox is invalid.");
    }
@@ -1601,25 +1530,7 @@ jala.Form.Component.File = function File(name) {
       contentType = newContentType;
       return;
    };
-   
-   /**
-    * Returns the maximum length of uploaded files in bytes.
-    * @type Number
-    */
-   this.getMaxLength = function() {
-      return maxLength;
-   };
-   
-   /**
-    * Sets the maximum length of uploaded files
-    * @param {Number} newMaxLength maximum length in bytes
-    */
-   this.setMaxLength = function(newMaxLength) {
-      maxLength = newMaxLength;
-      return;
-   };
-   
-   
+
    return this;
 };
 // extend jala.Form.Component.Input
@@ -1635,7 +1546,7 @@ jala.Form.Component.File.containsFileUpload = true;
  *       passed only if the form is re-rendered after an error occured.
  */
 jala.Form.Component.File.prototype.renderControls = function(attr, value, reqData) {
-   var contentType = this.getContentType();
+   var contentType = this.getRequirement(jala.Form.CONTENTTYPE);
    if (contentType) {
       attr.accept = (contentType instanceof Array) ? contentType.join(",") : contentType;
    }
@@ -1651,29 +1562,29 @@ jala.Form.Component.File.prototype.renderControls = function(attr, value, reqDat
  * @returns null if everything is ok or string containing error message
  * @type String
  */
-jala.Form.Component.File.prototype.checkSyntax = function(reqData) {
+jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
 
    if (reqData[this.name].contentLength == 0) {
       // no upload
-      if (this.getRequired() == true) {
-         return "File upload is required.";
+      if (this.getRequirement(jala.Form.REQUIRED) == true) {
+         return this.getMessage(jala.Form.REQUIRED, "File upload is required.");
       } else {
          // no further checks necessary, exit here
          return null;
       }
    }
 
-   var maxLength = this.getMaxLength();
+   var maxLength = this.getRequirement(jala.Form.MAXLENGTH);
    if (maxLength && reqData[this.name].contentLength > maxLength) {
-      return this.getMessage("tooLong", "This file is too big ({0} bytes), maximum allowed size {1} bytes.",
+      return this.getMessage(jala.Form.MAXLENGTH, "This file is too big ({0} bytes), maximum allowed size {1} bytes.",
             reqData[this.name].contentLength, maxLength);
    }
    
-   var contentType = this.getContentType();
+   var contentType = this.getRequirement(jala.Form.CONTENTTYPE);
    if (contentType) {
       var arr = (contentType instanceof Array) ? contentType : [contentType];
       if (arr.indexOf(reqData[this.name].contentType) == -1) {
-         return this.getMessage("wrongType", "The file type {0} is not allowed.",
+         return this.getMessage(jala.Form.CONTENTTYPE, "The file type {0} is not allowed.",
             reqData[this.name].contentType);
       }
    }
@@ -1741,7 +1652,7 @@ jala.Form.Tracker = function(reqData) {
 
    /**
     * A map containing parsed values (only for those fields that didn't
-    * fail during checkSyntax method).
+    * fail during checkRequirements method).
     * @type Object
     */
    this.values = {};
