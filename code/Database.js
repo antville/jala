@@ -297,6 +297,7 @@ jala.db.Server.prototype.getConnection = function(name, props) {
  * @param {String} params Optional creation parameters allowed for this data type.
  * @returns A newly created instance of DataType.
  * @constructor
+ * @private
  */
 jala.db.DataType = function(type, typeName, params) {
 
@@ -481,6 +482,7 @@ jala.db.RamDatabase.prototype.shutdown = function() {
  * </ul>
  * @param {String} primaryKey The name of the column that contains
  * the primary key
+ * @private
  */
 jala.db.RamDatabase.prototype.createTable = function(tableName, columns, primaryKey) {
    res.push();
@@ -667,6 +669,7 @@ jala.db.RamDatabase.prototype.copyTables = function(database) {
  * @returns All available data types
  * @type Array
  * @see jala.db.DataType
+ * @private
  */
 jala.db.RamDatabase.prototype.getDataTypes = function() {
    // data types are cached for performance reasons
@@ -692,6 +695,7 @@ jala.db.RamDatabase.prototype.getDataTypes = function() {
  * @param {Number} type The type code as defined in java.sql.Types
  * @returns The data type object for the code
  * @type jala.db.DataType
+ * @private
  */
 jala.db.RamDatabase.prototype.getDataType = function(type) {
    var types = this.getDataTypes();
