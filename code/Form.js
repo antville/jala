@@ -232,17 +232,16 @@ jala.Form.extend = function(subClass, superClass) {
 
 
 /**
- * Parses an object tree and configures a new jala.Form instance
- * according to the properties.
- * Propertynames are matched with setter-functions and
- * the property "class" is used to instanciate new
- * components.
+ * Parses a plain javascript object tree and configures a
+ * new jala.Form instance according to the properties.
+ * Propertynames are matched with constants and setter-functions,
+ * the property "type" is used to create new component objects.
  * @param {Object} config object tree containing config
  * @returns jala.Form instance
  * @type jala.Form
  */
-jala.Form.parseConfig = function(config) {
-   if (!config || !config.name || !config.elements) {
+jala.Form.create = function(config) {
+   if (!config || !config.name || !config.components) {
       return null;
    }
    var form = new jala.Form(config.name);
@@ -255,51 +254,66 @@ jala.Form.parseConfig = function(config) {
    if (config.errorMessage) {
       form.setErrorMessage(config.errorMessage);
    }
-   for (var i=0; i<config.elements.length; i++) {
-      element = config.elements[i];
+   if (config.components) {
+      jala.Form.createComponents(form, config.components);
+   }
+   return form;
+};
+
+
+/**
+ * Parses an array of plain js objects and tries to create components.
+ * @param {jala.Form | jala.Form.Component.Fieldset} container Object whose
+ *       addComponent method is used for new components (either Form or Fieldset).
+ * @param {Array} arr Array of plain javascript objects used as config.
+ */
+jala.Form.createComponents = function(container, arr) {
+   var components = [];
+   for (var i=0; i<arr.length; i++) {
+      element = arr[i];
       var clazzName = (element["type"]) ? element["type"].titleize() : "Input";
       var constr = jala.Form.Component[clazzName];
       if (!constr) {
          continue;
       }
       var component = new constr(element.name);
-      // call setter functions for all fields from config object:
+      container.addComponent(component);  // make sure that component.form is set before the loop!
       for (var key in element) {
          switch(key) {
             case "name":
             case "type":
             case "messages":
                break;
-            case jala.Form.REQUIRED:
-               component.require(key, true);
-               break;
-            case jala.Form.MAXLENGTH:
-               component.require(key, element[key]);
-               break;
-            case jala.Form.MINLENGTH:
-               component.require(key, element[key]);
-               break;
-            case jala.Form.CONTENTTYPE:
-               component.require(key, element[key]);
+            case "components":
+               jala.Form.createComponents(component, element[key]);
                break;
             case "getter":
             case "setter":
             case "validator":
                component[key] = element[key];
                break;
+            case jala.Form.REQUIRED:
+               component.require(key, true);
+               break;
             default:
-               // note: String.prototype.titleize from the helma.core module
-               // would uppercase the first letter, but lowercases all ensuing
-               // characters (maxLength would become Maxlength).
-               // note: use try/catch to detect if the setter method really exists
-               // because a check using if(component[method]) would fail for
-               // inherited methods although executing the inherited method works.
-               try {
-                  component["set" + key.charAt(0).toUpperCase() + key.substring(1)](element[key]);
-               } catch (e) {
-                  // invalid field for this component
-                  // FIXME: log this to app.log?
-                  res.debug("e="+e);
+               // check if key matches a constant:
+               if (jala.Form.CONSTANTS.indexOf(key) > -1) {
+                  component.require(key, element[key]);
+               } else {
+                  // call setter functions for all fields from config object:
+                  // note: String.prototype.titleize from the helma.core module
+                  // would uppercase the first letter, but lowercases all ensuing
+                  // characters (maxLength would become Maxlength).
+                  // note: use try/catch to detect if the setter method really exists
+                  // because a check using if(component[method]) would fail for
+                  // inherited methods although executing the inherited method works.
+                  try {
+                     component["set" + key.charAt(0).toUpperCase() + key.substring(1)](element[key]);
+                  } catch (e) {
+                     // invalid field for this component
+                     // FIXME: log this to app.log?
+                     res.debug("e="+e);
+                  }
                }
                break;
          }
@@ -309,10 +323,11 @@ jala.Form.parseConfig = function(config) {
             component.setMessage(key, element.messages[key]);
          }
       }
-      form.addComponent(component);
-   }   
-   return form;
+   }
+   return;
 };
+
+
 
 
 /**
@@ -475,7 +490,21 @@ jala.Form.prototype.id_macro = function(param) {
 jala.Form.MINLENGTH     = "minlength";
 jala.Form.MAXLENGTH     = "maxlength";
 jala.Form.REQUIRED      = "required";
+jala.Form.CHECKOPTIONS  = "checkoptions";
+
 jala.Form.CONTENTTYPE   = "contenttype"; 
+jala.Form.MAXWIDTH      = "maxwidth";
+jala.Form.MINWIDTH      = "minwidth";
+jala.Form.MAXHEIGHT     = "maxheight";
+jala.Form.MINHEIGHT     = "minheight";
+
+// collect constants in an array
+jala.Form.CONSTANTS = [];
+for (var key in jala.Form) {
+   if (key.toLowerCase() == jala.Form[key]) {
+      jala.Form.CONSTANTS.push(jala.Form[key]);
+   }
+}
 
 
 /**
@@ -671,6 +700,57 @@ jala.Form.Component.Fieldset.prototype.save = function(tracker, destObj) {
 
 
 
+
+
+
+/**
+ * @class Subclass of jala.Form.Component.Input which renders plain text or skins.
+ * @base jala.Form.Component.Input
+ * @param {String} name Name of the component, used as name of the html controls.
+ * @constructor
+ */
+jala.Form.Component.Skin = function Skin(name) {
+   jala.Form.Component.Skin.superConstructor.apply(this, arguments);
+   
+   var handler = undefined;
+   
+   /**
+    * Returns the skin source code for this component.
+    * @returns skin source
+    * @type String
+    */
+   this.getHandler = function() {
+      return handler;
+   };
+
+   /**
+    * Sets the skin source code for this component.
+    * @param {String} newSource new skin source
+    */
+   this.setHandler = function(newHandler) {
+      handler = newHandler;
+      return;
+   };
+
+   return this;
+};
+// extend jala.Form.Component
+jala.Form.extend(jala.Form.Component.Skin, jala.Form.Component);
+
+/**
+ * Renders the skin wrapped by this component to the response.
+ */
+jala.Form.Component.Skin.prototype.render = function() {
+   var obj = (this.getHandler()) ? this.getHandler() : this.form.getDataObj();
+   obj.renderSkin(this.name, this);
+   return;
+};
+
+
+
+
+
+
 /**
  * @class Class for rendering and validating input form elements.
  * @param {String} name Name of the component, used as name of the html controls.
@@ -683,6 +763,16 @@ jala.Form.Component.Input = function Input(name) {
    
    var messages = {};
 
+   /**
+    * Sets a requirement for this component.
+    * If function is called without arguments, jala.Form.REQUIRED
+    * is set to true.
+    * @param {String} key String defining the type of requirement,
+    *             constants in jala.Form may be used.
+    * @param {Object} val Value of the requirement.
+    * @param {String} msg Optional error message if requirement
+    *             is not fulfilled.
+    */
    this.require = function(key, val, msg) {
       if (arguments.length == 0) {
          // set default value for arguments
@@ -1131,70 +1221,6 @@ jala.Form.Component.Input.prototype.renderControls = function(attr, value, reqDa
 
 
 
-/**
- * @class Subclass of jala.Form.Component.Input which renders plain text or skins.
- * @base jala.Form.Component.Input
- * @param {String} name Name of the component, used as name of the html controls.
- * @constructor
- */
-jala.Form.Component.Skin = function Skin(name) {
-   jala.Form.Component.Skin.superConstructor.apply(this, arguments);
-   
-   var source = undefined;
-   
-   /**
-    * Returns the skin source code for this component.
-    * @returns skin source
-    * @type String
-    */
-   this.getSource = function() {
-      return source;
-   };
-
-   /**
-    * Sets the skin source code for this component.
-    * @param {String} newSource new skin source
-    */
-   this.setSource = function(newSource) {
-      source = newSource;
-      return;
-   };
-
-   
-   
-   return this;
-};
-// extend jala.Form.Component.Input
-jala.Form.extend(jala.Form.Component.Skin, jala.Form.Component.Input);
-
-/**
- * Renders an input tag to the response.
- * @param {Object} attr Basic attributes for this element.
- * @param {Object} value Value to be used for rendering this element.
- * @param {Object} reqData Request data for the whole form. This argument is
- *       passed only if the form is re-rendered after an error occured.
- */
-jala.Form.Component.Skin.prototype.renderControls = function(attr, value, reqData) {
-   if (this.getSource()) {
-      renderSkin(createSkin(this.getSource()));
-   }      
-   return;
-};
-
-/**
- * Not used in jala.Form.Component.Skin prototype.
- * @see jala.Form.Component.Input#checkLength
- * @param {Object} reqData request data
- * @param {jala.Form.Tracker} tracker jala.Form.Tracker object storing possible error messages
- * @returns null
- */
-jala.Form.Component.Skin.prototype.checkRequirements = function(reqData) {
-   return null;
-};
-
-
-
-
 
 /**
  * @class Subclass of jala.Form.Component.Input which renders and validates a
@@ -1412,7 +1438,6 @@ jala.Form.Component.Select = function Select(name) {
 // *      or strings whose value will be their index position.</li>
 // * <li><code>firstOption</code> Text to display if no value is selected</li>
 
-
    this.getOptions = function() {
       return options;
    };
@@ -1430,7 +1455,7 @@ jala.Form.Component.Select = function Select(name) {
       firstOption = newFirstOption;
       return;
    };
-   
+  
    return this;
 };
 // extend jala.Form.Component.Input
@@ -1491,6 +1516,10 @@ jala.Form.Component.Select.prototype.checkOptions = function(reqData) {
    // if field is required, an empty option is not allowed:
    var found = (!this.getRequirement(jala.Form.REQUIRED) && !reqData[this.name]);
    if (!found) {
+      if (this.getRequirement(jala.Form.CHECKOPTIONS) === false) {
+         // exit, if option check shall be suppressed
+         return null;
+      }
       var options = this.parseOptions();
       var val = reqData[this.name];
       for (var i=0; i<options.length; i++) {
@@ -1703,7 +1732,7 @@ jala.Form.Component.File.prototype.renderControls = function(attr, value, reqDat
 };
 
 /**
- * Validates a file upload by making sure it's there (if config.required is set),
+ * Validates a file upload by making sure it's there (if REQUIRED is set),
  * checking the file size, the content type and by trying to construct an image.
  * @param {Object} reqData request data
  * @param {jala.Form.Tracker} tracker jala.Form.Tracker object storing possible error messages
@@ -1742,6 +1771,75 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
 
 
 
+
+
+
+
+
+
+/**
+ * @class Subclass of jala.Form.Component.File which renders a file upload
+ * and validates uploaded files as images. Note that the file is not saved.
+ * Use req.data[field].writeToFile(dir, name).
+ * @base jala.Form.Component.File
+ * @param {String} name Name of the component, used as name of the html controls.
+ * @constructor
+ */
+jala.Form.Component.Image = function Image(name) {
+   jala.Form.Component.Image.superConstructor.apply(this, arguments);
+   
+   return this;
+};
+// extend jala.Form.Component.File
+jala.Form.extend(jala.Form.Component.Image, jala.Form.Component.File);
+
+
+
+/**
+ * Validates an image upload by making sure it's there (if REQUIRED is set),
+ * checking the file size, the content type and by trying to construct an image.
+ * If the file is an image, width and height limitations set by require are
+ * checked.
+ * @param {Object} reqData request data
+ * @type String
+ */
+jala.Form.Component.Image.prototype.checkRequirements = function(reqData) {
+   var re = this.constructor.superConstructor.prototype.checkRequirements.call(this, reqData);
+   if (re) {
+      return re;
+   }
+
+   if (reqData[this.name].contentLength > 0) {
+      var helmaImg = undefined;
+      try {
+         helmaImg = new Image(reqData[this.name]);
+      } catch (imgError) {
+         return "This image file can't be processed.";
+      }
+   
+      var maxWidth = this.getRequirement(jala.Form.MAXWIDTH);
+      if (maxWidth && helmaImg.getWidth() > maxWidth) {
+         return this.getMessage("maxwidth", "This image is too wide.");
+      }
+      
+      var minWidth = this.getRequirement(jala.Form.MINWIDTH);
+      if (minWidth && helmaImg.getWidth() < minWidth) {
+         return this.getMessage("minwidth", "This image is not wide enough.");
+      }
+      
+      var maxHeight = this.getRequirement(jala.Form.MAXHEIGHT);
+      if (maxHeight && helmaImg.getHeight() > maxHeight) {
+         return this.getMessage("maxheight", "This image is too tall.");
+      }
+      
+      var minHeight = this.getRequirement(jala.Form.MINHEIGHT);
+      if (minHeight && helmaImg.getHeight() < minHeight) {
+         return this.getMessage("minheight", "This image is not tall enough.");
+      }
+   }
+
+   return null;
+};
 
 
 
