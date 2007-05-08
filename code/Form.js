@@ -291,6 +291,7 @@ jala.Form.create = function(config) {
  */
 jala.Form.createComponents = function(container, arr) {
    var components = [];
+   var element;
    for (var i=0; i<arr.length; i++) {
       element = arr[i];
       var clazzName = (element["type"]) ? element["type"].titleize() : "Input";
@@ -602,6 +603,12 @@ for (var key in jala.Form) {
  * @constructor
  */
 jala.Form.Component = function Component(name) {
+   /**
+    * The Form this component belongs to
+    * @type jala.Form
+    * @private
+    */
+   var form;
 
    /**
     * Readonly reference to name of component
