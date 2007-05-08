@@ -522,13 +522,12 @@ jala.Test.prototype.executeTest = function(testFile) {
                   throw new jala.Test.EvaluatorException("Test function '" +
                                             functionName + "' is not defined.");
                }
-               testResult.log[testResult.log.length] = this.executeTestFunction(functionName, scope);
+               testResult.log.push(this.executeTestFunction(functionName, scope));
             } catch (e) {
                this.testsFailed += 1;
                testResult.status = jala.Test.FAILED;
-               testResult.log[testResult.log.length] = e;
+               testResult.push(e);
             }
-            testResult.log.push(this.executeTestFunction(functionName, scope));
          }
       } catch (e) {
          this.testsFailed += 1;
