@@ -22,7 +22,7 @@
 //
 
 /**
- * @fileoverview Fields and methods of the jala.Utilities class.
+ * @fileoverview Additional fields and methods of the HopObject class.
  */
 
 /**
@@ -91,7 +91,7 @@ HopObject.prototype.getAccessName = function(obj, maxLength) {
          accessName = accessName + counter.toString();
       }
       counter += 1;
-   } while (this[accessName] || this.get(accessName));
+   } while (this[accessName] || this[accessName + "_action"] || this.get(accessName));
    
    return accessName;
 };

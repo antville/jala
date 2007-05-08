@@ -392,7 +392,9 @@ jala.XmlRpcRequest.convertArgument = function(obj) {
       // convert into Hashtable
       result = new java.util.Hashtable();
       for (var key in obj) {
-         result.put(key, jala.XmlRpcRequest.convertArgument(obj[key]));
+         if (obj[key] != null) {
+            result.put(key, jala.XmlRpcRequest.convertArgument(obj[key]));
+         }
       }
    } else {
       result = obj;

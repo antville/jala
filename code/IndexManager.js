@@ -345,19 +345,17 @@ jala.IndexManager.prototype.getSegmentInfos = function() {
 /** @ignore */
 jala.IndexManager.prototype.toString = function() {
    var queue = this.getQueue();
-   return "[Index Manager '" + this.name + "' (" +
+   return "[Index Manager '" + this.getName() + "' (" +
           queue.size() + " objects queued)]";
 };
 
 /**
- * Adds a HopObject to the underlying index. This is done
+ * Adds a document object to the underlying index. This is done
  * by adding a new job to the internal queue and starting
  * a new worker thread to process it (if there isn't already
  * a worker being busy processing the queue). Adding an object
  * to the index also means that all documents with the same Id will
- * be removed before. The HopObject must implement a method
- * <code>getIndexDocument</code> that is expected to return
- * a ready-to-index instance of helma.Search.Document.
+ * be removed before.
  * @param {helma.Search.Document} doc The document object that should be
  * added to the underlying index.
  * @param {Boolean} force (optional) If true the object will be added
@@ -393,14 +391,12 @@ jala.IndexManager.prototype.add = function(doc, force) {
 };
 
 /**
- * Removes the object passed as argument from the underlying
- * index. The argument can be either a HopObject or a JavaScript
- * object, but this method expects the property <code>_id</code>
- * to be set. Removing is done by adding a new job to the internal
+ * Removes all entries with the Id passed as argument from the
+ * underlying index. Removing is done by adding a new job to the internal
  * queue, which in turn is processed asynchronously by a worker
  * thread.
- * @param {HopObject | Object} obj The HopObject or JavaScript object
- * whose property <code>_id</code> contains the Id of the index record.
+ * @param {Number} id The Id of the document object(s) to remove
+ * from the underlying index.
  * @param {Boolean} force (optional) If true the removal is done instantly.
  * In this case no checking is done if the index is locked, so use
  * this option with caution as it might lead to index corruption.

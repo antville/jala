@@ -516,10 +516,17 @@ jala.Test.prototype.executeTest = function(testFile) {
          // run all test methods defined in the array "tests"
          var functionName;
          for (var i=0;i<scope.tests.length;i++) {
-            functionName = scope.tests[i];
-            if (!scope[functionName] || scope[functionName].constructor != Function) {
-               throw new jala.Test.EvaluatorException("Test function '" +
-                                         functionName + "' is not defined.");
+            try {
+               functionName = scope.tests[i];
+               if (!scope[functionName] || scope[functionName].constructor != Function) {
+                  throw new jala.Test.EvaluatorException("Test function '" +
+                                            functionName + "' is not defined.");
+               }
+               testResult.log[testResult.log.length] = this.executeTestFunction(functionName, scope);
+            } catch (e) {
+               this.testsFailed += 1;
+               testResult.status = jala.Test.FAILED;
+               testResult.log[testResult.log.length] = e;
             }
             testResult.log.push(this.executeTestFunction(functionName, scope));
          }
