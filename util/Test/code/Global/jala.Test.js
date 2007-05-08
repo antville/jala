@@ -526,7 +526,7 @@ jala.Test.prototype.executeTest = function(testFile) {
             } catch (e) {
                this.testsFailed += 1;
                testResult.status = jala.Test.FAILED;
-               testResult.push(e);
+               testResult.log.push(e);
             }
          }
       } catch (e) {
