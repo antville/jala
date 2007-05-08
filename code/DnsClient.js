@@ -36,7 +36,8 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/lib/javadns.jar");
+app.addRepository(getProperty(jala.dir, "modules/jala") + 
+                  "/lib/javadns.jar");
 
 /**
  * Constructs a new DnsClient object.

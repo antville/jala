@@ -26,7 +26,8 @@
  * Dependencies
  */
 app.addRepository("modules/core/String.js");
-app.addRepository("modules/jala/code/XmlRpcRequest.js");
+app.addRepository(getProperty("jala.dir", "modules/jala") + 
+                  "/code/XmlRpcRequest.js");
 
 /**
  * A safe eval method that uses a standard Javascript scope

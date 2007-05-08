@@ -35,7 +35,7 @@ if (!global.jala) {
 
 (function() {
    var packages = [
-      "Mp3",
+      "BitTorrent",
       "Date",
       "DnsClient",
       "Captcha", 
@@ -46,6 +46,7 @@ if (!global.jala) {
       "ImageFilter",
       "IndexManager",
       "ListRenderer",
+      "Mp3",
       "PodCastWriter",
       "RemoteContent",
       "Rss20Writer",
@@ -53,9 +54,9 @@ if (!global.jala) {
       "XmlRpcRequest",
       "XmlWriter"
    ];
-   var jalaDir = getProperty("jala.dir", "modules/jala/code/");
+   var jalaDir = getProperty("jala.dir", "modules/jala");
    for (var i in packages) {
-      app.addRepository(jalaDir + packages[i] + ".js");
+      app.addRepository(jalaDir + "/code/" + packages[i] + ".js");
    }
    return;
 })();

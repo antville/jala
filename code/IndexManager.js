@@ -21,17 +21,14 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Fields and methods of the jala.IndexManager class.
  */
-
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
-
 
 /**
  * HelmaLib dependencies
@@ -41,7 +38,8 @@ app.addRepository("modules/helma/Search.js");
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/code/AsyncRequest.js");
+app.addRepository(getProperty("jala.dir", "modules/jala") + 
+                  "/code/AsyncRequest.js");
 
 /**
  * Constructs a new IndexManager object.

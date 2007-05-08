@@ -32,6 +32,8 @@ if (!global.jala) {
    global.jala = {};
 }
 
+// Resolve Jala dependencies
+app.addRepository(getProperty("jala.dir", "modules/jala") + "/code/all.js");
 
 /**
  * HelmaLib dependencies
@@ -42,7 +44,8 @@ app.addRepository("modules/helma/Http.js");
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/code/Database.js");
+app.addRepository(getProperty("jala.dir", "modules/jala") + 
+                  "/code/Database.js");
 
 /**
  * Constructs a new Test instance.

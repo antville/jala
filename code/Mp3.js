@@ -21,34 +21,26 @@
 // $HeadURL$
 //
 
-
 /**
  * @fileoverview Fields and methods of the jala.audio package.
  */
-
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
 
+// Load java libraries
+(function() {
+   var jalaDir = getProperty("jala.dir", "modules/jala");
+   // JavaMusicTag (org.farng.mp3.*)
+   app.addRepository(jalaDir + "/lib/jid3lib-0.5.4.jar");
+   // Mp3Info (de.ueberdosis.mp3info.*, required for parseDuration)
+   app.addRepository(jalaDir + "/lib/id3-1.6.0d9.jar");
+})();
 
-/**
- * Load java libraries
- */
-
-// JavaMusicTag (org.farng.mp3.*)
-app.addRepository("modules/jala/lib/jid3lib-0.5.4.jar");
-
-// Mp3Info (de.ueberdosis.mp3info.*, required for parseDuration)
-app.addRepository("modules/jala/lib/id3-1.6.0d9.jar");
-
-
-/**
- * HelmaLib dependencies
- */
+// Resolve HelmaLib dependencies
 app.addRepository("modules/helma/File.js");
-
 
 /**
  * Constructs a new jala.Mp3 wrapper and

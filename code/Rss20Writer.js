@@ -36,7 +36,8 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/code/XmlWriter.js");
+app.addRepository(getProperty("jala.dir", "modules/jala") + 
+                  "/code/XmlWriter.js");
 
 /**
  * @class Class to create, modify and render standard-compliant

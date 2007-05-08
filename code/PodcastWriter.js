@@ -36,7 +36,8 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/code/Rss20Writer.js");
+app.addRepository(getProperty("jala.dir", "modules/jala") + 
+                  "/code/Rss20Writer.js");
 
 /**
  * @class Class to create, modify and render standard-compliant

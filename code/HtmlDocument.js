@@ -33,9 +33,12 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/lib/dom4j-1.6.1.jar");
-app.addRepository("modules/jala/lib/jaxen-1.1-beta-8.jar");
-app.addRepository("modules/jala/lib/tagsoup-1.0rc3.jar");
+(function() {
+   var jalaDir = getProperty("jala.dir", "modules/jala");
+   app.addRepository(jalaDir + "/lib/dom4j-1.6.1.jar");
+   app.addRepository(jalaDir + "/lib/jaxen-1.1-beta-8.jar");
+   app.addRepository(jalaDir + "/lib/tagsoup-1.0rc3.jar");
+})();
 
 /**
  * Construct a new HTML document.
