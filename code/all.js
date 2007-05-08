@@ -35,6 +35,7 @@ if (!global.jala) {
 
 (function() {
    var packages = [
+      "AsyncRequest",
       "BitTorrent",
       "Date",
       "DnsClient",

@@ -51,6 +51,10 @@ if (!global.jala) {
  * of version 1.6)
  */
 jala.AsyncRequest = function(obj, funcName, args) {
+   app.logger.warn("Use of jala.AsyncRequest is deprecated in this version.");
+   app.logger.warn("This module will probably be removed in a " +
+                   "future version of Jala.");
+   
    /**
     * Contains a reference to the thread started by this AsyncRequest
     * @type java.lang.Thread
