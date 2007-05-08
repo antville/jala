@@ -77,8 +77,8 @@
    	<property name="destdir" location="${docs.destination}" />
    	<mkdir dir="${work}" />
       <helmadoc srcdir="${srcdir}"
-      			 destdir="${destdir}"
-      			 projectName="${docs.projectName}" />
+               destdir="${destdir}"
+               projectName="${docs.projectName}" />
       <delete dir="${work}" />
    </target>
 
@@ -172,8 +172,9 @@
          <copy todir="${workHelmadoc}">
             <fileset dir="@{srcdir}">
                <exclude name=".svn/**" />
-               <exclude name="docs/**" />
-               <exclude name="*/*.html" />
+               <include name="**/*.js" />
+               <include name="**/*.hac" />
+               <include name="**/*.properties" />
             </fileset>
          </copy>
          <echo message="Preparing files for JSDoc ..." />
@@ -196,10 +197,10 @@
             }
       
             // slice filename into dir (= name of prototype), filename, file-extension
-            var fileNameReg = /([^\\\/]+)[\\\/]([^\\\/]+)\.(.*)$/i;
+            var fileNameReg = /([^\\\/]+)[\\\/]([^\\\/]+)\.([^\.]*)$/i;
       
             // find plain function definitions
-            var functionReg = /^(\s*)function (.*)\(/gi;
+            var functionReg = /(^|[^=]\s+)function\s+(\w+)\s*\(/gi;
       
             // find constructor functions (after replacing plain function definitions
             var ctorReg = /.prototype.constructor/gi;
@@ -272,21 +273,22 @@
             
          ]]> </script>
          <echo message="... prepared files for JSDoc." />
-      
          <mkdir dir="@{destdir}" />
          <exec executable="perl">
             <arg value="${env.BUILD_HOME}/JSDoc/jsdoc.pl" />
             <arg value="--template-dir=${env.BUILD_HOME}/JSDoc/templates" />
             <arg value="-d=@{destdir}" />
             <arg value="--extensions=js,hac,properties" />
+            <arg value="--no-sources" />
             <arg value="--recursive" />
-         	<arg value="--quiet" />
+            <arg value="--quiet" />
             <arg value="--package-naming" />
             <arg value="--project-name=@{projectName}" />
             <arg value="--project-summary=@{srcdir}/.jsdoc/summary.html" />
-				<arg value="--globals-name=Global" />
+            <arg value="--globals-name=Global" />
          	<arg value="${workHelmadoc}" />
          </exec>
+      
          <delete dir="${workHelmadoc}" />
       </sequential>
    </macrodef>
