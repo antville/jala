@@ -24,9 +24,8 @@
 
 /**
  * @fileoverview This class can be used to render forms and to validate
- *    and store user submits. Further types of form elements can be added
+ *    and store user submits. Further types of form components can be added
  *    by subclassing jala.Form.Component.Input.
- *
  **/
 
 
@@ -333,7 +332,7 @@ jala.Form.createComponents = function(container, arr) {
                   // characters (maxLength would become Maxlength).
                   // note: use try/catch to detect if the setter method really exists
                   // because a check using if(component[method]) would fail for
-                  // inherited methods although executing the inherited method works.
+                  // inherited methods even though executing the inherited method works.
                   try {
                      component["set" + key.charAt(0).toUpperCase() + key.substring(1)](element[key]);
                   } catch (e) {
@@ -460,7 +459,9 @@ jala.Form.prototype.validate = function(reqData) {
  * overridden here.
  * @param {jala.Form.Tracker} tracker (optional) tracker object
  *       holding parsed data from form input.
- * @param {Object} destObj (optional) object whose values should be changed.
+ * @param {Object} destObj (optional) object whose values will be changed.
+ *       By default the dataObj passed to the constructor or to
+ *       setDataObj is used.
  */
 jala.Form.prototype.save = function(tracker, destObj) {
    tracker = (tracker) ? tracker : this.getTracker();
@@ -762,7 +763,7 @@ jala.Form.extend(jala.Form.Component.Fieldset, jala.Form.Component);
 
 
 /**
- * Renders all components within a fieldset.
+ * Renders all components within the fieldset.
  */
 jala.Form.Component.Fieldset.prototype.render = function() {
    jala.Form.html.openTag("fieldset");
@@ -784,7 +785,7 @@ jala.Form.Component.Fieldset.prototype.render = function() {
 
 
 /**
- * Validates all components within a fieldset.
+ * Validates all components within the fieldset.
  * @param {jala.Form.Tracker} tracker
  */
 jala.Form.Component.Fieldset.prototype.validate = function(tracker) {
@@ -797,7 +798,7 @@ jala.Form.Component.Fieldset.prototype.validate = function(tracker) {
 
 
 /**
- * Saves all components within a fieldset.
+ * Saves all components within the fieldset.
  * @param {jala.Form.Tracker} tracker
  * @param {Object} destObj
  */
@@ -894,14 +895,24 @@ jala.Form.Component.Input = function Input(name) {
       if (msg) {
          this.setMessage(key, msg);
       }
+      return;
    };
 
+   /**
+    * Returns the requirement value for a given key.
+    * @param {String} key String defining the type of requirement,
+    *             constants in jala.Form may be used.
+    * @type Object
+    */
    this.getRequirement = function(key) {
       return requirements[key];
    };
 
    /**
     * Sets a custom error message
+    * @param {String} key String defining the type of requirement,
+    *             constants in jala.Form may be used.
+    * @param {String} msg Error message
     */
    this.setMessage = function(key, msg) {
       messages[key] = msg;
@@ -919,7 +930,6 @@ jala.Form.Component.Input = function Input(name) {
     * message processor which will replace {0}, {1} etc.
     * @returns rendered message
     * @type String
-    * @private
     */
    this.getMessage = function(key, defaultMsg, args) {
       var arr = [(messages[key]) ? messages[key] : defaultMsg];
@@ -1033,12 +1043,12 @@ jala.Form.Component.Input = function Input(name) {
     * The validator function for this component. If set, the
     * function is called with the scope set to the data object
     * and with four arguments:
-    * <li>the name of the element
+    * <li>the name of the element</li>
     * <li>the parsed value of the element if all requirements have
     *     been fulfilled. E.g., for a date editor, the parsed value would
-    *     be a date object.
-    * <li>the map containing all user inputs as string (req.data)
-    * <li>the form object
+    *     be a date object.</li>
+    * <li>the map containing all user inputs as string (req.data)</li>
+    * <li>the form object</li>
     * @see #validate
     * @type Function
     */
@@ -1057,7 +1067,16 @@ jala.Form.Component.Input = function Input(name) {
 jala.Form.extend(jala.Form.Component.Input, jala.Form.Component);
 
 
-
+/**
+ * Validates the input provided to this component. First,
+ * checkRequirements is called. If no error occurs, the input
+ * is parsed using parseValue and passed on to the validator
+ * function.
+ * @see #checkRequirements
+ * @see #parseValue
+ * @param {jala.Form.Tracker} tracker Tracker object collecting
+ *       request data, error messages and parsed values.
+ */
 jala.Form.Component.Input.prototype.validate = function(tracker) {
    var error = this.checkRequirements(tracker.reqData);
    if (error != null) {
@@ -1077,25 +1096,33 @@ jala.Form.Component.Input.prototype.validate = function(tracker) {
          }
       }
    }
+   return;
 };
 
 
-
+/**
+ * Saves the parsed value using setValue.
+ * @see #setValue
+ * @param {jala.Form.Tracker} tracker Tracker object collecting
+ *       request data, error messages and parsed values.
+ * @param {Object} destObj (optional) object whose values will be changed.
+ */
 jala.Form.Component.Input.prototype.save = function(tracker, destObj) {
    this.setValue(destObj, tracker.values[this.name]);
+   return;
 };
-
 
 
 /**
  * Retrieves the property which is edited by this component.
- * <li>If no getter is given, the primitive property of the data object is returned.
- * <li>If a getter function is defined, it is executed and the return value used
- * as property. The data object and the name of the property are passed to the function
- * as arguments.</li>
+ * <li>If no getter is given, the method returns the primitive property
+ *    of the data object with the same name as the component.</li>
+ * <li>If a getter function is defined, it is executed with the scope
+ *    of the data object and the return value is used as default value.
+ *    The name of the component is passed to the getter function
+ *    as an argument.</li>
  * @returns The value of the property
  * @type String Number Date
- * @final
  */
 jala.Form.Component.Input.prototype.getValue = function() {
    if (this.form.getTracker()) {
@@ -1112,15 +1139,15 @@ jala.Form.Component.Input.prototype.getValue = function() {
 
 /**
  * Sets a property of the object passed as argument to the given value.
- * <li>If no setter is given, the primitive property of the data object is changed.
- * <li>If a setter function is defined it is executed with the data object, name and
- * new value provided as arguments</li>
- * <li>If the setter is explicitly set to null, no changes are made at all.
+ * <li>If no setter is set at the component, the primitive property
+ *    of the data object is changed.</li>
+ * <li>If a setter function is defined it is executed with the data object
+ *    as scope and with the name and new value provided as arguments</li>
+ * <li>If the setter is explicitly set to null, no changes are made at all.</li>
+ * @param {Object} destObj (optional) object whose values will be changed.
  * @param {Object} value The value to set the property to
  * @returns True in case the update was successful, false otherwise.
- * @type Boolean
- * @final
- * @see jala.Form#setSetter
+ * @see jala.Form#setter
  */
 jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
    // default value for the setter is undefined, so if it has been
@@ -1140,7 +1167,7 @@ jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
 
 
 /**
- * Renders an element including label, error and help messages.
+ * Renders this component including label, error and help messages.
  */
 jala.Form.Component.Input.prototype.render = function() {
    var className = (this.required == true) ? "required" : "optional";
@@ -1164,7 +1191,7 @@ jala.Form.Component.Input.prototype.render = function() {
 
 
 /**
- * If the error tracker holds an error message for this element,
+ * If the error tracker holds an error message for this component,
  * it is wrapped in a div-tag and returned as a string.
  * @returns Rendered string
  * @type String
@@ -1183,7 +1210,7 @@ jala.Form.Component.Input.prototype.renderError = function() {
 
 
 /**
- * Wraps the Label for this element in a div-tag and returns it
+ * Wraps the Label for this component in a div-tag and returns it
  * as a string
  * @returns Rendered string
  * @type String
@@ -1201,7 +1228,7 @@ jala.Form.Component.Input.prototype.renderLabel = function() {
 
 
 /**
- * If this element contains a help message, it is wrapped in
+ * If this component contains a help message, it is wrapped in
  * a div-tag and returned as a string.
  * @returns Rendered string
  * @type String
@@ -1220,10 +1247,16 @@ jala.Form.Component.Input.prototype.renderHelp = function() {
 };
 
 
+/**
+ * Macro rendering this component including label, error and help messages.
+ */
 jala.Form.Component.Input.prototype.render_macro = function(param) {
    this.render();
 };
 
+/**
+ * Macro rendering this component's controls.
+ */
 jala.Form.Component.Input.prototype.controls_macro = function(param) {
    var attr = this.getControlAttributes();
    var tracker = this.form.getTracker()
@@ -1235,21 +1268,36 @@ jala.Form.Component.Input.prototype.controls_macro = function(param) {
    return;
 };
 
+/**
+ * Macro rendering this component's error (if an error message
+ * has been set).
+ */
 jala.Form.Component.Input.prototype.error_macro = function(param) {
    res.write(this.renderError());
    return;
 };
 
+/**
+ * Macro rendering this component's label.
+ */
 jala.Form.Component.Input.prototype.label_macro = function(param) {
    res.write(this.renderLabel());
    return;
 };
 
+/**
+ * Macro rendering this component's help text (if a help text
+ * has been set).
+ */
 jala.Form.Component.Input.prototype.help_macro = function(param) {
    res.write(this.renderHelp());
    return;
 };
 
+/**
+ * Macro rendering this component's id
+ * @see jala.Form#createDomId
+ */
 jala.Form.Component.Input.prototype.id_macro = function(param) {
    res.write(this.form.createDomId(this.name));
    return;
@@ -1276,11 +1324,11 @@ jala.Form.Component.Input.prototype.getControlAttributes = function() {
 
 /**
  * Checks user input for maximum length, minimum length and required
- * if the corresponding options are set in this element's config.
+ * if the corresponding options have been set using the require method.
  * @param {Object} reqData request data
- * @param {jala.Form.Tracker} tracker jala.Form.Tracker object storing possible error messages
- * @returns null if everything is ok or string containing error message
+ * @returns String containing error message or null if everything is ok.
  * @type String
+ * @see #require
  */
 jala.Form.Component.Input.prototype.checkLength = function(reqData) {
    var required  = this.getRequirement(jala.Form.REQUIRED);
@@ -1307,11 +1355,12 @@ jala.Form.Component.Input.prototype.checkLength = function(reqData) {
 
 
 /**
- * Validates user input from an input tag.
- * @see jala.Form.Component.Input#checkLength
+ * Checks user input against options set using the require method.
  * @param {Object} reqData request data
- * @returns null if everything is ok or string containing error message
+ * @returns String containing error message or null if everything is ok.
  * @type String
+ * @see #checkLength
+ * @see #require
  */
 jala.Form.Component.Input.prototype.checkRequirements = function(reqData) {
    return this.checkLength(reqData);
@@ -1320,7 +1369,9 @@ jala.Form.Component.Input.prototype.checkRequirements = function(reqData) {
 
 /**
  * Parses the string input from the form and creates the datatype that
- * can be edited with this component. E.g. a string should be converted
+ * is edited with this component. For the input component this method
+ * is not of much use, but subclasses that edit other datatypes may use
+ * it. For example, a date editor should convert the user input from string
  * to a date object.
  * @param {Object} reqData request data
  * @returns parsed value
@@ -1332,8 +1383,9 @@ jala.Form.Component.Input.prototype.parseValue = function(reqData) {
 
 
 /**
- * Renders an input tag to the response.
- * @param {Object} attr Basic attributes for this element.
+ * Renders the html form elements to the response.
+ * This method shall be overridden by subclasses of input component.
+ * @param {Object} attr Basic attributes for the html form elements.
  * @param {Object} value Value to be used for rendering this element.
  * @param {Object} reqData Request data for the whole form. This argument is
  *       passed only if the form is re-rendered after an error occured.
@@ -1559,27 +1611,42 @@ jala.Form.Component.Select = function Select(name) {
    
    var options, firstOption = undefined;
    
-// * <li><code>options</code> An array of a function defining the options for this
-// *      element. A function is called with the data object and the field name as 
-// *      arguments and has to return an array.
-// *      The array may contain arrays: <code>[  [val, display], [val, display] ]</code>,
-// *      or objects: <code>[  {value:val, display:display}, ...]</code>,
-// *      or strings whose value will be their index position.</li>
-// * <li><code>firstOption</code> Text to display if no value is selected</li>
-
+   /**
+    * Returns the option list for this component.
+    */
    this.getOptions = function() {
       return options;
    };
    
+   /**
+    * Sets the option list for this component.
+    * The argument may either be an array that will be used as option list,
+    * or a function that is called when the option component is rendered and
+    * has to return an option array.
+    * For both arrays those formats are allowed:
+    * <li>Array of arrays <code>[ [val, display], [val, display], .. ]</code></li>
+    * <li>Array of objects <code>[ {value:val, display:display}, .. ]</code></li>
+    * <li>Array of strings <code>[ display, display, .. ]</code> In this case,
+    *    the index position of the string will be the value.</li>
+    * @param {Array Function} newOptions Array or function defining option list.
+    */
    this.setOptions = function(newOptions) {
       options = newOptions;
       return;
    };
    
+   /**
+    * Returns the text that should be displayed if no value is selected.
+    * @type String
+    */
    this.getFirstOption = function() {
       return firstOption;
    };
    
+   /**
+    * Sets the text that is displayed if no value is selected
+    * @param {String} newFirstOption text to display as first option element.
+    */
    this.setFirstOption = function(newFirstOption) {
       firstOption = newFirstOption;
       return;
@@ -1604,11 +1671,11 @@ jala.Form.Component.Select.prototype.renderControls = function(attr, value, reqD
 };
 
 /**
- * Validates user input from a dropdown element and makes sure that
- * option value list contains the user input.
+ * Validates user input from a dropdown element by making sure that
+ * the option value list contains the user input.
  * @see jala.Form.Component.Select#checkOptions
  * @param {Object} reqData request data
- * @returns null if everything is ok or string containing error message
+ * @returns string containing error message or null if everything is ok.
  * @type String
  */
 jala.Form.Component.Select.prototype.checkRequirements = function(reqData) {
@@ -1636,7 +1703,8 @@ jala.Form.Component.Select.prototype.parseOptions = function() {
 };
 
 /**
- * Checks user input for optiongroups: Value has to be in option array.
+ * Checks user input for optiongroups: Unless require("checkoptions")
+ * has ben set to false, the user input must exist in the option array.
  * @param {Object} reqData request data
  * @returns null if everything is ok or string containing error message
  * @type String
