@@ -44,7 +44,7 @@ app.addRepository("modules/helma/Http.js");
 /**
  * Jala dependencies
  */
-app.addRepository("modules/jala/code/I18n.js");
+app.addRepository(getProperty(jala.dir, "modules/jala") + "/code/I18n.js");
 
 /**
  * @class A class that renders and parses forms
@@ -58,7 +58,7 @@ jala.Form = function(name, dataObj) {
     * Readonly reference to the name of the form
     * @type String
     */
-   this.name;     // for doc purposes only, readonly-access through the getter function
+   this.name = name;     // for doc purposes only, readonly-access through the getter function
    this.__defineGetter__("name", function() {   return name;   });
 
 
@@ -107,7 +107,7 @@ jala.Form = function(name, dataObj) {
     * Returns the tracker object this form instance uses for collecting
     * error messages and parsed values.
     * @returns tracker object
-    * @type {jala.Form.Tracker}
+    * @type jala.Form.Tracker
     */
    this.getTracker = function() {
       return tracker;
@@ -122,6 +122,7 @@ jala.Form = function(name, dataObj) {
 
    /**
     * Contains a map of component objects.
+    * @type Object
     */
    this.components = {};
 
@@ -287,6 +288,7 @@ jala.Form.create = function(config) {
  * @param {jala.Form | jala.Form.Component.Fieldset} container
  *        Object whose addComponent method is used for adding new components.
  * @param {Array} arr Array of plain javascript objects used as config.
+ * @private
  */
 jala.Form.createComponents = function(container, arr) {
    var components = [];
@@ -323,8 +325,8 @@ jala.Form.createComponents = function(container, arr) {
                break;
             default:
                // check if key matches a constant:
-               if (jala.Form.CONSTANTS.indexOf(key) > -1) {
-                  component.require(key, element[key]);
+               if (jala.Form.CONSTANTS.indexOf(key.toLowerCase()) > -1) {
+                  component.require(key.toLowerCase(), element[key]);
                } else {
                   // call setter functions for all fields from config object:
                   // note: String.prototype.titleize from the helma.core module
@@ -353,14 +355,11 @@ jala.Form.createComponents = function(container, arr) {
 };
 
 
-
-
 /**
- * Renders this form to the response.
+ * Renders the opening form tag
+ * @private
  */
-jala.Form.prototype.render = function() {
-
-   // open the form tag
+jala.Form.prototype.renderFormOpen = function() {
    var formAttr = {
       id     : this.name,
       name   : this.name,
@@ -373,6 +372,16 @@ jala.Form.prototype.render = function() {
       formAttr.enctype = "multipart/form-data";
    }
    jala.Form.html.openTag("form", formAttr);
+};
+
+
+
+/**
+ * Renders this form to the response.
+ */
+jala.Form.prototype.render = function() {
+
+   this.renderFormOpen();
 
    // print optional general error message
    var errorMessage = this.getErrorMessage();
@@ -511,6 +520,20 @@ jala.Form.prototype.render_macro = function(param) {
 jala.Form.prototype.id_macro = function(param) {
    res.write(this.name);
 }
+
+/**
+ * Macro to print the opening form tag
+ */
+jala.Form.prototype.formOpen_macro = function(param) {
+   this.renderFormOpen();
+};
+
+/**
+ * Macro to print the closing form tag
+ */
+jala.Form.prototype.formClose_macro = function(param) {
+   jala.Form.html.closeTag("form");
+};
 
 /**
  * Constant used by require function to define that a component
@@ -1065,7 +1088,6 @@ jala.Form.Component.Input = function Input(name) {
 };
 // extend jala.Form.Component
 jala.Form.extend(jala.Form.Component.Input, jala.Form.Component);
-
 
 /**
  * Validates the input provided to this component. First,
@@ -1881,27 +1903,6 @@ jala.Form.Component.Checkbox.prototype.checkRequirements = function(reqData) {
  */
 jala.Form.Component.File = function File(name) {
    jala.Form.Component.File.superConstructor.apply(this, arguments);
-   
-   var contentType, maxLength = undefined;
-
-   /**
-    * Returns the mime types accepted as upload (string 
-    * or array of strings)
-    * @type String | Array
-    */
-   this.getContentType = function() {
-      return contentType;
-   };
-   
-   /**
-    * Sets the mime types accepted as upload (string 
-    * or array of strings)
-    * @param {String | Array} newContentType
-    */
-   this.setContentType = function(newContentType) {
-      contentType = newContentType;
-      return;
-   };
 
    this.containsFileUpload = function() {
       return true;
@@ -2011,7 +2012,7 @@ jala.Form.Component.Image.prototype.checkRequirements = function(reqData) {
       try {
          helmaImg = new Image(reqData[this.name]);
       } catch (imgError) {
-         return "This image file can't be processed.";
+         return this.getMessage("invalid", "This image file can't be processed.");
       }
    
       var maxWidth = this.getRequirement(jala.Form.MAXWIDTH);
