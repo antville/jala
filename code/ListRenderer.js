@@ -129,11 +129,11 @@ jala.ListRenderer = function(coll, renderer) {
     */
    this.setCollection = function(coll) {
       if (coll != null) {
-         if (coll instanceof HopObject|| coll instanceof jala.ListRenderer.ArrayList) {
-            collection = coll;
-         } else if (!(coll instanceof jala.ListRenderer.ArrayList)) {
-            // wrap all other collection types in an ArrayList
+         if (coll instanceof Array) {
+            // wrap array in an ArrayList instance
             collection = new jala.ListRenderer.ArrayList(coll);
+         } else {
+            collection = coll;
          }
       }
       return;
