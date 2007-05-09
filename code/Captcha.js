@@ -47,7 +47,7 @@ jala.Captcha = function() {
    /**
     * Jala dependencies
     */
-   app.addRepository(jgetProperty(jala.dir, "modules/jala") + 
+   app.addRepository(getProperty(jala.dir, "modules/jala") + 
                      "/lib/jcaptcha-all-1.0-RC3.jar");
 
    var gimpy;
