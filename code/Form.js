@@ -2042,8 +2042,21 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
    return null;
 };
 
-
-
+/**
+ * Overrides Component.Input#setValue. For file uploads, there is no
+ * default property saving. A file upload can either be handled using
+ * a setter method or saved from outside the save method.
+ * @param {Object} destObj (optional) object whose values will be changed.
+ * @param {Object} value The value to set the property to
+ * @returns True in case the update was successful, false otherwise.
+ * @see jala.Form#setter
+ */
+jala.Form.Component.File.prototype.setValue = function(destObj, value) {
+   if (this.setter) {
+      this.setter.call(destObj, this.name, value);
+   }
+   return;
+};
 
 
 
