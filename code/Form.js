@@ -89,6 +89,49 @@ jala.Form = function(name, dataObj) {
    };
 
 
+   /**
+    * The default getter function for this form. Unless a getter
+    * is specified for the component, this function is called
+    * to retrieve the original value of a field.
+    * When called, the scope is set to the data object and
+    * the name of the element is the sole argument.
+    * @see jala.Form.Component.Input#getValue
+    * @type Function
+    */
+   this.getter;      // for doc purposes only
+
+   // that's where the value really is stored:
+   var getter = jala.Form.propertyGetter;
+
+   this.__defineGetter__("getter", function() {   return getter;   });
+   this.__defineSetter__("getter", function(newGetter) {
+      if (newGetter instanceof Function) {
+         getter = newGetter;
+      }
+   });
+
+
+   /**
+    * The default setter function for this form. Unless a getter
+    * is specified for the component, this function is called to
+    * store the a value of a field.
+    * When called, the scope is set to the data object and
+    * the name and value of the element are provided as arguments.
+    * @see jala.Form.Component.Input#setValue
+    * @type Function
+    */
+   this.setter;      // for doc purposes only
+
+   // that's where the value really is stored:
+   var setter = jala.Form.propertySetter;
+
+   this.__defineGetter__("setter", function() {   return setter;   });
+   this.__defineSetter__("setter", function(newSetter) {
+      if (newSetter instanceof Function) {
+         setter = newSetter;
+      }
+   });
+
    var tracker = undefined;
    
    /**
@@ -274,6 +317,12 @@ jala.Form.create = function(config, dataObj) {
    }
    if (config.errorMessage) {
       form.setErrorMessage(config.errorMessage);
+   }
+   if (config.getter) {
+      form.getter = config.getter;
+   }
+   if (config.setter) {
+      form.setter = config.setter;
    }
    if (config.components) {
       jala.Form.createComponents(form, config.components);
@@ -1051,7 +1100,7 @@ jala.Form.Component.Input = function Input(name) {
     * The getter function for this component. If set, the
     * function is called to retrieve the original value of the
     * field. When called, the scope is set to the data object and
-    * the name of the element as sole argument.
+    * the name of the element is the sole argument.
     * @see #getValue
     * @type Function
     */
@@ -1174,10 +1223,9 @@ jala.Form.Component.Input.prototype.getValue = function() {
    if (this.form.getTracker()) {
       // handling re-rendering
       return null;
-   } else if (this.getter) {
-      return this.getter.call(this.form.getDataObject(), this.name);
    } else {
-      return this.form.getDataObject()[this.name];
+      var getter = (this.getter) ? this.getter : this.form.getter;
+      return getter.call(this.form.getDataObject(), this.name);
    }
 };
 
@@ -1196,16 +1244,13 @@ jala.Form.Component.Input.prototype.getValue = function() {
  * @see jala.Form#setter
  */
 jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
-   // default value for the setter is undefined, so if it has been
+   // default value for this.setter is undefined, so if it has been
    // set to explicitly null, we don't save the value. in this case,
    // we assume, the property is handled outside of jala.Form or purposely
    // ignored at all.
    if (this.setter !== null) {
-      if (this.setter) {
-         this.setter.call(destObj, this.name, value);
-      } else {
-         destObj[this.name] = value;
-      }
+      var setter = (this.setter) ? this.setter : this.form.setter;
+      setter.call(destObj, this.name, value);
    }
    return;
 };
@@ -1656,7 +1701,7 @@ jala.Form.extend(jala.Form.Component.Date, jala.Form.Component.Input);
 jala.Form.Component.Date.prototype.renderControls = function(attr, value, reqData) {
    if (reqData) {
       attr.value = reqData[this.name];
-   } else  if (value) {
+   } else  if (value instanceof Date) {
       attr.value = this.getDateFormat().format(value);
    }
    if (this.getRequirement(jala.Form.MAXLENGTH)) {
@@ -2042,26 +2087,6 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
    return null;
 };
 
-/**
- * Overrides Component.Input#setValue. For file uploads, there is no
- * default property saving. A file upload can either be handled using
- * a setter method or saved from outside the save method.
- * @param {Object} destObj (optional) object whose values will be changed.
- * @param {Object} value The value to set the property to
- * @returns True in case the update was successful, false otherwise.
- * @see jala.Form#setter
- */
-jala.Form.Component.File.prototype.setValue = function(destObj, value) {
-   if (this.setter) {
-      this.setter.call(destObj, this.name, value);
-   }
-   return;
-};
-
-
-
-
-
 
 /**
  * @class Subclass of jala.Form.Component.File which renders a file upload
@@ -2128,8 +2153,25 @@ jala.Form.Component.Image.prototype.checkRequirements = function(reqData) {
 };
 
 
+/**
+ * static default getter function used to return a field 
+ * from the data object.
+ * @param {String} name Name of the property.
+ * @type Object
+ */
+jala.Form.propertyGetter = function(name, value) {
+   return this[name];
+};
 
-
+/**
+ * static default setter function used to change a field 
+ * of the data object.
+ * @param {String} name Name of the property.
+ * @param {Object} value New value of the property.
+ */
+jala.Form.propertySetter = function(name, value) {
+   this[name] = value;
+};
 
 
 /**
