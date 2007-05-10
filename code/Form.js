@@ -496,11 +496,11 @@ jala.Form.prototype.save = function(tracker, destObj) {
  * @type Boolean
  */
 jala.Form.prototype.handle = function(reqData, destObj) {
-   var tracker = form.validate(reqData);
+   var tracker = this.validate(reqData);
    if (tracker.hasError()) {
       return false;
    } else {
-      form.save(tracker, destObj);
+      this.save(tracker, destObj);
       return true;
    }
 };
