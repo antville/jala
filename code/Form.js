@@ -262,11 +262,11 @@ jala.Form.extend = function(subClass, superClass) {
  * @returns jala.Form instance
  * @type jala.Form
  */
-jala.Form.create = function(config) {
+jala.Form.create = function(config, dataObj) {
    if (!config || !config.name || !config.components) {
       return null;
    }
-   var form = new jala.Form(config.name);
+   var form = new jala.Form(config.name, dataObj);
    if (config.legend) {
       form.setLegend(config.legend);
    }
@@ -1188,7 +1188,7 @@ jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
  * Renders this component including label, error and help messages.
  */
 jala.Form.Component.Input.prototype.render = function() {
-   var className = (this.required == true) ? "required" : "optional";
+   var className = (this.getRequirement(jala.Form.REQUIRED) == true) ? "required" : "optional";
    if (this.getClassName()) {
       className += " " + this.getClassName();
    }
@@ -1454,6 +1454,53 @@ jala.Form.Component.Password.prototype.renderControls = function(attr, value, re
 
 
 
+
+
+/**
+ * @class Subclass of jala.Form.Component.Input which renders and validates a
+ * hidden input tag.
+ * @base jala.Form.Component.Input
+ * @param {String} name Name of the component, used as name of the html controls.
+ * @constructor
+ */
+jala.Form.Component.Hidden = function Password(name) {
+   jala.Form.Component.Hidden.superConstructor.apply(this, arguments);
+   return this;
+};
+// extend jala.Form.Component.Input
+jala.Form.extend(jala.Form.Component.Hidden, jala.Form.Component.Input);
+
+/**
+ * Renders this component (for a hidden tag, this is just an input element,
+ * no div tag or anything).
+ */
+jala.Form.Component.Hidden.prototype.render = function() {
+   var attr = this.getControlAttributes();
+   var tracker = this.form.getTracker()
+   if (tracker) {
+      this.renderControls(attr, null, tracker.reqData);
+   } else {
+      this.renderControls(attr, this.getValue());
+   }
+   return;
+};
+
+/**
+ * Renders a hidden input tag to the response.
+ * @param {Object} attr Basic attributes for this element.
+ * @param {Object} value Value to be used for rendering this element.
+ * @param {Object} reqData Request data for the whole form. This argument is
+ *       passed only if the form is re-rendered after an error occured.
+ */
+jala.Form.Component.Hidden.prototype.renderControls = function(attr, value, reqData) {
+   attr.value = (reqData) ? reqData[this.name] : value;
+   jala.Form.html.hidden(attr);
+   return;
+};
+
+
+
+
 /**
  * @class Subclass of jala.Form.Component.Input which renders and validates a
  * textarea tag.
@@ -1579,7 +1626,11 @@ jala.Form.extend(jala.Form.Component.Date, jala.Form.Component.Input);
  *       passed only if the form is re-rendered after an error occured.
  */
 jala.Form.Component.Date.prototype.renderControls = function(attr, value, reqData) {
-   attr.value = (reqData) ? reqData[this.name] : this.getDateFormat().format(value);
+   if (reqData) {
+      attr.value = reqData[this.name];
+   } else  if (value) {
+      attr.value = this.getDateFormat().format(value);
+   }
    if (this.getRequirement(jala.Form.MAXLENGTH)) {
       attr.maxlength = this.getRequirement(jala.Form.MAXLENGTH);
    }

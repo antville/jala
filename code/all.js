@@ -40,6 +40,7 @@ if (!global.jala) {
       "Date",
       "DnsClient",
       "Captcha", 
+      "Form",
       "History",
       "HtmlDocument",
       "HopObject",
