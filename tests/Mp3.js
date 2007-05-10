@@ -43,7 +43,7 @@ var mp3File;
 
 
 var setup = function() {
-   var srcFile = jala.Test.getTestFile("audio.test.mp3");
+   var srcFile = jala.Test.getTestFile("Mp3.test.mp3");
    mp3File = new helma.File(java.lang.System.getProperty("java.io.tmpdir"), "test.mp3");
    srcFile.hardCopy(mp3File);
    return;
@@ -110,7 +110,7 @@ var testId3v2Write = function() {
    tag.setCopyright("ORF Online und Teletext GmbH");
    tag.setUrl("http://www.orf.at/");
 
-   var imgFile = jala.Test.getTestFile("audio.test.jpg");
+   var imgFile = jala.Test.getTestFile("Mp3.test.jpg");
    tag.setImage(3, "image/jpeg", imgFile.toByteArray());
 
    var oldsize = mp3.getSize();
@@ -139,7 +139,7 @@ var testId3v2Read = function() {
    assertEqual(tag.getUrl(), "http://www.orf.at/");
 
    var mimeObj = tag.getImage();
-   var imgFile = jala.Test.getTestFile("audio.test.jpg");
+   var imgFile = jala.Test.getTestFile("Mp3.test.jpg");
    assertEqual(mimeObj.contentLength, imgFile.getLength());
    return;
 };
