@@ -307,6 +307,7 @@ jala.Form.createComponents = function(container, arr) {
       var component = new constr(element.name);
       container.addComponent(component);  // make sure that component.form is set before the loop!
       for (var key in element) {
+         var msg = (element.messages && element.messages[key]) ? element.messages[key] : null;
          switch(key) {
             case "name":
             case "type":
@@ -321,12 +322,12 @@ jala.Form.createComponents = function(container, arr) {
                component[key] = element[key];
                break;
             case jala.Form.REQUIRED:
-               component.require(key, true);
+               component.require(key, true, msg);
                break;
             default:
                // check if key matches a constant:
                if (jala.Form.CONSTANTS.indexOf(key.toLowerCase()) > -1) {
-                  component.require(key.toLowerCase(), element[key]);
+                  component.require(key.toLowerCase(), element[key], msg);
                } else {
                   // call setter functions for all fields from config object:
                   // note: String.prototype.titleize from the helma.core module
@@ -343,11 +344,6 @@ jala.Form.createComponents = function(container, arr) {
                   }
                }
                break;
-         }
-      }
-      if (element.messages) {
-         for (var key in element.messages) {
-            component.setMessage(key, element.messages[key]);
          }
       }
    }
