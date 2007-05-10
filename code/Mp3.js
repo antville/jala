@@ -869,9 +869,9 @@ jala.Mp3.Id3v1.prototype.setTitle = function(title) {
  * @param {Number} trackNumber
  */
 jala.Mp3.Id3v1.prototype.setTrackNumber = function(trackNumber) {
-   if (trackNumber == null || trackNumber.trim() == "" || isNaN(trackNumber)) {
+   if (!trackNumber || isNaN(trackNumber)) {
       // default value for empty track numbers in v1 is zero.
-      trackNumber = "0";
+      trackNumber = 0;
    }
    this.getJavaObject().setTrackNumberOnAlbum(trackNumber);
    return;
