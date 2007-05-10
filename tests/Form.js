@@ -69,7 +69,7 @@ var testFormRender = function() {
    // alias / input
    assertEqual(list[++idx].name, "div");
    assertAttribute(list[idx].attributes, "id", "test_alias_row");
-   assertAttribute(list[idx].attributes, "class", "row required");
+   assertAttribute(list[idx].attributes, "class", "row require");
 
    assertEqual(list[++idx].name, "label");
    assertAttribute(list[idx].attributes, "id", "test_alias_label");
@@ -95,7 +95,7 @@ var testFormRender = function() {
    // desc / textarea
    assertEqual(list[++idx].name, "div");
    assertAttribute(list[idx].attributes, "id", "test_desc_row");
-   assertAttribute(list[idx].attributes, "class", "row required");
+   assertAttribute(list[idx].attributes, "class", "row require");
 
    assertEqual(list[++idx].name, "label");
    assertAttribute(list[idx].attributes, "id", "test_desc_label");
@@ -116,7 +116,7 @@ var testFormRender = function() {
    // pushdate / date
    assertEqual(list[++idx].name, "div");
    assertAttribute(list[idx].attributes, "id", "test_pushdate_row");
-   assertAttribute(list[idx].attributes, "class", "row required");
+   assertAttribute(list[idx].attributes, "class", "row require");
 
    assertEqual(list[++idx].name, "label");
    assertAttribute(list[idx].attributes, "id", "test_pushdate_label");
@@ -241,7 +241,7 @@ var testFormRender = function() {
    assertAttribute(list[idx].attributes, "id", "test_submit");
    assertAttribute(list[idx].attributes, "class", "submit");
    assertAttribute(list[idx].attributes, "name", "test_submit");
-   assertAttribute(list[idx].attributes, "value", "Submit");
+   assertAttribute(list[idx].attributes, "value", "Save");
    assertAttribute(list[idx].attributes, "type", "submit");
    
    return;
@@ -307,7 +307,7 @@ var testFormRenderWithError = function() {
  * Test the form save mechanism
  */
 var testFormSave = function() {
-   var dataObj = form.getDataObj();
+   var dataObj = form.getDataObject();
 
    var reqData = getRequestData();
    var tracker = form.validate(reqData);
@@ -399,7 +399,7 @@ var getRequestData = function() {
 var getConfig = function() {
    return   {
    name:             "test",
-   submit:           "Save",
+   submitValue:      "Save",
    components:[
       {
          name:       "alias",
@@ -407,9 +407,9 @@ var getConfig = function() {
          help:       "Enter alias.",
          minlength:  4,
          maxlength:  10,
-         required:   true,
+         require:    true,
          messages:   {
-            required: "Alias is required.",
+            require:   "Alias is required.",
             maxlength: "Alias is too long.",
             minlength: "Alias is too short."
          }
@@ -419,7 +419,7 @@ var getConfig = function() {
          type:       "textarea",
          rows:       3,
          cols:       30,
-         required:   true,
+         require:    true,
          getter:     function(name) {
             return this.getProperty(name);
          },
@@ -431,7 +431,7 @@ var getConfig = function() {
          name:       "pushdate",
          type:       "date",
          dateFormat: "d.M.yyyy H:m",
-         required:   true
+         require:    true
       },
       {
          name:       "isonline",

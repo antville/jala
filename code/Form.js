@@ -74,7 +74,7 @@ jala.Form = function(name, dataObj) {
     * @param {Object} dataObj The object which is being edited by this form.
     * @see #save
     */
-   this.setDataObj = function(newDataObj) {
+   this.setDataObject = function(newDataObj) {
       dataObj = newDataObj;
       return;
    };
@@ -84,7 +84,7 @@ jala.Form = function(name, dataObj) {
     * for rendering the form.
     * @returns The data object of this jala.Form instance
     */
-   this.getDataObj = function() {
+   this.getDataObject = function() {
       return dataObj;
    };
 
@@ -164,23 +164,22 @@ jala.Form = function(name, dataObj) {
 
 
    // init private fields:
-   var submitCaption, errorMessage = undefined;
+   var submitValue, errorMessage = undefined;
 
    /**
-    * Returns the caption of the submit button.
-    * @returns caption
+    * Returns the value (ie. text) of the submit button.
     * @type String
     */
-   this.getSubmitCaption = function() {
-      return submitCaption;
+   this.getSubmitValue = function() {
+      return submitValue;
    };
    
    /**
-    * Sets the caption of the submit button.
-    * @param {String} newCaption
+    * Sets the value (ie. text) of the submit button.
+    * @param {String} newSubmitValue
     */
-   this.setSubmitCaption = function(newCaption) {
-      submitCaption = newCaption;
+   this.setSubmitValue = function(newSubmitValue) {
+      submitValue = newSubmitValue;
       return;
    };
 
@@ -270,8 +269,8 @@ jala.Form.create = function(config, dataObj) {
    if (config.legend) {
       form.setLegend(config.legend);
    }
-   if (config.submitCaption) {
-      form.setSubmitCaption(config.submitCaption);
+   if (config.submitValue) {
+      form.setSubmitValue(config.submitValue);
    }
    if (config.errorMessage) {
       form.setErrorMessage(config.errorMessage);
@@ -298,13 +297,29 @@ jala.Form.createComponents = function(container, arr) {
       var clazzName = (element["type"]) ? element["type"].titleize() : "Input";
       var constr = jala.Form.Component[clazzName];
       if (!constr) {
-         // invalid constructor
+         // invalid constructor:
          var logStr = "jala.Form encountered unknown component type " + element["type"] + " in config of form ";
          logStr += (container.form) ? container.form.name : container.name;
          app.log(logStr);
          continue;
       }
-      var component = new constr(element.name);
+      var name = element.name;
+      if (!name && element.label) {
+         name = element.label.toAlphanumeric().toLowerCase();
+      } else if (!name && constr == jala.Form.Component.Fieldset) {
+         var str = "fieldset";
+         while(container.components[str]) {
+            str += "1";
+         }
+         name = str;
+      } else if (!name) {
+         // couldn't find a name for the component:
+         var logStr = "jala.Form encountered component of type " + clazzName.toLowerCase() + " without name or label property in config of form ";
+         logStr += (container.form) ? container.form.name : container.name;
+         app.log(logStr);
+         continue;
+      }
+      var component = new constr(name);
       container.addComponent(component);  // make sure that component.form is set before the loop!
       for (var key in element) {
          var msg = (element.messages && element.messages[key]) ? element.messages[key] : null;
@@ -321,7 +336,7 @@ jala.Form.createComponents = function(container, arr) {
             case "validator":
                component[key] = element[key];
                break;
-            case jala.Form.REQUIRED:
+            case jala.Form.REQUIRE:
                component.require(key, true, msg);
                break;
             default:
@@ -404,7 +419,7 @@ jala.Form.prototype.render = function() {
       {id: this.createDomId("submit"),
        name: this.createDomId("submit"),
        "class": "submit",
-       "value": this.getSubmitCaption() || "Submit"}
+       "value": this.getSubmitValue() || "Submit"}
    );
    jala.Form.html.closeTag("div");
    jala.Form.html.closeTag("div");
@@ -474,11 +489,11 @@ jala.Form.prototype.validate = function(reqData) {
  *       holding parsed data from form input.
  * @param {Object} destObj (optional) object whose values will be changed.
  *       By default the dataObj passed to the constructor or to
- *       setDataObj is used.
+ *       setDataObject is used.
  */
 jala.Form.prototype.save = function(tracker, destObj) {
    tracker = (tracker) ? tracker : this.getTracker();
-   destObj = (destObj) ? destObj : this.getDataObj();
+   destObj = (destObj) ? destObj : this.getDataObject();
    var components = this.listComponents();
    for (var i=0; i<components.length; i++) {
       components[i].save(tracker, destObj);
@@ -558,10 +573,10 @@ jala.Form.MAXLENGTH     = "maxlength";
 /**
  * Constant used by require function to define that a component
  * should validate only if the user did provide input.
- * Value: "required"
+ * Value: "require"
  * @type String
  */
-jala.Form.REQUIRED      = "required";
+jala.Form.REQUIRE       = "require";
 
 /**
  * Constant used by require function to define that a select or
@@ -631,6 +646,11 @@ for (var key in jala.Form) {
  * @constructor
  */
 jala.Form.Component = function Component(name) {
+   
+   if (!name) {
+      throw "jala.Form.Component constructed without name.";
+   }
+   
    /**
     * The Form this component belongs to
     * @type jala.Form
@@ -880,7 +900,7 @@ jala.Form.extend(jala.Form.Component.Skin, jala.Form.Component);
  * Renders the skin named by this component to the response.
  */
 jala.Form.Component.Skin.prototype.render = function() {
-   var obj = (this.getHandler()) ? this.getHandler() : this.form.getDataObj();
+   var obj = (this.getHandler()) ? this.getHandler() : this.form.getDataObject();
    obj.renderSkin(this.name, this);
    return;
 };
@@ -904,7 +924,7 @@ jala.Form.Component.Input = function Input(name) {
 
    /**
     * Sets a requirement for this component.
-    * If function is called without arguments, jala.Form.REQUIRED
+    * If function is called without arguments, jala.Form.REQUIRE
     * is set to true.
     * @param {String} key String defining the type of requirement,
     *             constants in jala.Form may be used.
@@ -915,7 +935,7 @@ jala.Form.Component.Input = function Input(name) {
    this.require = function(key, val, msg) {
       if (arguments.length == 0) {
          // set default value for arguments
-         key = jala.Form.REQUIRED;
+         key = jala.Form.REQUIRE;
          val = true;
       }
       requirements[key] = val;
@@ -949,7 +969,7 @@ jala.Form.Component.Input = function Input(name) {
    /**
     * Returns a specific message for a config element.
     * @param {String} key The key of the message as defined by
-    *          the constants in jala.Form.* (e.g. "required",
+    *          the constants in jala.Form.* (e.g. "require",
     *          "maxlength", "minlength" ...
     * @param {String} defaultMsg the message to use when no message
     *          was defined.
@@ -1111,7 +1131,7 @@ jala.Form.Component.Input.prototype.validate = function(tracker) {
       tracker.values[this.name] = this.parseValue(tracker.reqData);
       if (this.validator) {
          error = this.validator.call(
-            this.form.getDataObj(),
+            this.form.getDataObject(),
             this.name,
             tracker.values[this.name],
             tracker.reqData,
@@ -1155,9 +1175,9 @@ jala.Form.Component.Input.prototype.getValue = function() {
       // handling re-rendering
       return null;
    } else if (this.getter) {
-      return this.getter.call(this.form.getDataObj(), this.name);
+      return this.getter.call(this.form.getDataObject(), this.name);
    } else {
-      return this.form.getDataObj()[this.name];
+      return this.form.getDataObject()[this.name];
    }
 };
 
@@ -1196,7 +1216,7 @@ jala.Form.Component.Input.prototype.setValue = function(destObj, value) {
  * Renders this component including label, error and help messages.
  */
 jala.Form.Component.Input.prototype.render = function() {
-   var className = (this.getRequirement(jala.Form.REQUIRED) == true) ? "required" : "optional";
+   var className = (this.getRequirement(jala.Form.REQUIRE) == true) ? "require" : "optional";
    if (this.getClassName()) {
       className += " " + this.getClassName();
    }
@@ -1349,7 +1369,7 @@ jala.Form.Component.Input.prototype.getControlAttributes = function() {
 
 
 /**
- * Checks user input for maximum length, minimum length and required
+ * Checks user input for maximum length, minimum length and require
  * if the corresponding options have been set using the require method.
  * @param {Object} reqData request data
  * @returns String containing error message or null if everything is ok.
@@ -1357,12 +1377,12 @@ jala.Form.Component.Input.prototype.getControlAttributes = function() {
  * @see #require
  */
 jala.Form.Component.Input.prototype.checkLength = function(reqData) {
-   var required  = this.getRequirement(jala.Form.REQUIRED);
+   var require   = this.getRequirement(jala.Form.REQUIRE);
    var minLength = this.getRequirement(jala.Form.MINLENGTH);
    var maxLength = this.getRequirement(jala.Form.MAXLENGTH);
    
-   if (required && (reqData[this.name] == null || reqData[this.name].trim() == "")) {
-      return this.getMessage(jala.Form.REQUIRED, "Please enter text into this field.");
+   if (require && (reqData[this.name] == null || reqData[this.name].trim() == "")) {
+      return this.getMessage(jala.Form.REQUIRE, "Please enter text into this field.");
    } else if (maxLength && reqData[this.name].length > maxLength) {
       return this.getMessage(jala.Form.MAXLENGTH, "Input for this field is too long ({0} characters). Please enter no more than {1} characters.",
                                  reqData[this.name].length, maxLength);
@@ -1370,7 +1390,7 @@ jala.Form.Component.Input.prototype.checkLength = function(reqData) {
       // set an error if the element is required but the input is too short
       // but don't throw an error if the element is optional and empty
       if (reqData[this.name].length < minLength &&
-          (required || (!required && reqData[this.name].length > 0))) {
+          (require || (!require && reqData[this.name].length > 0))) {
          return this.getMessage(jala.Form.MINLENGTH, "Input for this field is too short ({0} characters). Please enter at least {1} characters.",
                reqData[this.name].length, minLength);
       }
@@ -1773,7 +1793,7 @@ jala.Form.Component.Select.prototype.parseOptions = function() {
       if (options instanceof Array) {
          return options;
       } else if (options instanceof Function) {
-         return options.call(this.form.getDataObj(), this.name);
+         return options.call(this.form.getDataObject(), this.name);
       }
    }
    return [];
@@ -1788,7 +1808,7 @@ jala.Form.Component.Select.prototype.parseOptions = function() {
  */
 jala.Form.Component.Select.prototype.checkOptions = function(reqData) {
    // if field is required, an empty option is not allowed:
-   var found = (!this.getRequirement(jala.Form.REQUIRED) && !reqData[this.name]);
+   var found = (!this.getRequirement(jala.Form.REQUIRE) && !reqData[this.name]);
    if (!found) {
       if (this.getRequirement(jala.Form.CHECKOPTIONS) === false) {
          // exit, if option check shall be suppressed
@@ -1985,7 +2005,7 @@ jala.Form.Component.File.prototype.renderControls = function(attr, value, reqDat
 };
 
 /**
- * Validates a file upload by making sure it's there (if REQUIRED is set),
+ * Validates a file upload by making sure it's there (if REQUIRE is set),
  * checking the file size, the content type and by trying to construct an image.
  * @param {Object} reqData request data
  * @param {jala.Form.Tracker} tracker jala.Form.Tracker object storing possible error messages
@@ -1996,8 +2016,8 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
 
    if (reqData[this.name].contentLength == 0) {
       // no upload
-      if (this.getRequirement(jala.Form.REQUIRED) == true) {
-         return this.getMessage(jala.Form.REQUIRED, "File upload is required.");
+      if (this.getRequirement(jala.Form.REQUIRE) == true) {
+         return this.getMessage(jala.Form.REQUIRE, "File upload is required.");
       } else {
          // no further checks necessary, exit here
          return null;
@@ -2049,7 +2069,7 @@ jala.Form.extend(jala.Form.Component.Image, jala.Form.Component.File);
 
 
 /**
- * Validates an image upload by making sure it's there (if REQUIRED is set),
+ * Validates an image upload by making sure it's there (if REQUIRE is set),
  * checking the file size, the content type and by trying to construct an image.
  * If the file is an image, width and height limitations set by require are
  * checked.
