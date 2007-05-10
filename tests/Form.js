@@ -87,7 +87,7 @@ var testFormRender = function() {
    assertAttribute(list[idx].attributes, "size", "20");
 
    assertEqual(list[++idx].name, "div");
-   assertEqual(list[idx].value, "Enter alias!");
+   assertEqual(list[idx].value, "Enter alias.");
    assertAttribute(list[idx].attributes, "id", "test_alias_help");
    assertAttribute(list[idx].attributes, "class", "help");
 
@@ -231,9 +231,11 @@ var testFormRender = function() {
 
    // submit
    assertEqual(list[++idx].name, "div");
+   assertAttribute(list[idx].attributes, "id", "test_submit_row");
+   assertAttribute(list[idx].attributes, "class", "row");
 
-   assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_submit_label");
+   assertEqual(list[++idx].name, "div");
+   assertAttribute(list[idx].attributes, "class", "element");
 
    assertEqual(list[++idx].name, "input");
    assertAttribute(list[idx].attributes, "id", "test_submit");
@@ -263,20 +265,20 @@ var testFormValidate = function() {
    reqData["category"] = "invalidOption";
    tracker = form.validate(reqData);
    assertTrue(tracker.hasError());
-   assertEqual(tracker.errors["alias"], "Alias is too short!");
-   assertEqual(tracker.errors["desc"], "Please enter text into this field!");
+   assertEqual(tracker.errors["alias"], "Alias is too short.");
+   assertEqual(tracker.errors["desc"], "Please enter text into this field.");
    assertEqual(tracker.errors["pushdate"], "This date cannot be parsed.");
-   assertEqual(tracker.errors["category"], "Please select a valid option!");
+   assertEqual(tracker.errors["category"], "Please select a valid option.");
 
    // reset to default userinput:
    reqData = getRequestData();
    // require a smaller image:
-   form.components.uploadfieldset.components.imageupload.require("maxwidth", 100, "Maximum width exceeded!");
+   form.components.uploadfieldset.components.imageupload.require("maxwidth", 100, "Maximum width exceeded.");
    tracker = form.validate(reqData);
    assertTrue(tracker.hasError());
-   assertEqual(tracker.errors["imageupload"], "Maximum width exceeded!");
+   assertEqual(tracker.errors["imageupload"], "Maximum width exceeded.");
    // undo image restriction:
-   form.components.uploadfieldset.components.imageupload.require("maxwidth", 200, "Maximum width exceeded!");
+   form.components.uploadfieldset.components.imageupload.require("maxwidth", 200, "Maximum width exceeded.");
    tracker = form.validate(reqData);
    assertFalse(tracker.hasError());
    
@@ -295,7 +297,7 @@ var testFormRenderWithError = function() {
    var html = new jala.HtmlDocument(form.renderAsString());
    var list = html.getAll("*");
    assertEqual(list[4].name, "div");
-   assertEqual(list[4].value, "Alias is too short!");
+   assertEqual(list[4].value, "Alias is too short.");
    assertAttribute(list[4].attributes, "class", "error");
    assertAttribute(list[4].attributes, "id", "test_alias_error");
 };
@@ -402,14 +404,14 @@ var getConfig = function() {
       {
          name:       "alias",
          label:      "Alias",
-         help:       "Enter alias!",
+         help:       "Enter alias.",
          minlength:  4,
          maxlength:  10,
          required:   true,
          messages:   {
-            required: "Alias is required!",
-            maxlength: "Alias is too long!",
-            minlength: "Alias is too short!"
+            required: "Alias is required.",
+            maxlength: "Alias is too long.",
+            minlength: "Alias is too short."
          }
       },
       {

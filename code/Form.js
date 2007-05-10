@@ -393,12 +393,20 @@ jala.Form.prototype.render = function() {
    }
 
    // submit button
-   jala.Form.html.openTag("div");
-   jala.Form.html.element("label", "", {id: this.createDomId("submit", "label")});
-   jala.Form.html.submit({id: this.createDomId("submit"),
-                name: this.createDomId("submit"),
-                "class": "submit",
-                "value": this.getSubmitCaption() || "Submit"});
+   jala.Form.html.openTag("div",
+      {id: this.createDomId("submit", "row"),
+         "class": "row"}
+   );
+   jala.Form.html.openTag("div",
+      {"class": "element"}
+   );
+   jala.Form.html.submit(
+      {id: this.createDomId("submit"),
+       name: this.createDomId("submit"),
+       "class": "submit",
+       "value": this.getSubmitCaption() || "Submit"}
+   );
+   jala.Form.html.closeTag("div");
    jala.Form.html.closeTag("div");
    jala.Form.html.closeTag("form");
    return;
@@ -1354,16 +1362,16 @@ jala.Form.Component.Input.prototype.checkLength = function(reqData) {
    var maxLength = this.getRequirement(jala.Form.MAXLENGTH);
    
    if (required && (reqData[this.name] == null || reqData[this.name].trim() == "")) {
-      return this.getMessage(jala.Form.REQUIRED, "Please enter text into this field!");
+      return this.getMessage(jala.Form.REQUIRED, "Please enter text into this field.");
    } else if (maxLength && reqData[this.name].length > maxLength) {
-      return this.getMessage(jala.Form.MAXLENGTH, "Input for this field is too long ({0} characters). Please enter no more than {1} characters!",
+      return this.getMessage(jala.Form.MAXLENGTH, "Input for this field is too long ({0} characters). Please enter no more than {1} characters.",
                                  reqData[this.name].length, maxLength);
    } else if (minLength) {
       // set an error if the element is required but the input is too short
       // but don't throw an error if the element is optional and empty
       if (reqData[this.name].length < minLength &&
           (required || (!required && reqData[this.name].length > 0))) {
-         return this.getMessage(jala.Form.MINLENGTH, "Input for this field is too short ({0} characters). Please enter at least {1} characters!",
+         return this.getMessage(jala.Form.MINLENGTH, "Input for this field is too short ({0} characters). Please enter at least {1} characters.",
                reqData[this.name].length, minLength);
       }
    }
@@ -1811,7 +1819,7 @@ jala.Form.Component.Select.prototype.checkOptions = function(reqData) {
       }
    }
    if (!found) {
-      return "Please select a valid option!";
+      return "Please select a valid option.";
    }
    return null;
 };
@@ -2103,7 +2111,7 @@ jala.Form.Component.Image.prototype.checkRequirements = function(reqData) {
  */
 jala.Form.isEmail = function(name, value, reqData, formObj) {
    if (!value.isEmail()) {
-      return "Please enter a valid email address!";
+      return "Please enter a valid email address.";
    }
    return null;
 };
@@ -2120,7 +2128,7 @@ jala.Form.isEmail = function(name, value, reqData, formObj) {
  */
 jala.Form.isUrl = function(name, value, reqData, formObj) {
    if (value && !helma.Http.evalUrl(value)) {
-      return "Please enter a valid URL (web address)!";
+      return "Please enter a valid URL (web address).";
    }
    return null;
 };
