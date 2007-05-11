@@ -603,9 +603,6 @@ jala.db.RamDatabase.prototype.tableExists = function(name) {
       if (t != null) {
          t.close();
       }
-      if (conn != null) {
-         conn.close();
-      }
    }
 };
 
