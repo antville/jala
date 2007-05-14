@@ -266,31 +266,41 @@ jala.Test.getValue = function(args, argsExpected, idx) {
  * @type String
  */
 jala.Test.getStackTrace = function(message) {
-   // store the file and line-number of the failed call
+   /**
+    * Private method for filtering out only JS parts of the stack trace
+    * @param {Object} name
+    */
+   var accept = function(name) {
+      return name.endsWith(".js") || name.endsWith(".hac") ||
+             name.endsWith(".hsp");
+   };
+
+   // create exception and fill in stack trace
    var ex = new Packages.org.mozilla.javascript.EvaluatorException(message || "");
    ex.fillInStackTrace();
    var trace = ex.getStackTrace();
-   var el, fileName, lineNumber;
    var stack = [];
+   var el, fileName, lineNumber;
    // parse the stack trace and keep only the js elements
-   for (var i=0;i<trace.length;i++) {
-      el = trace[i];
-      if (!(fileName = el.getFileName()))
-         continue;
-      if ((lineNumber = el.getLineNumber()) == -1)
-         continue;
-      if (fileName.endsWith(".js") || fileName.endsWith(".hac") || fileName.endsWith(".hsp")) {
-         // ignore all trace lines that refer to jala.Test
-         if (fileName.endsWith("jala.Test.js")) {
-            continue;
-         }
-         stack.push("at " + fileName + ", line " + lineNumber);
+   var inTrace = false;
+   for (var i=trace.length; i>0; i--) {
+      el = trace[i-1];
+      fileName = el.getFileName();
+      lineNumber = el.getLineNumber();
+      if (fileName != null && lineNumber > -1 && accept(fileName)) {
          if (fileName.endsWith(res.meta.currentTest)) {
-            break;
+            inTrace = true;
+         }
+         if (inTrace == true) {
+            // ignore all trace lines that refer to jala.Test
+            if (fileName.endsWith("jala.Test.js")) {
+               break;
+            }
+            stack.push("at " + fileName + ", line " + lineNumber);
          }
       }
    }
-   return stack.join("\n");
+   return stack.reverse().join("\n");
 };
 
 /**
