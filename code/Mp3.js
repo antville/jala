@@ -341,17 +341,17 @@ jala.Mp3.PICTURE_TYPES = ["Other", "32x32 pixels 'file icon' (PNG only)",
  * @final
  */
 jala.Mp3.FIELD_MAPPING = {
-   "album":    ["", "", "TAL", "TALB", "TALB"],
-   "artist":   ["", "", "TP1", "TPE1", "TPE1"],
-   "comment":  ["", "", "COM", "COMM", "COMM"],
-   "genre":    ["", "", "TCO", "TCON", "TCON"],
-   "title":    ["", "", "TT2", "TIT2", "TIT2"],
-   "trackNumber": ["", "", "TRK", "TRCK", "TRCK"],
-   "year":     ["", "", "TYE", "TYER", "TDRC"],
-   "author":   ["", "", "TCM", "TCOM", "TCOM"],
-   "copyright":["", "", "TCR", "TCOP", "TCOP"],
-   "url":      ["", "", "WXX", "WXXX", "WXXX"],
-   "image":    ["", "", "PIC", "APIC", "APIC"]
+   "album":    ["", "", "TALB", "TALB", "TALB"],
+   "artist":   ["", "", "TPE1", "TPE1", "TPE1"],
+   "comment":  ["", "", "COMM", "COMM", "COMM"],
+   "genre":    ["", "", "TCON", "TCON", "TCON"],
+   "title":    ["", "", "TIT2", "TIT2", "TIT2"],
+   "trackNumber": ["", "", "TRCK", "TRCK", "TRCK"],
+   "year":     ["", "", "TYER", "TYER", "TDRC"],
+   "author":   ["", "", "TCOM", "TCOM", "TCOM"],
+   "copyright":["", "", "TCOP", "TCOP", "TCOP"],
+   "url":      ["", "", "WXXX", "WXXX", "WXXX"],
+   "image":    ["", "", "APIC", "APIC", "APIC"]
 };
 
 
