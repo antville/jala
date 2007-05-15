@@ -782,11 +782,18 @@ jala.Mp3.Id3v1.prototype.getTitle = function() {
 
 /**
  * Returns the track number information of the tag.
- * @returns string representing track number
+ * @returns string representing track number or null 
+ * if tag doesn't contain a track number.
  * @type String
  */
 jala.Mp3.Id3v1.prototype.getTrackNumber = function() {
-   return this.getJavaObject().getTrackNumberOnAlbum();
+   try {
+      return this.getJavaObject().getTrackNumberOnAlbum();
+   } catch (e) {
+      // track number only exists in Id3v1.1, for
+      // Id3v1 getTrackNumberOnAlbum throws an exception.
+      return null;
+   }
 };
 
 
