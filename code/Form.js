@@ -73,6 +73,12 @@ jala.Form = function(name, dataObj) {
    var components = [];
 
    /**
+    * Private field containing the CSS class name of this form instance.
+    * @type String
+    */
+   var className;
+
+   /**
     * Private field containing the value of the submit button
     * @type String
     * @private
@@ -230,6 +236,23 @@ jala.Form = function(name, dataObj) {
       return false;
    };
 
+   /**
+    * Returns the class name set for this form instance.
+    * @returns class name
+    * @type String
+    */
+   this.getClassName = function() {
+      return className;
+   };
+
+   /**
+    * Sets an extra classname for this form instance
+    * @param {String} newClassName new classname
+    */
+   this.setClassName = function(newClassName) {
+      className = newClassName;
+      return;
+   };
 
    /**
     * Returns the value (ie. text) of the submit button.
@@ -424,6 +447,9 @@ jala.Form.create = function(config, dataObj) {
    if (config.legend) {
       form.setLegend(config.legend);
    }
+   if (config.className) {
+      form.setClassName(config.className);
+   }
    if (config.submitValue) {
       form.setSubmitValue(config.submitValue);
    }
@@ -497,7 +523,7 @@ jala.Form.createComponents = function(container, arr) {
                component[key] = element[key];
                break;
             case jala.Form.REQUIRE:
-               component.require(key, true, msg);
+               component.require(key, element[key], msg);
                break;
             default:
                // check if key matches a constant:
@@ -536,7 +562,7 @@ jala.Form.createComponents = function(container, arr) {
  * @type String
  */
 jala.Form.isEmail = function(name, value, reqData, formObj) {
-   if (!value.isEmail()) {
+   if (value && !value.isEmail()) {
       return "Please enter a valid email address.";
    }
    return null;
@@ -567,10 +593,13 @@ jala.Form.prototype.renderFormOpen = function() {
    var formAttr = {
       id     : this.name,
       name   : this.name,
-      "class": "form",
       action : (req.action == "main") ? "" : req.action,
       method : "post"
    };
+   var className = this.getClassName();
+   if (className) {
+      formAttr["class"] = className;
+   }
    if (this.containsFileUpload()) {
       // if there is an upload element, use multipart-enctype
       formAttr.enctype = "multipart/form-data";
@@ -723,8 +752,34 @@ jala.Form.prototype.render_macro = function() {
  * @type String
  */
 jala.Form.prototype.id_macro = function() {
-   return this.name;
+   res.write(this.name);
+   return;
 };
+
+/**
+ * Returns the name (equal to the id) of the form
+ * @returns The name of this Form instance
+ * @type String
+ */
+jala.Form.prototype.name_macro = function() {
+   res.write(this.name);
+   return;
+};
+
+/**
+ * Returns the class name of the form
+ * @returns The class name of this Form instance
+ * @type String
+ */
+jala.Form.prototype.class_macro = function() {
+   var className = this.getClassName();
+   if (className) {
+      res.write(className);
+   }
+   return;
+};
+
+
 
 /**
  * Writes the form opening tag to response
@@ -1471,6 +1526,37 @@ jala.Form.Component.Input.prototype.id_macro = function() {
    res.write(this.form.createDomId(this.name));
    return;
 };
+
+/**
+ * Renders this component's name
+ */
+jala.Form.Component.Input.prototype.name_macro = function() {
+   res.write(this.name);
+   return;
+};
+
+/**
+ * Renders this component's type
+ */
+jala.Form.Component.Input.prototype.type_macro = function() {
+   res.write(this.getType());
+   return;
+};
+
+/**
+ * Renders this component's class name.
+ * Note that this is just the class name that has been explicitly
+ * assigned using setClassName.
+ * @see #setClassName
+ */
+jala.Form.Component.Input.prototype.class_macro = function() {
+   var className = this.getClassName();
+   if (className) {
+      res.write(className);
+   }
+   return;
+};
+
 
 /**
  * Creates a new attribute object for this element.
