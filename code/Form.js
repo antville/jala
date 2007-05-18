@@ -185,7 +185,7 @@ jala.Form = function(name, dataObj) {
     * Contains the default component skin
     * @type Skin
     */
-   this.componentSkin = createSkin("<% param.error %><% param.label %><div class=\"element\"><% param.controls %><% param.help %></div>");
+   this.componentSkin = createSkin("<% param.error %><% param.label %><% param.controls %><% param.help %>");
 
    /**
     * Contains a map of component objects.
@@ -563,7 +563,7 @@ jala.Form.isUrl = function(name, value, reqData, formObj) {
  */
 jala.Form.prototype.renderFormOpen = function() {
    var formAttr = {
-      id     : this.name,
+      id     : this.createDomId(),
       name   : this.name,
       action : (req.action == "main") ? "" : req.action,
       method : "post"
@@ -586,12 +586,12 @@ jala.Form.prototype.renderFormOpen = function() {
 jala.Form.prototype.render = function() {
 
    this.renderFormOpen();
-
+   
    // print optional general error message
    var errorMessage = this.getErrorMessage();
    if (this.hasError() && errorMessage) {
       jala.Form.html.element("div", errorMessage,
-                   {id: this.createDomId("error"), "class": "form_error"});
+                   {id: this.createDomId("error"), "class": "formError"});
    }
 
    // loop through elements
@@ -617,20 +617,19 @@ jala.Form.prototype.renderAsString = function(param) {
 
 /**
  * Creates a DOM identifier based on the arguments passed. The
- * resulting Id will be prefixed with the name of the form,
- * and all arguments will be separated by an underscore.
+ * resulting Id will be prefixed with the name of the form.
+ * All arguments will be chained using camel casing.
  * @returns The DOM Id
  * @type String
  */
 jala.Form.prototype.createDomId = function(/* [part1][, part2][, ...] */) {
    res.push();
-   res.write(this.name);
+   res.write(this.name.charAt(0).toLowerCase());
+   res.write(this.name.substring(1));
    for (var i=0;i<arguments.length;i++) {
       if (arguments[i]) {
-         if (i < arguments.length) {
-            res.write("_");
-         }
-         res.write(arguments[i]);
+         res.write(arguments[i].charAt(0).toUpperCase());
+         res.write(arguments[i].substring(1));
       }
    }
    return res.pop();
@@ -849,6 +848,18 @@ jala.Form.Component.prototype.toString = function() {
 };
 
 /**
+ * Creates a DOM identifier based on the name of the form,
+ * the name of the component and an additional string.
+ * The items will be chained using camel casing.
+ * @param {String} idPart Optional string appended to component's id.
+ * @returns The DOM Id
+ * @type String
+ */
+jala.Form.Component.prototype.createDomId = function(idPart) {
+   return this.form.createDomId(this.name, idPart);
+}
+
+/**
  * Function to render a component.
  * Subclasses of jala.Form.Component may override this function.
  */
@@ -980,7 +991,14 @@ jala.Form.extend(jala.Form.Component.Fieldset, jala.Form.Component);
  * Renders all components within the fieldset.
  */
 jala.Form.Component.Fieldset.prototype.render = function() {
-   jala.Form.html.openTag("fieldset");
+
+   var attr = {
+   };
+   var className = this.getClassName();
+   if (className) {
+      attr["class"] = className;
+   }
+   jala.Form.html.openTag("fieldset", attr);
 
    // optional legend
    var legend = this.getLegend();
@@ -1381,8 +1399,8 @@ jala.Form.Component.Input.prototype.render = function() {
    }
 
    jala.Form.html.openTag("div",
-      {id: this.form.createDomId(this.name, "row"),
-       "class": "row " + className}
+      {id: this.createDomId(),
+       "class": "component " + className}
    );
    renderSkin(this.form.componentSkin, this);
    jala.Form.html.closeTag("div");
@@ -1400,8 +1418,8 @@ jala.Form.Component.Input.prototype.renderError = function() {
    if (tracker && tracker.errors[this.name]) {
       return jala.Form.html.elementAsString("div",
          tracker.errors[this.name],
-         {id: this.form.createDomId(this.name, "error"),
-          "class": "error"});
+         {"class": "errorText"}
+      );
    }
    return null;
 };
@@ -1415,9 +1433,7 @@ jala.Form.Component.Input.prototype.renderLabel = function() {
    return jala.Form.html.elementAsString(
       "label",
       this.getLabel() || "",
-      {id: this.form.createDomId(this.name, "label"),
-       "for": this.form.createDomId(this.name)
-      }
+      {"for": this.createDomId("control")}
    );
 };
 
@@ -1433,8 +1449,7 @@ jala.Form.Component.Input.prototype.renderHelp = function() {
       return jala.Form.html.elementAsString(
          "div",
          help,
-         {id: this.form.createDomId(this.name, "help"),
-          "class": "help"}
+         {"class": "helpText"}
       );
    }
    return null;
@@ -1493,7 +1508,7 @@ jala.Form.Component.Input.prototype.help_macro = function() {
  * @see jala.Form#createDomId
  */
 jala.Form.Component.Input.prototype.id_macro = function() {
-   res.write(this.form.createDomId(this.name));
+   res.write(this.createDomId());
    return;
 };
 
@@ -1535,7 +1550,7 @@ jala.Form.Component.Input.prototype.class_macro = function() {
  */
 jala.Form.Component.Input.prototype.getControlAttributes = function() {
    var attr = {
-      id: this.form.createDomId(this.name),
+      id: this.createDomId("control"),
       name: this.name,
       "class": this.getType() 
    };
@@ -2031,7 +2046,7 @@ jala.Form.Component.Radio.prototype.renderControls = function(attr, value) {
    var optionAttr, optionDisplay;
    for (var i=0; i<options.length; i++) {
       optionAttr = attr.clone({}, false);
-      optionAttr.id += "_" + i;
+      optionAttr.id += i;
       if ((options[i] instanceof Array) && options[i].length > 0) {
          optionAttr.value = options[i][0];
          optionDisplay = options[i][1];
@@ -2307,13 +2322,11 @@ jala.Form.extend(jala.Form.Component.Button, jala.Form.Component.Input);
  *       passed only if the form is re-rendered after an error occured.
  */
 jala.Form.Component.Button.prototype.render = function(attr, value, reqData) {
+   var classStr = (this.getClassName()) ? this.getClassName() + " " : "";
    var attr = {
-      id: this.form.createDomId(this.name, "row"),
+      id: this.createDomId(),
+      "class": "component" + classStr
    };
-   var className = this.getClassName();
-   if (className) {
-      attr["class"] = className;
-   }
    jala.Form.html.openTag("div", attr);
 
    this.renderControls(this.getControlAttributes(), this.getValue());
