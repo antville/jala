@@ -183,6 +183,8 @@ jala.Mp3 = function(file) {
     * Writes changed metadata back to the source file or to a new file. 
     * @param {String|helma.File} outFile (optional) save the modified file
     *                       to a different file
+    * @returns true on success, false if the file contains tags that cannot be saved (Id3v2_2).
+    * @type Boolean
     */
    this.save = function(outFile) {
       // turn off saving of backup-files:
@@ -198,6 +200,11 @@ jala.Mp3 = function(file) {
          v2JavaTagToDelete = null;
          raf.close();
       }
+
+      if(tagObjects[jala.Mp3.Id3v2] && tagObjects[jala.Mp3.Id3v2].getSubtype() == 2) {
+         app.log("Error in jala.Mp3#save: Can't save a tag of version Id3v2_2. Please remove the tag and add a new Id3v2 tag of sub type 3 or 4!");
+         return false;
+      }
    
       if(outFile) {
          var outFile = new helma.File(outFile);
@@ -210,7 +217,7 @@ jala.Mp3 = function(file) {
       mp3File.save(outFile,
          Packages.org.farng.mp3.TagConstant.MP3_FILE_SAVE_OVERWRITE
       );
-      return;
+      return true;
    };
 
 
