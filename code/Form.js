@@ -478,7 +478,6 @@ jala.Form.createComponents = function(container, arr) {
          continue;
       }
       var component = new constr(name);
-      container.addComponent(component);  // make sure that component.form is set before the loop!
       for (var key in element) {
          var msg = (element.messages && element.messages[key]) ? element.messages[key] : null;
          switch(key) {
@@ -519,6 +518,7 @@ jala.Form.createComponents = function(container, arr) {
                break;
          }
       }
+      container.addComponent(component);
    }
    return;
 };
