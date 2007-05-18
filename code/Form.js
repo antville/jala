@@ -79,13 +79,6 @@ jala.Form = function(name, dataObj) {
    var className;
 
    /**
-    * Private field containing the value of the submit button
-    * @type String
-    * @private
-    */
-   var submitValue;
-   
-   /**
     * Private field containing the default error message
     * @type String
     * @private
@@ -253,24 +246,6 @@ jala.Form = function(name, dataObj) {
       className = newClassName;
       return;
    };
-
-   /**
-    * Returns the value (ie. text) of the submit button.
-    * @type String
-    */
-   this.getSubmitValue = function() {
-      return submitValue;
-   };
-   
-   /**
-    * Sets the value (ie. text) of the submit button.
-    * @param {String} newSubmitValue
-    */
-   this.setSubmitValue = function(newSubmitValue) {
-      submitValue = newSubmitValue;
-      return;
-   };
-
 
    /**
     * Returns the general error message printed above the form
@@ -450,9 +425,6 @@ jala.Form.create = function(config, dataObj) {
    if (config.className) {
       form.setClassName(config.className);
    }
-   if (config.submitValue) {
-      form.setSubmitValue(config.submitValue);
-   }
    if (config.errorMessage) {
       form.setErrorMessage(config.errorMessage);
    }
@@ -628,22 +600,6 @@ jala.Form.prototype.render = function() {
       components[i].render();
    }
 
-   // submit button
-   jala.Form.html.openTag("div",
-      {id: this.createDomId("submit", "row"),
-         "class": "row"}
-   );
-   jala.Form.html.openTag("div",
-      {"class": "element"}
-   );
-   jala.Form.html.submit(
-      {id: this.createDomId("submit"),
-       name: this.createDomId("submit"),
-       "class": "submit",
-       "value": this.getSubmitValue() || "Submit"}
-   );
-   jala.Form.html.closeTag("div");
-   jala.Form.html.closeTag("div");
    jala.Form.html.closeTag("form");
    return;
 };
@@ -815,6 +771,12 @@ jala.Form.Component = function Component(name) {
    var form;
 
    /**
+    * Private field containing the CSS class name of this component
+    * @type String
+    */
+   var className;
+   
+   /**
     * Readonly reference to name of component
     * @type String
     */
@@ -846,6 +808,24 @@ jala.Form.Component = function Component(name) {
     */
    this.getType = function() {
       return this.constructor.name.toLowerCase();
+   };
+
+   /**
+    * Returns the class name set for this component.
+    * @returns class name
+    * @type String
+    */
+   this.getClassName = function() {
+      return className;
+   };
+
+   /**
+    * Sets an extra classname for this component
+    * @param {String} newClassName new classname
+    */
+   this.setClassName = function(newClassName) {
+      className = newClassName;
+      return;
    };
 
    /**
@@ -978,6 +958,20 @@ jala.Form.Component.Fieldset = function Fieldset(name) {
       return;
    };
 
+   /**
+    * Attaches this fieldset and all components to an instance of
+    * jala.Form.
+    * @param {jala.Form} newForm form object
+    * @private
+    */
+   this.setForm = function(newForm) {
+      form = newForm;
+      for (var i=0; i<components.length; i++) {
+         components[i].setForm(newForm);
+      }
+      return;
+   };
+
 };
 // extend jala.Form.Component
 jala.Form.extend(jala.Form.Component.Fieldset, jala.Form.Component);
@@ -1101,12 +1095,6 @@ jala.Form.Component.Input = function Input(name) {
    var messages = {};
 
    /**
-    * Private field containing the CSS class name of this component
-    * @type String
-    */
-   var className;
-   
-   /**
     * Private field containing the label of this component
     * @type String
     */
@@ -1180,24 +1168,6 @@ jala.Form.Component.Input = function Input(name) {
          arr.push(arguments[i]);
       }
       return gettext.apply(null, arr);
-   };
-
-   /**
-    * Returns the class name set for this component.
-    * @returns class name
-    * @type String
-    */
-   this.getClassName = function() {
-      return className;
-   };
-
-   /**
-    * Sets an extra classname for this component
-    * @param {String} newClassName new classname
-    */
-   this.setClassName = function(newClassName) {
-      className = newClassName;
-      return;
    };
 
    /**
@@ -2151,7 +2121,7 @@ jala.Form.Component.Checkbox.prototype.checkRequirements = function(reqData) {
 /**
  * Creates a new File component instance
  * @class Subclass of jala.Form.Component.Input which renders and validates a
- * file upload. Note that the file is not saved. Use req.data[field].writeToFile(dir, name).
+ * file upload.
  * @base jala.Form.Component.Input
  * @param {String} name Name of the component, used as name of the html controls.
  * @returns A newly created File component
@@ -2227,9 +2197,7 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
 /**
  * Creates a new Image component instance
  * @class Subclass of jala.Form.Component.File which renders a file upload
- * and validates uploaded files as images. Note that the image is not saved
- * to disk, this has to be handled manually by calling
- * req.data[field].writeToFile(dir, name).
+ * and validates uploaded files as images.
  * @base jala.Form.Component.File
  * @param {String} name Name of the component, used as name of the html controls.
  * @returns A newly created Image component
@@ -2287,6 +2255,114 @@ jala.Form.Component.Image.prototype.checkRequirements = function(reqData) {
    }
 
    return null;
+};
+
+
+
+/**
+ * Creates a new Button component instance
+ * @class Subclass of jala.Form.Component.Input which renders a button.
+ * @base jala.Form.Component.Input
+ * @param {String} name Name of the component, used as name of the html controls.
+ * @returns A newly created Button component
+ * @constructor
+ */
+jala.Form.Component.Button = function Button(name) {
+   jala.Form.Component.Button.superConstructor.apply(this, arguments);
+
+   /**
+    * Private field containing the value of the button (ie. the visible text)
+    * @type String
+    */
+   var value;
+   
+   /**
+    * Returns the value set for this button.
+    * @returns value
+    * @type String
+    */
+   this.getValue = function() {
+      return value;
+   };
+
+   /**
+    * Sets the value for this button.
+    * @param {String} newValue new value
+    */
+   this.setValue = function(newValue) {
+      value = newValue;
+      return;
+   };
+
+   return this;
+};
+// extend jala.Form.Component
+jala.Form.extend(jala.Form.Component.Button, jala.Form.Component.Input);
+
+/**
+ * Renders a button to the response.
+ * @param {Object} attr Basic attributes for this element.
+ * @param {Object} value Value to be used for rendering this element.
+ * @param {Object} reqData Request data for the whole form. This argument is
+ *       passed only if the form is re-rendered after an error occured.
+ */
+jala.Form.Component.Button.prototype.render = function(attr, value, reqData) {
+   var attr = {
+      id: this.form.createDomId(this.name, "row"),
+   };
+   var className = this.getClassName();
+   if (className) {
+      attr["class"] = className;
+   }
+   jala.Form.html.openTag("div", attr);
+
+   this.renderControls(this.getControlAttributes(), this.getValue());
+   
+   jala.Form.html.closeTag("div");
+   return;
+};
+
+/**
+ * Creates a new attribute object for this button.
+ * @returns Object with all attributes set for this button.
+ * @type Object
+ */
+jala.Form.Component.Button.prototype.renderControls = function(attr, value) {
+   if (value) {
+      attr.value = value;
+   }
+   jala.Form.html.button(attr);
+   return;
+};
+
+
+/**
+ * Creates a new Submit component instance
+ * @class Subclass of jala.Form.Component.Button which renders a submit button.
+ * @base jala.Form.Component.Button
+ * @param {String} name Name of the component, used as name of the html controls.
+ * @returns A newly created Submit component
+ * @constructor
+ */
+jala.Form.Component.Submit = function Submit(name) {
+   jala.Form.Component.Submit.superConstructor.apply(this, arguments);
+
+   return this;
+};
+// extend jala.Form.Component.Button
+jala.Form.extend(jala.Form.Component.Submit, jala.Form.Component.Button);
+
+/**
+ * Creates a new attribute object for this button.
+ * @returns Object with all attributes set for this button.
+ * @type Object
+ */
+jala.Form.Component.Submit.prototype.renderControls = function(attr, value) {
+   if (value) {
+      attr.value = value;
+   }
+   jala.Form.html.submit(attr);
+   return;
 };
 
 
