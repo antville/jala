@@ -46,6 +46,7 @@ var form;
  */
 var setup = function() {
    form = jala.Form.create(getConfig(), new DataObject());
+   // form.render();    // show the test form
    return;
 };
 
@@ -68,18 +69,14 @@ var testFormRender = function() {
    
    // alias / input
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_alias_row");
-   assertAttribute(list[idx].attributes, "class", "row require");
+   assertAttribute(list[idx].attributes, "id", "testAlias");
+   assertAttribute(list[idx].attributes, "class", "component require");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_alias_label");
-   assertAttribute(list[idx].attributes, "for", "test_alias");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testAliasControl");
 
    assertEqual(list[++idx].name, "input");
-   assertAttribute(list[idx].attributes, "id", "test_alias");
+   assertAttribute(list[idx].attributes, "id", "testAliasControl");
    assertAttribute(list[idx].attributes, "class", "input");
    assertAttribute(list[idx].attributes, "type", "text");
    assertAttribute(list[idx].attributes, "maxlength", "10");
@@ -88,24 +85,19 @@ var testFormRender = function() {
 
    assertEqual(list[++idx].name, "div");
    assertEqual(list[idx].value, "Enter alias.");
-   assertAttribute(list[idx].attributes, "id", "test_alias_help");
-   assertAttribute(list[idx].attributes, "class", "help");
+   assertAttribute(list[idx].attributes, "class", "helpText");
 
 
    // desc / textarea
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_desc_row");
-   assertAttribute(list[idx].attributes, "class", "row require");
+   assertAttribute(list[idx].attributes, "id", "testDesc");
+   assertAttribute(list[idx].attributes, "class", "component require");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_desc_label");
-   assertAttribute(list[idx].attributes, "for", "test_desc");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testDescControl");
 
    assertEqual(list[++idx].name, "textarea");
-   assertAttribute(list[idx].attributes, "id", "test_desc");
+   assertAttribute(list[idx].attributes, "id", "testDescControl");
    assertAttribute(list[idx].attributes, "class", "textarea");
    assertAttribute(list[idx].attributes, "name", "desc");
    assertAttribute(list[idx].attributes, "cols", "30");
@@ -115,18 +107,14 @@ var testFormRender = function() {
 
    // pushdate / date
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_pushdate_row");
-   assertAttribute(list[idx].attributes, "class", "row require");
+   assertAttribute(list[idx].attributes, "id", "testPushdate");
+   assertAttribute(list[idx].attributes, "class", "component require");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_pushdate_label");
-   assertAttribute(list[idx].attributes, "for", "test_pushdate");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testPushdateControl");
 
    assertEqual(list[++idx].name, "input");
-   assertAttribute(list[idx].attributes, "id", "test_pushdate");
+   assertAttribute(list[idx].attributes, "id", "testPushdateControl");
    assertAttribute(list[idx].attributes, "class", "date");
    assertAttribute(list[idx].attributes, "type", "text");
    assertAttribute(list[idx].attributes, "name", "pushdate");
@@ -134,18 +122,14 @@ var testFormRender = function() {
 
    // isonline / checkbox
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_isonline_row");
-   assertAttribute(list[idx].attributes, "class", "row optional");
+   assertAttribute(list[idx].attributes, "id", "testIsonline");
+   assertAttribute(list[idx].attributes, "class", "component optional");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_isonline_label");
-   assertAttribute(list[idx].attributes, "for", "test_isonline");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testIsonlineControl");
 
    assertEqual(list[++idx].name, "input");
-   assertAttribute(list[idx].attributes, "id", "test_isonline");
+   assertAttribute(list[idx].attributes, "id", "testIsonlineControl");
    assertAttribute(list[idx].attributes, "type", "checkbox");
    assertAttribute(list[idx].attributes, "class", "checkbox");
    assertAttribute(list[idx].attributes, "name", "isonline");
@@ -154,18 +138,14 @@ var testFormRender = function() {
 
    // category / select
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_category_row");
-   assertAttribute(list[idx].attributes, "class", "row optional");
+   assertAttribute(list[idx].attributes, "id", "testCategory");
+   assertAttribute(list[idx].attributes, "class", "component optional");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_category_label");
-   assertAttribute(list[idx].attributes, "for", "test_category");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testCategoryControl");
 
    assertEqual(list[++idx].name, "select");
-   assertAttribute(list[idx].attributes, "id", "test_category");
+   assertAttribute(list[idx].attributes, "id", "testCategoryControl");
    assertAttribute(list[idx].attributes, "class", "select");
    assertAttribute(list[idx].attributes, "name", "category");
    assertAttribute(list[idx].attributes, "size", "1");
@@ -192,18 +172,14 @@ var testFormRender = function() {
 
    // fileupload
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_fileupload_row");
-   assertAttribute(list[idx].attributes, "class", "row optional");
+   assertAttribute(list[idx].attributes, "id", "testFileupload");
+   assertAttribute(list[idx].attributes, "class", "component optional");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_fileupload_label");
-   assertAttribute(list[idx].attributes, "for", "test_fileupload");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testFileuploadControl");
 
    assertEqual(list[++idx].name, "input");
-   assertAttribute(list[idx].attributes, "id", "test_fileupload");
+   assertAttribute(list[idx].attributes, "id", "testFileuploadControl");
    assertAttribute(list[idx].attributes, "class", "file");
    assertAttribute(list[idx].attributes, "type", "file");
    assertAttribute(list[idx].attributes, "accept", "application/msword");
@@ -212,18 +188,14 @@ var testFormRender = function() {
 
    // imageupload
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_imageupload_row");
-   assertAttribute(list[idx].attributes, "class", "row optional");
+   assertAttribute(list[idx].attributes, "id", "testImageupload");
+   assertAttribute(list[idx].attributes, "class", "component optional");
 
    assertEqual(list[++idx].name, "label");
-   assertAttribute(list[idx].attributes, "id", "test_imageupload_label");
-   assertAttribute(list[idx].attributes, "for", "test_imageupload");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "for", "testImageuploadControl");
 
    assertEqual(list[++idx].name, "input");
-   assertAttribute(list[idx].attributes, "id", "test_imageupload");
+   assertAttribute(list[idx].attributes, "id", "testImageuploadControl");
    assertAttribute(list[idx].attributes, "class", "image");
    assertAttribute(list[idx].attributes, "type", "file");
    assertAttribute(list[idx].attributes, "name", "imageupload");
@@ -231,19 +203,29 @@ var testFormRender = function() {
 
    // submit
    assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "id", "test_submit_row");
-   assertAttribute(list[idx].attributes, "class", "row");
-
-   assertEqual(list[++idx].name, "div");
-   assertAttribute(list[idx].attributes, "class", "element");
+   assertAttribute(list[idx].attributes, "id", "testSubmit");
+   assertAttribute(list[idx].attributes, "class", "component");
 
    assertEqual(list[++idx].name, "input");
-   assertAttribute(list[idx].attributes, "id", "test_submit");
+   assertAttribute(list[idx].attributes, "id", "testSubmitControl");
    assertAttribute(list[idx].attributes, "class", "submit");
-   assertAttribute(list[idx].attributes, "name", "test_submit");
-   assertAttribute(list[idx].attributes, "value", "Save");
+   assertAttribute(list[idx].attributes, "name", "submit");
+   assertAttribute(list[idx].attributes, "value", "Submit this form");
    assertAttribute(list[idx].attributes, "type", "submit");
-   
+
+
+   // cancel
+   assertEqual(list[++idx].name, "div");
+   assertAttribute(list[idx].attributes, "id", "testCancel");
+   assertAttribute(list[idx].attributes, "class", "component");
+
+   assertEqual(list[++idx].name, "input");
+   assertAttribute(list[idx].attributes, "id", "testCancelControl");
+   assertAttribute(list[idx].attributes, "class", "button");
+   assertAttribute(list[idx].attributes, "name", "cancel");
+   assertAttribute(list[idx].attributes, "value", "Cancel edit");
+   assertAttribute(list[idx].attributes, "type", "button");
+
    return;
 }
 
@@ -298,8 +280,7 @@ var testFormRenderWithError = function() {
    var list = html.getAll("*");
    assertEqual(list[4].name, "div");
    assertEqual(list[4].value, "Alias is too short.");
-   assertAttribute(list[4].attributes, "class", "error");
-   assertAttribute(list[4].attributes, "id", "test_alias_error");
+   assertAttribute(list[4].attributes, "class", "errorText");
 };
 
 
@@ -399,10 +380,10 @@ var getRequestData = function() {
 var getConfig = function() {
    return   {
    name:             "test",
-   submitValue:      "Save",
+   className:        "form",
    components:[
       {
-         name:       "alias",
+         // name:       "alias",    deliberately left out, should construct name from label
          label:      "Alias",
          help:       "Enter alias.",
          minlength:  4,
@@ -477,6 +458,16 @@ var getConfig = function() {
             }
          ]
       },
+      {
+         name:       "submit",
+         type:       "submit",
+         value:      "Submit this form"
+      },
+      {
+         name:       "cancel",
+         type:       "button",
+         value:      "Cancel edit"
+      }
    ]};
 };
 
