@@ -185,7 +185,7 @@ jala.Form = function(name, dataObj) {
     * Contains the default component skin
     * @type Skin
     */
-   this.componentSkin = createSkin("<% param.error %><% param.label %><% param.controls %><% param.help %>");
+   this.componentSkin = createSkin("<% param.error prefix=' ' suffix='\n' %><% param.label prefix=' ' suffix='\n' %><% param.controls prefix=' ' suffix='\n' %><% param.help prefix=' ' suffix='\n' %>");
 
    /**
     * Contains a map of component objects.
@@ -278,6 +278,20 @@ jala.Form = function(name, dataObj) {
          return tracker.hasError();
       }
       return false;
+   };
+
+   /**
+    * If this instance of jala.Form holds a jala.Form.Tracker
+    * instance it returns the number of components that didn't
+    * validate.
+    * @returns Number of components that didn't validate.
+    * @type Number
+    */
+   this.countErrors = function() {
+      if (tracker) {
+         return tracker.countErrors();
+      }
+      return 0;
    };
 
    /**
@@ -588,12 +602,17 @@ jala.Form.prototype.renderFormOpen = function() {
 jala.Form.prototype.render = function() {
 
    this.renderFormOpen();
+   res.write("\n");
    
    // print optional general error message
    var errorMessage = this.getErrorMessage();
    if (this.hasError() && errorMessage) {
-      jala.Form.html.element("div", errorMessage,
-                   {id: this.createDomId("error"), "class": "formError"});
+      jala.Form.html.element(
+         "div",
+         gettext(errorMessage, this.countErrors()),
+         {id: this.createDomId("error"), "class": "formError"}
+      );
+      res.write("\n");
    }
 
    // loop through elements
@@ -1001,11 +1020,14 @@ jala.Form.Component.Fieldset.prototype.render = function() {
       attr["class"] = className;
    }
    jala.Form.html.openTag("fieldset", attr);
+   res.write("\n");
 
    // optional legend
    var legend = this.getLegend();
    if (legend != null) {
+      res.write(" ");
       jala.Form.html.element("legend", legend);
+      res.write("\n");
    }
 
    // loop through elements
@@ -1014,7 +1036,8 @@ jala.Form.Component.Fieldset.prototype.render = function() {
       components[i].render();
    }
 
-   jala.Form.html.closeTag("fieldset");   
+   jala.Form.html.closeTag("fieldset");
+   res.write("\n");
    return;
 };
 
@@ -1404,8 +1427,10 @@ jala.Form.Component.Input.prototype.render = function() {
       {id: this.createDomId(),
        "class": "component " + className}
    );
+   res.write("\n");
    renderSkin(this.form.componentSkin, this);
    jala.Form.html.closeTag("div");
+   res.write("\n");
    return;
 };
 
@@ -2330,10 +2355,13 @@ jala.Form.Component.Button.prototype.render = function(attr, value, reqData) {
       "class": "component" + classStr
    };
    jala.Form.html.openTag("div", attr);
+   res.write("\n ");
 
    this.renderControls(this.getControlAttributes(), this.getValue());
+   res.write("\n");
    
    jala.Form.html.closeTag("div");
+   res.write("\n");
    return;
 };
 
@@ -2450,6 +2478,20 @@ jala.Form.Tracker.prototype.hasError = function() {
       return true;
    }
    return false;
+};
+
+/**
+ * Returns the number of components for which this instance has
+ * tracked an error.
+ * @returns Number of components that did not validate.
+ * @type Number
+ */
+jala.Form.Tracker.prototype.countErrors = function() {
+   var ct = 0;
+   for (var keys in this.errors) {
+      ct++;
+   }
+   return ct;
 };
 
 /**
