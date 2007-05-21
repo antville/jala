@@ -448,6 +448,7 @@ jala.Form.create = function(config, dataObj) {
  * @private
  */
 jala.Form.createComponents = function(container, arr) {
+   var form = (container.form) ? container.form : container;
    var components = [];
    var element;
    for (var i=0; i<arr.length; i++) {
@@ -478,6 +479,7 @@ jala.Form.createComponents = function(container, arr) {
          continue;
       }
       var component = new constr(name);
+      component.setForm(form);
       for (var key in element) {
          var msg = (element.messages && element.messages[key]) ? element.messages[key] : null;
          switch(key) {
