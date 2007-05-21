@@ -441,6 +441,7 @@ jala.Mp3.prototype.getDuration = function() {
  */
 jala.Mp3.prototype.parseDuration = function() {
    try {
+      Packages.de.ueberdosis.util.OutputCtr.setLevel(0);    // turn off debug output
       var reader = Packages.de.ueberdosis.mp3info.ID3Reader(this.getFile().getAbsolutePath());
       var tag = reader.getExtendedID3Tag();
       return tag.getRuntime();
