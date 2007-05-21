@@ -1422,6 +1422,10 @@ jala.Form.Component.Input.prototype.render = function() {
    if (this.getClassName()) {
       className += " " + this.getClassName();
    }
+   var tracker = this.form.getTracker();
+   if (tracker && tracker.errors[this.name]) {
+      className += " error";
+   }
 
    jala.Form.html.openTag("div",
       {id: this.createDomId(),
