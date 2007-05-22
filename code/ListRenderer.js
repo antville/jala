@@ -451,7 +451,8 @@ jala.ListRenderer.prototype.renderList = function(param) {
       param.counter = 1;
       param.index = idx + 1;
       param.stop = stop;
-      param.itemsPerPage = pageSize;
+      param.pageSize = pageSize;
+      param.itemsPerPage = pageSize; // for backwards compatibility only
       param.collectionSize = collection.size();
       if (!param.skin && itemSkin) {
          param.skin = itemSkin;
