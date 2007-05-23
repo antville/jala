@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala 1.0 Overview
+Jala 1.2 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -109,342 +109,6 @@ function asd() {
 <!-- ========== END METHOD SUMMARY =========== -->
 
 
-        <pre class="sourceview"><span class="comment">//</span>
-<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
-<span class="comment">//</span>
-<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
-<span class="comment">// you may not use this file except in compliance with the License.</span>
-<span class="comment">// You may obtain a copy of the License at</span>
-<span class="comment">//</span>
-<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="comment">//</span>
-<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
-<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
-<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="comment">// See the License for the specific language governing permissions and</span>
-<span class="comment">// limitations under the License.</span>
-<span class="comment">//</span>
-<span class="comment">// $Revision$</span>
-<span class="comment">// $LastChangedBy$</span>
-<span class="comment">// $LastChangedDate$</span>
-<span class="comment">// $HeadURL$</span>
-<span class="comment">//</span>
-
-
-<span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the jala.Rss20Writer class.
- */</span>
-
-
-<span class="comment">// Define the global namespace for Jala modules</span>
-<span class="reserved">if</span> (!global.jala) {
-   global.jala = {};
-}
-
-
-<span class="comment">/**
- * Jala dependencies
- */</span>
-app.addRepository(<span class="literal">"modules/jala/code/XmlWriter.js"</span>);
-
-<span class="comment">/**
- * <span class="attrib">@class</span> Class to create, modify and render standard-compliant
- * RSS 2.0 feeds.
- * <span class="attrib">@constructor</span>
- * <span class="attrib">@extends</span> jala.XmlWriter
- * <span class="attrib">@param</span> {String} header Optional XML header.
- */</span>
-jala.Rss20Writer = <span class="reserved">function</span>(header) {
-   <span class="comment">// defines the prototype of this constructor</span>
-   jala.XmlWriter.apply(<span class="reserved">this</span>, arguments);
-
-   <span class="comment">// this should do the same but alas, helma throws</span>
-   <span class="comment">// an error the very first time it is executed:</span>
-   <span class="comment">//arguments.callee.prototype = new jala.XmlWriterInterface();</span>
-
-   var DATEFMT = <span class="literal">"EEE, dd MMM yyyy HH:mm:ss Z"</span>;
-
-   var CATEGORY = {
-      name: <span class="literal">"category"</span>,
-      amount: Infinity,
-      attributes: {
-         name: <span class="literal">"domain"</span>,
-      }
-   };
-
-   var ITEM = {
-      name: <span class="literal">"item"</span>,
-      amount: Infinity,
-      value: [{
-         name: <span class="literal">"title"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"link"</span>,
-      }, {
-         name: <span class="literal">"description"</span>,
-      }, {
-         name: <span class="literal">"author"</span>,
-      }, {
-         name: <span class="literal">"comments"</span>,
-      }, {
-         name: <span class="literal">"enclosure"</span>,
-         attributes: [{
-            name: <span class="literal">"url"</span>,
-            required: true
-         }, {
-            name: <span class="literal">"length"</span>,
-            required: true
-         }, {
-            name: <span class="literal">"type"</span>,
-            required: true
-         }]
-      }, {
-         name: <span class="literal">"guid"</span>,
-         attributes: [{
-            name: <span class="literal">"isPermaLink"</span>,
-            type: Boolean
-         }]
-      }, {
-         name: <span class="literal">"pubDate"</span>,
-         type: Date,
-         format: DATEFMT
-      }, {
-         name: <span class="literal">"source"</span>,
-         attributes: [{
-            name: <span class="literal">"url"</span>,
-            required: true
-         }]
-      }]
-   };
-
-   var CHANNEL = {
-      name: <span class="literal">"channel"</span>,
-      value: [{
-         name: <span class="literal">"title"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"link"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"description"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"language"</span>,
-      }, {
-         name: <span class="literal">"copyright"</span>,
-      }, {
-         name: <span class="literal">"managingEditor"</span>,
-      }, {
-         name: <span class="literal">"webMaster"</span>,
-      }, {
-         name: <span class="literal">"pubDate"</span>,
-         type: Date,
-         format: DATEFMT
-      }, {
-         name: <span class="literal">"lastBuildDate"</span>,
-         type: Date,
-         format: DATEFMT
-      }, {
-         name: <span class="literal">"generator"</span>,
-      }, {
-         name: <span class="literal">"docs"</span>,
-      }, {
-         name: <span class="literal">"cloud"</span>,
-         attributes: [{
-            name: <span class="literal">"domain"</span>,
-         }, {
-            name: <span class="literal">"port"</span>,
-            type: Number,
-            format: <span class="literal">"#"</span>
-         }, {
-            name: <span class="literal">"path"</span>,
-         }, {
-            name: <span class="literal">"registerProcedure"</span>,
-         }, {
-            name: <span class="literal">"protocol"</span>,
-         }]
-      }, {
-         name: <span class="literal">"ttl"</span>,
-         type: Number,
-         format: <span class="literal">"#"</span>
-      }, {
-         name: <span class="literal">"rating"</span>,
-      }, {
-         name: <span class="literal">"skipHours"</span>,
-      }, {
-         name: <span class="literal">"skipDays"</span>,
-      }]
-   };
-
-   var IMAGE = {
-      name: <span class="literal">"image"</span>,
-      value: [{
-         name: <span class="literal">"url"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"title"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"link"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"width"</span>,
-         type: Number,
-         format: <span class="literal">"#"</span>
-      }, {
-         name: <span class="literal">"height"</span>,
-         type: Number,
-         format: <span class="literal">"#"</span>
-      }, {
-         name: <span class="literal">"description"</span>,
-      }]
-   };
-
-   var TEXTINPUT = {
-      name: <span class="literal">"textinput"</span>,
-      value: [{
-         name: <span class="literal">"title"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"description"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"name"</span>,
-         required: true
-      }, {
-         name: <span class="literal">"link"</span>,
-         required: true
-      }]
-   };
-
-   var ROOT = {
-      name: <span class="literal">"rss"</span>,
-      attributes: [{
-         name: <span class="literal">"version"</span>,
-         value: <span class="literal">"2.0"</span>
-      }]
-   };
-
-   var xmlroot = <span class="reserved">this</span>.createElement(ROOT);
-   var channel = <span class="reserved">this</span>.createElement(CHANNEL);
-   xmlroot.setValue(channel);
-
-   <span class="comment">/**
-    * Get the writer's root element.
-    * <span class="attrib">@returns</span> The writer's root element.
-    * <span class="attrib">@type</span> jala.XmlWriter.XmlElement
-    */</span>
-   <span class="reserved">this</span>.getRoot = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> xmlroot;
-   };
-
-   <span class="comment">/**
-    * Add child elements to the channel template.
-    * <span class="attrib">@param</span> {Array} ext List of additional child elements.
-    */</span>
-   <span class="reserved">this</span>.extendChannel = <span class="reserved">function</span>(ext) {
-      <span class="reserved">this</span>.extend(CHANNEL, ext);
-      channel = <span class="reserved">this</span>.createElement(CHANNEL);
-      xmlroot.setValue(channel);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Get the writer's channel element.
-    * <span class="attrib">@returns</span> The writer's channel element.
-    * <span class="attrib">@type</span> jala.XmlWriter.XmlElement
-    */</span>
-   <span class="reserved">this</span>.getChannel = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> channel;
-   };
-
-   <span class="comment">/**
-    * Populate the channel element with data.
-    * <span class="attrib">@param</span> {Object} data An XmlWriter-compliant object structure.
-    * <span class="attrib">@returns</span> The populated channel element.
-    * <span class="attrib">@type</span> jala.XmlWriter.XmlElement
-    */</span>
-   <span class="reserved">this</span>.setChannel = <span class="reserved">function</span>(data) {
-      <span class="reserved">return</span> channel.populate(data);
-   };
-
-   <span class="comment">/**
-    * Add child elements to the item template.
-    * <span class="attrib">@param</span> {Array} ext List of additional child elements.
-    */</span>
-   <span class="reserved">this</span>.extendItem = <span class="reserved">function</span>(ext) {
-      <span class="reserved">this</span>.extend(ITEM, ext);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Get a new and innocent item element.
-    * <span class="attrib">@param</span> {Object} data An XmlWriter-compliant object structure.
-    * <span class="attrib">@returns</span> A new and innocent item element.
-    * <span class="attrib">@type</span> jala.XmlWriter.XmlElement
-    */</span>
-   <span class="reserved">this</span>.createItem = <span class="reserved">function</span>(data) {
-      var item = <span class="reserved">this</span>.createElement(ITEM);
-      item.populate(data);
-      <span class="reserved">return</span> item;
-   };
-
-   <span class="comment">/**
-    * Add an item element to the channel element.
-    * <span class="attrib">@param</span> {jala.XmlWriter.XmlElement} item The item element to add.
-    */</span>
-   <span class="reserved">this</span>.addItem = <span class="reserved">function</span>(item) {
-      channel.addValue(item);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Add a category element to an arbitrary element.
-    * <span class="attrib">@param</span> {String} name The name of the category.
-    * <span class="attrib">@param</span> {String} domain The domain of the category.
-    * <span class="attrib">@param</span> {jala.XmlWriter.XmlElement} parent The optional parent element.
-    */</span>
-   <span class="reserved">this</span>.addCategory = <span class="reserved">function</span>(name, domain, parent) {
-      <span class="reserved">if</span> (!parent)
-         parent = channel;
-      var cat = <span class="reserved">this</span>.createElement(CATEGORY);
-      cat.populate({
-         value: name,
-         attributes: {domain: domain}
-      });
-      parent.addValue(cat);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Populate the image element with data.
-    * <span class="attrib">@param</span> {Object} data An XmlWriter-compliant object structure.
-    */</span>
-   <span class="reserved">this</span>.setImage = <span class="reserved">function</span>(data) {
-      var image = <span class="reserved">this</span>.createElement(IMAGE);
-      image.populate(data);
-      channel.setValue(image);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Populate the textInput element with data.
-    * <span class="attrib">@param</span> {Object} data An XmlWriter-compliant object structure.
-    */</span>
-   <span class="reserved">this</span>.setTextInput = <span class="reserved">function</span>(data) {
-      var textInput = <span class="reserved">this</span>.createElement(TEXTINPUT);
-      textInput.populate(data);
-      channel.setValue(textInput);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="reserved">return</span> <span class="reserved">this</span>;
-};
-</pre>
-	<hr>
-
 
 
 <!-- ========== START OF NAVBAR ========== -->
@@ -469,7 +133,7 @@ jala.Rss20Writer = <span class="reserved">function</span>(header) {
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -500,6 +164,6 @@ jala.Rss20Writer = <span class="reserved">function</span>(header) {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </body>
 </html>

@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.ErrorTracker
+jala.Form.Component.Radio
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.ErrorTracker";
+parent.document.title="jala.Form.Component.Radio";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -24,7 +24,7 @@ parent.document.title="jala.ErrorTracker";
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-ErrorTracker.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -34,20 +34,20 @@ parent.document.title="jala.ErrorTracker";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.DnsClient.Record.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.Password.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Form.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Select.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.ErrorTracker.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Radio.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,10 +72,14 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.ErrorTracker</H2>
+<H2>Class jala.Form.Component.Radio</H2>
 <PRE>Object
    |
-   +--<b>jala.ErrorTracker</b>
+   +--<a href='jala.Form.Component.Input.html'>jala.Form.Component.Input</a>
+         |
+         +--<a href='jala.Form.Component.Select.html'>jala.Form.Component.Select</a>
+               |
+               +--<b>jala.Form.Component.Radio</b>
 </PRE>
 
 
@@ -83,16 +87,17 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.ErrorTracker</B>
+   <B>jala.Form.Component.Radio</B>
+   
+      <DT>extends <a href='jala.Form.Component.Select.html'>jala.Form.Component.Select</a> 
    
 
 </DL>
    
    <P>
-   <BR/>Instances of this class can contain a generic error- and non-error
- message and any number of error- and confirm messages which can be embedded
- in a skin using either the message or error macro.
- <BR/><I>Defined in <a href='overview-summary-ErrorTracker.js.html'>ErrorTracker.js</a></I><BR/><BR/>
+   <BR/>Subclass of jala.Form.Component.Input which renders and validates a
+ set of radio buttons.
+ <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
    </P>
    
    <HR>
@@ -104,44 +109,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- =========== FIELD SUMMARY =========== -->
 
-   <A NAME="field_summary"><!-- --></A>
-      <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-         <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-            <TD COLSPAN=2><FONT SIZE="+2">
-               <B>Field Summary</B></FONT></TD>
-         </TR>
-
-   <!-- This is one instance field summary -->
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&nbsp;Object</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#errors">errors</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A map containing error messages</TD>
-   </TR>
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&nbsp;Object</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#isError">isError</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A flag indicating that this instance contains error messages</TD>
-   </TR>
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&nbsp;String</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#mainErrorMessage">mainErrorMessage</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contains a generic error message that can be rendered in a skin
- using the error macro without any "name" attribute</TD>
-   </TR>
-   
-
-   </TABLE>
-   &nbsp;
-   
 
    
 
@@ -160,13 +127,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.ErrorTracker.html#jala.ErrorTracker()">jala.ErrorTracker</A> 
+	    <A HREF="jala.Form.Component.Radio.html#jala.Form.Component.Radio()">jala.Form.Component.Radio</A> 
 	 </B>
-	 (mainErrorMessage)
+	 (&lt;String&gt; name)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      A generic (error-)message container
+      Creates a new Radio component instance
       </TD>
 </TR>
 </TABLE>
@@ -188,34 +155,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#debug">debug</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Dumps the content of this tracker using res.debug
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
 	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#error_macro">error_macro</A></B>(&lt;String&gt; param)
+	       <A HREF="#checkRequirements">checkRequirements</A></B>(&lt;Object&gt; reqData)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the error message with the given name.
+	 Validates user input from a set of radio buttons and makes sure that
+ option value list contains the user input.
       </TD>
    </TR>
 
@@ -228,12 +179,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setError">setError</A></B>(&lt;String&gt; nameOrMessage )
+	       <A HREF="#renderControls">renderControls</A></B>(&lt;Object&gt; attr, &lt;Object&gt; value)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Adds the message with the given name to the list of errors and
- sets the isError flag to true.
+	 Renders a set of radio buttons to the response.
       </TD>
    </TR>
 
@@ -242,48 +192,39 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 
 
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TD><B>Methods inherited from class <a href="jala.Form.Component.Select.html">jala.Form.Component.Select</a></B></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>
+<!-- Inherited methods -->
+<a href="jala.Form.Component.Select.html#parseOptions">parseOptions</a>, <a href="jala.Form.Component.Select.html#checkOptions">checkOptions</a>
+</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TD><B>Methods inherited from class <a href="jala.Form.Component.Input.html">jala.Form.Component.Input</a></B></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>
+<!-- Inherited methods -->
+<a href="jala.Form.Component.Input.html#validate">validate</a>, <a href="jala.Form.Component.Input.html#save">save</a>, <a href="jala.Form.Component.Input.html#getValue">getValue</a>, <a href="jala.Form.Component.Input.html#setValue">setValue</a>, <a href="jala.Form.Component.Input.html#render">render</a>, <a href="jala.Form.Component.Input.html#renderError">renderError</a>, <a href="jala.Form.Component.Input.html#renderLabel">renderLabel</a>, <a href="jala.Form.Component.Input.html#renderHelp">renderHelp</a>, <a href="jala.Form.Component.Input.html#render_macro">render_macro</a>, <a href="jala.Form.Component.Input.html#controls_macro">controls_macro</a>, <a href="jala.Form.Component.Input.html#error_macro">error_macro</a>, <a href="jala.Form.Component.Input.html#label_macro">label_macro</a>, <a href="jala.Form.Component.Input.html#help_macro">help_macro</a>, <a href="jala.Form.Component.Input.html#id_macro">id_macro</a>, <a href="jala.Form.Component.Input.html#name_macro">name_macro</a>, <a href="jala.Form.Component.Input.html#type_macro">type_macro</a>, <a href="jala.Form.Component.Input.html#class_macro">class_macro</a>, <a href="jala.Form.Component.Input.html#getControlAttributes">getControlAttributes</a>, <a href="jala.Form.Component.Input.html#checkLength">checkLength</a>, <a href="jala.Form.Component.Input.html#parseValue">parseValue</a>
+</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
 <P>
 <!-- ========== END METHOD SUMMARY =========== -->
 
 
 <!-- ============ FIELD DETAIL START =========== -->
-
-   <A NAME="field_detail"><!-- --></A>
-   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-      <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-         <TD COLSPAN=1><FONT SIZE="+2"><B>Field Detail</B></FONT></TD>
-      </TR>
-   </TABLE>
-
-   
-   <A NAME="errors"><!-- --></A>
-   <H3>errors</H3>
-   <PRE>Object&nbsp;<B>errors</B></PRE>
-   <UL>
-   A map containing error messages
-   
-   </UL>
-   <HR>
-   
-   <A NAME="isError"><!-- --></A>
-   <H3>isError</H3>
-   <PRE>Object&nbsp;<B>isError</B></PRE>
-   <UL>
-   A flag indicating that this instance contains error messages
-   
-   </UL>
-   <HR>
-   
-   <A NAME="mainErrorMessage"><!-- --></A>
-   <H3>mainErrorMessage</H3>
-   <PRE>String&nbsp;<B>mainErrorMessage</B></PRE>
-   <UL>
-   Contains a generic error message that can be rendered in a skin
- using the error macro without any "name" attribute
-   
-   </UL>
-   <HR>
-   
 
 
 <!-- ============ FIELD DETAIL END =========== -->
@@ -299,13 +240,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.ErrorTracker()"><!-- --></A><H3>
-jala.ErrorTracker</H3>
-<PRE><B>jala.ErrorTracker</B>(mainErrorMessage)</PRE>
+<A NAME="jala.Form.Component.Radio()"><!-- --></A><H3>
+jala.Form.Component.Radio</H3>
+<PRE><B>jala.Form.Component.Radio</B>(&lt;String&gt; name)</PRE>
 
 
 <UL>
-   A generic (error-)message container
+   Creates a new Radio component instance
 </UL>
 
 
@@ -313,7 +254,7 @@ jala.ErrorTracker</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>a</CODE> -  generic error message that can be rendered in a skin         using the error macro without any "name" attribute  
+     <UL><CODE>name</CODE> -  Name of the component, used as name of the html controls.  
      </UL>
    
    
@@ -325,7 +266,7 @@ jala.ErrorTracker</H3>
    <UL>
    <B>Returns:</B>
      <UL>
-     A newly created FormFeedback instance   
+     A newly created Radio component   
      </UL>
    </UL>
 
@@ -352,33 +293,12 @@ jala.ErrorTracker</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="debug"><!-- --></A>
-   <H3>debug</H3>
-   <PRE>void <B>debug</B>()</PRE>
+   <A NAME="checkRequirements"><!-- --></A>
+   <H3>checkRequirements</H3>
+   <PRE>String <B>checkRequirements</B>(&lt;Object&gt; reqData)</PRE>
    
-      <UL>Dumps the content of this tracker using res.debug</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="error_macro"><!-- --></A>
-   <H3>error_macro</H3>
-   <PRE>String <B>error_macro</B>(&lt;String&gt; param)</PRE>
-   
-      <UL>Returns the error message with the given name. If the macro doesn't
- contain a "name" attribute, the generic error message is returned,
- otherwise the error message stored under the given name is returned.
- If neither prefix nor suffix are set, the message is wrapped in a div-tag
- of class 'error'.</UL>
+      <UL>Validates user input from a set of radio buttons and makes sure that
+ option value list contains the user input.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -386,7 +306,7 @@ jala.ErrorTracker</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> - .name name of message  
+     <UL><CODE>reqData</CODE> -  request data  
       </UL> 
    
    </UL>
@@ -397,25 +317,25 @@ jala.ErrorTracker</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        A previously stored error message   
+        null if everything is ok or string containing error message   
         </UL>
    </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
+   <UL>   
+   <B>See:</B><UL>- <a href="jala.Form.Component.Select.html#checkOptions">jala.Form.Component.Select.checkOptions()</a></UL>
+   </UL>
+   
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="setError"><!-- --></A>
-   <H3>setError</H3>
-   <PRE>void <B>setError</B>(&lt;String&gt; nameOrMessage )</PRE>
+   <A NAME="renderControls"><!-- --></A>
+   <H3>renderControls</H3>
+   <PRE>void <B>renderControls</B>(&lt;Object&gt; attr, &lt;Object&gt; value)</PRE>
    
-      <UL>Adds the message with the given name to the list of errors and
- sets the isError flag to true. If only one argument is given, it
- is interpreted as generic error message which can be rendered in
- a skin using the error macro without any "name" attibute, otherwise
- the message is stored with the given name argument as key.</UL>
+      <UL>Renders a set of radio buttons to the response.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -423,10 +343,10 @@ jala.ErrorTracker</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>nameOrMessage</CODE> -  Either the name of the error message  or a generic error message to use  
+     <UL><CODE>attr</CODE> -  Basic attributes for this element.  
       </UL> 
    
-     <UL><CODE>message</CODE> -  The message to store under the key passed as first  argument    
+     <UL><CODE>value</CODE> -  Value to be used for rendering this element.    
       </UL> 
    
    </UL>
@@ -455,7 +375,7 @@ jala.ErrorTracker</H3>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-ErrorTracker.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -465,20 +385,20 @@ jala.ErrorTracker</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.DnsClient.Record.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.Password.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Form.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Select.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.ErrorTracker.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Radio.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -506,6 +426,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </BODY>
 </HTML>

@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.XmlRpcRequest
+jala.Form.Component.Input
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.XmlRpcRequest";
+parent.document.title="jala.Form.Component.Input";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -24,7 +24,7 @@ parent.document.title="jala.XmlRpcRequest";
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-XmlRpcRequest.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -41,13 +41,13 @@ parent.document.title="jala.XmlRpcRequest";
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Utilities.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.Image.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.XmlWriter.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Password.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.XmlRpcRequest.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Input.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,26 +72,33 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.XmlRpcRequest</H2>
+<H2>Class jala.Form.Component.Input</H2>
 <PRE>Object
    |
-   +--<b>jala.XmlRpcRequest</b>
+   +--<b>jala.Form.Component.Input</b>
 </PRE>
+
+   <DL>
+   <DT>
+      <B>Direct Known Subclasses:</B> 
+      <DD>
+                <a href="jala.Form.Component.Hidden.html">jala.Form.Component.Hidden</a>, <a href="jala.Form.Component.Checkbox.html">jala.Form.Component.Checkbox</a>, <a href="jala.Form.Component.File.html">jala.Form.Component.File</a>, <a href="jala.Form.Component.Password.html">jala.Form.Component.Password</a>, <a href="jala.Form.Component.Button.html">jala.Form.Component.Button</a>, <a href="jala.Form.Component.Select.html">jala.Form.Component.Select</a>, <a href="jala.Form.Component.Textarea.html">jala.Form.Component.Textarea</a>, <a href="jala.Form.Component.Date.html">jala.Form.Component.Date</a>
+      </DD>
+   </DL>
 
 
 <HR>
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.XmlRpcRequest</B>
+   <B>jala.Form.Component.Input</B>
    
 
 </DL>
    
    <P>
-   <BR/>Instances of this class provide the necessary functionality
- for issueing XmlRpc requests to a remote service.
- <BR/><I>Defined in <a href='overview-summary-XmlRpcRequest.js.html'>XmlRpcRequest.js</a></I><BR/><BR/>
+   <BR/>Instances of this class represent a single form input field.
+ <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
    </P>
    
    <HR>
@@ -121,13 +128,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.XmlRpcRequest.html#jala.XmlRpcRequest()">jala.XmlRpcRequest</A> 
+	    <A HREF="jala.Form.Component.Input.html#jala.Form.Component.Input()">jala.Form.Component.Input</A> 
 	 </B>
-	 (&lt;String&gt; url, &lt;String&gt; methodName)
+	 (&lt;String&gt; name)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      A constructor for XmlRpc request objects
+      Creates a new input component instance.
       </TD>
 </TR>
 </TABLE>
@@ -149,17 +156,86 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Boolean</CODE>
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#debug">debug</A></B>()
+	       <A HREF="#checkLength">checkLength</A></B>(&lt;Object&gt; reqData)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns true if debug is enabled for this request, false otherwise
+	 Checks user input for maximum length, minimum length and require
+ if the corresponding options have been set using the require method.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#checkRequirements">checkRequirements</A></B>(&lt;Object&gt; reqData)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Checks user input against options set using the require method.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#class_macro">class_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component's class name.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#controls_macro">controls_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders the control(s) of this component
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#error_macro">error_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component's error message (if set) directly to response
       </TD>
    </TR>
 
@@ -172,12 +248,167 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#execute">execute</A></B>()
+	       <A HREF="#getControlAttributes">getControlAttributes</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Calling this method executes the remote method using
- the arguments specified.
+	 Creates a new attribute object for this element.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String|Number|Date</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getValue">getValue</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Retrieves the property which is edited by this component.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#help_macro">help_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component's help text, if set.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#id_macro">id_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component's id
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#label_macro">label_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component's label.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#name_macro">name_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component's name
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Object</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#parseValue">parseValue</A></B>(&lt;Object&gt; reqData)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Parses the string input from the form and creates the datatype that
+ is edited with this component.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#render">render</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component including label, error and help messages directly
+ to response.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#render_macro">render_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders this component including label, error and help messages
+ directly to response
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#renderControls">renderControls</A></B>(&lt;Object&gt; attr, &lt;Object&gt; value, &lt;Object&gt; reqData)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Renders the html form elements to the response.
       </TD>
    </TR>
 
@@ -190,11 +421,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getCredentials">getCredentials</A></B>()
+	       <A HREF="#renderError">renderError</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the credentials of this request
+	 If the error tracker holds an error message for this component,
+ it is wrapped in a div-tag and returned as a string.
       </TD>
    </TR>
 
@@ -207,11 +439,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getInputEncoding">getInputEncoding</A></B>()
+	       <A HREF="#renderHelp">renderHelp</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the input encoding
+	 If this component contains a help message, it is wrapped in
+ a div-tag and returned as a string.
       </TD>
    </TR>
 
@@ -224,96 +457,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getMethodName">getMethodName</A></B>()
+	       <A HREF="#renderLabel">renderLabel</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the name of the remote function to call
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;String</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getOutputEncoding">getOutputEncoding</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the output encoding
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;java.net.Proxy</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getProxy">getProxy</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the proxy object.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Number</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getReadTimeout">getReadTimeout</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the socket timeout of this request
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Number</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getTimeout">getTimeout</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the connection timeout of this request
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;java.net.URL</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getUrl">getUrl</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the URL of this request
+	 Returns the rendered label of this component
       </TD>
    </TR>
 
@@ -326,12 +474,28 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setCredentials">setCredentials</A></B>(&lt;String&gt; username, &lt;String&gt; password)
+	       <A HREF="#save">save</A></B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker, &lt;Object&gt; destObj)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets the credentials for basic http authentication to
- use with this request.
+	 Saves the parsed value using setValue.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Object</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setValue">setValue</A></B>(&lt;Object&gt; destObj, &lt;Object&gt; value)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Sets a property of the object passed as argument to the given value.
       </TD>
    </TR>
 
@@ -344,11 +508,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setDebug">setDebug</A></B>(&lt;Boolean&gt; flag)
+	       <A HREF="#type_macro">type_macro</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Enables or disables the debug mode.
+	 Renders this component's type
       </TD>
    </TR>
 
@@ -361,150 +525,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setEncoding">setEncoding</A></B>(&lt;String&gt; enc)
+	       <A HREF="#validate">validate</A></B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets both input and output encoding to the
- specified encoding string
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#setInputEncoding">setInputEncoding</A></B>(&lt;String&gt; enc)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets the input encoding to the specified encoding string
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#setOutputEncoding">setOutputEncoding</A></B>(&lt;String&gt; enc)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets the output encoding to the specified encoding string
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#setProxy">setProxy</A></B>(&lt;String&gt; proxyString)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets the proxy host and port.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#setReadTimeout">setReadTimeout</A></B>(&lt;Number&gt; millis)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets the socket timeout to the specified milliseconds.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#setTimeout">setTimeout</A></B>(&lt;Number&gt; millis)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Sets the connection timeout to the specified milliseconds.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;String</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#!s!argumentsToString">argumentsToString</A></B>(&lt;Object&gt; args)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Helper method to format an arguments array into
- a string useable for debugging output.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;java.lang.Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#!s!convertArgument">convertArgument</A></B>(&lt;Object&gt; obj)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Helper method for converting a Javascript object into
- its appropriate Java object.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#!s!convertResult">convertResult</A></B>(&lt;java.lang.Object&gt; obj)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Converts a Java object into its appropriate Javascript representation.
+	 Validates the input provided to this component.
       </TD>
    </TR>
 
@@ -533,13 +558,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.XmlRpcRequest()"><!-- --></A><H3>
-jala.XmlRpcRequest</H3>
-<PRE><B>jala.XmlRpcRequest</B>(&lt;String&gt; url, &lt;String&gt; methodName)</PRE>
+<A NAME="jala.Form.Component.Input()"><!-- --></A><H3>
+jala.Form.Component.Input</H3>
+<PRE><B>jala.Form.Component.Input</B>(&lt;String&gt; name)</PRE>
 
 
 <UL>
-   A constructor for XmlRpc request objects
+   Creates a new input component instance.
 </UL>
 
 
@@ -547,10 +572,7 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>url</CODE> -  The url of the XmlRpc entry point  
-     </UL>
-   
-     <UL><CODE>methodName</CODE> -  The name of the method to call  
+     <UL><CODE>name</CODE> -  Name of the component, used as name of the html control.  
      </UL>
    
    
@@ -558,13 +580,6 @@ jala.XmlRpcRequest</H3>
 
 
 <!-- Constructor return value(s) -->
-
-   <UL>
-   <B>Returns:</B>
-     <UL>
-     A newly created jala.XmlRpcRequest instance   
-     </UL>
-   </UL>
 
 <!-- End constructor return value(s) -->
 
@@ -589,174 +604,31 @@ jala.XmlRpcRequest</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="debug"><!-- --></A>
-   <H3>debug</H3>
-   <PRE>Boolean <B>debug</B>()</PRE>
+   <A NAME="checkLength"><!-- --></A>
+   <H3>checkLength</H3>
+   <PRE>String <B>checkLength</B>(&lt;Object&gt; reqData)</PRE>
    
-      <UL>Returns true if debug is enabled for this request, false otherwise</UL>
+      <UL>Checks user input for maximum length, minimum length and require
+ if the corresponding options have been set using the require method.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
-   <!-- METHOD PARAMETERS END -->
-
-   
    <UL>
-   <B>Returns:</B>
-        <UL>
-        True if debugging is enabled, false otherwise   
-        </UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>reqData</CODE> -  request data  
+      </UL> 
+   
    </UL>
    
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="execute"><!-- --></A>
-   <H3>execute</H3>
-   <PRE>Object <B>execute</B>()</PRE>
-   
-      <UL>Calling this method executes the remote method using
- the arguments specified.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
    <!-- METHOD PARAMETERS END -->
 
    
    <UL>
    <B>Returns:</B>
         <UL>
-        The result of this XmlRpc request   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getCredentials"><!-- --></A>
-   <H3>getCredentials</H3>
-   <PRE>String <B>getCredentials</B>()</PRE>
-   
-      <UL>Returns the credentials of this request</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The base46 encoded credentials of this request   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getInputEncoding"><!-- --></A>
-   <H3>getInputEncoding</H3>
-   <PRE>String <B>getInputEncoding</B>()</PRE>
-   
-      <UL>Returns the input encoding</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The input encoding used by this request   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getMethodName"><!-- --></A>
-   <H3>getMethodName</H3>
-   <PRE>String <B>getMethodName</B>()</PRE>
-   
-      <UL>Returns the name of the remote function to call</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The name of the remote function   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getOutputEncoding"><!-- --></A>
-   <H3>getOutputEncoding</H3>
-   <PRE>String <B>getOutputEncoding</B>()</PRE>
-   
-      <UL>Returns the output encoding</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The output encoding used by this request   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getProxy"><!-- --></A>
-   <H3>getProxy</H3>
-   <PRE>java.net.Proxy <B>getProxy</B>()</PRE>
-   
-      <UL>Returns the proxy object. This method will only return
- a value if using a java runtime > 1.5</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The proxy to use for this request   
+        String containing error message or null if everything is ok.   
         </UL>
    </UL>
    
@@ -764,93 +636,17 @@ jala.XmlRpcRequest</H3>
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <UL>   
-   <B>See:</B><UL>- <a href="#setProxy">setProxy()</a></UL>
+   <B>See:</B><UL>- <a href="#require">require</a></UL>
    </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="getReadTimeout"><!-- --></A>
-   <H3>getReadTimeout</H3>
-   <PRE>Number <B>getReadTimeout</B>()</PRE>
+   <A NAME="checkRequirements"><!-- --></A>
+   <H3>checkRequirements</H3>
+   <PRE>String <B>checkRequirements</B>(&lt;Object&gt; reqData)</PRE>
    
-      <UL>Returns the socket timeout of this request</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The socket timeout value in milliseconds   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getTimeout"><!-- --></A>
-   <H3>getTimeout</H3>
-   <PRE>Number <B>getTimeout</B>()</PRE>
-   
-      <UL>Returns the connection timeout of this request</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The connection timeout value in milliseconds   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getUrl"><!-- --></A>
-   <H3>getUrl</H3>
-   <PRE>java.net.URL <B>getUrl</B>()</PRE>
-   
-      <UL>Returns the URL of this request</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The URL of this request   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setCredentials"><!-- --></A>
-   <H3>setCredentials</H3>
-   <PRE>void <B>setCredentials</B>(&lt;String&gt; username, &lt;String&gt; password)</PRE>
-   
-      <UL>Sets the credentials for basic http authentication to
- use with this request.</UL>
+      <UL>Checks user input against options set using the require method.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -858,225 +654,7 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>username</CODE> -  The username  
-      </UL> 
-   
-     <UL><CODE>password</CODE> -  The password       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setDebug"><!-- --></A>
-   <H3>setDebug</H3>
-   <PRE>void <B>setDebug</B>(&lt;Boolean&gt; flag)</PRE>
-   
-      <UL>Enables or disables the debug mode. If enabled the xml source
- of both request and response is included in the result properties
- 'requestXml' and 'responseXml'</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>flag</CODE> -  True or false.       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setEncoding"><!-- --></A>
-   <H3>setEncoding</H3>
-   <PRE>void <B>setEncoding</B>(&lt;String&gt; enc)</PRE>
-   
-      <UL>Sets both input and output encoding to the
- specified encoding string</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>enc</CODE> -  The encoding to use for  both input and output. This must be a valid  java encoding string.       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setInputEncoding"><!-- --></A>
-   <H3>setInputEncoding</H3>
-   <PRE>void <B>setInputEncoding</B>(&lt;String&gt; enc)</PRE>
-   
-      <UL>Sets the input encoding to the specified encoding string</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>enc</CODE> -  The encoding to use for input. This must be a valid  java encoding string.       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setOutputEncoding"><!-- --></A>
-   <H3>setOutputEncoding</H3>
-   <PRE>void <B>setOutputEncoding</B>(&lt;String&gt; enc)</PRE>
-   
-      <UL>Sets the output encoding to the specified encoding string</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>enc</CODE> -  The encoding to use for output. This must be a valid  java encoding string.       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setProxy"><!-- --></A>
-   <H3>setProxy</H3>
-   <PRE>void <B>setProxy</B>(&lt;String&gt; proxyString)</PRE>
-   
-      <UL>Sets the proxy host and port. For Java runtimes < 1.5 this method
- sets the appropriate system properties (so this has an effect on
- all requests based on java.net.URL), for all others the proxy
- is only set for this request.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>proxyString</CODE> -  The proxy string in the form 'fqdn:port'  (eg. my.proxy.com:3128)       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setReadTimeout"><!-- --></A>
-   <H3>setReadTimeout</H3>
-   <PRE>void <B>setReadTimeout</B>(&lt;Number&gt; millis)</PRE>
-   
-      <UL>Sets the socket timeout to the specified milliseconds.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>millis</CODE> -  The timeout to use as socket timeout       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setTimeout"><!-- --></A>
-   <H3>setTimeout</H3>
-   <PRE>void <B>setTimeout</B>(&lt;Number&gt; millis)</PRE>
-   
-      <UL>Sets the connection timeout to the specified milliseconds.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>millis</CODE> -  The timeout to use as connection timeout       
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="!s!argumentsToString"><!-- --></A>
-   <H3>argumentsToString</H3>
-   <PRE>&lt;static&gt; String <B>argumentsToString</B>(&lt;Object&gt; args)</PRE>
-   
-      <UL>Helper method to format an arguments array into
- a string useable for debugging output.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>args</CODE> -  An arguments array  
+     <UL><CODE>reqData</CODE> -  request data  
       </UL> 
    
    </UL>
@@ -1087,7 +665,96 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The arguments array formatted as string   
+        String containing error message or null if everything is ok.   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#checkLength">checkLength()</a><BR/>- <a href="#require">require</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="class_macro"><!-- --></A>
+   <H3>class_macro</H3>
+   <PRE>void <B>class_macro</B>()</PRE>
+   
+      <UL>Renders this component's class name.
+ Note that this is just the class name that has been explicitly
+ assigned using setClassName.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#setClassName">setClassName</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="controls_macro"><!-- --></A>
+   <H3>controls_macro</H3>
+   <PRE>void <B>controls_macro</B>()</PRE>
+   
+      <UL>Renders the control(s) of this component</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="error_macro"><!-- --></A>
+   <H3>error_macro</H3>
+   <PRE>void <B>error_macro</B>()</PRE>
+   
+      <UL>Renders this component's error message (if set) directly to response</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getControlAttributes"><!-- --></A>
+   <H3>getControlAttributes</H3>
+   <PRE>Object <B>getControlAttributes</B>()</PRE>
+   
+      <UL>Creates a new attribute object for this element.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        Object with properties id, name, class   
         </UL>
    </UL>
    
@@ -1097,12 +764,124 @@ jala.XmlRpcRequest</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="!s!convertArgument"><!-- --></A>
-   <H3>convertArgument</H3>
-   <PRE>&lt;static&gt; java.lang.Object <B>convertArgument</B>(&lt;Object&gt; obj)</PRE>
+   <A NAME="getValue"><!-- --></A>
+   <H3>getValue</H3>
+   <PRE>String|Number|Date <B>getValue</B>()</PRE>
    
-      <UL>Helper method for converting a Javascript object into
- its appropriate Java object.</UL>
+      <UL>Retrieves the property which is edited by this component.
+ <ul>
+ <li>If no getter is given, the method returns the primitive property
+    of the data object with the same name as the component.</li>
+ <li>If a getter function is defined, it is executed with the scope
+    of the data object and the return value is used as default value.
+    The name of the component is passed to the getter function
+    as an argument.</li>
+ </ul></UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The value of the property   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="help_macro"><!-- --></A>
+   <H3>help_macro</H3>
+   <PRE>void <B>help_macro</B>()</PRE>
+   
+      <UL>Renders this component's help text, if set.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="id_macro"><!-- --></A>
+   <H3>id_macro</H3>
+   <PRE>void <B>id_macro</B>()</PRE>
+   
+      <UL>Renders this component's id</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="jala.Form.html#createDomId">jala.Form.createDomId()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="label_macro"><!-- --></A>
+   <H3>label_macro</H3>
+   <PRE>void <B>label_macro</B>()</PRE>
+   
+      <UL>Renders this component's label.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="name_macro"><!-- --></A>
+   <H3>name_macro</H3>
+   <PRE>void <B>name_macro</B>()</PRE>
+   
+      <UL>Renders this component's name</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="parseValue"><!-- --></A>
+   <H3>parseValue</H3>
+   <PRE>Object <B>parseValue</B>(&lt;Object&gt; reqData)</PRE>
+   
+      <UL>Parses the string input from the form and creates the datatype that
+ is edited with this component. For the input component this method
+ is not of much use, but subclasses that edit other datatypes may use
+ it. For example, a date editor should convert the user input from string
+ to a date object.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1110,7 +889,7 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>obj</CODE> -  The Javascript object to convert  
+     <UL><CODE>reqData</CODE> -  request data  
       </UL> 
    
    </UL>
@@ -1121,7 +900,7 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The appropriate Java representation of the object   
+        parsed value   
         </UL>
    </UL>
    
@@ -1131,11 +910,50 @@ jala.XmlRpcRequest</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="!s!convertResult"><!-- --></A>
-   <H3>convertResult</H3>
-   <PRE>&lt;static&gt; Object <B>convertResult</B>(&lt;java.lang.Object&gt; obj)</PRE>
+   <A NAME="render"><!-- --></A>
+   <H3>render</H3>
+   <PRE>void <B>render</B>()</PRE>
    
-      <UL>Converts a Java object into its appropriate Javascript representation.</UL>
+      <UL>Renders this component including label, error and help messages directly
+ to response.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="render_macro"><!-- --></A>
+   <H3>render_macro</H3>
+   <PRE>void <B>render_macro</B>()</PRE>
+   
+      <UL>Renders this component including label, error and help messages
+ directly to response</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="renderControls"><!-- --></A>
+   <H3>renderControls</H3>
+   <PRE>void <B>renderControls</B>(&lt;Object&gt; attr, &lt;Object&gt; value, &lt;Object&gt; reqData)</PRE>
+   
+      <UL>Renders the html form elements to the response.
+ This method shall be overridden by subclasses of input component.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1143,7 +961,157 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>obj</CODE> -  The Java object to convert  
+     <UL><CODE>attr</CODE> -  Basic attributes for the html form elements.  
+      </UL> 
+   
+     <UL><CODE>value</CODE> -  Value to be used for rendering this element.  
+      </UL> 
+   
+     <UL><CODE>reqData</CODE> -  Request data for the whole form. This argument is        passed only if the form is re-rendered after an error occured.    
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="renderError"><!-- --></A>
+   <H3>renderError</H3>
+   <PRE>String <B>renderError</B>()</PRE>
+   
+      <UL>If the error tracker holds an error message for this component,
+ it is wrapped in a div-tag and returned as a string.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        Rendered string   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="renderHelp"><!-- --></A>
+   <H3>renderHelp</H3>
+   <PRE>String <B>renderHelp</B>()</PRE>
+   
+      <UL>If this component contains a help message, it is wrapped in
+ a div-tag and returned as a string.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The rendered help message   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="renderLabel"><!-- --></A>
+   <H3>renderLabel</H3>
+   <PRE>String <B>renderLabel</B>()</PRE>
+   
+      <UL>Returns the rendered label of this component</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The rendered label of this component   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="save"><!-- --></A>
+   <H3>save</H3>
+   <PRE>void <B>save</B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker, &lt;Object&gt; destObj)</PRE>
+   
+      <UL>Saves the parsed value using setValue.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>tracker</CODE> -  Tracker object collecting        request data, error messages and parsed values.  
+      </UL> 
+   
+     <UL><CODE>destObj</CODE> -  (optional) object whose values will be changed.    
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#setValue">setValue()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setValue"><!-- --></A>
+   <H3>setValue</H3>
+   <PRE>Object <B>setValue</B>(&lt;Object&gt; destObj, &lt;Object&gt; value)</PRE>
+   
+      <UL>Sets a property of the object passed as argument to the given value.
+ <li>If no setter is set at the component, the primitive property
+    of the data object is changed.</li>
+ <li>If a setter function is defined it is executed with the data object
+    as scope and with the name and new value provided as arguments</li>
+ <li>If the setter is explicitly set to null, no changes are made at all.</li></UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>destObj</CODE> -  (optional) object whose values will be changed.  
+      </UL> 
+   
+     <UL><CODE>value</CODE> -  The value to set the property to  
       </UL> 
    
    </UL>
@@ -1154,12 +1122,67 @@ jala.XmlRpcRequest</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The appropriate Javascript representation of the Java object   
+        True in case the update was successful, false otherwise.   
         </UL>
    </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="jala.Form.html#setter">jala.Form.setter</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="type_macro"><!-- --></A>
+   <H3>type_macro</H3>
+   <PRE>void <B>type_macro</B>()</PRE>
+   
+      <UL>Renders this component's type</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="validate"><!-- --></A>
+   <H3>validate</H3>
+   <PRE>void <B>validate</B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker)</PRE>
+   
+      <UL>Validates the input provided to this component. First,
+ checkRequirements is called. If no error occurs, the input
+ is parsed using parseValue and passed on to the validator
+ function.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>tracker</CODE> -  Tracker object collecting        request data, error messages and parsed values.    
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#checkRequirements">checkRequirements()</a><BR/>- <a href="#parseValue">parseValue()</a></UL>
+   </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
@@ -1179,7 +1202,7 @@ jala.XmlRpcRequest</H3>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-XmlRpcRequest.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -1196,13 +1219,13 @@ jala.XmlRpcRequest</H3>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Utilities.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.Image.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.XmlWriter.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Password.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.XmlRpcRequest.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Input.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--

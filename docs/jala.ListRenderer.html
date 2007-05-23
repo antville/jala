@@ -34,7 +34,7 @@ parent.document.title="jala.ListRenderer";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
@@ -89,11 +89,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 </DL>
    
    <P>
-   <BR/>This class eases the rendering of arbitrary lists.
- Such lists can be represented by HopObject collections or 
- Arrays of HopObjects. Various arguments provide customization
- of the number of items per page, the maximum of pages and so on.
- <BR/><I>Defined in <a href='overview-summary-ListRenderer.js.html'>ListRenderer.js</a></I><BR/><BR/>
+   <BR/><BR/><I>Defined in <a href='overview-summary-ListRenderer.js.html'>ListRenderer.js</a></I><BR/><BR/>
    </P>
    
    <HR>
@@ -139,14 +135,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
  used for rendering different list items (eg.</TD>
    </TR>
    
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&lt;static&gt; &nbsp;helma.Html</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#!s!html">html</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Static instance of helma.Html</TD>
-   </TR>
-   
 
    </TABLE>
    &nbsp;
@@ -171,11 +159,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="jala.ListRenderer.html#jala.ListRenderer()">jala.ListRenderer</A> 
 	 </B>
-	 (&lt;Object&gt; listParam, &lt;Object&gt; renderers)
+	 (&lt;HopObject|ArrayList|Array&gt; coll, &lt;Object&gt; renderer)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Construct a list renderer.
+      
       </TD>
 </TR>
 </TABLE>
@@ -197,24 +185,92 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;Number</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#currentPage_macro">currentPage_macro</A></B>(param)
+	       <A HREF="#currentEnd_macro">currentEnd_macro</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Return the current page
+	 Returns the end item number in the current page
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#currentPage_macro">currentPage_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the current page number
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#currentStart_macro">currentStart_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the start item number in the current page
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getBaseHref">getBaseHref</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the base href of this ListRenderer instance
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;HopObject|Array</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getCollection">getCollection</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the collection this ListRenderer instance operates on
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -224,7 +280,161 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the current Page.
+	 Returns the current page index.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getEndIndex">getEndIndex</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the zero-based index position of the last item of the current page
+ in the collection this ListRenderer operates on.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getItemSkin">getItemSkin</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the name of the skin rendered for a single list item
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getList">getList</A></B>(&lt;Object&gt; param)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the rendered list of collection items as string
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getMaxPages">getMaxPages</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the maximum number of pages handled by this ListRenderer instance
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getNextLink">getNextLink</A></B>(&lt;Object&gt; param)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns a rendered link to the previous page as string.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getPageHref">getPageHref</A></B>(&lt;Number&gt; page)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the href of a page.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getPageNavigation">getPageNavigation</A></B>(&lt;Object&gt; param)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the rendered page navigation bar as string
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getPageSize">getPageSize</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the number of items displayed on one page
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getPrevLink">getPrevLink</A></B>(&lt;Object&gt; param)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns a rendered link to the previous page as string.
       </TD>
    </TR>
 
@@ -237,36 +447,90 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getSize">getSize</A></B>()
+	       <A HREF="#getRenderer">getRenderer</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 
+	 Returns the renderer used by this ListRenderer instance
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;Number</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#hasListItemSkin">hasListItemSkin</A></B>()
+	       <A HREF="#getStartIndex">getStartIndex</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns true if this ListRenderer instance
- has already a listItemSkin set.
+	 Returns the zero-based index position of the first item of the current page
+ in the collection this ListRenderer operates on.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getTotalPages">getTotalPages</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the total number of pages handled by this ListRenderer instance
+ (which is the collection size divided by the page size).
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getUrlParameterName">getUrlParameterName</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the name of the URL parameter name containing the index
+ of the page to display
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getUrlParameters">getUrlParameters</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns any additional URL parameters included in every navigation link
+ rendered by this ListRenderer instance.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -276,14 +540,15 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the maximum number of items per page.
+	 Either renders the maximum number of items per page, or
+ sets the limit to a given number.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -293,14 +558,14 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the link to the next page.
+	 Returns a rendered link to the next page.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -310,7 +575,24 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the page navigation bar.
+	 Returns the rendered page navigation bar.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#prevLink_macro">prevLink_macro</A></B>(&lt;Object&gt; param)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns a rendered link to the previous page.
       </TD>
    </TR>
 
@@ -323,35 +605,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#prevLink_macro">prevLink_macro</A></B>(&lt;Object&gt; param)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the link to the previous page.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
 	       <A HREF="#render_macro">render_macro</A></B>(&lt;Object&gt; param)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the list.
+	 Renders the current page of this list.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;void</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -361,7 +626,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the list.
+	 Renders the list of items for one page directly to response.
       </TD>
    </TR>
 
@@ -378,7 +643,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render the list as string.
+	 Returns the rendered list of collection items as string
       </TD>
    </TR>
 
@@ -395,7 +660,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render a link to the next page.
+	 Renders a link to the next page directly to response.
       </TD>
    </TR>
 
@@ -408,18 +673,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#renderNextLinkAsString">renderNextLinkAsString</A></B>(&lt;Object&gt; param)
+	       <A HREF="#renderNextLinkAsString">renderNextLinkAsString</A></B>(param)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render a link to the next page as string.
+	 Returns a rendered link to the previous page as string
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Object</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -429,7 +694,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render a page navigation bar.
+	 Renders the page navigation bar directly to response.
       </TD>
    </TR>
 
@@ -442,11 +707,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#renderPageNavigationAsString">renderPageNavigationAsString</A></B>(&lt;Object&gt; param)
+	       <A HREF="#renderPageNavigationAsString">renderPageNavigationAsString</A></B>(param)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render a page navigation bar as string.
+	 Returns the rendered page navigation bar as string
       </TD>
    </TR>
 
@@ -463,7 +728,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render a link to the previous page.
+	 Renders a link to the previous page directly to response.
       </TD>
    </TR>
 
@@ -480,7 +745,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Render a link to the previous page as string.
+	 Returns a rendered link to the previous page as string
       </TD>
    </TR>
 
@@ -493,11 +758,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setCurrentPage">setCurrentPage</A></B>(page)
+	       <A HREF="#setBaseHref">setBaseHref</A></B>(&lt;String&gt; href)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Set the current Page.
+	 Sets the base href of this ListRenderer instance.
       </TD>
    </TR>
 
@@ -510,28 +775,148 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#setPageSize">setPageSize</A></B>(&lt;int&gt; limit)
+	       <A HREF="#setCollection">setCollection</A></B>(&lt;HopObject|ArrayList|Array&gt; coll)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Set the amount of items shown per page.
+	 Sets the collection of this ListRenderer
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;void</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#size_macro">size_macro</A></B>(param)
+	       <A HREF="#setItemSkin">setItemSkin</A></B>(&lt;String&gt; name)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Return the total number of items
+	 Sets the name of the skin to render for every list item
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setMaxPages">setMaxPages</A></B>(&lt;Number&gt; pages)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Sets the maximum number of pages to display
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setPageSize">setPageSize</A></B>(&lt;Number&gt; size)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Sets the number of items to display on a single page
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setRenderer">setRenderer</A></B>(&lt;Object&gt; r)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Sets the renderer to be used by this ListRenderer instance
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setUrlParameterName">setUrlParameterName</A></B>(&lt;String&gt; name)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Sets the name of the URL parameter name containing the index of the page
+ to display
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#setUrlParameters">setUrlParameters</A></B>(&lt;String&gt; params)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Sets additional parameters to include in every navigation link
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#size_macro">size_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the total number of items
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#totalPages_macro">totalPages_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the total number of pages
       </TD>
    </TR>
 
@@ -565,15 +950,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </UL>
    <HR>
    
-   <A NAME="!s!html"><!-- --></A>
-   <H3>html</H3>
-   <PRE>&lt;static&gt;&nbsp;helma.Html&nbsp;<B>html</B></PRE>
-   <UL>
-   Static instance of helma.Html
-   
-   </UL>
-   <HR>
-   
 
 
 <!-- ============ FIELD DETAIL END =========== -->
@@ -591,22 +967,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="jala.ListRenderer()"><!-- --></A><H3>
 jala.ListRenderer</H3>
-<PRE><B>jala.ListRenderer</B>(&lt;Object&gt; listParam, &lt;Object&gt; renderers)</PRE>
+<PRE><B>jala.ListRenderer</B>(&lt;HopObject|ArrayList|Array&gt; coll, &lt;Object&gt; renderer)</PRE>
 
-
-<UL>
-   Construct a list renderer.
-</UL>
 
 
 
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>listParam</CODE> -  Customization parameters:  <ul>  <li>collection - Collection or Array of HopObjects.</li>  <li>currentPage - Optional index of the current page   (<code>req.data.page</code>)</li>  <li>itemsPerPage - The optional number of items per list page.</li>  <li>maxPages - The optional maximum number of pages.</li>  <li>href - An optional URL string to link to.</li>  <li>urlParams - Optional extra URL parameters.</li>  </ul>  
+     <UL><CODE>coll</CODE> -  The collection this ListRenderer  operates on, or - for backwards compatibility only - a parameter object containing  the collection and any other optional configuration parameters.  
      </UL>
    
-     <UL><CODE>renderers</CODE> -  The list types and renderer methods   used to render the single items in a list.  
+     <UL><CODE>renderer</CODE> -  An optional renderer to use. If this is set,  any rendering method defined in this renderer overrides the default renderer.  
      </UL>
    
    
@@ -615,20 +987,9 @@ jala.ListRenderer</H3>
 
 <!-- Constructor return value(s) -->
 
-   <UL>
-   <B>Returns:</B>
-     <UL>
-     A new list renderer instance.          
-     </UL>
-   </UL>
-
 <!-- End constructor return value(s) -->
 
 <!-- ADDITIONAL ATTRIBUTES -->
-
-<UL>   
-<B>Throws:</B><UL>- Exception if an ArrayList containing a subset of a bigger   Array and has too view elements for one page or the last page.         </UL>
-</UL>
 
 <HR/>
 <!-- END ADDITIONAL ATTRIBUTES  -->
@@ -649,17 +1010,124 @@ jala.ListRenderer</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="currentPage_macro"><!-- --></A>
-   <H3>currentPage_macro</H3>
-   <PRE>Object <B>currentPage_macro</B>(param)</PRE>
+   <A NAME="currentEnd_macro"><!-- --></A>
+   <H3>currentEnd_macro</H3>
+   <PRE>Number <B>currentEnd_macro</B>()</PRE>
    
-      <UL>Return the current page</UL>
+      <UL>Returns the end item number in the current page</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The end item number in the current page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="currentPage_macro"><!-- --></A>
+   <H3>currentPage_macro</H3>
+   <PRE>Number <B>currentPage_macro</B>()</PRE>
+   
+      <UL>Returns the current page number</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current page number   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="currentStart_macro"><!-- --></A>
+   <H3>currentStart_macro</H3>
+   <PRE>Number <B>currentStart_macro</B>()</PRE>
+   
+      <UL>Returns the start item number in the current page</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The start item number in the current page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getBaseHref"><!-- --></A>
+   <H3>getBaseHref</H3>
+   <PRE>String <B>getBaseHref</B>()</PRE>
+   
+      <UL>Returns the base href of this ListRenderer instance</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The base href of this ListRenderer instance   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getCollection"><!-- --></A>
+   <H3>getCollection</H3>
+   <PRE>HopObject|Array <B>getCollection</B>()</PRE>
+   
+      <UL>Returns the collection this ListRenderer instance operates on</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The collection of this ListRenderer   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -669,9 +1137,10 @@ jala.ListRenderer</H3>
 
    <A NAME="getCurrentPage"><!-- --></A>
    <H3>getCurrentPage</H3>
-   <PRE>Object <B>getCurrentPage</B>()</PRE>
+   <PRE>Number <B>getCurrentPage</B>()</PRE>
    
-      <UL>Returns the current Page.</UL>
+      <UL>Returns the current page index. This is either the page url parameter
+ or the page number 1.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -682,7 +1151,37 @@ jala.ListRenderer</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        the current Page. 
+        The current page number (starts with 1).   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#setUrlParameterName">setUrlParameterName()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getEndIndex"><!-- --></A>
+   <H3>getEndIndex</H3>
+   <PRE>Number <B>getEndIndex</B>()</PRE>
+   
+      <UL>Returns the zero-based index position of the last item of the current page
+ in the collection this ListRenderer operates on.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The index position of the last item in the list   
         </UL>
    </UL>
    
@@ -692,9 +1191,277 @@ jala.ListRenderer</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="getSize"><!-- --></A>
-   <H3>getSize</H3>
-   <PRE>Object <B>getSize</B>()</PRE>
+   <A NAME="getItemSkin"><!-- --></A>
+   <H3>getItemSkin</H3>
+   <PRE>Number <B>getItemSkin</B>()</PRE>
+   
+      <UL>Returns the name of the skin rendered for a single list item</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The name of the list item skin   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getList"><!-- --></A>
+   <H3>getList</H3>
+   <PRE>String <B>getList</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns the rendered list of collection items as string</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The rendered list   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#renderList">renderList()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getMaxPages"><!-- --></A>
+   <H3>getMaxPages</H3>
+   <PRE>Number <B>getMaxPages</B>()</PRE>
+   
+      <UL>Returns the maximum number of pages handled by this ListRenderer instance</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The maximum number of pages   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getNextLink"><!-- --></A>
+   <H3>getNextLink</H3>
+   <PRE>String <B>getNextLink</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns a rendered link to the previous page as string. For performance
+ reasons this method caches the rendered link in the local cache of this
+ ListRenderer instance.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        A rendered link to the previous page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#renderNextLink">renderNextLink()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getPageHref"><!-- --></A>
+   <H3>getPageHref</H3>
+   <PRE>String <B>getPageHref</B>(&lt;Number&gt; page)</PRE>
+   
+      <UL>Returns the href of a page. If no argument is given, the href
+ of the current page is returned. Any URL parameters set with
+ <a href="#setUrlParameters">setUrlParameters()</a> are added to the href.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>page</CODE> -  The optional page number to include in the href.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The href of the page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#setUrlParameters">setUrlParameters()</a><BR/>- <a href="#setUrlParameterName">setUrlParameterName()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getPageNavigation"><!-- --></A>
+   <H3>getPageNavigation</H3>
+   <PRE>String <B>getPageNavigation</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns the rendered page navigation bar as string</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The rendered page navigation   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#renderPageNavigation">renderPageNavigation()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getPageSize"><!-- --></A>
+   <H3>getPageSize</H3>
+   <PRE>Number <B>getPageSize</B>()</PRE>
+   
+      <UL>Returns the number of items displayed on one page</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The number of items displayed on a single page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getPrevLink"><!-- --></A>
+   <H3>getPrevLink</H3>
+   <PRE>String <B>getPrevLink</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns a rendered link to the previous page as string. For performance
+ reasons this method caches the rendered link in the local cache of this
+ ListRenderer instance.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        A rendered link to the previous page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#renderPrevLink">renderPrevLink()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getRenderer"><!-- --></A>
+   <H3>getRenderer</H3>
+   <PRE>Object <B>getRenderer</B>()</PRE>
+   
+      <UL>Returns the renderer used by this ListRenderer instance</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -708,18 +1475,103 @@ jala.ListRenderer</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="hasListItemSkin"><!-- --></A>
-   <H3>hasListItemSkin</H3>
-   <PRE>Object <B>hasListItemSkin</B>()</PRE>
+   <A NAME="getStartIndex"><!-- --></A>
+   <H3>getStartIndex</H3>
+   <PRE>Number <B>getStartIndex</B>()</PRE>
    
-      <UL>Returns true if this ListRenderer instance
- has already a listItemSkin set.</UL>
+      <UL>Returns the zero-based index position of the first item of the current page
+ in the collection this ListRenderer operates on.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The index position of the first item in the list   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getTotalPages"><!-- --></A>
+   <H3>getTotalPages</H3>
+   <PRE>Number <B>getTotalPages</B>()</PRE>
+   
+      <UL>Returns the total number of pages handled by this ListRenderer instance
+ (which is the collection size divided by the page size).</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The total number of pages   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getUrlParameterName"><!-- --></A>
+   <H3>getUrlParameterName</H3>
+   <PRE>String <B>getUrlParameterName</B>()</PRE>
+   
+      <UL>Returns the name of the URL parameter name containing the index
+ of the page to display</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The name of the page URL parameter name   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getUrlParameters"><!-- --></A>
+   <H3>getUrlParameters</H3>
+   <PRE>String <B>getUrlParameters</B>()</PRE>
+   
+      <UL>Returns any additional URL parameters included in every navigation link
+ rendered by this ListRenderer instance.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        A string containing additional URL parameters   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -729,9 +1581,10 @@ jala.ListRenderer</H3>
 
    <A NAME="limit_macro"><!-- --></A>
    <H3>limit_macro</H3>
-   <PRE>void <B>limit_macro</B>(&lt;Object&gt; param)</PRE>
+   <PRE>Number <B>limit_macro</B>(&lt;Object&gt; param)</PRE>
    
-      <UL>Render the maximum number of items per page.</UL>
+      <UL>Either renders the maximum number of items per page, or
+ sets the limit to a given number.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -739,13 +1592,20 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> -  Extra Hop macro parameters:  <ul>  <li>to - The maximum number of items per page to be set.  </ul>    
+     <UL><CODE>param</CODE> -  Extra macro parameters:  <ul>  <li>to - The maximum number of items per page to be set.  </ul>  If no limit is set, this macro returns the current number  of items per page.  
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current maximum number of items per page   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -755,39 +1615,9 @@ jala.ListRenderer</H3>
 
    <A NAME="nextLink_macro"><!-- --></A>
    <H3>nextLink_macro</H3>
-   <PRE>void <B>nextLink_macro</B>(&lt;Object&gt; param)</PRE>
+   <PRE>String <B>nextLink_macro</B>(&lt;Object&gt; param)</PRE>
    
-      <UL>Render the link to the next page.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Extra Hop macro parameters:  <ul>  <li>type - The type of renderer to be applied.</li>  </ul>  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderNextLink">jala.ListRenderer.renderNextLink()</a></UL>
-   </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="pageNavigation_macro"><!-- --></A>
-   <H3>pageNavigation_macro</H3>
-   <PRE>void <B>pageNavigation_macro</B>(&lt;Object&gt; param)</PRE>
-   
-      <UL>Render the page navigation bar.</UL>
+      <UL>Returns a rendered link to the next page.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -795,123 +1625,7 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> -  Extra Hop macro parameters:  <ul>  <li>type - The type of renderer to be applied.</li>  </ul>  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderPageNavigationAsString">jala.ListRenderer.renderPageNavigationAsString()</a></UL>
-   </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="prevLink_macro"><!-- --></A>
-   <H3>prevLink_macro</H3>
-   <PRE>void <B>prevLink_macro</B>(&lt;Object&gt; param)</PRE>
-   
-      <UL>Render the link to the previous page.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Extra Hop macro parameters:  <ul>  <li>type - The type of renderer to be applied.</li>  </ul>  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderPrevLink">jala.ListRenderer.renderPrevLink()</a></UL>
-   </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="render_macro"><!-- --></A>
-   <H3>render_macro</H3>
-   <PRE>Object <B>render_macro</B>(&lt;Object&gt; param)</PRE>
-   
-      <UL>Render the list.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Extra Hop macro parameters:  <ul>  <li>skin - The name of the main list skin.</li>  <li>type - The type of renderer to be applied.</li>  </ul>  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderList">jala.ListRenderer.renderList()</a></UL>
-   </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="renderList"><!-- --></A>
-   <H3>renderList</H3>
-   <PRE>Object <B>renderList</B>(&lt;Object&gt; param)</PRE>
-   
-      <UL>Render the list.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="renderListAsString"><!-- --></A>
-   <H3>renderListAsString</H3>
-   <PRE>String <B>renderListAsString</B>(&lt;Object&gt; param)</PRE>
-   
-      <UL>Render the list as string.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
+     <UL><CODE>param</CODE> -  Extra macro parameters:  <ul>  <li>type - The type of renderer to be applied.</li>  </ul>  
       </UL> 
    
    </UL>
@@ -922,7 +1636,7 @@ jala.ListRenderer</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The rendered list.   
+        A rendered link to the next page   
         </UL>
    </UL>
    
@@ -930,7 +1644,178 @@ jala.ListRenderer</H3>
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderList">jala.ListRenderer.renderList()</a></UL>
+   <B>See:</B><UL>- <a href="#renderNextLink">renderNextLink()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="pageNavigation_macro"><!-- --></A>
+   <H3>pageNavigation_macro</H3>
+   <PRE>String <B>pageNavigation_macro</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns the rendered page navigation bar.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Extra macro parameters:  <ul>  <li>type - The type of renderer to be applied.</li>  </ul>  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The rendered page navigation bar   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#getPageNavigation">getPageNavigation()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="prevLink_macro"><!-- --></A>
+   <H3>prevLink_macro</H3>
+   <PRE>String <B>prevLink_macro</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns a rendered link to the previous page.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Extra macro parameters:  <ul>  <li>type - The type of renderer to be applied.</li>  </ul>  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        A rendered link to the previous page   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#renderPrevLink">renderPrevLink()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="render_macro"><!-- --></A>
+   <H3>render_macro</H3>
+   <PRE>void <B>render_macro</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Renders the current page of this list.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Extra macro parameters:  <ul>  <li>skin - The name of the list skin to render for each item in the list.</li>  <li>type - The type of renderer to be applied.</li>  </ul>  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#renderList">renderList()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="renderList"><!-- --></A>
+   <H3>renderList</H3>
+   <PRE>void <B>renderList</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Renders the list of items for one page directly to response.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>See:</B><UL>- <a href="#getList">getList()</a></UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="renderListAsString"><!-- --></A>
+   <H3>renderListAsString</H3>
+   <PRE>String <B>renderListAsString</B>(&lt;Object&gt; param)</PRE>
+   
+      <UL>Returns the rendered list of collection items as string</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The rendered list   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>Deprecated</B> <I>Use <a href="#getList">getList()</a> instead</I><BR/><BR/><B>See:</B><UL>- <a href="#renderList">renderList()</a></UL>
    </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
@@ -940,7 +1825,7 @@ jala.ListRenderer</H3>
    <H3>renderNextLink</H3>
    <PRE>void <B>renderNextLink</B>(&lt;Object&gt; param)</PRE>
    
-      <UL>Render a link to the next page.</UL>
+      <UL>Renders a link to the next page directly to response.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -948,7 +1833,7 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
       </UL> 
    
    </UL>
@@ -960,7 +1845,7 @@ jala.ListRenderer</H3>
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderNextLink">jala.ListRenderer.renderNextLink()</a></UL>
+   <B>See:</B><UL>- <a href="#getNextLink">getNextLink()</a></UL>
    </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
@@ -968,20 +1853,12 @@ jala.ListRenderer</H3>
 
    <A NAME="renderNextLinkAsString"><!-- --></A>
    <H3>renderNextLinkAsString</H3>
-   <PRE>String <B>renderNextLinkAsString</B>(&lt;Object&gt; param)</PRE>
+   <PRE>String <B>renderNextLinkAsString</B>(param)</PRE>
    
-      <UL>Render a link to the next page as string.</UL>
+      <UL>Returns a rendered link to the previous page as string</UL>
    
 
    <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
-      </UL> 
-   
-   </UL>
    
    <!-- METHOD PARAMETERS END -->
 
@@ -989,21 +1866,27 @@ jala.ListRenderer</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The rendered link to the next page.   
+        A rendered link to the next page   
         </UL>
    </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
+   <UL>   
+   <B>Deprecated</B> <I>Use <a href="#getNextLink">getNextLink()</a> instead</I><BR/><BR/>
+   </UL>
+   
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
    <A NAME="renderPageNavigation"><!-- --></A>
    <H3>renderPageNavigation</H3>
-   <PRE>void <B>renderPageNavigation</B>(&lt;Object&gt; param)</PRE>
+   <PRE>Object <B>renderPageNavigation</B>(&lt;Object&gt; param)</PRE>
    
-      <UL>Render a page navigation bar.</UL>
+      <UL>Renders the page navigation bar directly to response. For performance reasons
+ this method caches the rendered page navigation in the local cache of this
+ ListRenderer instance.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1011,7 +1894,7 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
       </UL> 
    
    </UL>
@@ -1023,7 +1906,7 @@ jala.ListRenderer</H3>
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderPageNavigationAsString">jala.ListRenderer.renderPageNavigationAsString()</a></UL>
+   <B>See:</B><UL>- <a href="#getPageNavigation">getPageNavigation()</a></UL>
    </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
@@ -1031,20 +1914,12 @@ jala.ListRenderer</H3>
 
    <A NAME="renderPageNavigationAsString"><!-- --></A>
    <H3>renderPageNavigationAsString</H3>
-   <PRE>String <B>renderPageNavigationAsString</B>(&lt;Object&gt; param)</PRE>
+   <PRE>String <B>renderPageNavigationAsString</B>(param)</PRE>
    
-      <UL>Render a page navigation bar as string.</UL>
+      <UL>Returns the rendered page navigation bar as string</UL>
    
 
    <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
-      </UL> 
-   
-   </UL>
    
    <!-- METHOD PARAMETERS END -->
 
@@ -1052,12 +1927,16 @@ jala.ListRenderer</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The rendered page navigation bar.   
+        The rendered page navigation bar   
         </UL>
    </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>Deprecated</B> <I>Use <a href="#getPageNavigation">getPageNavigation()</a> instead</I><BR/><BR/>
+   </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
@@ -1066,7 +1945,7 @@ jala.ListRenderer</H3>
    <H3>renderPrevLink</H3>
    <PRE>void <B>renderPrevLink</B>(&lt;Object&gt; param)</PRE>
    
-      <UL>Render a link to the previous page.</UL>
+      <UL>Renders a link to the previous page directly to response.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1074,7 +1953,7 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
       </UL> 
    
    </UL>
@@ -1086,7 +1965,7 @@ jala.ListRenderer</H3>
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <UL>   
-   <B>See:</B><UL>- <a href="jala.ListRenderer.html#renderPrevLink">jala.ListRenderer.renderPrevLink()</a></UL>
+   <B>See:</B><UL>- <a href="#getPrevLink">getPrevLink()</a></UL>
    </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
@@ -1096,7 +1975,7 @@ jala.ListRenderer</H3>
    <H3>renderPrevLinkAsString</H3>
    <PRE>String <B>renderPrevLinkAsString</B>(&lt;Object&gt; param)</PRE>
    
-      <UL>Render a link to the previous page as string.</UL>
+      <UL>Returns a rendered link to the previous page as string</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1104,7 +1983,7 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>param</CODE> -  Object containing  extra parameters (e.g. from a Hop macro call).  
+     <UL><CODE>param</CODE> -  Object containing extra parameters (e.g. from a macro call).  
       </UL> 
    
    </UL>
@@ -1115,21 +1994,26 @@ jala.ListRenderer</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        The rendered link to the previous page.   
+        A rendered link to the previous page   
         </UL>
    </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
+   <UL>   
+   <B>Deprecated</B> <I>Use <a href="#getPrevLink">getPrevLink()</a> instead</I><BR/><BR/>
+   </UL>
+   
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="setCurrentPage"><!-- --></A>
-   <H3>setCurrentPage</H3>
-   <PRE>void <B>setCurrentPage</B>(page)</PRE>
+   <A NAME="setBaseHref"><!-- --></A>
+   <H3>setBaseHref</H3>
+   <PRE>void <B>setBaseHref</B>(&lt;String&gt; href)</PRE>
    
-      <UL>Set the current Page.</UL>
+      <UL>Sets the base href of this ListRenderer instance. All links rendered
+ will start with the href passed as argument</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1137,7 +2021,85 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>int</CODE> - ) the current Page       
+     <UL><CODE>href</CODE> -  The base href to use for rendering links       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setCollection"><!-- --></A>
+   <H3>setCollection</H3>
+   <PRE>void <B>setCollection</B>(&lt;HopObject|ArrayList|Array&gt; coll)</PRE>
+   
+      <UL>Sets the collection of this ListRenderer</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>coll</CODE> -  The collection this ListRenderer instance  should operate on       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setItemSkin"><!-- --></A>
+   <H3>setItemSkin</H3>
+   <PRE>void <B>setItemSkin</B>(&lt;String&gt; name)</PRE>
+   
+      <UL>Sets the name of the skin to render for every list item</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>name</CODE> -  The name of the skin to render for every list item       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setMaxPages"><!-- --></A>
+   <H3>setMaxPages</H3>
+   <PRE>void <B>setMaxPages</B>(&lt;Number&gt; pages)</PRE>
+   
+      <UL>Sets the maximum number of pages to display</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>pages</CODE> -  The maximum number of pages to display       
       </UL> 
    
    </UL>
@@ -1153,9 +2115,9 @@ jala.ListRenderer</H3>
 
    <A NAME="setPageSize"><!-- --></A>
    <H3>setPageSize</H3>
-   <PRE>void <B>setPageSize</B>(&lt;int&gt; limit)</PRE>
+   <PRE>void <B>setPageSize</B>(&lt;Number&gt; size)</PRE>
    
-      <UL>Set the amount of items shown per page.</UL>
+      <UL>Sets the number of items to display on a single page</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1163,7 +2125,86 @@ jala.ListRenderer</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>limit</CODE> -  The maximum number of items per page.       
+     <UL><CODE>size</CODE> -  The number of items to display on one page       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setRenderer"><!-- --></A>
+   <H3>setRenderer</H3>
+   <PRE>void <B>setRenderer</B>(&lt;Object&gt; r)</PRE>
+   
+      <UL>Sets the renderer to be used by this ListRenderer instance</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>r</CODE> -  The renderer to use       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setUrlParameterName"><!-- --></A>
+   <H3>setUrlParameterName</H3>
+   <PRE>void <B>setUrlParameterName</B>(&lt;String&gt; name)</PRE>
+   
+      <UL>Sets the name of the URL parameter name containing the index of the page
+ to display</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>name</CODE> -  The name of the page URL parameter       
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="setUrlParameters"><!-- --></A>
+   <H3>setUrlParameters</H3>
+   <PRE>void <B>setUrlParameters</B>(&lt;String&gt; params)</PRE>
+   
+      <UL>Sets additional parameters to include in every navigation link</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>params</CODE> -  A string to append to every navigation URL       
       </UL> 
    
    </UL>
@@ -1179,15 +2220,47 @@ jala.ListRenderer</H3>
 
    <A NAME="size_macro"><!-- --></A>
    <H3>size_macro</H3>
-   <PRE>Object <B>size_macro</B>(param)</PRE>
+   <PRE>Number <B>size_macro</B>()</PRE>
    
-      <UL>Return the total number of items</UL>
+      <UL>Returns the total number of items</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The total number of items in the collection this ListRenderer  instance is working on   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="totalPages_macro"><!-- --></A>
+   <H3>totalPages_macro</H3>
+   <PRE>Number <B>totalPages_macro</B>()</PRE>
+   
+      <UL>Returns the total number of pages</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The total number of pages available   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -1220,7 +2293,7 @@ jala.ListRenderer</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
@@ -1261,6 +2334,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </BODY>
 </HTML>

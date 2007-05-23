@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.Form.SelectComponent
+jala.Form.Component.Fieldset
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.Form.SelectComponent";
+parent.document.title="jala.Form.Component.Fieldset";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -34,20 +34,20 @@ parent.document.title="jala.Form.SelectComponent";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Form.RadioComponent.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.Date.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Form.TextareaComponent.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.File.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.Form.SelectComponent.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Fieldset.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,46 +72,25 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.Form.SelectComponent</H2>
+<H2>Class jala.Form.Component.Fieldset</H2>
 <PRE>Object
    |
-   +--<a href='jala.Form.InputComponent.html'>jala.Form.InputComponent</a>
-         |
-         +--<b>jala.Form.SelectComponent</b>
+   +--<b>jala.Form.Component.Fieldset</b>
 </PRE>
-
-   <DL>
-   <DT>
-      <B>Direct Known Subclasses:</B> 
-      <DD>
-                <a href="jala.Form.RadioComponent.html">jala.Form.RadioComponent</a>
-      </DD>
-   </DL>
 
 
 <HR>
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.Form.SelectComponent</B>
-   
-      <DT>extends <a href='jala.Form.InputComponent.html'>jala.Form.InputComponent</a> 
+   <B>jala.Form.Component.Fieldset</B>
    
 
 </DL>
    
    <P>
-   <BR/>Subclass of jala.Form.InputComponent which renders and validates a
- dropdown element.
- <p><b>Possible config options:</b><br/>
- <li><code>options</code> An array of a function defining the options for this
-      element. A function is called with the data object and the field name as 
-      arguments and has to return an array.
-      The array may contain arrays: <code>[  [val, display], [val, display] ]</code>,
-      or objects: <code>[  {value:val, display:display}, ...]</code>,
-      or strings whose value will be their index position.</li>
- <li><code>firstOption</code> Text to display if no value is selected</li>
- </p>
+   <BR/>Instances of this class represent a form fieldset containing
+ numerous form components
  <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
    </P>
    
@@ -124,44 +103,8 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- =========== FIELD SUMMARY =========== -->
 
-   <A NAME="field_summary"><!-- --></A>
-      <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-         <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-            <TD COLSPAN=2><FONT SIZE="+2">
-               <B>Field Summary</B></FONT></TD>
-         </TR>
-
-   <!-- This is one instance field summary -->
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&lt;static&gt; &nbsp;Array</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#!s!ACCEPTED_FIELDS">ACCEPTED_FIELDS</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An Array containing the config field names that are valid for this component</TD>
-   </TR>
-   
-
-   </TABLE>
-   &nbsp;
-   
 
    
-   
-   &nbsp;<A NAME=""><!-- --></A>
-   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-   <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-   <TD><B>Fields inherited from class <A HREF="jala.Form.InputComponent.html">jala.Form.InputComponent</A></B></TD>
-   </TR>
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD><CODE>
-   <a href="jala.Form.InputComponent.html#form">form</a>, <a href="jala.Form.InputComponent.html#type">type</a>, <a href="jala.Form.InputComponent.html#getter">getter</a>, <a href="jala.Form.InputComponent.html#setter">setter</a>, <a href="jala.Form.InputComponent.html#validate">validate</a>
-   </CODE></TD>
-   </TR>
-</TABLE>
-&nbsp;
-
-
 
 <!-- =========== END FIELD SUMMARY =========== -->
 
@@ -178,13 +121,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.Form.SelectComponent.html#jala.Form.SelectComponent()">jala.Form.SelectComponent</A> 
+	    <A HREF="jala.Form.Component.Fieldset.html#jala.Form.Component.Fieldset()">jala.Form.Component.Fieldset</A> 
 	 </B>
-	 (&lt;<a href="jala.Form.html">jala.Form</a>&gt; form, &lt;Object&gt; configObj)
+	 (&lt;String&gt; name)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      
+      Constructs a new Fieldset instance
       </TD>
 </TR>
 </TABLE>
@@ -212,11 +155,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#checkOptions">checkOptions</A></B>(&lt;Object&gt; reqData, &lt;<a href="jala.ErrorTracker.html">jala.ErrorTracker</a>&gt; tracker)
+	       <A HREF="#render">render</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Checks user input for optiongroups: Value has to be in option array.
+	 Renders all components within the fieldset.
       </TD>
    </TR>
 
@@ -229,30 +172,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#checkSyntax">checkSyntax</A></B>(&lt;Object&gt; reqData, &lt;<a href="jala.ErrorTracker.html">jala.ErrorTracker</a>&gt; tracker)
+	       <A HREF="#save">save</A></B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker, &lt;Object&gt; destObj)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Validates user input from a dropdown element and makes sure that
- option value list contains the user input.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getOptions">getOptions</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 sCreate an array of options for a dropdown element or a
- group of radiobuttons.
+	 Saves all components within the fieldset.
       </TD>
    </TR>
 
@@ -265,11 +189,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#renderControls">renderControls</A></B>(&lt;Object&gt; attr, &lt;Object&gt; value)
+	       <A HREF="#validate">validate</A></B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Renders a dropdown element to the response.
+	 Validates all components within the fieldset.
       </TD>
    </TR>
 
@@ -277,44 +201,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 </TABLE>
 
 
-
-&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TD><B>Methods inherited from class <a href="jala.Form.InputComponent.html">jala.Form.InputComponent</a></B></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>
-<!-- Inherited methods -->
-<a href="jala.Form.InputComponent.html#getValue">getValue</a>, <a href="jala.Form.InputComponent.html#getProperty">getProperty</a>, <a href="jala.Form.InputComponent.html#setProperty">setProperty</a>, <a href="jala.Form.InputComponent.html#render">render</a>, <a href="jala.Form.InputComponent.html#getError">getError</a>, <a href="jala.Form.InputComponent.html#getLabel">getLabel</a>, <a href="jala.Form.InputComponent.html#getHelp">getHelp</a>, <a href="jala.Form.InputComponent.html#getControlAttributes">getControlAttributes</a>, <a href="jala.Form.InputComponent.html#checkLength">checkLength</a>, <a href="jala.Form.InputComponent.html#setValue">setValue</a>
-</CODE></TD>
-</TR>
-</TABLE>
-&nbsp;
 
 <P>
 <!-- ========== END METHOD SUMMARY =========== -->
 
 
 <!-- ============ FIELD DETAIL START =========== -->
-
-   <A NAME="field_detail"><!-- --></A>
-   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-      <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-         <TD COLSPAN=1><FONT SIZE="+2"><B>Field Detail</B></FONT></TD>
-      </TR>
-   </TABLE>
-
-   
-   <A NAME="!s!ACCEPTED_FIELDS"><!-- --></A>
-   <H3>ACCEPTED_FIELDS</H3>
-   <PRE>&lt;static&gt;&nbsp;Array&nbsp;<B>ACCEPTED_FIELDS</B></PRE>
-   <UL>
-   An Array containing the config field names that are valid for this component
-   
-   </UL>
-   <HR>
-   
 
 
 <!-- ============ FIELD DETAIL END =========== -->
@@ -330,20 +222,21 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.Form.SelectComponent()"><!-- --></A><H3>
-jala.Form.SelectComponent</H3>
-<PRE><B>jala.Form.SelectComponent</B>(&lt;<a href="jala.Form.html">jala.Form</a>&gt; form, &lt;Object&gt; configObj)</PRE>
+<A NAME="jala.Form.Component.Fieldset()"><!-- --></A><H3>
+jala.Form.Component.Fieldset</H3>
+<PRE><B>jala.Form.Component.Fieldset</B>(&lt;String&gt; name)</PRE>
 
+
+<UL>
+   Constructs a new Fieldset instance
+</UL>
 
 
 
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>form</CODE> -  The form this element belongs to.  
-     </UL>
-   
-     <UL><CODE>configObj</CODE> -  Object holding configuration data for this element.  
+     <UL><CODE>name</CODE> -  The name of the fieldset  
      </UL>
    
    
@@ -351,6 +244,13 @@ jala.Form.SelectComponent</H3>
 
 
 <!-- Constructor return value(s) -->
+
+   <UL>
+   <B>Returns:</B>
+     <UL>
+     A newly created Fieldset instance   
+     </UL>
+   </UL>
 
 <!-- End constructor return value(s) -->
 
@@ -375,11 +275,29 @@ jala.Form.SelectComponent</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="checkOptions"><!-- --></A>
-   <H3>checkOptions</H3>
-   <PRE>void <B>checkOptions</B>(&lt;Object&gt; reqData, &lt;<a href="jala.ErrorTracker.html">jala.ErrorTracker</a>&gt; tracker)</PRE>
+   <A NAME="render"><!-- --></A>
+   <H3>render</H3>
+   <PRE>void <B>render</B>()</PRE>
    
-      <UL>Checks user input for optiongroups: Value has to be in option array.</UL>
+      <UL>Renders all components within the fieldset.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="save"><!-- --></A>
+   <H3>save</H3>
+   <PRE>void <B>save</B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker, &lt;Object&gt; destObj)</PRE>
+   
+      <UL>Saves all components within the fieldset.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -387,10 +305,10 @@ jala.Form.SelectComponent</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>reqData</CODE> -  request data  
+     <UL><CODE>tracker</CODE> -   
       </UL> 
    
-     <UL><CODE>tracker</CODE> -  jala.ErrorTracker object storing possible error messages    
+     <UL><CODE>destObj</CODE> -     
       </UL> 
    
    </UL>
@@ -404,73 +322,11 @@ jala.Form.SelectComponent</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="checkSyntax"><!-- --></A>
-   <H3>checkSyntax</H3>
-   <PRE>void <B>checkSyntax</B>(&lt;Object&gt; reqData, &lt;<a href="jala.ErrorTracker.html">jala.ErrorTracker</a>&gt; tracker)</PRE>
+   <A NAME="validate"><!-- --></A>
+   <H3>validate</H3>
+   <PRE>void <B>validate</B>(&lt;<a href="jala.Form.Tracker.html">jala.Form.Tracker</a>&gt; tracker)</PRE>
    
-      <UL>Validates user input from a dropdown element and makes sure that
- option value list contains the user input.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>reqData</CODE> -  request data  
-      </UL> 
-   
-     <UL><CODE>tracker</CODE> -  jala.ErrorTracker object storing possible error messages    
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.Form.SelectComponent.html#checkOptions">jala.Form.SelectComponent.checkOptions()</a></UL>
-   </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getOptions"><!-- --></A>
-   <H3>getOptions</H3>
-   <PRE>Array <B>getOptions</B>()</PRE>
-   
-      <UL>sCreate an array of options for a dropdown element or a
- group of radiobuttons. If options field of this element's
- config is an array, that array is returned.
- If options is a function, its return value is returned.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        array of options   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="renderControls"><!-- --></A>
-   <H3>renderControls</H3>
-   <PRE>void <B>renderControls</B>(&lt;Object&gt; attr, &lt;Object&gt; value)</PRE>
-   
-      <UL>Renders a dropdown element to the response.</UL>
+      <UL>Validates all components within the fieldset.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -478,10 +334,7 @@ jala.Form.SelectComponent</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>attr</CODE> -  Basic attributes for this element.  
-      </UL> 
-   
-     <UL><CODE>value</CODE> -  Value to be used for rendering this element.    
+     <UL><CODE>tracker</CODE> -     
       </UL> 
    
    </UL>
@@ -520,20 +373,20 @@ jala.Form.SelectComponent</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Form.RadioComponent.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.Date.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Form.TextareaComponent.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.File.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.Form.SelectComponent.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Fieldset.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -561,6 +414,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </BODY>
 </HTML>

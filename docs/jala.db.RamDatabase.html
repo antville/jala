@@ -34,7 +34,7 @@ parent.document.title="jala.db.RamDatabase";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
@@ -176,23 +176,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#createTable">createTable</A></B>(tableName, &lt;Array&gt; columns, &lt;String&gt; primaryKey)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Creates a table in this database.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
 	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
@@ -221,40 +204,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Returns a connection to this database
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;<a href="jala.db.DataType.html">jala.db.DataType</a></CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getDataType">getDataType</A></B>(&lt;Number&gt; type)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the data type for the code passed as argument
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getDataTypes">getDataTypes</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns an array containing all available data types.
       </TD>
    </TR>
 
@@ -468,38 +417,6 @@ jala.db.RamDatabase</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="createTable"><!-- --></A>
-   <H3>createTable</H3>
-   <PRE>Object <B>createTable</B>(tableName, &lt;Array&gt; columns, &lt;String&gt; primaryKey)</PRE>
-   
-      <UL>Creates a table in this database.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>columns</CODE> -  The columns to create in the table. Each column  must be described using an object containing the following properties:  <ul>  <li>name (String): The name of the column</li>  <li>type (Number): The type of the column as defined in java.sql.Types</li>  <li>nullable (Boolean): If true the column may contain null values (optional, defaults to true)</li>  <li>length (Number): The maximum length of the column (optional)</li>  <li>precision (Number): The precision to use (optional)</li>  <li>unique (Boolean): If true the column may only contain unique values (optional, defaults to false)</li>  <li>default (Object): The default value to use (optional)</li>  </ul>  
-      </UL> 
-   
-     <UL><CODE>primaryKey</CODE> -  The name of the column that contains  the primary key
-      </UL> 
-   
-     <UL><CODE>name</CODE> -  The name of the table  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
    <A NAME="dropTable"><!-- --></A>
    <H3>dropTable</H3>
    <PRE>Boolean <B>dropTable</B>(&lt;String&gt; tableName)</PRE>
@@ -562,68 +479,6 @@ jala.db.RamDatabase</H3>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getDataType"><!-- --></A>
-   <H3>getDataType</H3>
-   <PRE><a href="jala.db.DataType.html">jala.db.DataType</a> <B>getDataType</B>(&lt;Number&gt; type)</PRE>
-   
-      <UL>Returns the data type for the code passed as argument</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>type</CODE> -  The type code as defined in java.sql.Types  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The data type object for the code   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getDataTypes"><!-- --></A>
-   <H3>getDataTypes</H3>
-   <PRE>Array <B>getDataTypes</B>()</PRE>
-   
-      <UL>Returns an array containing all available data types.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        All available data types   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.db.DataType.html#">jala.db.DataType</a></UL>
-   </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
@@ -823,7 +678,7 @@ jala.db.RamDatabase</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
@@ -864,6 +719,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </BODY>
 </HTML>

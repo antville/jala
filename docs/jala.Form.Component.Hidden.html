@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.Form.RadioComponent
+jala.Form.Component.Hidden
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.Form.RadioComponent";
+parent.document.title="jala.Form.Component.Hidden";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -34,20 +34,20 @@ parent.document.title="jala.Form.RadioComponent";
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Form.PasswordComponent.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.File.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Form.SelectComponent.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Image.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.Form.RadioComponent.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Hidden.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,14 +72,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.Form.RadioComponent</H2>
+<H2>Class jala.Form.Component.Hidden</H2>
 <PRE>Object
    |
-   +--<a href='jala.Form.InputComponent.html'>jala.Form.InputComponent</a>
+   +--<a href='jala.Form.Component.Input.html'>jala.Form.Component.Input</a>
          |
-         +--<a href='jala.Form.SelectComponent.html'>jala.Form.SelectComponent</a>
-               |
-               +--<b>jala.Form.RadioComponent</b>
+         +--<b>jala.Form.Component.Hidden</b>
 </PRE>
 
 
@@ -87,24 +85,16 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.Form.RadioComponent</B>
+   <B>jala.Form.Component.Hidden</B>
    
-      <DT>extends <a href='jala.Form.SelectComponent.html'>jala.Form.SelectComponent</a> 
+      <DT>extends <a href='jala.Form.Component.Input.html'>jala.Form.Component.Input</a> 
    
 
 </DL>
    
    <P>
-   <BR/>Subclass of jala.Form.InputComponent which renders and validates a
- set of radio buttons.
- <p><b>Possible config options:</b><br/>
- <li><code>options</code> An array of a function defining the options for this
-      element. A function is called with the data object and the field name as 
-      arguments and has to return an array.
-      The array may contain arrays: <code>[  [val, display], [val, display] ]</code>,
-      or objects: <code>[  {value:val, display:display}, ...]</code>,
-      or strings whose value will be their index position.</li>
- </p>
+   <BR/>Subclass of jala.Form.Component.Input which renders and validates a
+ hidden input tag.
  <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
    </P>
    
@@ -117,44 +107,8 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- =========== FIELD SUMMARY =========== -->
 
-   <A NAME="field_summary"><!-- --></A>
-      <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-         <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-            <TD COLSPAN=2><FONT SIZE="+2">
-               <B>Field Summary</B></FONT></TD>
-         </TR>
-
-   <!-- This is one instance field summary -->
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&lt;static&gt; &nbsp;Array</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#!s!ACCEPTED_FIELDS">ACCEPTED_FIELDS</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An Array containing the config field names that are valid for this component</TD>
-   </TR>
-   
-
-   </TABLE>
-   &nbsp;
-   
 
    
-   
-   &nbsp;<A NAME=""><!-- --></A>
-   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-   <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-   <TD><B>Fields inherited from class <A HREF="jala.Form.InputComponent.html">jala.Form.InputComponent</A></B></TD>
-   </TR>
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD><CODE>
-   <a href="jala.Form.InputComponent.html#form">form</a>, <a href="jala.Form.InputComponent.html#type">type</a>, <a href="jala.Form.InputComponent.html#getter">getter</a>, <a href="jala.Form.InputComponent.html#setter">setter</a>, <a href="jala.Form.InputComponent.html#validate">validate</a>
-   </CODE></TD>
-   </TR>
-</TABLE>
-&nbsp;
-
-
 
 <!-- =========== END FIELD SUMMARY =========== -->
 
@@ -171,13 +125,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.Form.RadioComponent.html#jala.Form.RadioComponent()">jala.Form.RadioComponent</A> 
+	    <A HREF="jala.Form.Component.Hidden.html#jala.Form.Component.Hidden()">jala.Form.Component.Hidden</A> 
 	 </B>
-	 (&lt;<a href="jala.Form.html">jala.Form</a>&gt; form, &lt;Object&gt; configObj)
+	 (&lt;String&gt; name)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      
+      Constructs a newly created Hidden component instance
       </TD>
 </TR>
 </TABLE>
@@ -205,12 +159,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#checkSyntax">checkSyntax</A></B>(&lt;Object&gt; reqData, &lt;<a href="jala.ErrorTracker.html">jala.ErrorTracker</a>&gt; tracker)
+	       <A HREF="#render">render</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Validates user input from a set of radio buttons and makes sure that
- option value list contains the user input.
+	 Renders this component directly to response.
       </TD>
    </TR>
 
@@ -223,11 +176,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#renderControls">renderControls</A></B>(&lt;Object&gt; attr, &lt;Object&gt; value)
+	       <A HREF="#renderControls">renderControls</A></B>(&lt;Object&gt; attr, &lt;Object&gt; value, &lt;Object&gt; reqData)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Renders a set of radio buttons to the response.
+	 Renders a hidden input tag to the response.
       </TD>
    </TR>
 
@@ -239,26 +192,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TD><B>Methods inherited from class <a href="jala.Form.SelectComponent.html">jala.Form.SelectComponent</a></B></TD>
+<TD><B>Methods inherited from class <a href="jala.Form.Component.Input.html">jala.Form.Component.Input</a></B></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>
 <!-- Inherited methods -->
-<a href="jala.Form.SelectComponent.html#getOptions">getOptions</a>, <a href="jala.Form.SelectComponent.html#checkOptions">checkOptions</a>
-</CODE></TD>
-</TR>
-</TABLE>
-&nbsp;
-
-&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TD><B>Methods inherited from class <a href="jala.Form.InputComponent.html">jala.Form.InputComponent</a></B></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>
-<!-- Inherited methods -->
-<a href="jala.Form.InputComponent.html#getValue">getValue</a>, <a href="jala.Form.InputComponent.html#getProperty">getProperty</a>, <a href="jala.Form.InputComponent.html#setProperty">setProperty</a>, <a href="jala.Form.InputComponent.html#render">render</a>, <a href="jala.Form.InputComponent.html#getError">getError</a>, <a href="jala.Form.InputComponent.html#getLabel">getLabel</a>, <a href="jala.Form.InputComponent.html#getHelp">getHelp</a>, <a href="jala.Form.InputComponent.html#getControlAttributes">getControlAttributes</a>, <a href="jala.Form.InputComponent.html#checkLength">checkLength</a>, <a href="jala.Form.InputComponent.html#setValue">setValue</a>
+<a href="jala.Form.Component.Input.html#validate">validate</a>, <a href="jala.Form.Component.Input.html#save">save</a>, <a href="jala.Form.Component.Input.html#getValue">getValue</a>, <a href="jala.Form.Component.Input.html#setValue">setValue</a>, <a href="jala.Form.Component.Input.html#renderError">renderError</a>, <a href="jala.Form.Component.Input.html#renderLabel">renderLabel</a>, <a href="jala.Form.Component.Input.html#renderHelp">renderHelp</a>, <a href="jala.Form.Component.Input.html#render_macro">render_macro</a>, <a href="jala.Form.Component.Input.html#controls_macro">controls_macro</a>, <a href="jala.Form.Component.Input.html#error_macro">error_macro</a>, <a href="jala.Form.Component.Input.html#label_macro">label_macro</a>, <a href="jala.Form.Component.Input.html#help_macro">help_macro</a>, <a href="jala.Form.Component.Input.html#id_macro">id_macro</a>, <a href="jala.Form.Component.Input.html#name_macro">name_macro</a>, <a href="jala.Form.Component.Input.html#type_macro">type_macro</a>, <a href="jala.Form.Component.Input.html#class_macro">class_macro</a>, <a href="jala.Form.Component.Input.html#getControlAttributes">getControlAttributes</a>, <a href="jala.Form.Component.Input.html#checkLength">checkLength</a>, <a href="jala.Form.Component.Input.html#checkRequirements">checkRequirements</a>, <a href="jala.Form.Component.Input.html#parseValue">parseValue</a>
 </CODE></TD>
 </TR>
 </TABLE>
@@ -269,24 +208,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 
 <!-- ============ FIELD DETAIL START =========== -->
-
-   <A NAME="field_detail"><!-- --></A>
-   <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-      <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-         <TD COLSPAN=1><FONT SIZE="+2"><B>Field Detail</B></FONT></TD>
-      </TR>
-   </TABLE>
-
-   
-   <A NAME="!s!ACCEPTED_FIELDS"><!-- --></A>
-   <H3>ACCEPTED_FIELDS</H3>
-   <PRE>&lt;static&gt;&nbsp;Array&nbsp;<B>ACCEPTED_FIELDS</B></PRE>
-   <UL>
-   An Array containing the config field names that are valid for this component
-   
-   </UL>
-   <HR>
-   
 
 
 <!-- ============ FIELD DETAIL END =========== -->
@@ -302,20 +223,21 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.Form.RadioComponent()"><!-- --></A><H3>
-jala.Form.RadioComponent</H3>
-<PRE><B>jala.Form.RadioComponent</B>(&lt;<a href="jala.Form.html">jala.Form</a>&gt; form, &lt;Object&gt; configObj)</PRE>
+<A NAME="jala.Form.Component.Hidden()"><!-- --></A><H3>
+jala.Form.Component.Hidden</H3>
+<PRE><B>jala.Form.Component.Hidden</B>(&lt;String&gt; name)</PRE>
 
+
+<UL>
+   Constructs a newly created Hidden component instance
+</UL>
 
 
 
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>form</CODE> -  The form this element belongs to.  
-     </UL>
-   
-     <UL><CODE>configObj</CODE> -  Object holding configuration data for this element.  
+     <UL><CODE>name</CODE> -  Name of the component, used as name of the html controls.  
      </UL>
    
    
@@ -323,6 +245,13 @@ jala.Form.RadioComponent</H3>
 
 
 <!-- Constructor return value(s) -->
+
+   <UL>
+   <B>Returns:</B>
+     <UL>
+     A newly created Hidden component instance   
+     </UL>
+   </UL>
 
 <!-- End constructor return value(s) -->
 
@@ -347,26 +276,15 @@ jala.Form.RadioComponent</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="checkSyntax"><!-- --></A>
-   <H3>checkSyntax</H3>
-   <PRE>void <B>checkSyntax</B>(&lt;Object&gt; reqData, &lt;<a href="jala.ErrorTracker.html">jala.ErrorTracker</a>&gt; tracker)</PRE>
+   <A NAME="render"><!-- --></A>
+   <H3>render</H3>
+   <PRE>void <B>render</B>()</PRE>
    
-      <UL>Validates user input from a set of radio buttons and makes sure that
- option value list contains the user input.</UL>
+      <UL>Renders this component directly to response. For a hidden tag, this is
+ just an input element, no div tag or anything.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>reqData</CODE> -  request data  
-      </UL> 
-   
-     <UL><CODE>tracker</CODE> -  jala.ErrorTracker object storing possible error messages    
-      </UL> 
-   
-   </UL>
    
    <!-- METHOD PARAMETERS END -->
 
@@ -374,18 +292,14 @@ jala.Form.RadioComponent</H3>
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
-   <UL>   
-   <B>See:</B><UL>- <a href="jala.Form.SelectComponent.html#checkOptions">jala.Form.SelectComponent.checkOptions()</a></UL>
-   </UL>
-   
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
    <A NAME="renderControls"><!-- --></A>
    <H3>renderControls</H3>
-   <PRE>void <B>renderControls</B>(&lt;Object&gt; attr, &lt;Object&gt; value)</PRE>
+   <PRE>void <B>renderControls</B>(&lt;Object&gt; attr, &lt;Object&gt; value, &lt;Object&gt; reqData)</PRE>
    
-      <UL>Renders a set of radio buttons to the response.</UL>
+      <UL>Renders a hidden input tag to the response.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -396,7 +310,10 @@ jala.Form.RadioComponent</H3>
      <UL><CODE>attr</CODE> -  Basic attributes for this element.  
       </UL> 
    
-     <UL><CODE>value</CODE> -  Value to be used for rendering this element.    
+     <UL><CODE>value</CODE> -  Value to be used for rendering this element.  
+      </UL> 
+   
+     <UL><CODE>reqData</CODE> -  Request data for the whole form. This argument is        passed only if the form is re-rendered after an error occured.    
       </UL> 
    
    </UL>
@@ -435,20 +352,20 @@ jala.Form.RadioComponent</H3>
 </TABLE>
 </TD>
 <TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-<B>Jala 1.0</B>
+<B>Jala 1.2</B>
 </EM>
 </TD
 </TR>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.Form.PasswordComponent.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.File.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.Form.SelectComponent.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Image.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.Form.RadioComponent.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Hidden.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -476,6 +393,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </BODY>
 </HTML>

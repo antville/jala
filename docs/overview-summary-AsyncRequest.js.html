@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala 1.0 Overview
+Jala 1.2 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -110,177 +110,6 @@ function asd() {
 <!-- ========== END METHOD SUMMARY =========== -->
 
 
-        <pre class="sourceview"><span class="comment">//</span>
-<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
-<span class="comment">//</span>
-<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
-<span class="comment">// you may not use this file except in compliance with the License.</span>
-<span class="comment">// You may obtain a copy of the License at</span>
-<span class="comment">//</span>
-<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="comment">//</span>
-<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
-<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
-<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="comment">// See the License for the specific language governing permissions and</span>
-<span class="comment">// limitations under the License.</span>
-<span class="comment">//</span>
-<span class="comment">// $Revision$</span>
-<span class="comment">// $LastChangedBy$</span>
-<span class="comment">// $LastChangedDate$</span>
-<span class="comment">// $HeadURL$</span>
-<span class="comment">//</span>
-
-
-<span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the jala.AsyncRequest class.
- */</span>
-
-
-<span class="comment">// Define the global namespace for Jala modules</span>
-<span class="reserved">if</span> (!global.jala) {
-   global.jala = {};
-}
-
-
-<span class="comment">/**
- * Creates a new AsyncRequest instance.
- * <span class="attrib">@class</span> This class is used to create requests of type "INTERNAL"
- * (like cron-jobs) that are processed in a separate thread and
- * therefor asynchronous.
- * <span class="attrib">@param</span> {Object} obj Object in whose context the method should be called
- * <span class="attrib">@param</span> {String} funcName Name of the function to call
- * <span class="attrib">@param</span> {Array} args Array containing the arguments that should be passed
- * to the function (optional). This option is &lt;em&gt;deprecated&lt;/em&gt;, instead
- * pass the arguments directly to the {<span class="attrib">@link</span> #run} method.
- * <span class="attrib">@constructor</span>
- * <span class="attrib">@returns</span> A new instance of AsyncRequest
- * <span class="attrib">@type</span> AsyncRequest
- */</span>
-jala.AsyncRequest = <span class="reserved">function</span>(obj, funcName, args) {
-   <span class="comment">/**
-    * Contains a reference to the thread started by this AsyncRequest
-    * <span class="attrib">@type</span> java.lang.Thread
-    * <span class="attrib">@private</span>
-    */</span>
-   var thread;
-   
-   <span class="comment">/**
-    * Contains the timeout defined for this AsyncRequest (in milliseconds)
-    * <span class="attrib">@type</span> Number
-    * <span class="attrib">@private</span>
-    */</span>
-   var timeout;
-   
-   <span class="comment">/**
-    * Contains the number of milliseconds to wait before starting
-    * the asynchronous request.
-    * <span class="attrib">@type</span> Number
-    * <span class="attrib">@private</span>
-    */</span>
-   var delay;
-
-   <span class="comment">/**
-    * Run method necessary to implement java.lang.Runnable.
-    * <span class="attrib">@private</span>
-    */</span>
-   var runner = <span class="reserved">function</span>() {
-      <span class="comment">// evaluator that will handle the request</span>
-      var ev = app.__app__.getEvaluator();
-
-      <span class="reserved">if</span> (delay != null) {
-         java.lang.Thread.sleep(delay);
-      }
-      try {
-         <span class="reserved">if</span> (args === undefined || args === null || args.constructor != Array) {
-            args = [];
-         }
-         <span class="reserved">if</span> (timeout != null) {
-            ev.invokeInternal(obj, funcName, args, timeout);
-         } <span class="reserved">else</span> {
-            ev.invokeInternal(obj, funcName, args);
-         }
-      } catch (e) {
-         <span class="comment">// ignore it, but log it</span>
-         app.log(<span class="literal">"[Runner] Caught Exception: "</span> + e);
-      } finally {
-         <span class="comment">// release the ev in any case</span>
-         app.__app__.releaseEvaluator(ev);
-         <span class="comment">// remove reference to underlying thread</span>
-         thread = null;
-      }
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Sets the timeout of this asynchronous request.
-    * <span class="attrib">@param</span> {Number} seconds Thread-timeout.
-    */</span>
-   <span class="reserved">this</span>.setTimeout = <span class="reserved">function</span>(seconds) {
-      timeout = seconds * 1000;
-      <span class="reserved">return</span>;
-   };
-   
-   <span class="comment">/**
-    * Defines the delay to wait before evaluating this asynchronous request.
-    * <span class="attrib">@param</span> {Number} millis Milliseconds to wait
-    */</span>
-   <span class="reserved">this</span>.setDelay = <span class="reserved">function</span>(millis) {
-      delay = millis;
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Starts this asynchronous request. Any arguments passed to
-    * this method will be passed to the method executed by
-    * this AsyncRequest instance.
-    */</span>
-   <span class="reserved">this</span>.run  = <span class="reserved">function</span>() {
-      <span class="reserved">if</span> (arguments.length &gt; 0) {
-         <span class="comment">// convert arguments object into array</span>
-         args = Array.<span class="reserved">prototype</span>.slice.call(arguments, 0, arguments.length);
-      }
-      thread = (new java.lang.Thread(new java.lang.Runnable({<span class="literal">"run"</span>: runner})));
-      thread.start();
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Starts this asynchronous request.
-    * <span class="attrib">@deprecated</span> Use {<span class="attrib">@link</span> #run} instead
-    */</span>
-   <span class="reserved">this</span>.evaluate = <span class="reserved">function</span>() {
-      <span class="reserved">this</span>.run.apply(<span class="reserved">this</span>, arguments);
-      <span class="reserved">return</span>;
-   };
-
-   <span class="comment">/**
-    * Returns true if the underlying thread is alive
-    * <span class="attrib">@returns</span> True if the underlying thread is alive,
-    * false otherwise.
-    * <span class="attrib">@type</span> Boolean
-    */</span>
-   <span class="reserved">this</span>.isAlive = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> thread != null &amp;&amp; thread.isAlive();
-   }   
-
-   <span class="comment">/** <span class="attrib">@ignore</span> */</span>
-   <span class="reserved">this</span>.toString = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> <span class="literal">"[jala.AsyncRequest]"</span>;
-   };
-
-   <span class="comment">/**
-    * Main constructor body
-    */</span>
-   <span class="reserved">if</span> (!obj || !funcName)
-      throw <span class="literal">"jala.AsyncRequest: insufficient arguments."</span>;
-   <span class="reserved">return</span> <span class="reserved">this</span>;
-}
-</pre>
-	<hr>
-
 
 
 <!-- ========== START OF NAVBAR ========== -->
@@ -305,7 +134,7 @@ jala.AsyncRequest = <span class="reserved">function</span>(obj, funcName, args) 
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -336,6 +165,6 @@ jala.AsyncRequest = <span class="reserved">function</span>(obj, funcName, args) 
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </body>
 </html>

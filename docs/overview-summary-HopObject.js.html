@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala 1.0 Overview
+Jala 1.2 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -78,7 +78,7 @@ function asd() {
 <h4>Summary</h4>
 <p>
 	
-		Fields and methods of the jala.Utilities class.<BR/><BR/>
+		Additional fields and methods of the HopObject class.<BR/><BR/>
 	
 </p>
 
@@ -90,106 +90,6 @@ function asd() {
 
 <!-- ========== END METHOD SUMMARY =========== -->
 
-
-        <pre class="sourceview"><span class="comment">//</span>
-<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
-<span class="comment">//</span>
-<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
-<span class="comment">// you may not use this file except in compliance with the License.</span>
-<span class="comment">// You may obtain a copy of the License at</span>
-<span class="comment">//</span>
-<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="comment">//</span>
-<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
-<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
-<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="comment">// See the License for the specific language governing permissions and</span>
-<span class="comment">// limitations under the License.</span>
-<span class="comment">//</span>
-<span class="comment">// $Revision$</span>
-<span class="comment">// $LastChangedBy$</span>
-<span class="comment">// $LastChangedDate$</span>
-<span class="comment">// $HeadURL$</span>
-<span class="comment">//</span>
-
-<span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the jala.Utilities class.
- */</span>
-
-<span class="comment">/**
- * HelmaLib dependencies
- */</span>
-app.addRepository(<span class="literal">"modules/core/String.js"</span>);
-
-<span class="comment">/**
- * Constructs a name from an object which
- * is unique in the underlying HopObject collection. 
- * <span class="attrib">@param</span> {Object} obj The object representing or containing
- * the alias name. Possible object types include:
- * &lt;ul&gt;
- * &lt;li&gt;File&lt;/li&gt;
- * &lt;li&gt;helma.File&lt;/li&gt;
- * &lt;li&gt;java.io.File&lt;/li&gt;
- * &lt;li&gt;String&lt;/li&gt;
- * &lt;li&gt;java.lang.String&lt;/li&gt;
- * &lt;/ul&gt;
- * <span class="attrib">@param</span> {Number} maxLength The maximum length of the alias
- * <span class="attrib">@returns</span> The resulting alias
- * <span class="attrib">@type</span> String
- */</span>
-HopObject.<span class="reserved">prototype</span>.getAccessName = <span class="reserved">function</span>(obj, maxLength) {
-   var name;
-   var clazz = obj.constructor || obj.getClass();
-   switch (clazz) {
-      case File:
-      case helma.File:
-      case java.io.File:
-      case Packages.helma.util.MimePart:
-      <span class="comment">// first fix bloody ie/win file paths containing backslashes</span>
-      var rawName = obj.getName().replace(/\\/g, <span class="literal">"/"</span>);
-      rawName = rawName.split(<span class="literal">"/"</span>);
-      name = rawName.pop();
-      <span class="reserved">if</span> (name.contains(<span class="literal">"."</span>))
-         name = name.substring(0, name.lastIndexOf(<span class="literal">"."</span>));
-      break;
-      
-      case String:
-      case java.lang.String:
-      name = obj;
-      break;
-
-      default:
-      name = obj.toString();
-   }
-
-   <span class="comment">// convert accessName to lowercase and clean it from any invalid characters</span>
-   var accessName = name.toLowerCase().toFileName();
-   var len = accessName.length;
-   var counter = 0;
-   var overflow;
-   
-   do {
-      <span class="reserved">if</span> (maxLength) {
-         <span class="reserved">if</span> (counter) {
-            len += counter.toString().length;
-         }
-         <span class="reserved">if</span> ((overflow = len - maxLength) &gt; 0) {
-            accessName = accessName.substring(0, accessName.length - overflow);
-            len = accessName.length;
-         }
-      }
-      <span class="reserved">if</span> (counter) {
-         accessName = accessName + counter.toString();
-      }
-      counter += 1;
-   } <span class="reserved">while</span> (<span class="reserved">this</span>[accessName] || <span class="reserved">this</span>.get(accessName));
-   
-   <span class="reserved">return</span> accessName;
-};
-</pre>
-	<hr>
 
 
 
@@ -215,7 +115,7 @@ HopObject.<span class="reserved">prototype</span>.getAccessName = <span class="r
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -246,6 +146,6 @@ HopObject.<span class="reserved">prototype</span>.getAccessName = <span class="r
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </body>
 </html>

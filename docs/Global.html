@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.HtmlDocument
+Global
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.HtmlDocument";
+parent.document.title="Global";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -24,7 +24,7 @@ parent.document.title="jala.HtmlDocument";
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-HtmlDocument.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"> <FONT CLASS="NavBarFont1">File</FONT>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -41,13 +41,13 @@ parent.document.title="jala.HtmlDocument";
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.History.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<B>PREV CLASS</B><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.I18n.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="helma.Http.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.HtmlDocument.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Global.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,10 +72,10 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.HtmlDocument</H2>
+<H2>Class Global</H2>
 <PRE>Object
    |
-   +--<b>jala.HtmlDocument</b>
+   +--<b>Global</b>
 </PRE>
 
 
@@ -83,18 +83,10 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.HtmlDocument</B>
+   <B>Global</B>
    
 
 </DL>
-   
-   <P>
-   <BR/>This class provides easy access to the elements of
- an arbitrary HTML document. By using TagSoup, Dom4J and Jaxen
- even invalid HTML can be parsed, turned into an object tree
- and easily be processed with XPath expressions.
- <BR/><I>Defined in <a href='overview-summary-HtmlDocument.js.html'>HtmlDocument.js</a></I><BR/><BR/>
-   </P>
    
    <HR>
 
@@ -113,27 +105,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
-<A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD>
-      <CODE>
-	 <B>
-	    <A HREF="jala.HtmlDocument.html#jala.HtmlDocument()">jala.HtmlDocument</A> 
-	 </B>
-	 (&lt;String&gt; source)
-      </CODE>
-      <BR>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Construct a new HTML document.
-      </TD>
-</TR>
-</TABLE>
-
 <!-- ======== END CONSTRUCTOR SUMMARY ======== -->
 
 &nbsp;
@@ -151,68 +122,17 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
+	    <CODE>&lt;static&gt;&nbsp;Object</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getAll">getAll</A></B>(&lt;String&gt; elementName)
+	       <A HREF="#!s!Image">Image</A></B>(name)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Retrieves all elements by name from the document.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getLinks">getLinks</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get all link elements of the HTML document.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;org.dom4j.tree.DefaultElement</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#scrape">scrape</A></B>(&lt;String&gt; xpathExpr)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get all document nodes from an XPath expression.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;String</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#toString">toString</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get a string representation of the HTML document.
+	 
       </TD>
    </TR>
 
@@ -232,44 +152,8 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
     <!-- ========= CONSTRUCTOR DETAIL START ======== -->
 
-<A NAME="constructor_detail"><!-- --></A>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-   <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-      <TD COLSPAN=1>
-      <FONT SIZE="+2"><B>Constructor Detail</B></FONT>
-      </TD>
-   </TR>
-</TABLE>
-
-<A NAME="jala.HtmlDocument()"><!-- --></A><H3>
-jala.HtmlDocument</H3>
-<PRE><B>jala.HtmlDocument</B>(&lt;String&gt; source)</PRE>
-
-
-<UL>
-   Construct a new HTML document.
-</UL>
-
-
-
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>source</CODE> -  The HTML source code.  
-     </UL>
-   
-   
-   </UL>
-
 
 <!-- Constructor return value(s) -->
-
-   <UL>
-   <B>Returns:</B>
-     <UL>
-     A new HTML document.   
-     </UL>
-   </UL>
 
 <!-- End constructor return value(s) -->
 
@@ -294,117 +178,15 @@ jala.HtmlDocument</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="getAll"><!-- --></A>
-   <H3>getAll</H3>
-   <PRE>Array <B>getAll</B>(&lt;String&gt; elementName)</PRE>
-   
-      <UL>Retrieves all elements by name from the document.
- The returned object structure is compatible for usage
- in <a href="jala.XmlWriter.html#">jala.XmlWriter</a>.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>elementName</CODE> -  The name of the desired element  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The list of available elements in the document   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getLinks"><!-- --></A>
-   <H3>getLinks</H3>
-   <PRE>Array <B>getLinks</B>()</PRE>
-   
-      <UL>Get all link elements of the HTML document.</UL>
+   <A NAME="!s!Image"><!-- --></A>
+   <H3>Image</H3>
+   <PRE>&lt;static&gt; Object <B>Image</B>(name)</PRE>
    
 
    <!-- METHOD PARAMETERS START -->
    
    <!-- METHOD PARAMETERS END -->
 
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        A list of link elements.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="scrape"><!-- --></A>
-   <H3>scrape</H3>
-   <PRE>org.dom4j.tree.DefaultElement <B>scrape</B>(&lt;String&gt; xpathExpr)</PRE>
-   
-      <UL>Get all document nodes from an XPath expression.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>xpathExpr</CODE> -  An XPath expression.  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        A list of HTML elements.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="toString"><!-- --></A>
-   <H3>toString</H3>
-   <PRE>String <B>toString</B>()</PRE>
-   
-      <UL>Get a string representation of the HTML document.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        A string representation of the HTML document.   
-        </UL>
-   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -427,7 +209,7 @@ jala.HtmlDocument</H3>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-HtmlDocument.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"> <FONT CLASS="NavBarFont1">File</FONT>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -444,13 +226,13 @@ jala.HtmlDocument</H3>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.History.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<B>PREV CLASS</B><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.I18n.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="helma.Http.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.HtmlDocument.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Global.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--

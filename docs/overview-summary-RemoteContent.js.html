@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala 1.0 Overview
+Jala 1.2 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -109,316 +109,6 @@ function asd() {
 <!-- ========== END METHOD SUMMARY =========== -->
 
 
-        <pre class="sourceview"><span class="comment">//</span>
-<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
-<span class="comment">//</span>
-<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
-<span class="comment">// you may not use this file except in compliance with the License.</span>
-<span class="comment">// You may obtain a copy of the License at</span>
-<span class="comment">//</span>
-<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="comment">//</span>
-<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
-<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
-<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="comment">// See the License for the specific language governing permissions and</span>
-<span class="comment">// limitations under the License.</span>
-<span class="comment">//</span>
-<span class="comment">// $Revision$</span>
-<span class="comment">// $LastChangedBy$</span>
-<span class="comment">// $LastChangedDate$</span>
-<span class="comment">// $HeadURL$</span>
-<span class="comment">//</span>
-
-<span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the jala.RemoteContent class.
- */</span>
-
-<span class="comment">// HelmaLib dependencies</span>
-app.addRepository(<span class="literal">"modules/core/String.js"</span>);
-app.addRepository(<span class="literal">"modules/core/Object.js"</span>);
-app.addRepository(<span class="literal">"modules/core/Date.js"</span>);
-app.addRepository(<span class="literal">"modules/helma/Http.js"</span>);
-
-<span class="comment">// Define the global namespace for Jala modules</span>
-<span class="reserved">if</span> (!global.jala) {
-   global.jala = {};
-}
-
-<span class="comment">/**
- * Construct a new remote content handler.
- * <span class="attrib">@class</span> API to define, fetch and update content
- * from a remote site.
- * <span class="attrib">@param</span> {String} url The URL string of the remote site.
- * <span class="attrib">@param</span> {Integer} method The method to retrieve the remote content.
- * <span class="attrib">@param</span> {File} storage The cache directory.
- * <span class="attrib">@returns</span> A new remote content handler.
- * <span class="attrib">@extends</span> helma.Http
- * <span class="attrib">@constructor</span>
- */</span>
-jala.RemoteContent = <span class="reserved">function</span>(url, method, storage) {
-   <span class="reserved">if</span> (typeof PropertyMgr == <span class="literal">"undefined"</span>)
-      var PropertyMgr = {};
-
-   var NULLSTR = <span class="literal">""</span>;
-   var key = url.md5();
-   var fname = key + jala.RemoteContent.SUFFIX;
-   var cache;
-   method = (method != null ? method.toLowerCase() : null);
-
-   <span class="comment">// depending on the method argument the instance </span>
-   <span class="comment">// becomes extent of the appropriate remote client</span>
-   switch (method) {
-      case jala.RemoteContent.XMLRPC:
-         break;
-      default:
-         helma.Http.call(<span class="reserved">this</span>);
-         break;
-   }
-
-   <span class="reserved">if</span> (!storage) {
-      storage = jala.RemoteContent.CACHEDIR;
-      <span class="reserved">if</span> (!storage.exists() || !storage.isDirectory())
-         storage.mkdir(storage.getAbsolutePath());
-   }
-
-   var getCache = <span class="reserved">function</span>() {
-      switch (storage.constructor) {
-         case HopObject:
-            cache = storage;
-            break;
-
-         case PropertyMgr:
-            cache = storage.getAll();
-            break;
-
-         default:
-            var f = new File(storage, fname);
-            cache = f.exists() ? Xml.read(f) : new HopObject();
-      }
-      <span class="reserved">return</span> cache;
-   };
-
-   var setCache = <span class="reserved">function</span>() {
-      cache.url = url;
-      cache.method = method;
-      <span class="reserved">if</span> (!cache.interval) {
-         cache.interval = Date.ONEHOUR;
-      }
-      cache.lastUpdate = new Date();
-      cache = cache.clone(new HopObject());
-
-      switch (storage.constructor) {
-         case HopObject:
-            <span class="reserved">for</span> (var i in cache)
-               storage[i] = cache[i];
-            break;
-
-         case PropertyMgr:
-            storage.setAll(cache);
-            break;
-
-         default:
-            var f = new File(storage, fname);
-            Xml.write(cache, f);
-      }
-      <span class="reserved">return</span>;
-   };
-
-   cache = getCache();
-
-   <span class="comment">/**
-    * Set the interval the remote content's
-    * cache is bound to be updated.
-    * <span class="attrib">@param</span> {Number} interval The interval value in milliseconds.
-    */</span>
-   <span class="reserved">this</span>.setInterval = <span class="reserved">function</span>(interval) {
-      cache.interval = parseInt(interval, 10);
-      <span class="reserved">return</span>;
-   };
-   
-   <span class="comment">/**
-    * Get an arbitrary property of the remote content.
-    * <span class="attrib">@param</span> {String} key The name of the property.
-    * <span class="attrib">@returns</span> The value of the property.
-    */</span>
-   <span class="reserved">this</span>.get = <span class="reserved">function</span>(key) {
-      <span class="reserved">return</span> cache[key];
-   }
-
-   <span class="comment">/**
-    * Get all available property names.
-    * <span class="attrib">@returns</span> The list of property names.
-    * <span class="attrib">@type</span> Array
-    */</span>
-   <span class="reserved">this</span>.getKeys = <span class="reserved">function</span>() {
-      var keys = [];
-      <span class="reserved">for</span> (var i in cache) {
-         keys.push(i);
-      }
-      <span class="reserved">return</span> keys.sort();
-   };
-
-   <span class="comment">/**
-    * Tests whether the remote content needs to be updated.
-    * <span class="attrib">@returns</span> True if the remote content needs to be updated.
-    * <span class="attrib">@type</span> Boolean
-    */</span>
-   <span class="reserved">this</span>.needsUpdate = <span class="reserved">function</span>() {
-      <span class="reserved">if</span> (!cache.lastUpdate) {
-         <span class="reserved">return</span> true;
-      } <span class="reserved">else</span> {
-         var max = new Date() - cache.interval;
-         <span class="reserved">if</span> (max - cache.lastUpdate &gt; 0) {
-            <span class="reserved">return</span> true;
-         }
-      }
-      <span class="reserved">return</span> false;
-   };
-
-   <span class="comment">/**
-    * Get the updated and cached remote content.
-    * <span class="attrib">@returns</span> The content as retrieved from the remote site.
-    * <span class="attrib">@type</span> String
-    */</span>
-   <span class="reserved">this</span>.update = <span class="reserved">function</span>() {
-      app.debug(<span class="literal">"[jala.RemoteContent] Retrieving "</span> + url);
-      var result;
-      switch (method) {
-         case jala.RemoteContent.XMLRPC:
-            break;
-         default:
-            result = <span class="reserved">this</span>.getUrl(url, cache.lastModified || cache.eTag);
-            <span class="reserved">if</span> (result.code != 200 &amp;&amp; cache.content) {
-               <span class="comment">// preserve the content received before</span>
-               result.content = cache.content;
-            }
-            result.interval = cache.interval;
-            cache = result;
-      }
-      setCache();
-      <span class="reserved">return</span> cache.content;
-   };
-
-   <span class="comment">/**
-    * Flushes (empties) the cached remote content.
-    */</span>
-   <span class="reserved">this</span>.clear = <span class="reserved">function</span>() {
-      switch (storage.constructor) {
-         case HopObject:
-            <span class="reserved">for</span> (var i in storage)
-               delete storage[i];
-            break;
-
-         case PropertyMgr:
-            storage.reset();
-            break;
-
-         default:
-            var f = new File(storage, fname);
-            f.remove();
-      }
-      <span class="reserved">return</span>;
-   };
-   
-   <span class="comment">/**
-    * Get a string representation of the remote content.
-    * <span class="attrib">@returns</span> The remote content as string.
-    * <span class="attrib">@type</span> String
-    */</span>
-   <span class="reserved">this</span>.toString = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> cache.content || NULLSTR;
-   };
-
-   <span class="comment">/**
-    * Get the value of the remote content.
-    * <span class="attrib">@returns</span> The remote content including response header data.
-    * <span class="attrib">@type</span> Object
-    */</span>
-   <span class="reserved">this</span>.valueOf = <span class="reserved">function</span>() {
-      <span class="reserved">return</span> cache;
-   };
-
-   <span class="reserved">return</span> <span class="reserved">this</span>;
-};
-
-<span class="comment">/**
- * A constant representing the HTTP retrieval method.
- * <span class="attrib">@type</span> int
- * <span class="attrib">@final</span>
- */</span>
-jala.RemoteContent.HTTP = 1;
-
-<span class="comment">/**
- * A constant representing the XML-RPC retrieval method.
- * <span class="attrib">@type</span> int
- * <span class="attrib">@final</span>
- */</span>
-jala.RemoteContent.XMLRPC = 2;
-
-<span class="comment">/**
- * The default name of the cache directory.
- * <span class="attrib">@type</span> String
- * <span class="attrib">@final</span>
- */</span>
-jala.RemoteContent.SUFFIX = <span class="literal">".cache"</span>;
-
-<span class="comment">/**
- * The default cache directory.
- * <span class="attrib">@type</span> File
- * <span class="attrib">@final</span>
- */</span>
-jala.RemoteContent.CACHEDIR = new File(app.dir, jala.RemoteContent.SUFFIX);
-
-<span class="comment">/**
- * Remove all remote content from a file-based cache.
- * <span class="attrib">@param</span> {File} cache An optional target directory.
- */</span>
-jala.RemoteContent.flush = <span class="reserved">function</span>(cache) {
-   jala.RemoteContent.forEach(<span class="reserved">function</span>(rc) {
-      rc.clear();
-      <span class="reserved">return</span>;
-   });
-   <span class="reserved">return</span>;
-};
-
-<span class="comment">/**
- * Apply a custom method on all remote content in a file-based cache.
- * <span class="attrib">@param</span> {Function} callback The callback method to be executed
- * for each remote content file.
- * <span class="attrib">@param</span> {File} cache An optional target directory.
- */</span>
-jala.RemoteContent.forEach = <span class="reserved">function</span>(callback, cache) {
-   <span class="reserved">if</span> (!cache)
-      cache = jala.RemoteContent.CACHEDIR;
-   var f, rc;
-   var files = cache.list();
-   <span class="reserved">for</span> (var i in files) {
-      f = new File(cache, files[i]);
-      <span class="reserved">if</span> (!files[i].endsWith(jala.RemoteContent.SUFFIX))
-         continue;
-      rc = new jala.RemoteContent(Xml.read(f).url);
-      <span class="reserved">if</span> (callback &amp;&amp; callback.constructor == Function)
-         callback(rc);
-   }
-   <span class="reserved">return</span>;
-};
-
-<span class="comment">/**
- * Apply a custom method on all remote content in a file-based cache.
- * <span class="attrib">@param</span> {Function} callback The callback method to be executed
- * for each remote content file.
- * <span class="attrib">@param</span> {File} cache An optional target directory.
- * <span class="attrib">@deprecated</span> Use {<span class="attrib">@link</span> #forEach} instead.
- */</span>
-jala.RemoteContent.exec = <span class="reserved">function</span>() {
-   jala.RemoteContent.forEach.apply(<span class="reserved">this</span>, arguments);
-};
-</pre>
-	<hr>
-
 
 
 <!-- ========== START OF NAVBAR ========== -->
@@ -443,7 +133,7 @@ jala.RemoteContent.exec = <span class="reserved">function</span>() {
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -474,6 +164,6 @@ jala.RemoteContent.exec = <span class="reserved">function</span>() {
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </body>
 </html>

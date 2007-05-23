@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Jala 1.0 Overview
+Jala 1.2 Overview
 </title>
 <link rel ="stylesheet" type="text/css" href="stylesheet.css" title="Style">
 <script>
@@ -38,7 +38,7 @@ function asd() {
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top">
 <em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -109,250 +109,6 @@ function asd() {
 <!-- ========== END METHOD SUMMARY =========== -->
 
 
-        <pre class="sourceview"><span class="comment">//</span>
-<span class="comment">// Jala Project [http://opensvn.csie.org/traccgi/jala]</span>
-<span class="comment">//</span>
-<span class="comment">// Copyright 2004 ORF Online und Teletext GmbH</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 (the ``License'');</span>
-<span class="comment">// you may not use this file except in compliance with the License.</span>
-<span class="comment">// You may obtain a copy of the License at</span>
-<span class="comment">//</span>
-<span class="comment">//    http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="comment">//</span>
-<span class="comment">// Unless required by applicable law or agreed to in writing, software</span>
-<span class="comment">// distributed under the License is distributed on an ``AS IS'' BASIS,</span>
-<span class="comment">// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-<span class="comment">// See the License for the specific language governing permissions and</span>
-<span class="comment">// limitations under the License.</span>
-<span class="comment">//</span>
-<span class="comment">// $Revision$</span>
-<span class="comment">// $LastChangedBy$</span>
-<span class="comment">// $LastChangedDate$</span>
-<span class="comment">// $HeadURL$</span>
-<span class="comment">//</span>
-
-<span class="comment">/**
- * <span class="attrib">@fileoverview</span> Fields and methods of the jala.Utilities class.
- */</span>
-
-<span class="comment">// Define the global namespace for Jala modules</span>
-<span class="reserved">if</span> (!global.jala) {
-   global.jala = {};
-}
-
-<span class="comment">/**
- * HelmaLib dependencies
- */</span>
-app.addRepository(<span class="literal">"modules/core/Number.js"</span>);
-
-<span class="comment">/**
- * Construct a utility object.
- * <span class="attrib">@class</span> This class contains various convenience methods
- * which do not fit in any other class.
- * <span class="attrib">@returns</span> A new utitilty object.
- * <span class="attrib">@constructor</span>
- */</span>
-jala.Utilities = <span class="reserved">function</span>() {
-   <span class="reserved">return</span> <span class="reserved">this</span>;
-};
-
-<span class="comment">/**
- * Return a string representation of the utitility class.
- * <span class="attrib">@returns</span> [jala.Utilities]
- * <span class="attrib">@type</span> String
- * <span class="attrib">@ignore</span> FIXME: JSDoc bug
- */</span>
-jala.Utilities.toString = <span class="reserved">function</span>() {
-   <span class="reserved">return</span> <span class="literal">"[jala.Utilities]"</span>;
-};
-
-<span class="comment">/**
- * Return a string representation of the utitility object.
- * <span class="attrib">@returns</span> [jala.Utilities Object]
- * <span class="attrib">@type</span> String
- */</span>
-jala.Utilities.<span class="reserved">prototype</span>.toString = <span class="reserved">function</span>() {
-   <span class="reserved">return</span> <span class="literal">"[jala.Utilities Object]"</span>;
-};
-
-<span class="comment">/**
- * Default utility class instance.
- * <span class="attrib">@type</span> jala.Utilities
- * <span class="attrib">@final</span>
- */</span>
-jala.util = new jala.Utilities();
-
-<span class="comment">/**
- * Creates a random password with different levels of security.
- * <span class="attrib">@param</span> {Number} len The length of the password (default: 8)
- * <span class="attrib">@param</span> {Number} level The security level
- * &lt;ul&gt;
- * &lt;li&gt;0 - containing only vowels or consonants (default)&lt;/li&gt;
- * &lt;li&gt;1 - throws in a number at random position&lt;/li&gt;
- * &lt;li&gt;2 - throws in a number and a special character at random position&lt;/li&gt;
- * &lt;/ul&gt;
- * <span class="attrib">@returns</span> The resulting password
- * <span class="attrib">@type</span> String
- */</span>
-jala.Utilities.<span class="reserved">prototype</span>.createPassword = <span class="reserved">function</span>(len, level) {
-   len = len || 8;
-   level = level || 0;
-
-   var LETTERSONLY  = 0;
-   var WITHNUMBERS  = 1;
-   var WITHSPECIALS = 2;
-   
-   var vowels     = [<span class="literal">'a'</span>, <span class="literal">'e'</span>, <span class="literal">'i'</span>, <span class="literal">'o'</span>, <span class="literal">'u'</span>];
-   var consonants = [<span class="literal">'b'</span>, <span class="literal">'c'</span>, <span class="literal">'d'</span>, <span class="literal">'f'</span>, <span class="literal">'g'</span>, <span class="literal">'h'</span>, <span class="literal">'j'</span>, <span class="literal">'k'</span>, <span class="literal">'l'</span>, <span class="literal">'m'</span>, <span class="literal">'n'</span>, <span class="literal">'p'</span>, <span class="literal">'q'</span>, <span class="literal">'r'</span>, <span class="literal">'s'</span>, <span class="literal">'t'</span>, <span class="literal">'v'</span>, <span class="literal">'w'</span>, <span class="literal">'x'</span>, <span class="literal">'y'</span>, <span class="literal">'z'</span>];
-   var specials   = [<span class="literal">'.'</span>, <span class="literal">'#'</span>, <span class="literal">'!'</span>, <span class="literal">'$'</span>, <span class="literal">'%'</span>, <span class="literal">'&amp;'</span>, <span class="literal">'?'</span>];
-
-   var posNum     = level &gt; LETTERSONLY ? Math.floor(Math.random() * (len - 2)) : -1;
-   var posSpecial = level &gt; WITHNUMBERS ? Math.floor(Math.random() * (len - 3)) : -2;
-   <span class="reserved">if</span> (posNum == posSpecial) {
-      posSpecial += 1;
-   }
-
-   res.push();
-   <span class="comment">// loop to create characters:</span>
-   var i, rnd;
-   <span class="reserved">for</span> (i=0; i&lt;(len-level); i+=1) {
-      <span class="reserved">if</span>(i % 2 == 0) {
-         <span class="comment">// every 2nd one is a vowel</span>
-         rnd = Math.floor(Math.random() * vowels.length);
-         res.write(vowels[rnd]);
-      } <span class="reserved">else</span> {
-         <span class="comment">// every 2nd one is a consonant</span>
-         rnd = Math.floor(Math.random() * consonants.length);
-         res.write(consonants[rnd]);
-      }
-      <span class="reserved">if</span> (i == posNum) {
-         <span class="comment">// increased password security:</span>
-         <span class="comment">// throw in a number at random</span>
-         rnd = Math.floor(Math.random() * specials.length);
-         res.write(String(rnd + 1));
-      }
-      <span class="reserved">if</span> (i == posSpecial) {
-         <span class="comment">// increased password security:</span>
-         <span class="comment">// throw in a number at random</span>
-         rnd = Math.floor(Math.random() * specials.length);
-         res.write(specials[rnd]);
-      }
-   }
-   <span class="reserved">return</span> res.pop();
-};
-
-<span class="comment">/**
- * Static field indicating a removed object property.
- * <span class="attrib">@type</span> Number
- * <span class="attrib">@final</span>
- */</span>
-jala.Utilities.VALUE_REMOVED = -1;
-
-<span class="comment">/**
- * Static field indicating ad added object property.
- * <span class="attrib">@type</span> Number
- * <span class="attrib">@final</span>
- */</span>
-jala.Utilities.VALUE_ADDED = 1;
-
-<span class="comment">/**
- * Static field indicating a modified object property.
- * <span class="attrib">@type</span> Number
- * <span class="attrib">@final</span>
- */</span>
-jala.Utilities.VALUE_MODIFIED = 2;
-
-<span class="comment">/**
- * Returns an array containing the properties that are 
- * added, removed or modified in one object compared to another.
- * <span class="attrib">@param</span> {Object} obj1 The first of two objects which should be compared
- * <span class="attrib">@param</span> {Object} obj2 The second of two objects which should be compared
- * <span class="attrib">@returns</span> An Object containing all properties that are added, removed
- * or modified in the second object compared to the first. 
- * Each property contains a status field with an integer value 
- * which can be checked against the static jala.Utility fields 
- * VALUE_ADDED, VALUE_MODIFIED and VALUE_REMOVED.
- * <span class="attrib">@type</span> Object
- */</span>
-jala.Utilities.<span class="reserved">prototype</span>.diffObjects = <span class="reserved">function</span>(obj1, obj2) {
-   var childDiff, value1, value2;
-   var diff = {};
-   var foundDiff = false;
-
-   <span class="reserved">for</span> (var propName in obj1) {
-      <span class="reserved">if</span> (obj2[propName] === undefined || obj2[propName] === <span class="literal">""</span> || obj2[propName] === null) {
-         diff[propName] = {status: jala.Utilities.VALUE_REMOVED};
-         foundDiff = true;
-      }
-   }
-   <span class="reserved">for</span> (var propName in obj2) {
-      value1 = obj1[propName];
-      value2 = obj2[propName];
-      switch (value2.constructor) {
-         case HopObject:
-         case Object:
-            <span class="reserved">if</span> (childDiff = Jala.Utility.<span class="reserved">prototype</span>.diffObjects(value1, value2)) {
-               diff[propName] = childDiff;
-               foundDiff = true;
-            }
-            break;
-         default:
-            <span class="reserved">if</span> (value2 != null &amp;&amp; value2 !== <span class="literal">""</span>) {
-               <span class="reserved">if</span> (value1 === null || value1 === undefined || value1 === <span class="literal">""</span>) {
-                  diff[propName] = {status: jala.Utilities.VALUE_ADDED,
-                                    value: value2};
-                  foundDiff = true;
-               } <span class="reserved">else</span> <span class="reserved">if</span> (value1 != value2) {
-                  diff[propName] = {status: jala.Utilities.VALUE_MODIFIED,
-                                    value: value2};
-                  foundDiff = true;
-               }
-            }
-            break;
-      }
-   }
-   <span class="reserved">return</span> foundDiff ? diff : null;
-};
-
-<span class="comment">/**
- * Patches an object with a "diff" object created by the 
- * {<span class="attrib">@link</span> #diffObjects} method.
- * Please mind that this method is recursive, it descends
- * along the "diff" object structure.
- * <span class="attrib">@param</span> {Object} obj The Object the diff should be applied to
- * <span class="attrib">@param</span> {Object} diff A "diff" object created by the {<span class="attrib">@link</span> #diffObjects} method
- * <span class="attrib">@returns</span> The patched Object with all differences applied
- * <span class="attrib">@type</span> Object
- */</span>
-jala.Utilities.<span class="reserved">prototype</span>.patchObject = <span class="reserved">function</span>(obj, diff) {
-   var propDiff, value1;
-   <span class="reserved">for</span> (var propName in diff) {
-      propDiff = diff[propName];
-      value1 = obj[propName];
-      <span class="reserved">if</span> (propDiff.status != null) {
-         switch (propDiff.status) {
-            case jala.Utilities.VALUE_REMOVED:
-               <span class="comment">// app.debug("applyDiff(): removing property " + propName);</span>
-               delete obj[propName];
-               break;
-            case jala.Utilities.VALUE_ADDED:
-            case jala.Utilities.VALUE_MODIFIED:
-            default:
-               <span class="comment">// app.debug("applyDiff(): changing property " + propName + " to " + propDiff.value);</span>
-               obj[propName] = propDiff.value;
-               break;
-         }
-      } <span class="reserved">else</span> {
-         <span class="comment">// app.debug("applyDiff(): descending to child object " + propName);</span>
-         jala.Utilities.patchObject(value1, propDiff);
-      }
-   }
-   <span class="reserved">return</span> obj;
-};
-</pre>
-	<hr>
-
 
 
 <!-- ========== START OF NAVBAR ========== -->
@@ -377,7 +133,7 @@ jala.Utilities.<span class="reserved">prototype</span>.patchObject = <span class
 </table>
 </td>
 <td bgcolor="#EEEEFF" align="right" valign="top"><em>
-<b>Jala 1.0</b></em>
+<b>Jala 1.2</b></em>
 </td>
 </tr>
 
@@ -408,6 +164,6 @@ jala.Utilities.<span class="reserved">prototype</span>.patchObject = <span class
 <font size="-1">
 
 </font>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed Apr  4 17:06:49 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
 </body>
 </html>

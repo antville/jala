@@ -3,14 +3,14 @@
 <HTML>
 <HEAD>
 <TITLE>
-jala.HtmlDocument
+jala.Form.Component.Button
 </TITLE>
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <SCRIPT>
 function asd()
 {
-parent.document.title="jala.HtmlDocument";
+parent.document.title="jala.Form.Component.Button";
 }
 </SCRIPT>
 <BODY BGCOLOR="white" onload="asd();">
@@ -24,7 +24,7 @@ parent.document.title="jala.HtmlDocument";
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-HtmlDocument.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -41,13 +41,13 @@ parent.document.title="jala.HtmlDocument";
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.History.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.I18n.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Checkbox.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.HtmlDocument.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Button.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
@@ -72,28 +72,37 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <HR>
 
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>Class jala.HtmlDocument</H2>
+<H2>Class jala.Form.Component.Button</H2>
 <PRE>Object
    |
-   +--<b>jala.HtmlDocument</b>
+   +--<a href='jala.Form.Component.Input.html'>jala.Form.Component.Input</a>
+         |
+         +--<b>jala.Form.Component.Button</b>
 </PRE>
+
+   <DL>
+   <DT>
+      <B>Direct Known Subclasses:</B> 
+      <DD>
+                <a href="jala.Form.Component.Submit.html">jala.Form.Component.Submit</a>
+      </DD>
+   </DL>
 
 
 <HR>
 <DL>
    <!-- Class definition -->
    <DT>class 
-   <B>jala.HtmlDocument</B>
+   <B>jala.Form.Component.Button</B>
+   
+      <DT>extends <a href='jala.Form.Component.Input.html'>jala.Form.Component.Input</a> 
    
 
 </DL>
    
    <P>
-   <BR/>This class provides easy access to the elements of
- an arbitrary HTML document. By using TagSoup, Dom4J and Jaxen
- even invalid HTML can be parsed, turned into an object tree
- and easily be processed with XPath expressions.
- <BR/><I>Defined in <a href='overview-summary-HtmlDocument.js.html'>HtmlDocument.js</a></I><BR/><BR/>
+   <BR/>Subclass of jala.Form.Component.Input which renders a button.
+ <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
    </P>
    
    <HR>
@@ -123,13 +132,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD>
       <CODE>
 	 <B>
-	    <A HREF="jala.HtmlDocument.html#jala.HtmlDocument()">jala.HtmlDocument</A> 
+	    <A HREF="jala.Form.Component.Button.html#jala.Form.Component.Button()">jala.Form.Component.Button</A> 
 	 </B>
-	 (&lt;String&gt; source)
+	 (&lt;String&gt; name)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Construct a new HTML document.
+      Creates a new Button component instance
       </TD>
 </TR>
 </TABLE>
@@ -151,68 +160,34 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
+	    <CODE>&nbsp;void</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getAll">getAll</A></B>(&lt;String&gt; elementName)
+	       <A HREF="#render">render</A></B>(&lt;Object&gt; attr, &lt;Object&gt; value, &lt;Object&gt; reqData)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Retrieves all elements by name from the document.
+	 Renders a button to the response.
       </TD>
    </TR>
 
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
+	    <CODE>&nbsp;Object</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getLinks">getLinks</A></B>()
+	       <A HREF="#renderControls">renderControls</A></B>(attr, value)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get all link elements of the HTML document.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;org.dom4j.tree.DefaultElement</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#scrape">scrape</A></B>(&lt;String&gt; xpathExpr)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get all document nodes from an XPath expression.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;String</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#toString">toString</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Get a string representation of the HTML document.
+	 Creates a new attribute object for this button.
       </TD>
    </TR>
 
@@ -220,6 +195,20 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 </TABLE>
 
 
+
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TD><B>Methods inherited from class <a href="jala.Form.Component.Input.html">jala.Form.Component.Input</a></B></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>
+<!-- Inherited methods -->
+<a href="jala.Form.Component.Input.html#validate">validate</a>, <a href="jala.Form.Component.Input.html#save">save</a>, <a href="jala.Form.Component.Input.html#getValue">getValue</a>, <a href="jala.Form.Component.Input.html#setValue">setValue</a>, <a href="jala.Form.Component.Input.html#renderError">renderError</a>, <a href="jala.Form.Component.Input.html#renderLabel">renderLabel</a>, <a href="jala.Form.Component.Input.html#renderHelp">renderHelp</a>, <a href="jala.Form.Component.Input.html#render_macro">render_macro</a>, <a href="jala.Form.Component.Input.html#controls_macro">controls_macro</a>, <a href="jala.Form.Component.Input.html#error_macro">error_macro</a>, <a href="jala.Form.Component.Input.html#label_macro">label_macro</a>, <a href="jala.Form.Component.Input.html#help_macro">help_macro</a>, <a href="jala.Form.Component.Input.html#id_macro">id_macro</a>, <a href="jala.Form.Component.Input.html#name_macro">name_macro</a>, <a href="jala.Form.Component.Input.html#type_macro">type_macro</a>, <a href="jala.Form.Component.Input.html#class_macro">class_macro</a>, <a href="jala.Form.Component.Input.html#getControlAttributes">getControlAttributes</a>, <a href="jala.Form.Component.Input.html#checkLength">checkLength</a>, <a href="jala.Form.Component.Input.html#checkRequirements">checkRequirements</a>, <a href="jala.Form.Component.Input.html#parseValue">parseValue</a>
+</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
 
 <P>
 <!-- ========== END METHOD SUMMARY =========== -->
@@ -241,13 +230,13 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TR>
 </TABLE>
 
-<A NAME="jala.HtmlDocument()"><!-- --></A><H3>
-jala.HtmlDocument</H3>
-<PRE><B>jala.HtmlDocument</B>(&lt;String&gt; source)</PRE>
+<A NAME="jala.Form.Component.Button()"><!-- --></A><H3>
+jala.Form.Component.Button</H3>
+<PRE><B>jala.Form.Component.Button</B>(&lt;String&gt; name)</PRE>
 
 
 <UL>
-   Construct a new HTML document.
+   Creates a new Button component instance
 </UL>
 
 
@@ -255,7 +244,7 @@ jala.HtmlDocument</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>source</CODE> -  The HTML source code.  
+     <UL><CODE>name</CODE> -  Name of the component, used as name of the html controls.  
      </UL>
    
    
@@ -267,7 +256,7 @@ jala.HtmlDocument</H3>
    <UL>
    <B>Returns:</B>
      <UL>
-     A new HTML document.   
+     A newly created Button component   
      </UL>
    </UL>
 
@@ -294,13 +283,11 @@ jala.HtmlDocument</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="getAll"><!-- --></A>
-   <H3>getAll</H3>
-   <PRE>Array <B>getAll</B>(&lt;String&gt; elementName)</PRE>
+   <A NAME="render"><!-- --></A>
+   <H3>render</H3>
+   <PRE>void <B>render</B>(&lt;Object&gt; attr, &lt;Object&gt; value, &lt;Object&gt; reqData)</PRE>
    
-      <UL>Retrieves all elements by name from the document.
- The returned object structure is compatible for usage
- in <a href="jala.XmlWriter.html#">jala.XmlWriter</a>.</UL>
+      <UL>Renders a button to the response.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -308,7 +295,13 @@ jala.HtmlDocument</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>elementName</CODE> -  The name of the desired element  
+     <UL><CODE>attr</CODE> -  Basic attributes for this element.  
+      </UL> 
+   
+     <UL><CODE>value</CODE> -  Value to be used for rendering this element.  
+      </UL> 
+   
+     <UL><CODE>reqData</CODE> -  Request data for the whole form. This argument is        passed only if the form is re-rendered after an error occured.    
       </UL> 
    
    </UL>
@@ -316,24 +309,17 @@ jala.HtmlDocument</H3>
    <!-- METHOD PARAMETERS END -->
 
    
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The list of available elements in the document   
-        </UL>
-   </UL>
-   
 
    <!-- ADDITIONAL ATTRIBUTES START -->
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="getLinks"><!-- --></A>
-   <H3>getLinks</H3>
-   <PRE>Array <B>getLinks</B>()</PRE>
+   <A NAME="renderControls"><!-- --></A>
+   <H3>renderControls</H3>
+   <PRE>Object <B>renderControls</B>(attr, value)</PRE>
    
-      <UL>Get all link elements of the HTML document.</UL>
+      <UL>Creates a new attribute object for this button.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -344,65 +330,7 @@ jala.HtmlDocument</H3>
    <UL>
    <B>Returns:</B>
         <UL>
-        A list of link elements.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="scrape"><!-- --></A>
-   <H3>scrape</H3>
-   <PRE>org.dom4j.tree.DefaultElement <B>scrape</B>(&lt;String&gt; xpathExpr)</PRE>
-   
-      <UL>Get all document nodes from an XPath expression.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>xpathExpr</CODE> -  An XPath expression.  
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        A list of HTML elements.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="toString"><!-- --></A>
-   <H3>toString</H3>
-   <PRE>String <B>toString</B>()</PRE>
-   
-      <UL>Get a string representation of the HTML document.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        A string representation of the HTML document.   
+        Object with all attributes set for this button.   
         </UL>
    </UL>
    
@@ -427,7 +355,7 @@ jala.HtmlDocument</H3>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-HtmlDocument.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -444,13 +372,13 @@ jala.HtmlDocument</H3>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="jala.History.html"><B>PREV CLASS</B></A><!-- 
+&nbsp;<A HREF="jala.Form.Component.html"><B>PREV CLASS</B></A><!-- 
    NEXT CLASS 
 -->
-&nbsp;<A HREF="jala.I18n.html"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="jala.Form.Component.Checkbox.html"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="index.html" TARGET="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="jala.HtmlDocument.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="jala.Form.Component.Button.html" TARGET="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;
 <SCRIPT>
   <!--
