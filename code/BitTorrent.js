@@ -59,8 +59,7 @@ jala.BitTorrent = function(filePath, trackerUrl) {
    var torrent, sourceFile, torrentFile;
    var pieceLength = 256;
 
-   /** @ignore */
-   function updateTorrent() {
+   var updateTorrent = function() {
       if (torrent.info) {
          return torrent;
       }
@@ -101,7 +100,7 @@ jala.BitTorrent = function(filePath, trackerUrl) {
       };
       
       return torrent;
-   }
+   };
    
    /**
     * Get all available property names.
