@@ -33,6 +33,7 @@ var tests = [
 
 /**
  * A simple test of jala.BitTorrent.
+ * FIXME: Needs resolution of issue #33
  */
 var testBitTorrent = function() {
    var size = 1024 * 1024; // 1 meg
@@ -55,9 +56,14 @@ var testBitTorrent = function() {
    torrent.save();
    file["delete"]();
 
-   var torrentFile = torrent.getTorrentFile();
-   var refFile = new helma.File(jala.Test.getTestFile("1meg.reference.torrent"));
-   assertEqual(torrentFile.readAll().trim(), refFile.readAll().trim());
-   torrentFile.remove();
+   try {
+      var torrentFile = torrent.getTorrentFile();
+      var refFile = new helma.File(jala.Test.getTestFile("1meg.reference.torrent"));
+      assertEqual(torrentFile.readAll().trim(), refFile.readAll().trim());
+   } catch (x) {
+      throw(x);
+   } finally {
+      torrentFile.remove();
+   }
    return;
 };
