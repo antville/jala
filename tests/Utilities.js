@@ -70,9 +70,9 @@ var testDiffObjects = function() {
    assertNotNull(diff.b);
    assertNotNull(diff.c);
 
-   assertEqual(diff.a.value, 2);
+   assertEqual(diff.a.value, o2.a);
    assertUndefined(diff.b.value);
-   assertEqual(diff.c.value, 3);
+   assertEqual(diff.c.value, o2.c);
 
    assertEqual(diff.a.status, jala.Utilities.VALUE_MODIFIED);
    assertEqual(diff.b.status, jala.Utilities.VALUE_REMOVED);
