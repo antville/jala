@@ -178,27 +178,32 @@ jala.Utilities.prototype.diffObjects = function(obj1, obj2) {
    for (var propName in obj2) {
       value1 = obj1[propName];
       value2 = obj2[propName];
-      switch (value2.constructor) {
-         case HopObject:
-         case Object:
-            if (childDiff = this.diffObjects(value1, value2)) {
-               diff[propName] = childDiff;
-               foundDiff = true;
-            }
-            break;
-         default:
-            if (value2 != null && value2 !== "") {
-               if (value1 === null || value1 === undefined || value1 === "") {
-                  diff[propName] = {status: jala.Utilities.VALUE_ADDED,
-                                    value: value2};
-                  foundDiff = true;
-               } else if (value1 != value2) {
-                  diff[propName] = {status: jala.Utilities.VALUE_MODIFIED,
-                                    value: value2};
+      if (value1 == null) {
+         diff[propName] = {status: jala.Utilities.VALUE_ADDED,
+                           value: value2};
+      } else {
+         switch (value2.constructor) {
+            case HopObject:
+            case Object:
+               if (childDiff = this.diffObjects(value1, value2)) {
+                  diff[propName] = childDiff;
                   foundDiff = true;
                }
-            }
-            break;
+               break;
+            default:
+               if (value2 != null && value2 !== "") {
+                  if (value1 === null || value1 === undefined || value1 === "") {
+                     diff[propName] = {status: jala.Utilities.VALUE_ADDED,
+                                       value: value2};
+                     foundDiff = true;
+                  } else if (value1 != value2) {
+                     diff[propName] = {status: jala.Utilities.VALUE_MODIFIED,
+                                       value: value2};
+                     foundDiff = true;
+                  }
+               }
+               break;
+         }
       }
    }
    return foundDiff ? diff : null;

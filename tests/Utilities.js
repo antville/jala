@@ -48,8 +48,9 @@ var testCreatePassword = function() {
    return;
 };
 
-var o1 = {a: 1, b: 2, d: 4};
-var o2 = {a: 2, c: 3, d: 4};
+var o1 = {a: 1, b: 2, d: 4, e: {f: 6, g: 7}, h: {i: 9}};
+var o2 = {a: 2, c: 3, d: 4, e: {f: 7, h: 8}, i: {j: 10}};
+
 var diff = jala.util.diffObjects(o1, o2);
 
 /**
@@ -76,6 +77,11 @@ var testDiffObjects = function() {
    assertEqual(diff.a.status, jala.Utilities.VALUE_MODIFIED);
    assertEqual(diff.b.status, jala.Utilities.VALUE_REMOVED);
    assertEqual(diff.c.status, jala.Utilities.VALUE_ADDED);
+   assertEqual(diff.e.f.status, jala.Utilities.VALUE_MODIFIED);
+   assertEqual(diff.e.g.status, jala.Utilities.VALUE_REMOVED);
+   assertEqual(diff.e.h.status, jala.Utilities.VALUE_ADDED);
+   assertEqual(diff.h.status, jala.Utilities.VALUE_REMOVED);
+   assertEqual(diff.i.status, jala.Utilities.VALUE_ADDED);
    return;
 };
 
@@ -98,8 +104,14 @@ var testPatchObject = function() {
    assertNotNull(o1.c);
    assertNotNull(o1.d);
 
-   assertEqual(o1.a, 2);
-   assertEqual(o1.c, 3);
-   assertEqual(o1.d, 4);
+   assertEqual(o1.a, o2.a);
+   assertEqual(o1.c, o2.c);
+   assertEqual(o1.d, o2.d);
+
+   assertEqual(o1.e.f, o2.e.f);
+   assertUndefined(o1.e.g);
+   assertEqual(o1.e.h, o2.e.h);
+   assertUndefined(o1.h);
+   assertEqual(o1.i.j, o2.i.j);
    return;
 };
