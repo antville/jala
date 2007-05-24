@@ -181,7 +181,7 @@ jala.Utilities.prototype.diffObjects = function(obj1, obj2) {
       switch (value2.constructor) {
          case HopObject:
          case Object:
-            if (childDiff = Jala.Utility.prototype.diffObjects(value1, value2)) {
+            if (childDiff = this.diffObjects(value1, value2)) {
                diff[propName] = childDiff;
                foundDiff = true;
             }
@@ -234,7 +234,7 @@ jala.Utilities.prototype.patchObject = function(obj, diff) {
          }
       } else {
          // app.debug("applyDiff(): descending to child object " + propName);
-         jala.Utilities.patchObject(value1, propDiff);
+         this.patchObject(value1, propDiff);
       }
    }
    return obj;
