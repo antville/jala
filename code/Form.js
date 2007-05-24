@@ -2250,7 +2250,7 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
  * @constructor
  */
 // FIXME: see below
-/*jala.Form.Component.Image = function() {};*/
+jala.Form.Component.Image = function() {};
 
 /**
  * @ignore
@@ -2261,17 +2261,12 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
  * is executed seems to solve this problem and could be used
  * as a work-around for similar issues.
  */
-/*jala.Form.Component.Image = (function() {
+jala.Form.Component.Image = (function() {
    return function Image(name) {
       jala.Form.Component.Image.superConstructor.apply(this, arguments);
       return this;
    };
-})();*/
-
-jala.Form.Component.Image = function Image(name) {
-   jala.Form.Component.Image.superConstructor.apply(this, arguments);
-   return this;
-};
+})();
 
 // extend jala.Form.Component.File
 jala.Form.extend(jala.Form.Component.Image, jala.Form.Component.File);
