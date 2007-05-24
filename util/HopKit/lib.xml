@@ -47,25 +47,9 @@
 
 
    <!-- =================================================================== -->
-   <!-- Create documentation with jsdoc.pl                                  -->
-   <!-- =================================================================== -->
-   <target name="jsdoc">
-      <echo message="Creating JavaScript docs with JSDoc on ${user.dir}" />
-      <property name="jsdoc.projectName" value="" />
-      <input message="Destination directory (docs):"
-               addproperty="jsdoc.destination" defaultvalue="docs" />
-      <property name="src" value="${user.dir}" />
-      <property name="dest" value="${user.dir}/${jsdoc.destination}" />
-      <jsdoc name="${jsdoc.projectName}" srcdir="${src}" destdir="${dest}">
-         <fileset dir="${src}" includes="**/*.js" />
-      </jsdoc>
-   </target>
-
-
-   <!-- =================================================================== -->
    <!-- Create documentation for a Helma application with jsdoc.pl          -->
    <!-- =================================================================== -->
-   <target name="docs">
+   <target name="hopdoc">
       <input message="Directory containing the application code (./code):"
                addproperty="docs.source" defaultvalue="./code" />
       <input message="Destination directory for the documentation (./docs):"
@@ -77,8 +61,29 @@
    	<property name="destdir" location="${docs.destination}" />
    	<mkdir dir="${work}" />
       <helmadoc srcdir="${srcdir}"
-               destdir="${destdir}"
-               projectName="${docs.projectName}" />
+             	 destdir="${destdir}"
+             	 projectName="${docs.projectName}" />
+      <delete dir="${work}" />
+   </target>
+
+
+   <!-- =================================================================== -->
+   <!-- Create documentation with jsdoc.pl                                  -->
+   <!-- =================================================================== -->
+   <target name="docs">
+      <input message="Directory containing the code (./code):"
+               addproperty="docs.source" defaultvalue="./code" />
+      <input message="Destination directory for the documentation (./docs):"
+               addproperty="docs.destination" defaultvalue="./docs" />
+      <input message="Name of the project:"
+               addproperty="docs.projectName" defaultvalue="" />
+   	<!-- convert inputs to absolute paths -->
+   	<property name="srcdir" location="${docs.source}" />
+   	<property name="destdir" location="${docs.destination}" />
+   	<mkdir dir="${work}" />
+      <jsdoc srcdir="${srcdir}"
+             destdir="${destdir}"
+             projectName="${docs.projectName}" />
       <delete dir="${work}" />
    </target>
 
@@ -132,25 +137,36 @@
    <!-- Create documentation with jsdoc.pl                                  -->
    <!-- =================================================================== -->
    <macrodef name="jsdoc">
-      <attribute name="destdir" />
-      <attribute name="name" />
    	<attribute name="srcdir" />
-      <element name="filesetEl" implicit="true" />
+      <attribute name="destdir" />
+      <attribute name="projectName" />
       <sequential>
-         <path id="filepath">
-            <filesetEl />
-         </path>
-         <pathconvert pathsep=" " property="sourceFiles" refid="filepath" />
-         <echo message="sourcefiles: ${sourceFiles}" />
+         <echo message="Generating JSDoc API documentation for @{srcdir}" />
+         <property name="workJSdoc" value="${work}/jsdoc-worker" />
+         <mkdir dir="${workJSdoc}" />
+         <copy todir="${workJSdoc}">
+            <fileset dir="@{srcdir}">
+               <exclude name=".svn/**" />
+               <include name="**/*.js" />
+            </fileset>
+         </copy>
          <mkdir dir="@{destdir}" />
          <exec executable="perl">
             <arg value="${env.BUILD_HOME}/JSDoc/jsdoc.pl" />
             <arg value="--template-dir=${env.BUILD_HOME}/JSDoc/templates" />
             <arg value="-d=@{destdir}" />
-            <arg value="--project-name=@{name}" />
+            <arg value="--extensions=js" />
+            <arg value="--no-sources" />
+            <arg value="--recursive" />
+            <arg value="--quiet" />
+            <arg value="--package-naming" />
+            <arg value="--project-name=@{projectName}" />
             <arg value="--project-summary=@{srcdir}/.jsdoc/summary.html" />
-         	<arg line="${sourceFiles}" />
+            <arg value="--globals-name=Global" />
+         	<arg value="${workJSdoc}" />
          </exec>
+      
+         <delete dir="${workJSdoc}" />
       </sequential>
    </macrodef>
 
