@@ -2249,11 +2249,30 @@ jala.Form.Component.File.prototype.checkRequirements = function(reqData) {
  * @returns A newly created Image component
  * @constructor
  */
+// FIXME: see below
+/*jala.Form.Component.Image = function() {};*/
+
+/**
+ * @ignore
+ * FIXME: JSDoc has some sever problems with this class.
+ * It's somehow due to the named method ("Image") that it
+ * always appears as global static object.
+ * Wrapping the method in another function which immediately
+ * is executed seems to solve this problem and could be used
+ * as a work-around for similar issues.
+ */
+/*jala.Form.Component.Image = (function() {
+   return function Image(name) {
+      jala.Form.Component.Image.superConstructor.apply(this, arguments);
+      return this;
+   };
+})();*/
+
 jala.Form.Component.Image = function Image(name) {
    jala.Form.Component.Image.superConstructor.apply(this, arguments);
-   
    return this;
 };
+
 // extend jala.Form.Component.File
 jala.Form.extend(jala.Form.Component.Image, jala.Form.Component.File);
 
