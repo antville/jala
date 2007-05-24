@@ -34,7 +34,7 @@
  * @returns True if the value is a string, false otherwise
  * @type Boolean
  */
-var isString = function(val) {
+function isString(val) {
    return typeof(val) == "string" ||
              val instanceof java.lang.String ||
              val instanceof String;
@@ -47,7 +47,7 @@ var isString = function(val) {
  * @returns True if the value is a boolean, false otherwise
  * @type Boolean
  */
-var isBoolean = function(val) {
+function isBoolean(val) {
    return typeof(val) == "boolean" ||
              val instanceof Boolean;
 };
@@ -59,7 +59,7 @@ var isBoolean = function(val) {
  * @returns True if the value is a number, false otherwise
  * @type Boolean
  */
-var isNumber = function(val) {
+function isNumber(val) {
    return typeof(val) == "number" ||
              val instanceof java.lang.Number ||
              val instanceof Number;
@@ -71,7 +71,7 @@ var isNumber = function(val) {
  * @returns True if the value is null, false otherwise
  * @type Boolean
  */
-var isNull = function(val) {
+function isNull(val) {
    return val === null;
 };
 
@@ -81,7 +81,7 @@ var isNull = function(val) {
  * @returns True if the value is undefined, false otherwise
  * @type Boolean
  */
-var isUndefined = function(val) {
+function isUndefined(val) {
    return val === undefined;
 };
 
@@ -91,7 +91,7 @@ var isUndefined = function(val) {
  * @returns True if the value is an array, false otherwise
  * @type Boolean
  */
-var isArray = function(val) {
+function isArray(val) {
    return val instanceof Array;
 };
 
@@ -102,7 +102,7 @@ var isArray = function(val) {
  * @returns True if the value is a date, false otherwise
  * @type Boolean
  */
-var isDate = function(val) {
+function isDate(val) {
    return val instanceof Date ||
              val instanceof java.util.Date;
 };
@@ -114,7 +114,7 @@ var isDate = function(val) {
  * @returns True if the value is an object, false otherwise
  * @type Boolean
  */
-var isObject = function(val) {
+function isObject(val) {
    return val instanceof Object ||
              val instanceof java.lang.Object;
 };
@@ -125,6 +125,6 @@ var isObject = function(val) {
  * @returns True if the argument is a function, false otherwise
  * @type Boolean
  */
-var isFunction = function(val) {
+function isFunction(val) {
    return val instanceof Function;
 };
