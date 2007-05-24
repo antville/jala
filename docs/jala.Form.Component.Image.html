@@ -24,7 +24,7 @@ parent.document.title="jala.Form.Component.Image";
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"> <FONT CLASS="NavBarFont1">File</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">&nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -75,7 +75,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <H2>Class jala.Form.Component.Image</H2>
 <PRE>Object
    |
-   +--<b>jala.Form.Component.Image</b>
+   +--<a href='jala.Form.Component.Input.html'>jala.Form.Component.Input</a>
+         |
+         +--<a href='jala.Form.Component.File.html'>jala.Form.Component.File</a>
+               |
+               +--<b>jala.Form.Component.Image</b>
 </PRE>
 
 
@@ -85,8 +89,16 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <DT>class 
    <B>jala.Form.Component.Image</B>
    
+      <DT>extends <a href='jala.Form.Component.File.html'>jala.Form.Component.File</a> 
+   
 
 </DL>
+   
+   <P>
+   <BR/>Subclass of jala.Form.Component.File which renders a file upload
+ and validates uploaded files as images.
+ <BR/><I>Defined in <a href='overview-summary-Form.js.html'>Form.js</a></I><BR/><BR/>
+   </P>
    
    <HR>
 
@@ -104,6 +116,27 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD>
+      <CODE>
+	 <B>
+	    <A HREF="jala.Form.Component.Image.html#jala.Form.Component.Image()">jala.Form.Component.Image</A> 
+	 </B>
+	 ()
+      </CODE>
+      <BR>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      Creates a new Image component instance
+      </TD>
+</TR>
+</TABLE>
 
 <!-- ======== END CONSTRUCTOR SUMMARY ======== -->
 
@@ -142,6 +175,34 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 
 
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TD><B>Methods inherited from class <a href="jala.Form.Component.File.html">jala.Form.Component.File</a></B></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>
+<!-- Inherited methods -->
+<a href="jala.Form.Component.File.html#renderControls">renderControls</a>
+</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TD><B>Methods inherited from class <a href="jala.Form.Component.Input.html">jala.Form.Component.Input</a></B></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>
+<!-- Inherited methods -->
+<a href="jala.Form.Component.Input.html#validate">validate</a>, <a href="jala.Form.Component.Input.html#save">save</a>, <a href="jala.Form.Component.Input.html#getValue">getValue</a>, <a href="jala.Form.Component.Input.html#setValue">setValue</a>, <a href="jala.Form.Component.Input.html#render">render</a>, <a href="jala.Form.Component.Input.html#renderError">renderError</a>, <a href="jala.Form.Component.Input.html#renderLabel">renderLabel</a>, <a href="jala.Form.Component.Input.html#renderHelp">renderHelp</a>, <a href="jala.Form.Component.Input.html#render_macro">render_macro</a>, <a href="jala.Form.Component.Input.html#controls_macro">controls_macro</a>, <a href="jala.Form.Component.Input.html#error_macro">error_macro</a>, <a href="jala.Form.Component.Input.html#label_macro">label_macro</a>, <a href="jala.Form.Component.Input.html#help_macro">help_macro</a>, <a href="jala.Form.Component.Input.html#id_macro">id_macro</a>, <a href="jala.Form.Component.Input.html#name_macro">name_macro</a>, <a href="jala.Form.Component.Input.html#type_macro">type_macro</a>, <a href="jala.Form.Component.Input.html#class_macro">class_macro</a>, <a href="jala.Form.Component.Input.html#getControlAttributes">getControlAttributes</a>, <a href="jala.Form.Component.Input.html#checkLength">checkLength</a>, <a href="jala.Form.Component.Input.html#parseValue">parseValue</a>
+</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
 <P>
 <!-- ========== END METHOD SUMMARY =========== -->
 
@@ -153,8 +214,44 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
     <!-- ========= CONSTRUCTOR DETAIL START ======== -->
 
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+   <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+      <TD COLSPAN=1>
+      <FONT SIZE="+2"><B>Constructor Detail</B></FONT>
+      </TD>
+   </TR>
+</TABLE>
+
+<A NAME="jala.Form.Component.Image()"><!-- --></A><H3>
+jala.Form.Component.Image</H3>
+<PRE><B>jala.Form.Component.Image</B>()</PRE>
+
+
+<UL>
+   Creates a new Image component instance
+</UL>
+
+
+
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>name</CODE> -  Name of the component, used as name of the html controls.  
+     </UL>
+   
+   
+   </UL>
+
 
 <!-- Constructor return value(s) -->
+
+   <UL>
+   <B>Returns:</B>
+     <UL>
+     A newly created Image component   
+     </UL>
+   </UL>
 
 <!-- End constructor return value(s) -->
 
@@ -223,7 +320,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
   <TR ALIGN="center" VALIGN="top">
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"> <FONT CLASS="NavBarFont1">File</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">  <A HREF="overview-summary-Form.js.html"><FONT CLASS="NavBarFont1"><B>File</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="overview-tree.html"><FONT CLASS="NavBarFont1"><b>Tree</b></FONT></A>&nbsp;</TD>
   <!--TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"-->    <!--A HREF="deprecated-list.html"--><!--FONT CLASS="NavBarFont1">Deprecated</FONT--><!--/A--><!--&nbsp;</TD-->
@@ -274,6 +371,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Wed May 23 18:57:48 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu May 24 13:56:27 2007</div>
 </BODY>
 </HTML>
