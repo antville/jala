@@ -697,6 +697,15 @@ jala.Test.prototype.results_macro = function() {
    return;
 };
 
+/**
+ * Returns the absolute path to the directory containing the tests
+ * @returns The path to the tests directory
+ * @type String
+ */
+jala.Test.prototype.directory_macro = function() {
+   return jala.Test.getTestsDirectory();
+};
+
 
 
 /***********************************************************************
