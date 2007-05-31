@@ -550,7 +550,7 @@ jala.Form.createComponents = function(container, arr) {
  * @type String
  */
 jala.Form.isEmail = function(name, value, reqData, formObj) {
-   if (value && !value.isEmail()) {
+   if (value && !value.trim().isEmail()) {
       return "Please enter a valid email address.";
    }
    return null;
