@@ -1804,12 +1804,8 @@ jala.Form.extend(jala.Form.Component.Textarea, jala.Form.Component.Input);
  */
 jala.Form.Component.Textarea.prototype.renderControls = function(attr, value, reqData) {
    attr.value = (reqData) ? reqData[this.name] : value;
-   if (this.getRows()) {
-      attr.rows = this.getRows();
-   }
-   if (this.getCols()) {
-      attr.cols = this.getCols();
-   }
+   attr.rows = this.getRows() || 5;
+   attr.cols = this.getCols() || 25;
    jala.Form.html.textArea(attr);
    return;
 };
