@@ -1,4 +1,4 @@
-This is the README file for version 1.0 of the Jala Javascript Library.
+This is the README file for version 1.2 of the Jala Javascript Library.
 
 
 About Jala
@@ -42,15 +42,6 @@ name):
 More information about the addRepository method and generally including 
 repositories in a Helma application is available at 
 http://helma.org/stories/77712/.
-
-
-Important note using jala.Mp3Info
----------------------------------
-
-jala.Mp3Info requires the Java package de.ueberdosis.mp3info.ID3Reader. Due to 
-license restrictions you need to manually download the JAR file providing the 
-package from http://www.ueberdosis.de/java/id3.html and install it in Jala's 
-``lib'' directory.
 
 
 Contact, Bugs and Feedback
