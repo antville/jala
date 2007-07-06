@@ -47,8 +47,11 @@ http://helma.org/stories/77712/.
 Contact, Bugs and Feedback
 --------------------------
 
-The Jala Project is currently hosted at https://OpenSVN.csie.org/traccgi/jala/ 
-providing all necessary information about Subversion access, Ticketing, Releases 
-etc.
+The Jala Project is hosted at https://dev.orf.at/jala/ providing all necessary 
+information about Subversion access, Ticketing, Releases etc.
+
+Although we encourage you to post your questions and comments as ticket, we also 
+provide a mailing list for convenience (details at 
+https://dev.orf.at/trac/jala/wiki/MailingList).
 
 For immediate contact you can reach the developers via jaladev AT gmail.com.
