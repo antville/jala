@@ -348,17 +348,18 @@ jala.Mp3.PICTURE_TYPES = ["Other", "32x32 pixels 'file icon' (PNG only)",
  * @final
  */
 jala.Mp3.FIELD_MAPPING = {
-   "album":    ["", "", "TALB", "TALB", "TALB"],
-   "artist":   ["", "", "TPE1", "TPE1", "TPE1"],
-   "comment":  ["", "", "COMM", "COMM", "COMM"],
-   "genre":    ["", "", "TCON", "TCON", "TCON"],
-   "title":    ["", "", "TIT2", "TIT2", "TIT2"],
+   "album":       ["", "", "TALB", "TALB", "TALB"],
+   "artist":      ["", "", "TPE1", "TPE1", "TPE1"],
+   "comment":     ["", "", "COMM", "COMM", "COMM"],
+   "genre":       ["", "", "TCON", "TCON", "TCON"],
+   "title":       ["", "", "TIT2", "TIT2", "TIT2"],
+   "subtitle":    ["", "", "TIT3", "TIT3", "TIT3"],
    "trackNumber": ["", "", "TRCK", "TRCK", "TRCK"],
-   "year":     ["", "", "TYER", "TYER", "TDRC"],
-   "author":   ["", "", "TCOM", "TCOM", "TCOM"],
-   "copyright":["", "", "TCOP", "TCOP", "TCOP"],
-   "url":      ["", "", "WXXX", "WXXX", "WXXX"],
-   "image":    ["", "", "APIC", "APIC", "APIC"]
+   "year":        ["", "", "TYER", "TYER", "TDRC"],
+   "author":      ["", "", "TCOM", "TCOM", "TCOM"],
+   "copyright":   ["", "", "TCOP", "TCOP", "TCOP"],
+   "url":         ["", "", "WXXX", "WXXX", "WXXX"],
+   "image":       ["", "", "APIC", "APIC", "APIC"]
 };
 
 
@@ -657,6 +658,7 @@ jala.Mp3.prototype.getMetadata = function() {
    // Id3 tag values
    var fields = [
       "title",
+      "subtitle",
       "author",
       "url",
       "trackNumber",
@@ -1227,6 +1229,16 @@ jala.Mp3.Id3v2.prototype.getTitle = function() {
 
 
 /**
+ * Returns the subtitle information of the tag.
+ * @returns string containing subtitle
+ * @type String
+ */
+jala.Mp3.Id3v2.prototype.getSubtitle = function() {
+   return this.getTextContent("subtitle");
+};
+
+
+/**
  * Returns the track number information of the tag.
  * @returns string representing track number
  * @type String
@@ -1336,6 +1348,16 @@ jala.Mp3.Id3v2.prototype.setComment = function(comment) {
  */
 jala.Mp3.Id3v2.prototype.setTitle = function(title) {
    this.setTextContent("title", title);
+   return;
+};
+
+
+/**
+ * Sets the subtitle information
+ * @param {String} title
+ */
+jala.Mp3.Id3v2.prototype.setSubtitle = function(title) {
+   this.setTextContent("subtitle", title);
    return;
 };
 
