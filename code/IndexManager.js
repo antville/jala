@@ -21,14 +21,17 @@
 // $HeadURL$
 //
 
+
 /**
  * @fileoverview Fields and methods of the jala.IndexManager class.
  */
+
 
 // Define the global namespace for Jala modules
 if (!global.jala) {
    global.jala = {};
 }
+
 
 /**
  * HelmaLib dependencies
@@ -36,22 +39,18 @@ if (!global.jala) {
 app.addRepository("modules/helma/Search.js");
 
 /**
- * Jala dependencies
- */
-app.addRepository(getProperty("jala.dir", "modules/jala") + 
-                  "/code/AsyncRequest.js");
-
-/**
  * Constructs a new IndexManager object.
  * @class This class basically sits on top of a helma.Search.Index instance
- * and provides methods for adding, removing, optimizing and rebuilding
- * the underlying index. All methods except rebuilding are executed
- * asynchronously using an internal queue that contains jobs created
- * for each call of add/remove/optimize. Rebuilding is somehow different
- * as it puts this manager into rebuilding mode where all following
- * calls of add/remove/optimize are queued, but the queue is not flushed
- * until rebuilding has finished. This ensures that objects that have been
- * modified during a rebuilding process are re-indexed properly afterwards.
+ * and provides methods for adding, removing and optimizing the underlying index.
+ * All methods generate jobs that are put into an internal queue which is
+ * processed asynchronously by a separate worker thread. This means all calls
+ * to add(), remove() and optimize() will return immediately, but the changes to
+ * the index will be done within a short delay. Please keep in mind to change the
+ * status of this IndexManager instance to REBUILDING before starting to rebuild
+ * the index, as this ensures that all add/remove/optimize jobs will stay in the
+ * queue and will only be processed after switching the status back to NORMAL.
+ * This ensures that objects that have been modified during a rebuilding process
+ * are re-indexed properly afterwards.
  * @param {String} name The name of the index, which is the name of the directory
  * the index already resides or will be created in.
  * @param {helma.File} dir The base directory where this index's directory
@@ -61,7 +60,21 @@ app.addRepository(getProperty("jala.dir", "modules/jala") +
  * @constructor
  * @see helma.Search.createIndex
  */
-jala.IndexManager = function(name, dir, lang) {
+jala.IndexManager = function IndexManager(name, dir, lang) {
+
+   /**
+    * Private variable containing the worker thread
+    * @private
+    */
+   var thread = null;
+
+   /**
+    * Private flag indicating that the worker thread should stop
+    * @type Boolean
+    * @private
+    */
+   var interrupted = false;
+
    /**
     * Private variable containing the index managed by
     * this IndexManager instance.
@@ -86,21 +99,11 @@ jala.IndexManager = function(name, dir, lang) {
    var queue = java.util.Collections.synchronizedList(new java.util.LinkedList());
 
    /**
-    * Private variable containing the worker flushing the queue
-    * @type jala.AsyncRequest
+    * The name of the unique identifier field in the index. Defaults to "id".
+    * @type String
     * @private
     */
-   var worker = null;
-
-   /**
-    * Private property holding the version number of the underlying index
-    * (see org.apache.lucene.index.IndexReader.getCurrentVersion()).
-    * This is used to determine if the index should be optimized.
-    * @type Number
-    * @private
-    * @see #needsOptimize
-    */
-   var version = 0;
+   var idFieldname = "id";
 
    /**
     * Returns the underlying index.
@@ -109,15 +112,6 @@ jala.IndexManager = function(name, dir, lang) {
     */
    this.getIndex = function() {
       return index;
-   };
-
-   /**
-    * Returns the current version of this index manager
-    * @returns The current version of this index manager
-    * @type Number 
-    */
-   this.getVersion = function() {
-      return version;
    };
 
    /**
@@ -165,6 +159,28 @@ jala.IndexManager = function(name, dir, lang) {
    };
 
    /**
+    * Returns the name of the field containing the unique identifier
+    * of document objects in the index wrapped by this IndexManager.
+    * Defaults to "id".
+    * @returns The name of the id field in the index
+    * @type String
+    * @see #setIdFieldname 
+    */
+   this.getIdFieldname = function() {
+      return idFieldname;
+   };
+
+   /**
+    * Sets the name of the field containing the unique identifier
+    * of document objects in the index wrapped by this IndexManager.
+    * @see #getIdFieldname 
+    */
+   this.setIdFieldname = function(name) {
+      idFieldname = name;
+      return;
+   };
+
+   /**
     * Returns true if the underlying index is currently optimized.
     * @returns True in case the index is optimized, false otherwise.
     * @type Boolean
@@ -179,15 +195,6 @@ jala.IndexManager = function(name, dir, lang) {
    };
 
    /**
-    * Returns true if a worker has been initialized and it's still alive.
-    * @returns True if a worker is running, false otherwise.
-    * @type Boolean
-    */
-   this.hasWorker = function() {
-      return (worker != null) ? worker.isAlive() : false;
-   };
-   
-   /**
     * Returns true if the underlying index is currently rebuilding.
     * @returns True in case the index is rebuilding, false otherwise.
     * @type Boolean
@@ -197,32 +204,91 @@ jala.IndexManager = function(name, dir, lang) {
    };
 
    /**
-    * Updates the internal version property of this index manager
-    * to the current version of the underlying index.
+    * Starts the IndexManager worker thread that processes the job queue
     */
-   this.updateVersion = function() {
-      version = this.getCurrentIndexVersion();
-      return;
-   };
-
-   /**
-    * Starts a new worker thread if there isn't already one
-    * processing the queue. This method also checks if the
-    * thread is actually dead.
-    * @param {Boolean} force If true the worker is created regardless
-    * whether there is one already or not.
-    * @private
-    */
-   this.startWorker = function(force) {
-      if (force === true || !this.hasWorker()) {
-         app.logger.debug("IndexManager '" + this.getName() +
-                          "': creating new worker");
-         worker = new jala.AsyncRequest(this, "flush");
-         worker.evaluate();
+   this.start = function() {
+      if (!this.isRunning()) {
+         interrupted = false;
+         thread = app.invokeAsync(this, function() {
+            while (interrupted === false) {
+               if (this.getStatus() != jala.IndexManager.REBUILDING && !queue.isEmpty()) {
+                  var job = queue.remove(0);
+                  this.log("debug", "remaining jobs " + queue.size());
+                  // special handling of optimize jobs: if there are other jobs
+                  // waiting behind it, delay the optimizing until all other
+                  // jobs are processed
+                  if (job.type == jala.IndexManager.Job.OPTIMIZE && !queue.isEmpty()) {
+                     this.log("debug", "delaying optimize job until other jobs are finished");
+                     queue.add(job);
+                  } else {
+                     var result = this.processJob(job);
+                     if (result == false) {
+                        // processing job failed, check if we should re-add
+                        if (job.errors < jala.IndexManager.MAXTRIES) {
+                           // increment error counter and put back into queue
+                           job.errors += 1;
+                           queue.add(job);
+                        } else {
+                           this.log("error", "error during queue flush: tried " +
+                                    jala.IndexManager.MAXTRIES + " times to handle " +
+                                    job.type + " job " + ", giving up.");
+                        }
+                     }
+                  }
+               } else {
+                  // wait for 100ms before checking again
+                  java.lang.Thread.sleep(100);
+               }
+            }
+            return;
+         }, [], -1);
+         this.log("started successfully");
+      } else {
+         this.log("already running");
       }
       return;
    };
    
+   /**
+    * Stops this IndexManager instance
+    */
+   this.stop = function() {
+      interrupted = true;
+      thread = null;
+      this.log("stopped");
+      return;
+   };
+
+   /**
+    * Returns true if this IndexManager instance is running
+    * @returns True if this IndexManager instance is running, false otherwise.
+    * @type Boolean
+    */
+   this.isRunning = function() {
+      if (thread != null) {
+         return thread.running;
+      }
+      return false;
+   };
+
+   /**
+    * Read only reference containing the running status of this IndexManager
+    * @type Boolean
+    */
+   this.running; // for api documentation only, is overwritten by getter below
+   this.__defineGetter__("running", function() {
+       return this.isRunning()
+   });
+
+   /**
+    * Read only reference containing the number of pending jobs
+    * @type Boolean
+    */
+   this.pending; // for api documentation only, is overwritten by getter below
+   this.__defineGetter__("pending", function() {
+       return queue.size()
+   });
+
    /**
     * Main constructor body. Initializes the underlying index.
     */
@@ -230,10 +296,7 @@ jala.IndexManager = function(name, dir, lang) {
    var analyzer = helma.Search.getAnalyzer(lang);
    var fsDir = search.getDirectory(new helma.File(dir, name));
    index = search.createIndex(fsDir, analyzer);
-   // initialize the version
-   this.updateVersion();
-   app.logger.info("IndexManager '" + this.getName() +
-                   "': created/mounted " + index);
+   this.log("created/mounted " + index);
 
    return this;
 };
@@ -245,14 +308,6 @@ jala.IndexManager = function(name, dir, lang) {
  * @final
  */
 jala.IndexManager.MAXTRIES = 10;
-
-/**
- * Constant defining the number of changes in the underlying
- * index before it should be optimized.
- * @type Number
- * @final
- */
-jala.IndexManager.OPTIMIZE_INTERVAL = 1000;
 
 /**
  * Constant defining normal mode of this index manager.
@@ -269,15 +324,52 @@ jala.IndexManager.NORMAL = 1;
 jala.IndexManager.REBUILDING = 2;
 
 /**
+ * Returns the milliseconds elapsed between the current timestamp
+ * and the one passed as argument.
+ * @returns The elapsed time in millis.
+ * @type Number
+ * @private
+ */
+jala.IndexManager.getRuntime = function(millis) {
+   return java.lang.System.currentTimeMillis() - millis;
+};
+
+/** @ignore */
+jala.IndexManager.prototype.toString = function() {
+   return "[" + this.constructor.name + " '" + this.getName() + "' (" +
+          this.pending + " objects queued)]";
+};
+
+/**
+ * Helper function that prefixes every log message with
+ * the name of the IndexManager.
+ * @param {String} level An optional logging level. Accepted values
+ * @param {String} msg The log message
+ * are "debug", "info", "warn" and "error".
+ */
+jala.IndexManager.prototype.log = function(/* msg, level */) {
+   var level = "info", message;
+   if (arguments.length == 2) {
+      level = arguments[0];
+      message = arguments[1];
+   } else {
+      message = arguments[0];
+   }
+   app.logger[level]("[" + this.constructor.name + " '" +
+                     this.getName() + "'] " + message);
+   return;
+};
+
+/**
  * Static helper method that returns the value of the "id"
  * field of a document object.
  * @param {helma.Search.Document} doc The document whose id
  * should be returned.
  * @private
  */
-jala.IndexManager.getDocumentId = function(doc) {
+jala.IndexManager.prototype.getDocumentId = function(doc) {
    try {
-      return doc.getField("id").value;
+      return doc.getField(this.getIdFieldname()).value;
    } catch (e) {
       // ignore
    }
@@ -285,290 +377,131 @@ jala.IndexManager.getDocumentId = function(doc) {
 };
 
 /**
- * Returns the milliseconds elapsed between the current timestamp
- * and the one passed as argument.
- * @returns The elapsed time in millis.
- * @type Number
- * @private
- */
-jala.IndexManager.getRuntime = function(d) {
-   return (new Date()) - d;
-};
-
-/**
- * Returns an Array containing objects, where each one
- * contains information about an index segment in two
- * properties: "name" is the file name of the segment,
- * and "docCount" contains the number of documents in
- * this segment.
- * @returns An Array containing segment informations.
- * @type Array
- */
-jala.IndexManager.prototype.getSegmentInfos = function() {
-   var FORMAT = -1;
-   var infos = [];
-   var directory = this.getIndex().getDirectory();
-   var input = directory.openInput("segments");
-   var format, version, counter;
-
-   try {
-      format = input.readInt();
-      if (format < 0){     // file contains explicit format info
-         // check that it is a format we can understand
-         if (format < FORMAT)
-            throw ("Unknown format version: " + format);
-         version = input.readLong(); // read version
-         counter = input.readInt(); // read counter
-      } else {     // file is in old format without explicit format info
-         counter = format;
-      }
-   
-      for (var i=input.readInt(); i>0; i--) { // read segmentInfos
-         infos.push({name: input.readString(),
-                     docCount: input.readInt()});
-      }
-   
-      if (format >= 0) {    // in old format the version number may be at the end of the file
-         if (input.getFilePointer() >= input.length())
-            version = 0; // old file format without version number
-         else
-            version = input.readLong(); // read version
-      }
-   } catch (e) {
-      app.logger.debug("Unable to retrieve segment infos, reason: " + e);
-   } finally {
-      input.close();
-   }
-   return infos;
-};
-
-/** @ignore */
-jala.IndexManager.prototype.toString = function() {
-   var queue = this.getQueue();
-   return "[Index Manager '" + this.getName() + "' (" +
-          queue.size() + " objects queued)]";
-};
-
-/**
- * Adds a document object to the underlying index. This is done
- * by adding a new job to the internal queue and starting
- * a new worker thread to process it (if there isn't already
- * a worker being busy processing the queue). Adding an object
- * to the index also means that all documents with the same Id will
- * be removed before.
+ * Queues the document object passed as argument for addition to the underlying
+ * index. This includes that all existing documents with the same identifier will
+ * be removed before the object passed as argument is added. In addition
+ * this method queues an optimizer job too, which will be executed after the
+ * adding of the document.
  * @param {helma.Search.Document} doc The document object that should be
  * added to the underlying index.
- * @param {Boolean} force (optional) If true the object will be added
- * instantly to the index without any check if the index is
- * locked or not, so use this option with caution. Normally this
- * option should never be set manually.
+ * @returns True if the job was added successfully to the internal queue,
+ * false otherwise.
+ * @type Boolean
  * @see helma.Search.Document
  */
-jala.IndexManager.prototype.add = function(doc, force) {
-   if (force === true) {
-      var start = new Date();
-      this.getIndex().updateDocument(doc, "id");
-      app.logger.debug("IndexManager '" + this.getName() +
-                       "': added document with Id " +
-                       jala.IndexManager.getDocumentId(doc) +
-                       " in " + jala.IndexManager.getRuntime(start) + " ms");
-   } else {
-      if (!doc) {
-         app.logger.error("IndexManager '" + this.getName() +
-                          "': missing document object to add");
-      } else {
-         var job = new jala.IndexManager.Job(jala.IndexManager.Job.ADD,
-                                             doc);
-         this.getQueue().add(job);
-         app.logger.debug("IndexManager '" + this.getName() +
-                          "': queued adding document " + job.getId() + " to index");
-         if (!this.isRebuilding()) {
-            this.startWorker();
-         }
-      }
+jala.IndexManager.prototype.add = function(doc) {
+   var id;
+   if (!doc) {
+      this.log("error", "missing document object to add");
+      return false;
+   } else if ((id = this.getDocumentId(doc)) == null) {
+      this.log("error", "document doesn't contain an Id field '" +
+               this.getIdFieldname() + "'");
+      return false;
    }
-   return;
+   // the job's callback function which actually adds the document to the index
+   var callback = function() {
+      var start = java.lang.System.currentTimeMillis();
+      this.getIndex().updateDocument(doc, this.getIdFieldname());
+      this.log("debug", "added document with Id " + id +
+               " to index in " + jala.IndexManager.getRuntime(start) + " ms");
+      return;
+   }
+   var job = new jala.IndexManager.Job(jala.IndexManager.Job.ADD, callback);
+   this.getQueue().add(job);
+   this.log("debug", "queued adding document " + id + " to index");
+   // add an optimizing job too
+   this.optimize();
+   return true;
 };
 
 /**
- * Removes all entries with the Id passed as argument from the
- * underlying index. Removing is done by adding a new job to the internal
- * queue, which in turn is processed asynchronously by a worker
- * thread.
- * @param {Number} id The Id of the document object(s) to remove
- * from the underlying index.
- * @param {Boolean} force (optional) If true the removal is done instantly.
- * In this case no checking is done if the index is locked, so use
- * this option with caution as it might lead to index corruption.
- */
-jala.IndexManager.prototype.remove = function(id, force) {
-   if (force === true) {
-      var start = new Date();
-      this.getIndex().removeDocument("id", id);
-      app.logger.debug("IndexManager '" + this.getName() +
-                       "': removed document with Id " + id +
-                       " from index in " + jala.IndexManager.getRuntime(start) +
-                       " ms");
-   } else {
-      id = parseInt(id, 10);
-      if (isNaN(id)) {
-         app.logger.error("IndexManager '" + this.getName() +
-                          "': missing or invalid document id to remove");
-      } else {
-         var job = new jala.IndexManager.Job(jala.IndexManager.Job.REMOVE, id);
-         this.getQueue().add(job);
-         app.logger.debug("IndexManager '" + this.getName() +
-                          "': queued removal of document with Id " + id);
-         if (!this.isRebuilding()) {
-            this.startWorker();
-         }
-      }
-   }
-   return;
-};
-
-/**
- * Optimizes the underlying index. Optimizing is done asynchronously,
- * so this method returns immediately, but the job itself will be
- * processed as soon as possible. Calling this method multiple times
- * doesn not lead to multiple optimization, as the job cannot be
- * added to the queue if there is already one.
- * @param {Boolean} force If true the index is optimized
- * immediately, without any check whether the index is locked
- * or not, so use this option with caution.
- * @see #needsOptimize()
- */
-jala.IndexManager.prototype.optimize = function(force) {
-   if (force === true) {
-      var start = new Date();
-      this.getIndex().optimize();
-      // update version number to current index version
-      this.updateVersion();
-      app.logger.info("IndexManager '" + this.getName() +
-                      "': optimized index in " + jala.IndexManager.getRuntime(start) +
-                      " ms");
-   } else {
-      var job = new jala.IndexManager.Job(jala.IndexManager.Job.OPTIMIZE);
-      this.getQueue().add(job);
-      app.logger.debug("IndexManager '" + this.getName() +
-                       "': queued index optimization");
-      if (!this.isRebuilding()) {
-         this.startWorker();
-      }
-   }
-   return;
-};
-
-/**
- * Returns the version number of the underlying index.
- * @returns The current version number of the underlying index.
- * @type Number
- */
-jala.IndexManager.prototype.getCurrentIndexVersion = function() {
-   var dir = this.getIndex().getDirectory();
-   try {
-      return Packages.org.apache.lucene.index.IndexReader.getCurrentVersion(dir);
-   } catch (e) {
-      app.logger.debug("IndexManager '" + this.getName() +
-                       "': unable to determine the index version, reason: " + e);
-   }
-   return null;
-};
-
-/**
- * Returns true if the index should be optimized. This is done by
- * comparing the version number of this IndexManager with the one of
- * the underlying index. If it exceeds IndexManager.OPTIMIZE_INTERVAL
- * the index needs to be optimized.
- * @returns True in case the underlying should be optimized, false
- * otherwise
+ * Queues all index documents whose identifier value ("id" by default) matches
+ * the number passed as argument from the underlying index. In addition this
+ * method queues an optimizing job too, which is executed after the removal.
+ * @param {Number} id The identifier value
+ * @returns True if the removal job was added successfully to the queue, false
+ * otherwise.
  * @type Boolean
  */
-jala.IndexManager.prototype.needsOptimize = function() {
-   var version = this.getVersion();
-   var indexVersion = this.getCurrentIndexVersion();
-   if (indexVersion != null &&
-      (indexVersion - version) >= jala.IndexManager.OPTIMIZE_INTERVAL) {
-      return true;
+jala.IndexManager.prototype.remove = function(id) {
+   if (id === null || isNaN(id)) {
+      this.log("error", "missing or invalid document id to remove");
+      return false;
    }
-   return false;
+   // the job's callback function which actually removes all documents
+   // with the given id from the index
+   var callback = function() {
+      var start = java.lang.System.currentTimeMillis();
+      this.getIndex().removeDocument(this.getIdFieldname(), parseInt(id, 10));
+      this.log("debug", "removed document with Id " + id +
+               " from index in " + jala.IndexManager.getRuntime(start) + " ms");
+   };
+   var job = new jala.IndexManager.Job(jala.IndexManager.Job.REMOVE, callback);
+   this.getQueue().add(job);
+   this.log("debug", "queued removal of document with Id " + id);
+   // add an optimizing job too
+   this.optimize();
+   return true;
 };
 
 /**
- * Flushes the underlying queue. This method should not be called
- * directly as it might run for a long time (depends on the length
- * of the queue). Instead this method will be executed asynchronously
- * after calling add(), remove() or optimize(). For safety reasons
- * every flush() will only run for a maximum time of 5 minutes, if
- * after that any objects are left in the queue a new asynchronous
- * thread will be started to continue processing the queue.
+ * Optimizes the underlying index. Optimizing jobs have lower priority than add
+ * or remove jobs, so calling this method does not mean that the index will be
+ * optimized immediately. Instead, this job will stay in the internal queue as
+ * long as there are other jobs waiting. Calling this method multiple times
+ * doesn not lead to multiple optimization, as the job cannot be
+ * added to the queue if there is already one.
+ * @returns True if the optimizing job was added, false otherwise (meaning that
+ * there is already an optimizing job waiting in the queue)
+ * @type Boolean
+ */
+jala.IndexManager.prototype.optimize = function() {
+   if (this.hasOptimizingJob()) {
+      return false;
+   }
+   var callback = function() {
+      var start = java.lang.System.currentTimeMillis();
+      this.getIndex().optimize();
+      this.log("optimized index in " + jala.IndexManager.getRuntime(start) + " ms");
+      return;
+   };
+   var job = new jala.IndexManager.Job(jala.IndexManager.Job.OPTIMIZE, callback);
+   this.getQueue().add(job);
+   this.log("debug", "queued index optimization");
+   return true;
+};
+
+/**
+ * Processes a single queued job
+ * @param {Object} job
  * @private
  */
-jala.IndexManager.prototype.flush = function() {
-   var queue = this.getQueue();
-   var start = new Date();
-   var job;
-   while (!queue.isEmpty() && jala.IndexManager.getRuntime(start) < 300000) {
-      job = queue.remove(0);
-      app.logger.debug("IndexManager '" + this.getName() +
-                       "': " + job.type + " job with Id " + job.getId() +
-                       " has been in queue for " + jala.IndexManager.getRuntime(job.createtime) +
-                       " ms, processing now... (Thread " + java.lang.Thread.currentThread().getId() +
-                       ", remaining jobs: " + queue.size() + ")");
-      try {
-         switch (job.type) {
-            case jala.IndexManager.Job.ADD:
-               this.add(job.data, true);
-               break;
-
-            case jala.IndexManager.Job.REMOVE:
-               this.remove(job.data, true);
-               break;
-
-            case jala.IndexManager.Job.OPTIMIZE:
-               this.optimize(true);
-               break;
-
-            default:
-               app.logger.error("IndexManager '" + this.getName() +
-                                "': error during queue flush, unknown job type " +
-                                job.type);
-               break;
-         }
-      } catch (e) {
-         app.logger.debug("Exception during flush: " + e);
-         if (job.errors < jala.IndexManager.MAXTRIES) {
-            // got an error, so increment error counter and put back into queue
-            job.errors += 1;
-            queue.add(job);
-         } else {
-            app.logger.error("IndexManager '" + this.getName() +
-                             "': error during queue flush: tried " +
-                             jala.IndexManager.MAXTRIES + " times to handle " +
-                             job.type + " (Id: " + job.getId() +
-                             ", giving up. Last error was: " + e);
-         }
-      }
+jala.IndexManager.prototype.processJob = function(job) {
+   this.log("debug", job.type + " job has been in queue for " +
+            jala.IndexManager.getRuntime(job.createtime.getTime()) +
+            " ms, processing now...");
+   try {
+      job.callback.call(this);
+   } catch (e) {
+      this.log("error", "Exception while processing job " + job.type + ": " + e);
+      return false;
    }
-   if (queue.size() > 0) {
-      // there are still objects in the queue, so spawn a new worker
-      this.startWorker(true);
-   } else if (this.needsOptimize()) {
-      // we're finished with flushing, but index needs an optimize
-      // so add an optimizing job and start a new worker, but before
-      // remove the reference to the worker to ensure that a new worker
-      // is started (otherwise this worker would prevent the next
-      // from starting).
-      queue.add(new jala.IndexManager.Job(jala.IndexManager.Job.OPTIMIZE));
-      this.startWorker(true);
-   }
-   return;
+   return true;
 };
+
+
+
+/*********************
+ *****   J O B   *****
+ *********************/
+
 
 /**
  * Creates a new Job instance.
  * @class Instances of this class represent a single index
  * manipulation job to be processed by the index manager.
+ * @param {Number} id The Id of the job
  * @param {Number} type The type of job, which can be either
  * jala.IndexManager.Job.ADD, jala.IndexManager.Job.REMOVE
  * or jala.IndexManager.Job.OPTIMIZE.
@@ -577,7 +510,7 @@ jala.IndexManager.prototype.flush = function() {
  * @constructor
  * @see jala.IndexManager.Job
  */
-jala.IndexManager.Job = function(type, data) {
+jala.IndexManager.Job = function(type, callback) {
    /**
     * The type of the job
     * @type Number
@@ -591,7 +524,7 @@ jala.IndexManager.Job = function(type, data) {
     * of the document that should be removed from the index. For optimizing
     * jobs this property is null.
     */
-   this.data = data;
+   this.callback = callback;
 
    /**
     * An internal error counter which is increased whenever processing
@@ -612,26 +545,7 @@ jala.IndexManager.Job = function(type, data) {
 
 /** @ignore */
 jala.IndexManager.Job.prototype.toString = function() {
-   return "[Index Job]";
-};
-
-/**
- * Returns the Id of the job. For adding jobs, this returns the
- * Id of the document object, for removal jobs the Id to remove
- * from the index. For optimizing jobs this method returns null.
- * @returns The Id of the job
- * @type String
- */
-jala.IndexManager.Job.prototype.getId = function() {
-   switch (this.type) {
-      case jala.IndexManager.Job.REMOVE:
-         return this.data;
-      case jala.IndexManager.Job.ADD:
-         return jala.IndexManager.getDocumentId(this.data);
-      default:
-         break;
-   }
-   return null;
+   return "[Job (type: " + this.type + ")]";
 };
 
 /**
@@ -654,4 +568,3 @@ jala.IndexManager.Job.REMOVE = "remove";
  * @final
  */
 jala.IndexManager.Job.OPTIMIZE = "optimize";
-
