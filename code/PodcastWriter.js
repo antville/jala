@@ -74,6 +74,8 @@ jala.PodcastWriter = function(header) {
    }, {
       name: "itunes:summary"
    }, {
+      name: "itunes:new-feed-url"
+   }, {
       name: "itunes:image",
       attributes: [{
          name: "href"
