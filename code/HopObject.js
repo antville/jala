@@ -41,12 +41,29 @@ app.addRepository("modules/core/String.js");
  * <li>java.io.File</li>
  * <li>String</li>
  * <li>java.lang.String</li>
+ * <li>Packages.helma.util.MimePart</li>
  * </ul>
  * @param {Number} maxLength The maximum length of the alias
  * @returns The resulting alias
  * @type String
  */
 HopObject.prototype.getAccessName = function(obj, maxLength) {
+   /**
+    * Private method checking if the key passed as argument is already
+    * existing in this object
+    * @param {String} key The key string to test
+    * @returns True in case the key is already in use, false otherwise
+    * @type Boolean
+    */
+   var isReserved = function(obj, key) {
+      return key === "." ||
+             key === ".." ||
+             obj[key] != null ||
+             obj[key + "_action"] != null ||
+             obj.get(key) != null
+   };
+
+   // prepare name depending on argument
    var name;
    var clazz = obj.constructor || obj.getClass();
    switch (clazz) {
@@ -54,46 +71,42 @@ HopObject.prototype.getAccessName = function(obj, maxLength) {
       case helma.File:
       case java.io.File:
       case Packages.helma.util.MimePart:
-      // first fix bloody ie/win file paths containing backslashes
-      var rawName = obj.getName().replace(/\\/g, "/");
-      rawName = rawName.split("/");
-      name = rawName.pop();
-      if (name.contains("."))
-         name = name.substring(0, name.lastIndexOf("."));
-      break;
-      
+         // first fix bloody ie/win file paths containing backslashes
+         name = obj.getName().split(/[\\\/]/).pop();
+         if (name.contains("."))
+            name = name.substring(0, name.lastIndexOf("."));
+         break;
       case String:
       case java.lang.String:
-      name = obj;
-      break;
-
+         name = obj;
+         break;
       default:
-      name = obj.toString();
+         name = obj.toString();
    }
 
-   // convert accessName to lowercase and clean it from any invalid characters
-   var accessName = name.toLowerCase().toFileName();
-   var len = accessName.length;
-   var counter = 0;
-   var overflow;
-   
-   do {
-      if (maxLength) {
-         if (counter) {
-            len += counter.toString().length;
+   // remove all (back)slashes
+   var accessName = name.replace(/[\\\/]/g, "");
+   if (accessName.length > maxLength) {
+      accessName = accessName.substring(0, maxLength);
+   }
+   var result = accessName;
+   if (isReserved(this, result)) {
+      var len = result.length;
+      var counter = 1;
+      var overflow;
+      while (isReserved(this, result)) {
+         result = accessName + "-" + counter.toString();
+         if ((overflow = result.length - maxLength) > 0) {
+            result = accessName.substring(0, accessName.length - overflow) +
+                     "-" + counter.toString();
+            if (result.length > maxLength) {
+               throw "Unable to create accessname due to limit restriction";
+            }
          }
-         if ((overflow = len - maxLength) > 0) {
-            accessName = accessName.substring(0, accessName.length - overflow);
-            len = accessName.length;
-         }
+         counter += 1;
       }
-      if (counter) {
-         accessName = accessName + counter.toString();
-      }
-      counter += 1;
-   } while (this[accessName] || this[accessName + "_action"] || this.get(accessName));
-   
-   return accessName;
+   }
+   return result;
 };
 
 
