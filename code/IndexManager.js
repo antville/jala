@@ -37,6 +37,7 @@ if (!global.jala) {
  * HelmaLib dependencies
  */
 app.addRepository("modules/helma/Search.js");
+app.addRepository("modules/helma/File.js");
 
 /**
  * Constructs a new IndexManager object.
