@@ -36,7 +36,7 @@ if (!global.jala) {
 /**
  * Jala dependencies
  */
-app.addRepository(getProperty(jala.dir, "modules/jala") + 
+app.addRepository(getProperty("jala.dir", "modules/jala") + 
                   "/lib/javadns.jar");
 
 /**

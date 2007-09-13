@@ -44,7 +44,7 @@ app.addRepository("modules/helma/Http.js");
 /**
  * Jala dependencies
  */
-app.addRepository(getProperty(jala.dir, "modules/jala") + "/code/I18n.js");
+app.addRepository(getProperty("jala.dir", "modules/jala") + "/code/I18n.js");
 
 /**
  * Constructs a new Form instance
