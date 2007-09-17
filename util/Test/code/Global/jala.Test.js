@@ -320,7 +320,6 @@ jala.Test.getTestScope = function() {
    var engine = Packages.helma.scripting.rhino.RhinoEngine.getRhinoEngine();
    var scope = new Packages.helma.scripting.rhino.GlobalObject(engine.getCore(),
                          app.__app__, true);
-   var framework = Packages.helma.framework;
    // put the necessary global objects into the scope
    scope.root = root;
    scope.session = session;
