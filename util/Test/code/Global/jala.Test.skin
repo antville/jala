@@ -45,7 +45,7 @@ function toggleCheckboxes(reverse) {
 			cb.checked = state;
 		}
 	}
-	return;
+	return false;
 }
 
 -->
@@ -104,10 +104,13 @@ function toggleCheckboxes(reverse) {
 <% #logFailed --------------------------------------------------------------- %>
 
 <dt class="test error">Error</dt>
-<dd><% param.functionName prefix='<span class="function">' suffix='()</span>' %></span>
-<% param.comment prefix='<div class="comment">' suffix='</div>' %>
-<div class="message"><% param.message %></div>
-<div class="stackTrace"><% param.stackTrace encoding="html" %></div></dd>
+<dd>
+   <% param.functionName prefix='<span class="function">' suffix='()</span>' %></span>
+   <div class="message"><% param.name suffix=": " %><% param.message %></div>
+   <div class="comment"><% param.comment %></div>
+   <div><% param.fileName prefix="at " %><% param.lineNumber prefix=":" %></div>
+   <div class="stackTrace"><% param.stackTrace encoding="html" %></div>
+</dd>
 
 
 

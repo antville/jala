@@ -261,11 +261,12 @@ jala.Test.getValue = function(args, argsExpected, idx) {
 
 /**
  * Creates a stack trace and parses it for display.
- * @param {String} message The failure message
+ * @param {java.lang.StackTraceElement} trace The trace to parse. If not given
+ * a stacktrace will be generated
  * @returns The parsed stack trace
  * @type String
  */
-jala.Test.getStackTrace = function(message) {
+jala.Test.getStackTrace = function(trace) {
    /**
     * Private method for filtering out only JS parts of the stack trace
     * @param {Object} name
@@ -276,9 +277,11 @@ jala.Test.getStackTrace = function(message) {
    };
 
    // create exception and fill in stack trace
-   var ex = new Packages.org.mozilla.javascript.EvaluatorException(message || "");
-   ex.fillInStackTrace();
-   var trace = ex.getStackTrace();
+   if (!trace) {
+      var ex = new Packages.org.mozilla.javascript.EvaluatorException("");
+      ex.fillInStackTrace();
+      trace = ex.getStackTrace();
+   }
    var stack = [];
    var el, fileName, lineNumber;
    // parse the stack trace and keep only the js elements
@@ -296,7 +299,7 @@ jala.Test.getStackTrace = function(message) {
             if (fileName.endsWith("jala.Test.js")) {
                break;
             }
-            stack.push("at " + fileName + ", line " + lineNumber);
+            stack.push("at " + fileName + ":" + lineNumber);
          }
       }
    }
@@ -379,7 +382,7 @@ jala.Test.Exception = function Exception() {
 
 /** @ignore */
 jala.Test.Exception.prototype.toString = function() {
-   return "jala.Test.Exception: " + this.message + "]";
+   return "[jala.Test.Exception: " + this.message + "]";
 };
 
 /**
@@ -395,15 +398,15 @@ jala.Test.TestException = function TestException(comment, message) {
    this.functionName = null;
    this.comment = comment;
    this.message = message;
-   this.stackTrace = jala.Test.getStackTrace(message);
+   this.stackTrace = jala.Test.getStackTrace();
    return this;
 };
 jala.Test.TestException.prototype = new jala.Test.Exception();
 
 /** @ignore */
 jala.Test.TestException.prototype.toString = function() {
-   return "jala.Test.TestException in " + this.functionName +
-          ": " + this.message;
+   return "[jala.Test.TestException in " + this.functionName +
+          ": " + this.message + "]";
 };
 
 /**
@@ -417,34 +420,62 @@ jala.Test.TestException.prototype.toString = function() {
 jala.Test.ArgumentsException = function ArgumentsException(message) {
    this.functionName = null;
    this.message = message;
-   this.stackTrace = jala.Test.getStackTrace(message);
+   this.stackTrace = jala.Test.getStackTrace();
    return this;
 };
 jala.Test.ArgumentsException.prototype = new jala.Test.Exception();
 
 /** @ignore */
 jala.Test.ArgumentsException.prototype.toString = function() {
-   return "jala.Test.ArgumentsException in " + this.functionName +
-          ": " + this.message;
+   return "[jala.Test.ArgumentsException in " + this.functionName +
+          ": " + this.message + "]";
 };
 
 /**
  * Creates a new EvaluatorException instance
  * @class Instances of this exception are thrown when attempt
- * to evaluate the test code fails
- * @param {String} message The failure message
+ * to evaluate the test code fails.
+ * @param {String} message The failure message, or an Error previously
+ * thrown.
+ * @param {String} exception An optional nested Error
  * @returns A newly created EvaluatorException instance
  * @constructor
  */
-jala.Test.EvaluatorException = function EvaluatorException(message) {
-   this.message = message;
+jala.Test.EvaluatorException = function EvaluatorException(message, exception) {
+   this.functionName = null;
+   this.message = null;
+   this.stackTrace = null;
+   this.fileName = null;
+   this.lineNumber = null;
+
+   if (arguments.length == 1 && arguments[0] instanceof Error) {
+      this.message = "";
+      exception = arguments[0];
+   } else {
+      this.message = message;
+   }
+
+   if (exception != null) {
+      this.name = exception.name;
+      if (exception.rhinoException != null) {
+         var e = exception.rhinoException;
+         this.message += e.details();
+         this.stackTrace = jala.Test.getStackTrace(e.getStackTrace());
+      }
+      if (!this.stackTrace) {
+         // got no stack trace, so add at least filename and line number
+         this.fileName = exception.fileName;
+         this.lineNumber = exception.lineNumber;
+      }
+   }
+
    return this;
 };
 jala.Test.EvaluatorException.prototype = new jala.Test.Exception();
 
 /** @ignore */
 jala.Test.EvaluatorException.prototype.toString = function() {
-   return "jala.Test.EvaluatorException: " + this.message;
+   return "[jala.Test.EvaluatorException: " + this.message + "]";
 };
 
 
@@ -536,6 +567,7 @@ jala.Test.prototype.executeTest = function(testFile) {
             } catch (e) {
                this.testsFailed += 1;
                testResult.status = jala.Test.FAILED;
+               e.functionName = functionName;
                testResult.log.push(e);
             }
          }
@@ -552,8 +584,7 @@ jala.Test.prototype.executeTest = function(testFile) {
    } catch (e) {
       this.testsFailed += 1;
       testResult.status = jala.Test.FAILED;
-      var msg = e.toString() + " (" + e.fileName + "#" + e.lineNumber + ")";
-      testResult.log.push(new jala.Test.EvaluatorException(msg));
+      testResult.log.push(new jala.Test.EvaluatorException(e));
    } finally {
       // exit the js context created above
       cx.exit();
@@ -580,10 +611,8 @@ jala.Test.prototype.executeTestFunction = function(functionName, scope) {
       this.functionsPassed += 1;
       return new jala.Test.TestFunctionResult(functionName, start);
    } catch (e) {
-      if (e instanceof jala.Test.Exception) {
-         e.functionName = functionName;
-      } else {
-         e = new jala.Test.EvaluatorException(e.toString());
+      if (!(e instanceof jala.Test.Exception)) {
+         e = new jala.Test.EvaluatorException(e);
       }
       this.functionsFailed += 1;
       throw e;
@@ -1237,7 +1266,7 @@ jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTable
       root.invalidate();
       return testDb;
    } catch (e) {
-      throw new jala.Test.EvaluatorException("Unable to switch to test database, reason: " + e);
+      throw new jala.Test.EvaluatorException("Unable to switch to test database because of ", e);
    }
 };
 
@@ -1265,7 +1294,7 @@ jala.Test.DatabaseMgr.prototype.stopAll = function() {
       app.clearCache();
       root.invalidate();
    } catch (e) {
-      throw new jala.Test.EvaluatorException("Unable to stop test databases, reason: " + e);
+      throw new jala.Test.EvaluatorException("Unable to stop test databases because of ", e);
    }
    return;
 };
