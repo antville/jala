@@ -4,8 +4,8 @@
  * @final
  */
 var tests = [
-//   "testRamDatabase",
-//   "testFileDatabase",
+   "testRamDatabase",
+   "testFileDatabase",
    "testServer"
 ];
 
@@ -157,6 +157,9 @@ var testServer = function() {
 
    // stop the server
    assertTrue(server.stop());
+   // and remove the file database created above
+   var db = new jala.db.FileDatabase("test", tmpDir, "test", "1111");
+   db.remove();
    return;
 };
 
