@@ -430,7 +430,7 @@ jala.db.RamDatabase = function(name, username, password) {
     * @type String
     */
    this.getUsername = function() {
-      return username;
+      return username || "sa";
    };
    
    /**
@@ -439,18 +439,8 @@ jala.db.RamDatabase = function(name, username, password) {
     * @type String
     */
    this.getPassword = function() {
-      return password;
+      return password || "";
    };
-
-   /**
-    * Main constructor body
-    */
-   if (!username) {
-      username = "sa";
-   }
-   if (!password) {
-      password = "";
-   }
 
    return;
 };
@@ -781,8 +771,8 @@ jala.db.RamDatabase.prototype.runScript = function(file, props, charset, continu
    try {
       Packages.org.h2.tools.RunScript.execute(
          this.getUrl(props),
-         "sa",
-         "",
+         this.getUsername(),
+         this.getPassword(),
          file.getAbsolutePath(),
          charset || "UTF-8",
          continueOnError === true
@@ -805,8 +795,12 @@ jala.db.RamDatabase.prototype.runScript = function(file, props, charset, continu
  */
 jala.db.RamDatabase.prototype.dump = function(file, props) {
    try {
-      Packages.org.h2.tools.Script.execute(this.getUrl(props),
-            "sa", "", file.getAbsolutePath());
+      Packages.org.h2.tools.Script.execute(
+         this.getUrl(props),
+         this.getUsername(),
+         this.getPassword(),
+         file.getAbsolutePath()
+      );
    } catch (e) {
       app.logger.error("jala.db: Unable to dump database to '" + file.getAbsolutePath() +
             ", reason: " + e.toString());
@@ -866,7 +860,7 @@ jala.db.FileDatabase = function(name, directory, username, password) {
     * @type String
     */
    this.getUsername = function() {
-      return username;
+      return username || "sa";
    };
    
    /**
@@ -875,7 +869,7 @@ jala.db.FileDatabase = function(name, directory, username, password) {
     * @type String
     */
    this.getPassword = function() {
-      return password;
+      return password || "";
    };
 
    if (!name || typeof(name) != "string" ||
