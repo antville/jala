@@ -90,14 +90,16 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    
    <P>
    <BR/>This class basically sits on top of a helma.Search.Index instance
- and provides methods for adding, removing, optimizing and rebuilding
- the underlying index. All methods except rebuilding are executed
- asynchronously using an internal queue that contains jobs created
- for each call of add/remove/optimize. Rebuilding is somehow different
- as it puts this manager into rebuilding mode where all following
- calls of add/remove/optimize are queued, but the queue is not flushed
- until rebuilding has finished. This ensures that objects that have been
- modified during a rebuilding process are re-indexed properly afterwards.
+ and provides methods for adding, removing and optimizing the underlying index.
+ All methods generate jobs that are put into an internal queue which is
+ processed asynchronously by a separate worker thread. This means all calls
+ to add(), remove() and optimize() will return immediately, but the changes to
+ the index will be done within a short delay. Please keep in mind to change the
+ status of this IndexManager instance to REBUILDING before starting to rebuild
+ the index, as this ensures that all add/remove/optimize jobs will stay in the
+ queue and will only be processed after switching the status back to NORMAL.
+ This ensures that objects that have been modified during a rebuilding process
+ are re-indexed properly afterwards.
  <BR/><I>Defined in <a href='overview-summary-IndexManager.js.html'>IndexManager.js</a></I><BR/><BR/><B>See:</B><UL>- helma.Search.createIndex</UL>
    </P>
    
@@ -150,15 +152,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD><CODE><B><A HREF="#!s!NORMAL">NORMAL</A></B></CODE>
    <BR>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constant defining normal mode of this index manager.</TD>
-   </TR>
-   
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&lt;static&gt; &nbsp;&lt;final&gt;&nbsp;Number</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#!s!OPTIMIZE_INTERVAL">OPTIMIZE_INTERVAL</A></B></CODE>
-   <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constant defining the number of changes in the underlying
- index before it should be optimized.</TD>
    </TR>
    
    <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -219,209 +212,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#add">add</A></B>(&lt;helma.Search.Document&gt; doc, &lt;Boolean&gt; force)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Adds a document object to the underlying index.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Number</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getCurrentIndexVersion">getCurrentIndexVersion</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the version number of the underlying index.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;helma.Search.Index</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getIndex">getIndex</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the underlying index.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;String</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getName">getName</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the name of the index manger, which
- is equal to the name of the underlying index
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;java.util.LinkedList</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getQueue">getQueue</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the queue this index manager is using.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Array</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getSegmentInfos">getSegmentInfos</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns an Array containing objects, where each one
- contains information about an index segment in two
- properties: "name" is the file name of the segment,
- and "docCount" contains the number of documents in
- this segment.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Number</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getStatus">getStatus</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the status of this manager.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Number</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getVersion">getVersion</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the current version of this index manager
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
 	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#hasOptimizingJob">hasOptimizingJob</A></B>()
+	       <A HREF="#add">add</A></B>(&lt;helma.Search.Document&gt; doc)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns true if the underlying index is currently optimized.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Boolean</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#hasWorker">hasWorker</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns true if a worker has been initialized and it's still alive.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Boolean</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#isRebuilding">isRebuilding</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns true if the underlying index is currently rebuilding.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Boolean</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#needsOptimize">needsOptimize</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns true if the index should be optimized.
+	 Queues the document object passed as argument for addition to the underlying
+ index.
       </TD>
    </TR>
 
@@ -434,7 +236,25 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#optimize">optimize</A></B>(&lt;Boolean&gt; force)
+	       <A HREF="#log">log</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Helper function that prefixes every log message with
+ the name of the IndexManager.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#optimize">optimize</A></B>()
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -445,54 +265,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#remove">remove</A></B>(&lt;Number&gt; id, &lt;Boolean&gt; force)
+	       <A HREF="#remove">remove</A></B>(&lt;Number&gt; id)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Removes all entries with the Id passed as argument from the
- underlying index.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#setStatus">setStatus</A></B>(&lt;Number&gt; s)
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Modifies the status of this manager, which has implications
- on how index modifying jobs are handled.
-      </TD>
-   </TR>
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#updateVersion">updateVersion</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Updates the internal version property of this index manager
- to the current version of the underlying index.
+	 Queues all index documents whose identifier value ("id" by default) matches
+ the number passed as argument from the underlying index.
       </TD>
    </TR>
 
@@ -536,22 +320,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <PRE>&lt;static&gt;&nbsp;&lt;final&gt;&nbsp;Number&nbsp;<B>NORMAL</B></PRE>
    <UL>
    Constant defining normal mode of this index manager.
-   
-    <P>
-    <DL>
-    <DT><B>See Also:</B><DD><A HREF="constant-values.html#java.awt.AWTEvent.COMPONENT_EVENT_MASK">Constant Field Values</A></DL>
-    </DL>
-
-   
-   </UL>
-   <HR>
-   
-   <A NAME="!s!OPTIMIZE_INTERVAL"><!-- --></A>
-   <H3>OPTIMIZE_INTERVAL</H3>
-   <PRE>&lt;static&gt;&nbsp;&lt;final&gt;&nbsp;Number&nbsp;<B>OPTIMIZE_INTERVAL</B></PRE>
-   <UL>
-   Constant defining the number of changes in the underlying
- index before it should be optimized.
    
     <P>
     <DL>
@@ -650,14 +418,13 @@ jala.IndexManager</H3>
 
    <A NAME="add"><!-- --></A>
    <H3>add</H3>
-   <PRE>void <B>add</B>(&lt;helma.Search.Document&gt; doc, &lt;Boolean&gt; force)</PRE>
+   <PRE>Boolean <B>add</B>(&lt;helma.Search.Document&gt; doc)</PRE>
    
-      <UL>Adds a document object to the underlying index. This is done
- by adding a new job to the internal queue and starting
- a new worker thread to process it (if there isn't already
- a worker being busy processing the queue). Adding an object
- to the index also means that all documents with the same Id will
- be removed before.</UL>
+      <UL>Queues the document object passed as argument for addition to the underlying
+ index. This includes that all existing documents with the same identifier will
+ be removed before the object passed as argument is added. In addition
+ this method queues an optimizer job too, which will be executed after the
+ adding of the document.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -668,13 +435,17 @@ jala.IndexManager</H3>
      <UL><CODE>doc</CODE> -  The document object that should be  added to the underlying index.  
       </UL> 
    
-     <UL><CODE>force</CODE> -  (optional) If true the object will be added  instantly to the index without any check if the index is  locked or not, so use this option with caution. Normally this  option should never be set manually.  
-      </UL> 
-   
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True if the job was added successfully to the internal queue,  false otherwise.   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -686,286 +457,29 @@ jala.IndexManager</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
-   <A NAME="getCurrentIndexVersion"><!-- --></A>
-   <H3>getCurrentIndexVersion</H3>
-   <PRE>Number <B>getCurrentIndexVersion</B>()</PRE>
+   <A NAME="log"><!-- --></A>
+   <H3>log</H3>
+   <PRE>void <B>log</B>()</PRE>
    
-      <UL>Returns the version number of the underlying index.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The current version number of the underlying index.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getIndex"><!-- --></A>
-   <H3>getIndex</H3>
-   <PRE>helma.Search.Index <B>getIndex</B>()</PRE>
-   
-      <UL>Returns the underlying index.</UL>
+      <UL>Helper function that prefixes every log message with
+ the name of the IndexManager.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
-   <!-- METHOD PARAMETERS END -->
-
-   
    <UL>
-   <B>Returns:</B>
-        <UL>
-        The index this queue is working on.   
-        </UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>level</CODE> -  An optional logging level. Accepted values  
+      </UL> 
+   
+     <UL><CODE>msg</CODE> -  The log message  are "debug", "info", "warn" and "error".    
+      </UL> 
+   
    </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getName"><!-- --></A>
-   <H3>getName</H3>
-   <PRE>String <B>getName</B>()</PRE>
-   
-      <UL>Returns the name of the index manger, which
- is equal to the name of the underlying index</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
    
    <!-- METHOD PARAMETERS END -->
 
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The name of the index manager   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getQueue"><!-- --></A>
-   <H3>getQueue</H3>
-   <PRE>java.util.LinkedList <B>getQueue</B>()</PRE>
-   
-      <UL>Returns the queue this index manager is using.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The queue.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getSegmentInfos"><!-- --></A>
-   <H3>getSegmentInfos</H3>
-   <PRE>Array <B>getSegmentInfos</B>()</PRE>
-   
-      <UL>Returns an Array containing objects, where each one
- contains information about an index segment in two
- properties: "name" is the file name of the segment,
- and "docCount" contains the number of documents in
- this segment.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        An Array containing segment informations.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getStatus"><!-- --></A>
-   <H3>getStatus</H3>
-   <PRE>Number <B>getStatus</B>()</PRE>
-   
-      <UL>Returns the status of this manager.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The status of this index manager.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="#!s!NORMAL">NORMAL</a><BR/>- <a href="#!s!REBUILDING">REBUILDING</a></UL>
-   </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="getVersion"><!-- --></A>
-   <H3>getVersion</H3>
-   <PRE>Number <B>getVersion</B>()</PRE>
-   
-      <UL>Returns the current version of this index manager</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The current version of this index manager   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="hasOptimizingJob"><!-- --></A>
-   <H3>hasOptimizingJob</H3>
-   <PRE>Boolean <B>hasOptimizingJob</B>()</PRE>
-   
-      <UL>Returns true if the underlying index is currently optimized.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        True in case the index is optimized, false otherwise.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="hasWorker"><!-- --></A>
-   <H3>hasWorker</H3>
-   <PRE>Boolean <B>hasWorker</B>()</PRE>
-   
-      <UL>Returns true if a worker has been initialized and it's still alive.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        True if a worker is running, false otherwise.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="isRebuilding"><!-- --></A>
-   <H3>isRebuilding</H3>
-   <PRE>Boolean <B>isRebuilding</B>()</PRE>
-   
-      <UL>Returns true if the underlying index is currently rebuilding.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        True in case the index is rebuilding, false otherwise.   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="needsOptimize"><!-- --></A>
-   <H3>needsOptimize</H3>
-   <PRE>Boolean <B>needsOptimize</B>()</PRE>
-   
-      <UL>Returns true if the index should be optimized. This is done by
- comparing the version number of this IndexManager with the one of
- the underlying index. If it exceeds IndexManager.OPTIMIZE_INTERVAL
- the index needs to be optimized.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        True in case the underlying should be optimized, false  otherwise   
-        </UL>
-   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -975,78 +489,41 @@ jala.IndexManager</H3>
 
    <A NAME="optimize"><!-- --></A>
    <H3>optimize</H3>
-   <PRE>void <B>optimize</B>(&lt;Boolean&gt; force)</PRE>
+   <PRE>Boolean <B>optimize</B>()</PRE>
    
-      <UL>Optimizes the underlying index. Optimizing is done asynchronously,
- so this method returns immediately, but the job itself will be
- processed as soon as possible. Calling this method multiple times
+      <UL>Optimizes the underlying index. Optimizing jobs have lower priority than add
+ or remove jobs, so calling this method does not mean that the index will be
+ optimized immediately. Instead, this job will stay in the internal queue as
+ long as there are other jobs waiting. Calling this method multiple times
  doesn not lead to multiple optimization, as the job cannot be
  added to the queue if there is already one.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
    
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>force</CODE> -  If true the index is optimized  immediately, without any check whether the index is locked  or not, so use this option with caution.  
-      </UL> 
-   
-   </UL>
-   
    <!-- METHOD PARAMETERS END -->
 
    
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True if the optimizing job was added, false otherwise (meaning that  there is already an optimizing job waiting in the queue)   
+        </UL>
+   </UL>
+   
 
    <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="#needsOptimize">()</a></UL>
-   </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
    <A NAME="remove"><!-- --></A>
    <H3>remove</H3>
-   <PRE>void <B>remove</B>(&lt;Number&gt; id, &lt;Boolean&gt; force)</PRE>
+   <PRE>Boolean <B>remove</B>(&lt;Number&gt; id)</PRE>
    
-      <UL>Removes all entries with the Id passed as argument from the
- underlying index. Removing is done by adding a new job to the internal
- queue, which in turn is processed asynchronously by a worker
- thread.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <UL>
-   <B>Parameters:</B>
-   
-     <UL><CODE>id</CODE> -  The Id of the document object(s) to remove  from the underlying index.  
-      </UL> 
-   
-     <UL><CODE>force</CODE> -  (optional) If true the removal is done instantly.  In this case no checking is done if the index is locked, so use  this option with caution as it might lead to index corruption.    
-      </UL> 
-   
-   </UL>
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="setStatus"><!-- --></A>
-   <H3>setStatus</H3>
-   <PRE>void <B>setStatus</B>(&lt;Number&gt; s)</PRE>
-   
-      <UL>Modifies the status of this manager, which has implications
- on how index modifying jobs are handled. If the status
- is <a href="#!s!REBUILDING">REBUILDING</a>, all jobs are queued until the status
- is set back to <a href="#!s!NORMAL">NORMAL</a>.</UL>
+      <UL>Queues all index documents whose identifier value ("id" by default) matches
+ the number passed as argument from the underlying index. In addition this
+ method queues an optimizing job too, which is executed after the removal.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1054,7 +531,7 @@ jala.IndexManager</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>s</CODE> -  The new status of this manager.  
+     <UL><CODE>id</CODE> -  The identifier value  
       </UL> 
    
    </UL>
@@ -1062,28 +539,12 @@ jala.IndexManager</H3>
    <!-- METHOD PARAMETERS END -->
 
    
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="#!s!NORMAL">NORMAL</a><BR/>- <a href="#!s!REBUILDING">REBUILDING</a></UL>
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True if the removal job was added successfully to the queue, false  otherwise.   
+        </UL>
    </UL>
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
-   <A NAME="updateVersion"><!-- --></A>
-   <H3>updateVersion</H3>
-   <PRE>void <B>updateVersion</B>()</PRE>
-   
-      <UL>Updates the internal version property of this index manager
- to the current version of the underlying index.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -1157,6 +618,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue May 29 10:26:15 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Sep 18 15:34:18 2007</div>
 </BODY>
 </HTML>

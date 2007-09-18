@@ -98,9 +98,9 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    
    <P>
    <BR/>Instances of this class represent an in-memory sql database.
- <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
+ <br /><strong>Important:</strong> You need the h2.jar in directory "lib/ext"
  of your helma installation for this library to work, which you can get
- at http://hsqldb.org/.
+ at http://www.h2database.com/.
  <BR/><I>Defined in <a href='overview-summary-Database.js.html'>Database.js</a></I><BR/><BR/>
    </P>
    
@@ -133,7 +133,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="jala.db.RamDatabase.html#jala.db.RamDatabase()">jala.db.RamDatabase</A> 
 	 </B>
-	 (&lt;String&gt; name)
+	 (&lt;String&gt; name, &lt;String&gt; username, &lt;String&gt; password)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -193,6 +193,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#dump">dump</A></B>(&lt;helma.File&gt; file, &lt;Object&gt; props)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Dumps the database schema and data into a file
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
 	    <CODE>&nbsp;helma.Database</CODE>
 	 </FONT>
       </TD>
@@ -221,6 +238,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Returns the name of the database
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getPassword">getPassword</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the password of this database
       </TD>
    </TR>
 
@@ -262,13 +296,30 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;Object</CODE>
+	    <CODE>&nbsp;String</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#runScript">runScript</A></B>(&lt;helma.File&gt; file)
+	       <A HREF="#getUsername">getUsername</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the username of this database
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#runScript">runScript</A></B>(&lt;helma.File&gt; file, &lt;Object&gt; props, &lt;String&gt; charset, &lt;Boolean&gt; continueOnError)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -337,7 +388,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="jala.db.RamDatabase()"><!-- --></A><H3>
 jala.db.RamDatabase</H3>
-<PRE><B>jala.db.RamDatabase</B>(&lt;String&gt; name)</PRE>
+<PRE><B>jala.db.RamDatabase</B>(&lt;String&gt; name, &lt;String&gt; username, &lt;String&gt; password)</PRE>
 
 
 <UL>
@@ -349,7 +400,13 @@ jala.db.RamDatabase</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>name</CODE> -  The name of the database  
+     <UL><CODE>name</CODE> -  The name of the database. If not given a private  un-named database is created, that can only be accessed through this instance  of jala.db.RamDatabase  
+     </UL>
+   
+     <UL><CODE>username</CODE> -  Optional username (defaults to "sa"). This username  is used when creating the database, so the same should be used when  creating subsequent instances of jala.db.RamDatabase pointing to a named  database.  
+     </UL>
+   
+     <UL><CODE>password</CODE> -  Optional password (defaults to "").  
      </UL>
    
    
@@ -450,6 +507,42 @@ jala.db.RamDatabase</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="dump"><!-- --></A>
+   <H3>dump</H3>
+   <PRE>Boolean <B>dump</B>(&lt;helma.File&gt; file, &lt;Object&gt; props)</PRE>
+   
+      <UL>Dumps the database schema and data into a file</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>file</CODE> -  The file where the database dump will be  
+      </UL> 
+   
+     <UL><CODE>props</CODE> -  Optional object containing connection properties  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True in case the database was successfully dumped, false otherwise   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="getConnection"><!-- --></A>
    <H3>getConnection</H3>
    <PRE>helma.Database <B>getConnection</B>(props)</PRE>
@@ -499,6 +592,31 @@ jala.db.RamDatabase</H3>
    <B>Returns:</B>
         <UL>
         The name of the database   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getPassword"><!-- --></A>
+   <H3>getPassword</H3>
+   <PRE>String <B>getPassword</B>()</PRE>
+   
+      <UL>Returns the password of this database</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The password of this database   
         </UL>
    </UL>
    
@@ -575,9 +693,34 @@ jala.db.RamDatabase</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="getUsername"><!-- --></A>
+   <H3>getUsername</H3>
+   <PRE>String <B>getUsername</B>()</PRE>
+   
+      <UL>Returns the username of this database</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The username of this database   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="runScript"><!-- --></A>
    <H3>runScript</H3>
-   <PRE>Object <B>runScript</B>(&lt;helma.File&gt; file)</PRE>
+   <PRE>Boolean <B>runScript</B>(&lt;helma.File&gt; file, &lt;Object&gt; props, &lt;String&gt; charset, &lt;Boolean&gt; continueOnError)</PRE>
    
       <UL>Runs the script file passed as argument in the context of this database.
  Use this method to eg. create and/or populate a database.</UL>
@@ -588,13 +731,29 @@ jala.db.RamDatabase</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>file</CODE> -  The script file to run.
+     <UL><CODE>file</CODE> -  The script file to run  
+      </UL> 
+   
+     <UL><CODE>props</CODE> -  Optional object containing connection properties  
+      </UL> 
+   
+     <UL><CODE>charset</CODE> -  Optional character set to use (defaults to "UTF-8")  
+      </UL> 
+   
+     <UL><CODE>continueOnError</CODE> -  Optional flag indicating whether to continue  on error or not (defaults to false)  
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True in case the script was executed successfully, false otherwise   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -719,6 +878,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue May 29 10:26:15 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Sep 18 15:34:18 2007</div>
 </BODY>
 </HTML>

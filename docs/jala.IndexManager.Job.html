@@ -114,18 +114,18 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    
    <TR BGCOLOR="white" CLASS="TableRowColor">
    <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&nbsp;Date</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#createtime">createtime</A></B></CODE>
+   <CODE>&nbsp;Object</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#callback">callback</A></B></CODE>
    <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The date and time at which this job was created.</TD>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The data needed to process this job.</TD>
    </TR>
    
    <TR BGCOLOR="white" CLASS="TableRowColor">
    <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-   <CODE>&nbsp;Object</CODE></FONT></TD>
-   <TD><CODE><B><A HREF="#data">data</A></B></CODE>
+   <CODE>&nbsp;Date</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="#createtime">createtime</A></B></CODE>
    <BR>
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The data needed to process this job.</TD>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The date and time at which this job was created.</TD>
    </TR>
    
    <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -193,7 +193,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="jala.IndexManager.Job.html#jala.IndexManager.Job()">jala.IndexManager.Job</A> 
 	 </B>
-	 (&lt;Number&gt; type, &lt;Object&gt; data)
+	 (&lt;Number&gt; type, callback)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -207,34 +207,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 &nbsp;
 
 <!-- ========== METHOD SUMMARY =========== -->
-
-<A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-
-
-   <TR BGCOLOR="white" CLASS="TableRowColor">
-      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
-	 <FONT SIZE="-1">
-	    <CODE>&nbsp;String</CODE>
-	 </FONT>
-      </TD>
-      <TD>
-	 <CODE>
-	    <B>
-	       <A HREF="#getId">getId</A></B>()
-	 </CODE>
-	 <BR>
-	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the Id of the job.
-      </TD>
-   </TR>
-
-
-</TABLE>
 
 
 
@@ -252,24 +224,24 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    </TABLE>
 
    
-   <A NAME="createtime"><!-- --></A>
-   <H3>createtime</H3>
-   <PRE>Date&nbsp;<B>createtime</B></PRE>
-   <UL>
-   The date and time at which this job was created.
-   
-   </UL>
-   <HR>
-   
-   <A NAME="data"><!-- --></A>
-   <H3>data</H3>
-   <PRE>Object&nbsp;<B>data</B></PRE>
+   <A NAME="callback"><!-- --></A>
+   <H3>callback</H3>
+   <PRE>Object&nbsp;<B>callback</B></PRE>
    <UL>
    The data needed to process this job. For adding jobs this property
  must contain the helma.Search.Document instance to add to
  the index. For removal job this property must contain the unique identifier
  of the document that should be removed from the index. For optimizing
  jobs this property is null.
+   
+   </UL>
+   <HR>
+   
+   <A NAME="createtime"><!-- --></A>
+   <H3>createtime</H3>
+   <PRE>Date&nbsp;<B>createtime</B></PRE>
+   <UL>
+   The date and time at which this job was created.
    
    </UL>
    <HR>
@@ -355,7 +327,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="jala.IndexManager.Job()"><!-- --></A><H3>
 jala.IndexManager.Job</H3>
-<PRE><B>jala.IndexManager.Job</B>(&lt;Number&gt; type, &lt;Object&gt; data)</PRE>
+<PRE><B>jala.IndexManager.Job</B>(&lt;Number&gt; type, callback)</PRE>
 
 
 <UL>
@@ -368,6 +340,9 @@ jala.IndexManager.Job</H3>
    <B>Parameters:</B>
    
      <UL><CODE>type</CODE> -  The type of job, which can be either  jala.IndexManager.Job.ADD, jala.IndexManager.Job.REMOVE  or jala.IndexManager.Job.OPTIMIZE.  
+     </UL>
+   
+     <UL><CODE>id</CODE> -  The Id of the job  
      </UL>
    
      <UL><CODE>data</CODE> -  The data needed to process the job.  
@@ -401,45 +376,6 @@ jala.IndexManager.Job</H3>
 
 
 <!-- ============ METHOD DETAIL START ========== -->
-
-<A NAME="method_detail"><!-- --></A>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-   <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-      <TD COLSPAN=1><FONT SIZE="+2">
-         <B>Method Detail</B></FONT>
-      </TD>
-   </TR>
-</TABLE>
-
-<!-- One single method detail entry -->
-
-   <A NAME="getId"><!-- --></A>
-   <H3>getId</H3>
-   <PRE>String <B>getId</B>()</PRE>
-   
-      <UL>Returns the Id of the job. For adding jobs, this returns the
- Id of the document object, for removal jobs the Id to remove
- from the index. For optimizing jobs this method returns null.</UL>
-   
-
-   <!-- METHOD PARAMETERS START -->
-   
-   <!-- METHOD PARAMETERS END -->
-
-   
-   <UL>
-   <B>Returns:</B>
-        <UL>
-        The Id of the job   
-        </UL>
-   </UL>
-   
-
-   <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <!-- ADDITIONAL ATTRIBUTES  END -->
-<HR>
-
 
 
 <!-- ============ METHOD DETAIL END ========== -->
@@ -506,6 +442,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue May 29 10:26:15 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Sep 18 15:34:18 2007</div>
 </BODY>
 </HTML>

@@ -89,11 +89,11 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 </DL>
    
    <P>
-   <BR/>Instances of this class represent a HSQLDB database server
- hosting up to 10 separate databases, which are accessible via network.
- <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
+   <BR/>Instances of this class represent a H2 database listener that
+ allows multiple databases to be accessed via tcp.
+ <br /><strong>Important:</strong> You need the h2.jar in directory "lib/ext"
  of your helma installation for this library to work, which you can get
- at http://hsqldb.org/.
+ at http://www.h2database.com/.
  <BR/><I>Defined in <a href='overview-summary-Database.js.html'>Database.js</a></I><BR/><BR/>
    </P>
    
@@ -126,7 +126,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <B>
 	    <A HREF="jala.db.Server.html#jala.db.Server()">jala.db.Server</A> 
 	 </B>
-	 (&lt;String|Number&gt; address)
+	 (&lt;helma.File&gt; baseDir, &lt;Number&gt; port)
       </CODE>
       <BR>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -152,17 +152,19 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#addDatabase">addDatabase</A></B>(&lt;<a href="jala.db.RamDatabase.html">jala.db.RamDatabase</a>&gt; db, &lt;Object&gt; props)
+	       <A HREF="#createOnDemand">createOnDemand</A></B>(&lt;Boolean&gt; bool)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Adds a database to this server.
+	 If called with boolean true as argument, this server creates databases
+ on-the-fly, otherwise it only accepts connections to already existing
+ databases.
       </TD>
    </TR>
 
@@ -175,11 +177,45 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getConnection">getConnection</A></B>(&lt;String&gt; name, &lt;Object&gt; props)
+	       <A HREF="#getConnection">getConnection</A></B>(&lt;String&gt; name, &lt;String&gt; username, &lt;String&gt; password, &lt;Object&gt; props)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Returns a connection to a database within this server.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;helma.File</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getDirectory">getDirectory</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the directory used by this server instance
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Number</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#getPort">getPort</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the port this server listens on
       </TD>
    </TR>
 
@@ -192,7 +228,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#getProperties">getProperties</A></B>(&lt;String&gt; name, &lt;Object&gt; props)
+	       <A HREF="#getProperties">getProperties</A></B>(&lt;String&gt; name, &lt;String&gt; username, &lt;String&gt; password, &lt;Object&gt; props)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -214,8 +250,25 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Returns the JDBC Url to use for connections to the
- specified database.
+	 Returns the JDBC Url to use for connections to a given database.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#isPublic">isPublic</A></B>(&lt;Boolean&gt; bool)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 If called with boolean true as argument, this server accepts connections
+ from outside localhost.
       </TD>
    </TR>
 
@@ -239,7 +292,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -256,7 +309,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TR BGCOLOR="white" CLASS="TableRowColor">
       <TD ALIGN="right" VALIGN="top" WIDTH="1%">
 	 <FONT SIZE="-1">
-	    <CODE>&nbsp;void</CODE>
+	    <CODE>&nbsp;Boolean</CODE>
 	 </FONT>
       </TD>
       <TD>
@@ -267,6 +320,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Stops the database server.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;Boolean</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#useSsl">useSsl</A></B>(&lt;Boolean&gt; bool)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Toggles the use of Ssl encryption within this server.
       </TD>
    </TR>
 
@@ -297,7 +367,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 
 <A NAME="jala.db.Server()"><!-- --></A><H3>
 jala.db.Server</H3>
-<PRE><B>jala.db.Server</B>(&lt;String|Number&gt; address)</PRE>
+<PRE><B>jala.db.Server</B>(&lt;helma.File&gt; baseDir, &lt;Number&gt; port)</PRE>
 
 
 <UL>
@@ -309,7 +379,19 @@ jala.db.Server</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>address</CODE> -  Either the IP address or the port number or a combination  of both in the form "ip:port". By default the IP address is "127.0.0.1" (aka localhost)  and the port is 9001.  
+     <UL><CODE>baseDir</CODE> -  The directory where the database files  are located or should be stored  
+     </UL>
+   
+     <UL><CODE>port</CODE> -  The port to listen on (defaults to 9001)  
+     </UL>
+   
+     <UL><CODE>createOnDemand</CODE> -  If true this server will create non-existing  databases on-the-fly, if false it only accepts connections to already  existing databases in the given base directory  
+     </UL>
+   
+     <UL><CODE>makePublic</CODE> -  If true this database is reachable from outside,  if false it's only reachable from localhost  
+     </UL>
+   
+     <UL><CODE>useSsl</CODE> -  If true SSL will be used to encrypt the connection  
      </UL>
    
    
@@ -348,11 +430,13 @@ jala.db.Server</H3>
 
 <!-- One single method detail entry -->
 
-   <A NAME="addDatabase"><!-- --></A>
-   <H3>addDatabase</H3>
-   <PRE>void <B>addDatabase</B>(&lt;<a href="jala.db.RamDatabase.html">jala.db.RamDatabase</a>&gt; db, &lt;Object&gt; props)</PRE>
+   <A NAME="createOnDemand"><!-- --></A>
+   <H3>createOnDemand</H3>
+   <PRE>Boolean <B>createOnDemand</B>(&lt;Boolean&gt; bool)</PRE>
    
-      <UL>Adds a database to this server.</UL>
+      <UL>If called with boolean true as argument, this server creates databases
+ on-the-fly, otherwise it only accepts connections to already existing
+ databases. This should be set before starting the server.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -360,16 +444,20 @@ jala.db.Server</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>db</CODE> -  The database to add  
-      </UL> 
-   
-     <UL><CODE>props</CODE> -  An optional parameter object containing database  properties    
+     <UL><CODE>bool</CODE> -  If true this server creates non-existing databases  on demand, if false it only allows connections to existing databases.  If no argument is given, this method returns the current setting.  
       </UL> 
    
    </UL>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current setting if no argument is given, or void   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -379,7 +467,7 @@ jala.db.Server</H3>
 
    <A NAME="getConnection"><!-- --></A>
    <H3>getConnection</H3>
-   <PRE>helma.Database <B>getConnection</B>(&lt;String&gt; name, &lt;Object&gt; props)</PRE>
+   <PRE>helma.Database <B>getConnection</B>(&lt;String&gt; name, &lt;String&gt; username, &lt;String&gt; password, &lt;Object&gt; props)</PRE>
    
       <UL>Returns a connection to a database within this server.</UL>
    
@@ -390,6 +478,12 @@ jala.db.Server</H3>
    <B>Parameters:</B>
    
      <UL><CODE>name</CODE> -  The name of the database running  within this server  
+      </UL> 
+   
+     <UL><CODE>username</CODE> -  Optional username to use for this connection  
+      </UL> 
+   
+     <UL><CODE>password</CODE> -  Optional password to use for this connection  
       </UL> 
    
      <UL><CODE>props</CODE> -  An optional parameter object  containing connection properties to add to the connection Url.  
@@ -413,9 +507,59 @@ jala.db.Server</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="getDirectory"><!-- --></A>
+   <H3>getDirectory</H3>
+   <PRE>helma.File <B>getDirectory</B>()</PRE>
+   
+      <UL>Returns the directory used by this server instance</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The directory where the databases used by this  server are located in   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="getPort"><!-- --></A>
+   <H3>getPort</H3>
+   <PRE>Number <B>getPort</B>()</PRE>
+   
+      <UL>Returns the port this server listens on</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The port this server listens on   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="getProperties"><!-- --></A>
    <H3>getProperties</H3>
-   <PRE>helma.util.ResourceProperties <B>getProperties</B>(&lt;String&gt; name, &lt;Object&gt; props)</PRE>
+   <PRE>helma.util.ResourceProperties <B>getProperties</B>(&lt;String&gt; name, &lt;String&gt; username, &lt;String&gt; password, &lt;Object&gt; props)</PRE>
    
       <UL>Returns a properties object containing the connection properties
  of the database with the given name.</UL>
@@ -427,6 +571,12 @@ jala.db.Server</H3>
    <B>Parameters:</B>
    
      <UL><CODE>name</CODE> -  The name of the database  
+      </UL> 
+   
+     <UL><CODE>username</CODE> -  Optional username to use for this connection  
+      </UL> 
+   
+     <UL><CODE>password</CODE> -  Optional password to use for this connection  
       </UL> 
    
      <UL><CODE>props</CODE> -  An optional parameter object containing  connection properties to add to the connection Url.  
@@ -454,8 +604,7 @@ jala.db.Server</H3>
    <H3>getUrl</H3>
    <PRE>String <B>getUrl</B>(&lt;String&gt; name, &lt;Object&gt; props)</PRE>
    
-      <UL>Returns the JDBC Url to use for connections to the
- specified database.</UL>
+      <UL>Returns the JDBC Url to use for connections to a given database.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -478,6 +627,40 @@ jala.db.Server</H3>
    <B>Returns:</B>
         <UL>
         The JDBC Url to use for connecting to a database  within this sever   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="isPublic"><!-- --></A>
+   <H3>isPublic</H3>
+   <PRE>Boolean <B>isPublic</B>(&lt;Boolean&gt; bool)</PRE>
+   
+      <UL>If called with boolean true as argument, this server accepts connections
+ from outside localhost. This should be set before starting the server.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>bool</CODE> -  If true this server accepts connections from outside  localhost. If no argument is given, this method returns the current setting.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current setting if no argument is given, or void   
         </UL>
    </UL>
    
@@ -514,10 +697,9 @@ jala.db.Server</H3>
 
    <A NAME="start"><!-- --></A>
    <H3>start</H3>
-   <PRE>void <B>start</B>()</PRE>
+   <PRE>Boolean <B>start</B>()</PRE>
    
-      <UL>Starts the database server. This should be called after all databases
- have been added.</UL>
+      <UL>Starts the database server.</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -525,19 +707,22 @@ jala.db.Server</H3>
    <!-- METHOD PARAMETERS END -->
 
    
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True in case the server started successfully, false otherwise   
+        </UL>
+   </UL>
+   
 
    <!-- ADDITIONAL ATTRIBUTES START -->
-   
-   <UL>   
-   <B>See:</B><UL>- <a href="#addDatabase">addDatabase()</a></UL>
-   </UL>
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
    <A NAME="stop"><!-- --></A>
    <H3>stop</H3>
-   <PRE>void <B>stop</B>()</PRE>
+   <PRE>Boolean <B>stop</B>()</PRE>
    
       <UL>Stops the database server.</UL>
    
@@ -546,6 +731,47 @@ jala.db.Server</H3>
    
    <!-- METHOD PARAMETERS END -->
 
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        True if stopping the server was successful, false otherwise   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="useSsl"><!-- --></A>
+   <H3>useSsl</H3>
+   <PRE>Boolean <B>useSsl</B>(&lt;Boolean&gt; bool)</PRE>
+   
+      <UL>Toggles the use of Ssl encryption within this server. This should be set
+ before starting the server.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>bool</CODE> -  If true SSL encryption will be used, false  otherwise. If no argument is given, this method returns the  current setting.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The current setting if no argument is given, or void   
+        </UL>
+   </UL>
    
 
    <!-- ADDITIONAL ATTRIBUTES START -->
@@ -619,6 +845,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue May 29 10:26:15 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Tue Sep 18 15:34:18 2007</div>
 </BODY>
 </HTML>
