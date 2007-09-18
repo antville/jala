@@ -49,45 +49,50 @@ jala.db.getPropertyString = function(props) {
 
 /**
  * Returns a new Server instance.
- * @class Instances of this class represent a HSQLDB database server
- * hosting up to 10 separate databases, which are accessible via network.
- * <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
+ * @class Instances of this class represent a H2 database listener that
+ * allows multiple databases to be accessed via tcp.
+ * <br /><strong>Important:</strong> You need the h2.jar in directory "lib/ext"
  * of your helma installation for this library to work, which you can get
- * at http://hsqldb.org/.
- * @param {String|Number} address Either the IP address or the port number or a combination
- * of both in the form "ip:port". By default the IP address is "127.0.0.1" (aka localhost)
- * and the port is 9001.
+ * at http://www.h2database.com/.
+ * @param {helma.File} baseDir The directory where the database files
+ * are located or should be stored
+ * @param {Number} port The port to listen on (defaults to 9001)
+ * @param {Boolean} createOnDemand If true this server will create non-existing
+ * databases on-the-fly, if false it only accepts connections to already
+ * existing databases in the given base directory
+ * @param {Boolean} makePublic If true this database is reachable from outside,
+ * if false it's only reachable from localhost
+ * @param {Boolean} useSsl If true SSL will be used to encrypt the connection
  * @returns A newly created Server instance
  * @constructor
  */
-jala.db.Server = function(address) {
+jala.db.Server = function(baseDir, port) {
 
    /**
-    * Private variable containing the hsqldb server instance
-    * @type Packages.org.hsqldb.Server
+    * Private variable containing the h2 server instance
+    * @type org.h2.tools.Server
     * @private
     */
-   var server = new Packages.org.hsqldb.Server();
+   var server = null;
 
    /**
-    * Private array containing the databases within this server.
-    * The index position of a database in this array corresponds
-    * to the index position within the wrapped server.
+    * An object containing configuration properties used when creating
+    * the server instance
     * @private
     */
-   var databases = [];
-
-   /**
-    * Map containing the names of databases pointing
-    * to the index of the database within the server
-    * @private
-    */
-   var names = {};
+   var config = {
+      "baseDir": baseDir.getAbsolutePath(),
+      "tcpPort": port || 9092,
+      "tcpSSL": false,
+      "ifExists": true,
+      "tcpAllowOthers": false,
+      "log": false
+   };
 
    /**
     * Returns the wrapped database server instance
     * @returns The wrapped database server
-    * @type org.hsqldb.Server
+    * @type org.h2.tools.Server
     * @private
     */
    this.getServer = function() {
@@ -95,59 +100,62 @@ jala.db.Server = function(address) {
    };
 
    /**
-    * Returns the database with the given name.
-    * @param {String} name The name of the database to return
-    * @returns The database with the given name
-    * @type jala.db.RamDatabase
+    * Returns the directory used by this server instance
+    * @returns The directory where the databases used by this
+    * server are located in
+    * @type helma.File
+    */
+   this.getDirectory = function() {
+      return baseDir;
+   };
+
+   /**
+    * Returns the port this server listens on
+    * @returns The port this server listens on
+    * @type Number
+    */
+   this.getPort = function() {
+      return config.tcpPort;
+   };
+
+   /**
+    * Returns the config of this server
+    * @returns The config of this server
     * @private
     */
-   this.getDatabase = function(name) {
-      var dbIdx;
-      if ((dbIdx = names[name]) != null) {
-         return databases[dbIdx];
+   this.getConfig = function() {
+      return config;
+   };
+
+   /**
+    * Starts the database server.
+    * @returns True in case the server started successfully, false otherwise
+    * @type Boolean
+    */
+   this.start = function() {
+      if (server != null && server.isRunning()) {
+         throw "jala.db.Server: already listening on port " + this.getPort();
       }
-      return null;
-   };
-
-   /**
-    * Returns the map containing the database names registered
-    * within this server instance.
-    * @returns A map containing the database names as properties which
-    * value is the index position of the database within this server
-    * @type Object
-    * @private
-    */
-   this.getDatabaseMap = function() {
-      return names;
-   };
-
-   /**
-    * Returns an array containing all databases within this server.
-    * @returns All databases within this server
-    * @type Array
-    * @private
-    */
-   this.getDatabases = function() {
-      return databases;
-   };
-
-   /**
-    * Main constructor body
-    */
-   var ip = "127.0.0.1";
-   var port = 9001;
-   if (address != null) {
-      if (address.indexOf(":") > -1) {
-         ip = address.substring(0, address.indexOf(":"));
-         port = parseInt(address.substring(address.indexOf(":") + 1), 10);
-      } else if (!isNaN(address)) {
-         port = parseInt(address, 10);
+      // convert properties into an array
+      var config = this.getConfig();
+      var args = [];
+      for (var propName in config) {
+         args.push("-" + propName);
+         args.push(config[propName].toString());
       }
-   }
-   // set the IP address and the port this server should listen on
-   server.setAddress(ip);
-   server.setPort(port);
-   app.logger.info("Jala : created instance listening on " + ip + ":" + port);
+      // create the server instance
+      server = Packages.org.h2.tools.Server.createTcpServer(args);
+      try {
+         server.start();
+      } catch (e) {
+         app.logger.error("jala.db.Server: unable to start server, reason: " + e);
+         return false;
+      }
+      app.logger.info("jala.db.Server: listening on localhost:" + this.getPort());
+      return true;
+   };
+
+
    return this;
 };
 
@@ -157,25 +165,20 @@ jala.db.Server.prototype.toString = function() {
 };
 
 /**
- * Starts the database server. This should be called after all databases
- * have been added.
- * @see #addDatabase
- */
-jala.db.Server.prototype.start = function() {
-   var server = this.getServer();
-   server.setLogWriter(null);
-   server.setErrWriter(null);
-   server.start();
-   return;
-};
-
-/**
  * Stops the database server.
+ * @returns True if stopping the server was successful, false otherwise
+ * @type Boolean
  */
 jala.db.Server.prototype.stop = function() {
-   var server = this.getServer();
-   server.stop();
-   return;
+   try {
+      this.getServer().stop();
+      app.logger.info("jala.db.Server: stopped listening on localhost:" +
+                      this.getPort());
+   } catch (e) {
+      app.logger.error("jala.db.Server: Unable to stop, reason: " + e);
+      return false;
+   }
+   return true;
 };
 
 /**
@@ -184,44 +187,68 @@ jala.db.Server.prototype.stop = function() {
  * @type Boolean
  */
 jala.db.Server.prototype.isRunning = function() {
-   return this.getServer().getState() == Packages.org.hsqldb.ServerConstants.SERVER_STATE_ONLINE;
+   return this.getServer().isRunning();
 };
 
 /**
- * Adds a database to this server.
- * @param {jala.db.RamDatabase} db The database to add
- * @param {Object} props An optional parameter object containing database
- * properties
+ * Toggles the use of Ssl encryption within this server. This should be set
+ * before starting the server.
+ * @param {Boolean} bool If true SSL encryption will be used, false
+ * otherwise. If no argument is given, this method returns the
+ * current setting.
+ * @returns The current setting if no argument is given, or void
+ * @type Boolean
  */
-jala.db.Server.prototype.addDatabase = function(db, props) {
-   if (!(db instanceof jala.db.RamDatabase)) {
-      throw "jala.db.Server: Invalid argument to addDatabase(): " + db;
+jala.db.Server.prototype.useSsl = function(bool) {
+   var config = this.getConfig();
+   if (bool != null) {
+      config.tcpSSL = (bool === true);
+   } else {
+      return config.tcpSSL;
    }
-   var name = db.getName();
-   var map = this.getDatabaseMap();
-   if (map[name] != null) {
-      throw "jala.db.Server: There is already a database registered with the name '" +
-             name + "'";
-   }
-   var server = this.getServer();
-   var databases = this.getDatabases();
-   var dbIdx = databases.length;
-   var dbPath = db.getDatabasePath();
-   dbPath += ";sql.enforce_strict_size=true";
-   if (props != null) {
-      dbPath += jala.db.getPropertyString(props);
-   }
-   this.getDatabaseMap()[name] = dbIdx;
-   this.getDatabases()[dbIdx] = db;
-   // add the database to the server
-   server.setDatabaseName(dbIdx, name);
-   server.setDatabasePath(dbIdx, dbPath);
    return;
 };
 
 /**
- * Returns the JDBC Url to use for connections to the
- * specified database.
+ * If called with boolean true as argument, this server creates databases
+ * on-the-fly, otherwise it only accepts connections to already existing
+ * databases. This should be set before starting the server.
+ * @param {Boolean} bool If true this server creates non-existing databases
+ * on demand, if false it only allows connections to existing databases.
+ * If no argument is given, this method returns the current setting.
+ * @returns The current setting if no argument is given, or void
+ * @type Boolean
+ */
+jala.db.Server.prototype.createOnDemand = function(bool) {
+   var config = this.getConfig();
+   if (bool != null) {
+      config.ifExists = (bool === false);
+   } else {
+      return !config.ifExists;
+   }
+   return;
+};
+
+/**
+ * If called with boolean true as argument, this server accepts connections
+ * from outside localhost. This should be set before starting the server.
+ * @param {Boolean} bool If true this server accepts connections from outside
+ * localhost. If no argument is given, this method returns the current setting.
+ * @returns The current setting if no argument is given, or void
+ * @type Boolean
+ */
+jala.db.Server.prototype.isPublic = function(bool) {
+   var config = this.getConfig();
+   if (bool != null) {
+      config.tcpAllowOthers = (bool === true);
+   } else {
+      return config.tcpAllowOthers;
+   }
+   return;
+};
+
+/**
+ * Returns the JDBC Url to use for connections to a given database.
  * @param {String} name An optional name of a database running
  * @param {Object} props Optional connection properties to add
  * @returns The JDBC Url to use for connecting to a database
@@ -229,16 +256,13 @@ jala.db.Server.prototype.addDatabase = function(db, props) {
  * @type String
  */
 jala.db.Server.prototype.getUrl = function(name, props) {
-   if (!this.getDatabase(name)) {
-      throw "jala.db.Server: database '" + name + "' doesn't exist";
-   }
    res.push();
-   res.write("jdbc:hsqldb:hsql://localhost:");
-   res.write(this.getServer().getPort());
+   res.write("jdbc:h2:");
+   res.write(this.useSsl() ? "ssl" : "tcp");
+   res.write("://localhost:");
+   res.write(this.getPort());
    res.write("/");
-   if (name != null) {
-      res.write(name);
-   }
+   res.write(name);
    res.write(jala.db.getPropertyString(props))
    return res.pop();
 };
@@ -247,20 +271,19 @@ jala.db.Server.prototype.getUrl = function(name, props) {
  * Returns a properties object containing the connection properties
  * of the database with the given name.
  * @param {String} name The name of the database
+ * @param {String} username Optional username to use for this connection
+ * @param {String} password Optional password to use for this connection
  * @param {Object} props An optional parameter object containing
  * connection properties to add to the connection Url.
  * @returns A properties object containing the connection properties
  * @type helma.util.ResourceProperties
  */
-jala.db.Server.prototype.getProperties = function(name, props) {
-   if (!this.getDatabase(name)) {
-      throw "jala.db.Server: database '" + name + "' doesn't exist";
-   }
+jala.db.Server.prototype.getProperties = function(name, username, password, props) {
    var rp = new Packages.helma.util.ResourceProperties();
    rp.put(name + ".url", this.getUrl(name, props));
-   rp.put(name + ".driver", "org.hsqldb.jdbcDriver");
-   rp.put(name + ".user", "sa");
-   rp.put(name + ".password", "");
+   rp.put(name + ".driver", "org.h2.Driver");
+   rp.put(name + ".user", username || "sa");
+   rp.put(name + ".password", password || "");
    return rp;
 };
 
@@ -268,13 +291,15 @@ jala.db.Server.prototype.getProperties = function(name, props) {
  * Returns a connection to a database within this server.
  * @param {String} name The name of the database running
  * within this server
+ * @param {String} username Optional username to use for this connection
+ * @param {String} password Optional password to use for this connection
  * @param {Object} props An optional parameter object
  * containing connection properties to add to the connection Url.
  * @returns A connection to the specified database
  * @type helma.Database
  */
-jala.db.Server.prototype.getConnection = function(name, props) {
-   var rp = this.getProperties(name, props);
+jala.db.Server.prototype.getConnection = function(name, username, password, props) {
+   var rp = this.getProperties(name, username, password, props);
    var dbSource = new Packages.helma.objectmodel.db.DbSource(name, rp);
    return new helma.Database(dbSource);
 };
@@ -374,14 +399,21 @@ jala.db.DataType.prototype.needsQuotes = function() {
 /**
  * Returns a newly created RamDatabase instance.
  * @class Instances of this class represent an in-memory sql database.
- * <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
+ * <br /><strong>Important:</strong> You need the h2.jar in directory "lib/ext"
  * of your helma installation for this library to work, which you can get
- * at http://hsqldb.org/.
- * @param {String} name The name of the database
+ * at http://www.h2database.com/.
+ * @param {String} name The name of the database. If not given a private
+ * un-named database is created, that can only be accessed through this instance
+ * of jala.db.RamDatabase
+ * @param {String} username Optional username (defaults to "sa"). This username
+ * is used when creating the database, so the same should be used when
+ * creating subsequent instances of jala.db.RamDatabase pointing to a named
+ * database.
+ * @param {String} password Optional password (defaults to "").
  * @returns A newly created instance of RamDatabase
  * @constructor
  */
-jala.db.RamDatabase = function(name) {
+jala.db.RamDatabase = function(name, username, password) {
 
    /**
     * Returns the name of the database
@@ -391,6 +423,34 @@ jala.db.RamDatabase = function(name) {
    this.getName = function() {
       return name;
    };
+
+   /**
+    * Returns the username of this database
+    * @returns The username of this database
+    * @type String
+    */
+   this.getUsername = function() {
+      return username;
+   };
+   
+   /**
+    * Returns the password of this database
+    * @returns The password of this database
+    * @type String
+    */
+   this.getPassword = function() {
+      return password;
+   };
+
+   /**
+    * Main constructor body
+    */
+   if (!username) {
+      username = "sa";
+   }
+   if (!password) {
+      password = "";
+   }
 
    return;
 };
@@ -407,7 +467,7 @@ jala.db.RamDatabase.prototype.toString = function() {
  * @type String
  */
 jala.db.RamDatabase.prototype.getUrl = function(props) {
-   var url = "jdbc:hsqldb:" + this.getDatabasePath();
+   var url = "jdbc:h2:" + this.getDatabasePath();
    if (props != null) {
       url += jala.db.getPropertyString(props);
    }
@@ -437,9 +497,9 @@ jala.db.RamDatabase.prototype.getProperties = function(props) {
    var name = this.getName();
    var rp = new Packages.helma.util.ResourceProperties();
    rp.put(name + ".url", this.getUrl(props));
-   rp.put(name + ".driver", "org.hsqldb.jdbcDriver");
-   rp.put(name + ".user", "sa");
-   rp.put(name + ".password", "");
+   rp.put(name + ".driver", "org.h2.Driver");
+   rp.put(name + ".user", this.getUsername());
+   rp.put(name + ".password", this.getPassword());
    return rp;
 };
 
@@ -709,25 +769,51 @@ jala.db.RamDatabase.prototype.getDataType = function(type) {
 /**
  * Runs the script file passed as argument in the context of this database.
  * Use this method to eg. create and/or populate a database.
- * @param {helma.File} file The script file to run.
+ * @param {helma.File} file The script file to run
+ * @param {Object} props Optional object containing connection properties
+ * @param {String} charset Optional character set to use (defaults to "UTF-8")
+ * @param {Boolean} continueOnError Optional flag indicating whether to continue
+ * on error or not (defaults to false)
+ * @returns True in case the script was executed successfully, false otherwise
+ * @type Boolean
  */
-jala.db.RamDatabase.prototype.runScript = function(file) {
+jala.db.RamDatabase.prototype.runScript = function(file, props, charset, continueOnError) {
    try {
-      var sqlFile = new Packages.org.hsqldb.util.SqlFile(new java.io.File(file), false, new java.util.HashMap());
-      var conn = this.getConnection().getConnection();
-      sqlFile.execute(conn, false);
-      app.logger.info("Jala Database: successfully executed SQL script '" + file.getAbsolutePath() + "'");
-      return true;
+      Packages.org.h2.tools.RunScript.execute(
+         this.getUrl(props),
+         "sa",
+         "",
+         file.getAbsolutePath(),
+         charset || "UTF-8",
+         continueOnError === true
+      );
+      app.logger.info("jala.db: successfully executed SQL script '" +
+                      file.getAbsolutePath() + "'");
    } catch (e) {
-      app.logger.error("Jala Database: executing SQL script failed, reason: " + e);
+      app.logger.error("jala.db: executing SQL script failed, reason: " + e);
       return false;
-   } finally {
-      if (conn != null) {
-         conn.close();
-      }
    }
+   return true;
 };
 
+/**
+ * Dumps the database schema and data into a file
+ * @param {helma.File} file The file where the database dump will be
+ * @param {Object} props Optional object containing connection properties
+ * @returns True in case the database was successfully dumped, false otherwise
+ * @type Boolean
+ */
+jala.db.RamDatabase.prototype.dump = function(file, props) {
+   try {
+      Packages.org.h2.tools.Script.execute(this.getUrl(props),
+            "sa", "", file.getAbsolutePath());
+   } catch (e) {
+      app.logger.error("jala.db: Unable to dump database to '" + file.getAbsolutePath() +
+            ", reason: " + e.toString());
+      return false;
+   }
+   return true;
+};
 
 
 /*************************************
@@ -738,19 +824,26 @@ jala.db.RamDatabase.prototype.runScript = function(file) {
 /**
  * Returns a newly created instance of FileDatabase.
  * @class Instances of this class represent a file based in-process database
- * <br /><strong>Important:</strong> You need the hsqldb.jar in lib/ext
+ * <br /><strong>Important:</strong> You need the h2.jar in directory "lib/ext"
  * of your helma installation for this library to work, which you can get
- * at http://hsqldb.org/.
- * @param {String} name The name of the database
+ * at http://www.h2database.com/.
+ * @param {String} name The name of the database. This name is used as
+ * prefix for all database files
  * @param {helma.File} directory The directory where the database files
  * should be stored in.
+ * @param {String} username Optional username (defaults to "sa"). This username
+ * is used when creating the database, so the same should be used when
+ * creating subsequent instances of jala.db.FileDatabase pointing to the
+ * same database
+ * @param {String} password Optional password (defaults to "").
  * @returns A newly created FileDatabase instance
  * @constructor
  */
-jala.db.FileDatabase = function(name, directory) {
+jala.db.FileDatabase = function(name, directory, username, password) {
 
    /**
-    * Returns the name of the database
+    * Returns the name of the database. This name is used as prefix
+    * for all files of this database in the specified directory
     * @returns The name of the database
     * @type String
     */
@@ -760,12 +853,37 @@ jala.db.FileDatabase = function(name, directory) {
 
    /**
     * Returns the directory where the database files are stored.
-    * @returns The directory where the database is stored.
+    * @returns The directory where this database is stored.
     * @type helma.File
     */
    this.getDirectory = function() {
       return directory;
    };
+
+   /**
+    * Returns the username of this database
+    * @returns The username of this database
+    * @type String
+    */
+   this.getUsername = function() {
+      return username;
+   };
+   
+   /**
+    * Returns the password of this database
+    * @returns The password of this database
+    * @type String
+    */
+   this.getPassword = function() {
+      return password;
+   };
+
+   if (!name || typeof(name) != "string" ||
+             !directory || !(directory instanceof helma.File)) {
+      throw "jala.db.FileDatabase: Missing or invalid arguments"
+   } else if (!directory.exists()) {
+      throw "jala.db.FileDatabase: directory '" + directory + "' does not exist";
+   }
 
    return this;
 };
@@ -774,8 +892,8 @@ jala.db.FileDatabase.prototype = new jala.db.RamDatabase();
 
 /** @ignore */
 jala.db.FileDatabase.prototype.toString = function() {
-   return "[Jala FileDatabase " + this.getName() +
-          " (" + this.getDirectory().getAbsolutePath() + ")]";
+   return "[Jala FileDatabase '" + this.getName() + "' in "
+          + this.getDirectory().getAbsolutePath() + "]";
 };
 
 /**
@@ -788,4 +906,73 @@ jala.db.FileDatabase.prototype.toString = function() {
 jala.db.FileDatabase.prototype.getDatabasePath = function() {
    var directory = new helma.File(this.getDirectory(), this.getName());
    return "file:" + directory.getAbsolutePath();
+};
+
+/**
+ * Deletes all files of this database on disk. Note that this also
+ * closes the database before removing it.
+ * @returns True in case the database was removed successfully, false otherwise
+ * @type Boolean
+ */
+jala.db.FileDatabase.prototype.remove = function() {
+   var directory = this.getDirectory();
+   try {
+      // shut down the database
+      this.shutdown();
+      Packages.org.h2.tools.DeleteDbFiles.execute(
+         directory.getAbsolutePath(),
+         this.getName(),
+         false
+      );
+   } catch(e) {
+      app.logger.error("jala.db: Unable to delete database in " +
+            directory.getAbsolutePath() + ", reason: " + e);
+      return false;
+   }
+   return true;
+};
+
+/**
+ * Creates a backup of this database, using the file passed as argument. The
+ * result will be a zipped file containing the database files
+ * @param {helma.File} file The file to write the backup to
+ * @returns True if the database backup was created successfully, false otherwise
+ * @type Boolean
+ */
+jala.db.FileDatabase.prototype.backup = function(file) {
+   try {
+      Packages.org.h2.tools.Backup.execute(
+         file.getAbsolutePath(),
+         this.getDirectory().getAbsolutePath(),
+         this.getName(),
+         false
+      );
+   } catch (e) {
+      app.logger.error("jala.db: Unable to backup database to '" +
+                       file.getAbsolutePath() + ", reason: " + e);
+      return false;
+   }
+   return true;
+};
+
+/**
+ * Restores this database using a backup on disk.
+ * @param {helma.File} backupFile The backup file to use for restore
+ * @returns True if the database was successfully restored, false otherwise
+ * @type Boolean
+ */
+jala.db.FileDatabase.prototype.restore = function(backupFile) {
+   try {
+      Packages.org.h2.tools.Restore.execute(
+         backupFile.getAbsolutePath(),
+         this.getDirectory().getAbsolutePath(),
+         this.getName(),
+         false
+      );
+   } catch (e) {
+      app.logger.error("jala.db: Unable to restore database using '" +
+                       backupFile.getAbsolutePath() + ", reason: " + e);
+      return false;
+   }
+   return true;
 };
