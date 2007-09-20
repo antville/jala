@@ -341,6 +341,8 @@ jala.Test.getTestScope = function() {
    scope.httpClient = new jala.Test.HttpClient();
    // instantiate the test database manager
    scope.testDatabases = new jala.Test.DatabaseMgr();
+   // instantiate the smtp server
+   scope.smtpServer = new jala.Test.SmtpServer();
    return scope;
 };
 
@@ -1296,4 +1298,220 @@ jala.Test.DatabaseMgr.prototype.stopAll = function() {
       throw new jala.Test.EvaluatorException("Unable to stop test databases because of ", e);
    }
    return;
+};
+
+
+
+/*********************************
+ ***** S M T P   S E R V E R *****
+ *********************************/
+
+
+/**
+ * Creates a new SmtpServer instance
+ * @class Instances of this class represent an SMTP server listening on
+ * localhost. By default jala.Test will create a global variable called
+ * "smtpServer" that contains an instance of this class. To use the server call
+ * {@link #start} in a test method (eg. in the basic setup method) and
+ * {@link #stop} in the cleanup method.
+ * @param {Number} port Optional port to listen on (defaults to 25)
+ * @returns A newly created SmtpServer instance
+ * @constructor
+ */
+jala.Test.SmtpServer = function(port) {
+   var server = null;
+   
+   var oldSmtpServer = null;
+
+   /**
+    * Starts the SMTP server. Note that this method switches the SMTP server as
+    * defined in app.properties of the tested application or server.properties
+    * to "localhost" to ensure that all mails sent during tests are received
+    * by this server. The SMTP server definition is switched back to the
+    * original when {@link #stop} is called.
+    */
+   this.start = function() {
+      server = new Packages.org.subethamail.wiser.Wiser()
+      // listen only on localhost
+      server.setHostname("localhost");
+      if (port != null && !isNaN(port)) {
+         server.setPort(port);
+      }
+      // switch smtp property of tested application
+      oldSmtpServer = getProperty("smtp");
+      app.__app__.getProperties().put("smtp", "localhost");
+      server.start();
+      return;
+   };
+
+   /**
+    * Stops the SMTP server and switches the "smtp" property of the tested
+    * application back to the value defined in app or server.properties
+    */
+   this.stop = function() {
+      server.stop();
+      server = null;
+      // switch back to original SMTP server address
+      var props = app.__app__.getProperties();
+      if (oldSmtpServer != null) {
+         props.put("smtp", oldSmtpServer);
+      } else {
+         props.remove("smtp");
+      }
+      return;
+   };
+
+   /**
+    * Returns an array containing all mails received by the server,
+    * where each one is an instance of {@link jala.Test.SmtpServer.Mail}
+    * @returns An array with all messages
+    * @type Array
+    */
+   this.getMessages = function() {
+      var it = server.getMessages().listIterator();
+      var result = [];
+      while (it.hasNext()) {
+         result.push(new jala.Test.SmtpServer.Mail(it.next()));
+      }
+      return result;
+   };
+
+   return this;
+};
+
+/** @ignore */
+jala.Test.SmtpServer.prototype.toString = function() {
+   return "[Jala Test SmtpServer]";
+};
+
+/**
+ * Creates a new Mail instance
+ * @class Instances of this class represent a mail message received
+ * by the SMTP server
+ * @param {org.subethamail.wiser.WiserMessage} message The message
+ * as received by the SMTP server
+ * @returns A newly created Mail instance
+ * @constructor
+ */
+jala.Test.SmtpServer.Mail = function(message) {
+   /**
+    * The wrapped message as MimeMessage instance
+    * @type javax.mail.internet.MimeMessage
+    * @private
+    */
+   var mimeMessage = message.getMimeMessage();
+
+   /**
+    * Returns the wrapped message
+    * @type org.subethamail.wiser.WiserMessage
+    */
+   this.getMessage = function() {
+      return message;
+   };
+
+   /**
+    * Returns the wrapped message as MimeMessage
+    * @type javax.mail.internet.MimeMessage
+    */
+   this.getMimeMessage = function() {
+      return mimeMessage;
+   };
+
+   return this;
+};
+
+/** @ignore */
+jala.Test.SmtpServer.Mail.prototype.toString = function() {
+   return "[Jala Test Mail]";
+};
+
+/**
+ * Returns an array containing all senders of this mail
+ * @returns An array with all senders of this mail
+ * @type Array
+ */
+jala.Test.SmtpServer.Mail.prototype.getFrom = function() {
+   var result = [];
+   this.getMimeMessage().getFrom().forEach(function(addr) {
+      result.push(addr.toString())
+   });
+   return result;
+};
+
+/**
+ * Returns an array containing all recipients of this mail
+ * @returns An array with all recipients of this mail
+ * @type Array
+ */
+jala.Test.SmtpServer.Mail.prototype.getTo = function() {
+   var type = Packages.javax.mail.internet.MimeMessage.RecipientType.TO;
+   var result = [];
+   this.getMimeMessage().getRecipients(type).forEach(function(addr) {
+      result.push(addr.toString())
+   });
+   return result;
+};
+
+/**
+ * Returns an array containing all CC recipients of this mail
+ * @returns An array with all CC recipients of this mail
+ * @type Array
+ */
+jala.Test.SmtpServer.Mail.prototype.getCc = function() {
+   var type = Packages.javax.mail.internet.MimeMessage.RecipientType.CC;
+   var result = [];
+   this.getMimeMessage().getRecipients(type).forEach(function(addr) {
+      result.push(addr.toString())
+   });
+   return result;
+};
+
+/**
+ * Returns an array with all reply-to addresses of this mail
+ * @returns An array with all reply-to addresses of this mail
+ * @type Array
+ */
+jala.Test.SmtpServer.Mail.prototype.getReplyTo = function() {
+   var result = [];
+   this.getMimeMessage().getReplyTo().forEach(function(addr) {
+      result.push(addr.toString())
+   });
+   return result;
+};
+
+/**
+ * Returns the encoding of this mail as defined in the "Content-Transfer-Encoding"
+ * header field
+ * @returns The encoding of this mail
+ * @type String
+ */
+jala.Test.SmtpServer.Mail.prototype.getEncoding = function() {
+   return this.getMimeMessage().getEncoding();
+};
+
+/**
+ * Returns the subject of this mail
+ * @returns The subject of this mail
+ * @type String
+ */
+jala.Test.SmtpServer.Mail.prototype.getSubject = function() {
+   return this.getMimeMessage().getSubject();
+};
+
+/**
+ * Returns the content of this mail
+ * @returns The content of this mail
+ */
+jala.Test.SmtpServer.Mail.prototype.getContent = function() {
+   return this.getMimeMessage().getContent();
+};
+
+/**
+ * Returns the content type of this mail as defined in the "Content-Type"
+ * header field
+ * @returns The content type of this mail
+ * @type String
+ */
+jala.Test.SmtpServer.Mail.prototype.getContentType = function() {
+   return this.getMimeMessage().getContentType();
 };
