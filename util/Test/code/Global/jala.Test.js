@@ -1363,7 +1363,7 @@ jala.Test.SmtpServer = function(port) {
 
    /**
     * Returns an array containing all mails received by the server,
-    * where each one is an instance of {@link jala.Test.SmtpServer.Mail}
+    * where each one is an instance of {@link jala.Test.SmtpServer.Message}
     * @returns An array with all messages
     * @type Array
     */
@@ -1371,7 +1371,7 @@ jala.Test.SmtpServer = function(port) {
       var it = server.getMessages().listIterator();
       var result = [];
       while (it.hasNext()) {
-         result.push(new jala.Test.SmtpServer.Mail(it.next()));
+         result.push(new jala.Test.SmtpServer.Message(it.next()));
       }
       return result;
    };
@@ -1393,7 +1393,7 @@ jala.Test.SmtpServer.prototype.toString = function() {
  * @returns A newly created Mail instance
  * @constructor
  */
-jala.Test.SmtpServer.Mail = function(message) {
+jala.Test.SmtpServer.Message = function(message) {
    /**
     * The wrapped message as MimeMessage instance
     * @type javax.mail.internet.MimeMessage
@@ -1421,7 +1421,7 @@ jala.Test.SmtpServer.Mail = function(message) {
 };
 
 /** @ignore */
-jala.Test.SmtpServer.Mail.prototype.toString = function() {
+jala.Test.SmtpServer.Message.prototype.toString = function() {
    return "[Jala Test Mail]";
 };
 
@@ -1430,7 +1430,7 @@ jala.Test.SmtpServer.Mail.prototype.toString = function() {
  * @returns An array with all senders of this mail
  * @type Array
  */
-jala.Test.SmtpServer.Mail.prototype.getFrom = function() {
+jala.Test.SmtpServer.Message.prototype.getFrom = function() {
    var result = [];
    this.getMimeMessage().getFrom().forEach(function(addr) {
       result.push(addr.toString())
@@ -1443,7 +1443,7 @@ jala.Test.SmtpServer.Mail.prototype.getFrom = function() {
  * @returns An array with all recipients of this mail
  * @type Array
  */
-jala.Test.SmtpServer.Mail.prototype.getTo = function() {
+jala.Test.SmtpServer.Message.prototype.getTo = function() {
    var type = Packages.javax.mail.internet.MimeMessage.RecipientType.TO;
    var result = [];
    this.getMimeMessage().getRecipients(type).forEach(function(addr) {
@@ -1457,7 +1457,7 @@ jala.Test.SmtpServer.Mail.prototype.getTo = function() {
  * @returns An array with all CC recipients of this mail
  * @type Array
  */
-jala.Test.SmtpServer.Mail.prototype.getCc = function() {
+jala.Test.SmtpServer.Message.prototype.getCc = function() {
    var type = Packages.javax.mail.internet.MimeMessage.RecipientType.CC;
    var result = [];
    this.getMimeMessage().getRecipients(type).forEach(function(addr) {
@@ -1471,7 +1471,7 @@ jala.Test.SmtpServer.Mail.prototype.getCc = function() {
  * @returns An array with all reply-to addresses of this mail
  * @type Array
  */
-jala.Test.SmtpServer.Mail.prototype.getReplyTo = function() {
+jala.Test.SmtpServer.Message.prototype.getReplyTo = function() {
    var result = [];
    this.getMimeMessage().getReplyTo().forEach(function(addr) {
       result.push(addr.toString())
@@ -1485,7 +1485,7 @@ jala.Test.SmtpServer.Mail.prototype.getReplyTo = function() {
  * @returns The encoding of this mail
  * @type String
  */
-jala.Test.SmtpServer.Mail.prototype.getEncoding = function() {
+jala.Test.SmtpServer.Message.prototype.getEncoding = function() {
    return this.getMimeMessage().getEncoding();
 };
 
@@ -1494,7 +1494,7 @@ jala.Test.SmtpServer.Mail.prototype.getEncoding = function() {
  * @returns The subject of this mail
  * @type String
  */
-jala.Test.SmtpServer.Mail.prototype.getSubject = function() {
+jala.Test.SmtpServer.Message.prototype.getSubject = function() {
    return this.getMimeMessage().getSubject();
 };
 
@@ -1502,7 +1502,7 @@ jala.Test.SmtpServer.Mail.prototype.getSubject = function() {
  * Returns the content of this mail
  * @returns The content of this mail
  */
-jala.Test.SmtpServer.Mail.prototype.getContent = function() {
+jala.Test.SmtpServer.Message.prototype.getContent = function() {
    return this.getMimeMessage().getContent();
 };
 
@@ -1512,6 +1512,6 @@ jala.Test.SmtpServer.Mail.prototype.getContent = function() {
  * @returns The content type of this mail
  * @type String
  */
-jala.Test.SmtpServer.Mail.prototype.getContentType = function() {
+jala.Test.SmtpServer.Message.prototype.getContentType = function() {
    return this.getMimeMessage().getContentType();
 };
