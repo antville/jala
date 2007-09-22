@@ -37,7 +37,6 @@ if (!global.jala) {
    var jalaDir = getProperty("jala.dir", "modules/jala");
    app.addRepository(jalaDir + "/lib/dom4j-1.6.1.jar");
    app.addRepository(jalaDir + "/lib/jaxen-1.1-beta-8.jar");
-   app.addRepository(jalaDir + "/lib/tagsoup-1.0rc3.jar");
 })();
 
 /**
@@ -53,8 +52,7 @@ if (!global.jala) {
 jala.HtmlDocument = function(source) {
    var REQUIREMENTS = {
       "dom4j-1.6.1": "http://www.dom4j.org",
-      "jaxen-1.1-beta-8": "http://www.jaxen.org",
-      "tagsoup-1.0rc3": "http://mercury.ccil.org/~cowan/XML/tagsoup"
+      "jaxen-1.1-beta-8": "http://www.jaxen.org"
    };
 
    var reader = new java.io.StringReader(source);
