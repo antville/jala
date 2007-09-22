@@ -154,6 +154,12 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
    <TD><CODE><B><A HREF="jala.Test.DatabaseMgr.html">jala.Test.DatabaseMgr</A></B></CODE></TD>
    </TR>
 
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+   <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+   <CODE>&lt;static&nbsp;class&gt;</CODE></FONT></TD>
+   <TD><CODE><B><A HREF="jala.Test.SmtpServer.html">jala.Test.SmtpServer</A></B></CODE></TD>
+   </TR>
+
 </TABLE>
 &nbsp;
 
@@ -288,6 +294,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Checks if the values passed as arguments are equal.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#assertEqualFile">assertEqualFile</A></B>(&lt;Object&gt; val, &lt;String|helma.File&gt; file)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Checks if the value passed as argument equals the content of a file on disk.
       </TD>
    </TR>
 
@@ -453,6 +476,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
+	       <A HREF="#assertThrows">assertThrows</A></B>(&lt;Object&gt; func, &lt;Object&gt; exception)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Checks if the function passed as argument throws a defined exception.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
 	       <A HREF="#assertTrue">assertTrue</A></B>(&lt;Object&gt; val)
 	 </CODE>
 	 <BR>
@@ -475,6 +515,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Checks if the value passed as argument is undefined.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&nbsp;String</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#directory_macro">directory_macro</A></B>()
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Returns the absolute path to the directory containing the tests
       </TD>
    </TR>
 
@@ -559,7 +616,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	 Renders a single the result of a single test
+	 Renders the result of a single test
       </TD>
    </TR>
 
@@ -660,7 +717,7 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
       <TD>
 	 <CODE>
 	    <B>
-	       <A HREF="#!s!getStackTrace">getStackTrace</A></B>(&lt;String&gt; message)
+	       <A HREF="#!s!getStackTrace">getStackTrace</A></B>(&lt;java.lang.StackTraceElement&gt; trace)
 	 </CODE>
 	 <BR>
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -735,6 +792,23 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	 Returns the argument on the index position in the array
  passed as arguments.
+      </TD>
+   </TR>
+
+   <TR BGCOLOR="white" CLASS="TableRowColor">
+      <TD ALIGN="right" VALIGN="top" WIDTH="1%">
+	 <FONT SIZE="-1">
+	    <CODE>&lt;static&gt;&nbsp;void</CODE>
+	 </FONT>
+      </TD>
+      <TD>
+	 <CODE>
+	    <B>
+	       <A HREF="#!s!include">include</A></B>(&lt;Object&gt; scope, file)
+	 </CODE>
+	 <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 Evaluates a javascript file in the global test scope.
       </TD>
    </TR>
 
@@ -926,6 +1000,39 @@ jala.Test</H3>
       </UL> 
    
      <UL><CODE>val2</CODE> -  The value that should be compared to the first argument.  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>Throws:</B><UL>- jala.Test.ArgumentsException  <BR>- jala.Test.TestException    </UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="assertEqualFile"><!-- --></A>
+   <H3>assertEqualFile</H3>
+   <PRE>void <B>assertEqualFile</B>(&lt;Object&gt; val, &lt;String|helma.File&gt; file)</PRE>
+   
+      <UL>Checks if the value passed as argument equals the content of a file on disk.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>val</CODE> -  The value that should be compared with the content of  the file on disk.  
+      </UL> 
+   
+     <UL><CODE>file</CODE> -  Either a file name (including a path), or  an instance of helma.File representing the file to use for comparison.  
       </UL> 
    
    </UL>
@@ -1222,6 +1329,39 @@ jala.Test</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="assertThrows"><!-- --></A>
+   <H3>assertThrows</H3>
+   <PRE>void <B>assertThrows</B>(&lt;Object&gt; func, &lt;Object&gt; exception)</PRE>
+   
+      <UL>Checks if the function passed as argument throws a defined exception.</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>func</CODE> -  The function to call  
+      </UL> 
+   
+     <UL><CODE>exception</CODE> -  Optional object expected to be thrown when executing  the function  
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <UL>   
+   <B>Throws:</B><UL>- jala.Test.ArgumentsException  <BR>- jala.Test.TestException    </UL>
+   </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="assertTrue"><!-- --></A>
    <H3>assertTrue</H3>
    <PRE>void <B>assertTrue</B>(&lt;Object&gt; val)</PRE>
@@ -1278,6 +1418,31 @@ jala.Test</H3>
    <UL>   
    <B>Throws:</B><UL>- jala.Test.ArgumentsException  <BR>- jala.Test.TestException    </UL>
    </UL>
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
+   <A NAME="directory_macro"><!-- --></A>
+   <H3>directory_macro</H3>
+   <PRE>String <B>directory_macro</B>()</PRE>
+   
+      <UL>Returns the absolute path to the directory containing the tests</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+   <UL>
+   <B>Returns:</B>
+        <UL>
+        The path to the tests directory   
+        </UL>
+   </UL>
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
    
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
@@ -1385,7 +1550,7 @@ jala.Test</H3>
    <H3>renderResult</H3>
    <PRE>void <B>renderResult</B>(result)</PRE>
    
-      <UL>Renders a single the result of a single test</UL>
+      <UL>Renders the result of a single test</UL>
    
 
    <!-- METHOD PARAMETERS START -->
@@ -1552,7 +1717,7 @@ jala.Test</H3>
 
    <A NAME="!s!getStackTrace"><!-- --></A>
    <H3>getStackTrace</H3>
-   <PRE>&lt;static&gt; String <B>getStackTrace</B>(&lt;String&gt; message)</PRE>
+   <PRE>&lt;static&gt; String <B>getStackTrace</B>(&lt;java.lang.StackTraceElement&gt; trace)</PRE>
    
       <UL>Creates a stack trace and parses it for display.</UL>
    
@@ -1562,7 +1727,7 @@ jala.Test</H3>
    <UL>
    <B>Parameters:</B>
    
-     <UL><CODE>message</CODE> -  The failure message  
+     <UL><CODE>trace</CODE> -  The trace to parse. If not given  a stacktrace will be generated  
       </UL> 
    
    </UL>
@@ -1708,6 +1873,37 @@ jala.Test</H3>
    <!-- ADDITIONAL ATTRIBUTES  END -->
 <HR>
 
+   <A NAME="!s!include"><!-- --></A>
+   <H3>include</H3>
+   <PRE>&lt;static&gt; void <B>include</B>(&lt;Object&gt; scope, file)</PRE>
+   
+      <UL>Evaluates a javascript file in the global test scope. This method can be used
+ to include generic testing code in test files. This method is available as
+ global method "include" for all test methods</UL>
+   
+
+   <!-- METHOD PARAMETERS START -->
+   
+   <UL>
+   <B>Parameters:</B>
+   
+     <UL><CODE>scope</CODE> -  The scope in which the file should be evaluated  
+      </UL> 
+   
+     <UL><CODE>fileName</CODE> -  The name of the file to include, including the path    
+      </UL> 
+   
+   </UL>
+   
+   <!-- METHOD PARAMETERS END -->
+
+   
+
+   <!-- ADDITIONAL ATTRIBUTES START -->
+   
+   <!-- ADDITIONAL ATTRIBUTES  END -->
+<HR>
+
    <A NAME="!s!valueToString"><!-- --></A>
    <H3>valueToString</H3>
    <PRE>&lt;static&gt; String <B>valueToString</B>(val)</PRE>
@@ -1807,6 +2003,6 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 
 </FONT>
-<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Thu Mar 15 14:24:11 2007</div>
+<div class="jsdoc_ctime">Documentation generated by <a href="http://jsdoc.sourceforge.net/" target="_parent">JSDoc</a> on Sat Sep 22 14:27:37 2007</div>
 </BODY>
 </HTML>
