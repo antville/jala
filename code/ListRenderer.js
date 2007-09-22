@@ -412,17 +412,28 @@ jala.ListRenderer.prototype.getEndIndex = function() {
  * @see jala.ListRenderer#defaultRenderer
  */
 jala.ListRenderer.prototype.getRenderFunction = function(part, fName) {
+
+   var getFunction = function(renderer, name) {
+      var handler;
+      if ((handler = renderer[part]) != null) {
+         if (handler[name] instanceof Function) {
+            return handler[name];
+         }
+      }
+      return null;
+   };
+
+   var result;
    var renderer = this.getRenderer();
-   if (!fName)
-      fName = "default";
-   var handler;
-   if (renderer != null && (handler = renderer[part]) != null) {
-      if (handler[fName] instanceof Function) {
-         return handler[fName];
+   if (renderer != null) {
+      if (!fName || !(result = getFunction(renderer, fName))) {
+         result = getFunction(renderer, "default");
       }
    }
-   // return the default renderer
-   return jala.ListRenderer.defaultRenderer[part][fName];
+   if (!result) {
+      result = getFunction(jala.ListRenderer.defaultRenderer, "default");
+   }
+   return result;
 };
 
 /**
