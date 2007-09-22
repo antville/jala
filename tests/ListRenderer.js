@@ -182,15 +182,30 @@ var testHrefs = function() {
  * Test custom renderer
  */
 var testRenderer = function() {
-   // create a pseudo renderer to check if overriding default renderer works
+   // a pseudo renderer to check if overriding default renderer works
    var renderer = {
       "list": {
+         "custom": function() {
+            return;
+         },
          "default": function() {
             return;
          },
       },
    };
-   var list = new jala.ListRenderer(arrayList, renderer);
-   assertEqual(list.getRenderFunction("list", "default"), renderer.list["default"]);
+
+   // use default renderer
+   var list = new jala.ListRenderer(arrayList);
+   assertEqual(list.getRenderFunction("list"),
+               jala.ListRenderer.defaultRenderer.list["default"]);
+   assertEqual(list.getRenderFunction("list", "nonexisting"),
+               jala.ListRenderer.defaultRenderer.list["default"]);
+   assertNull(list.getRenderFunction("nonexisting"));
+
+   // use custom renderer
+   list = new jala.ListRenderer(arrayList, renderer);
+   assertEqual(list.getRenderFunction("list", "custom"), renderer.list["custom"]);
+   assertEqual(list.getRenderFunction("list", "nonexisting"), renderer.list["default"]);
+   assertEqual(list.getRenderFunction("list"), renderer.list["default"]);
    return;
 };
