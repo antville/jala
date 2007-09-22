@@ -23,7 +23,12 @@
 ## $HeadURL: https://robert@opensvn.csie.org/jala/trunk/util/HopKit/build.bat $
 ##
 
+# Uncomment and set this to the directory of your Helma installation
+# if you installed jala in a different subdirectory than "modules/jala"
+# HELMA_HOME="path/to/helma/installation"
+
 #--------------------------------------------
+# No need to change anything below
 # buildfile for ant 1.7.0
 #--------------------------------------------
 if test -z "${ANT_HOME}" ; then
@@ -41,6 +46,11 @@ if [ "${BUILD_HOME:0:1}" != "/" ] ; then
 fi
 export BUILD_HOME
 
+#---- store HELMA_HOME if not defined above
+if [ -z "$HELMA_HOME" ] ; then
+    HELMA_HOME=$BUILD_HOME/../../../..
+fi
+
 #---- Slurp the command line arguments.
 while [ $# -ne 0  ]
 do
@@ -56,6 +66,6 @@ else
    BUILD_XML="${PWD}/build.xml"
 fi
 
-"${ANT_HOME}/bin/ant -Dant.home="${BUILD_HOME}" -Dbasedir="${PWD}" -lib "${BUILD_HOME}/lib" -propertyfile "${PWD}\build.properties" ${ANT_CMD_LINE_ARGS}
+${ANT_HOME}/bin/ant -Dant.home="${BUILD_HOME}" -Dbasedir="${PWD}" -lib "${BUILD_HOME}/lib:${HELMA_HOME}/lib" -propertyfile "${PWD}/build.properties" -file $BUILD_XML ${ANT_CMD_LINE_ARGS}
 
 exit

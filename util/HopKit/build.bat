@@ -30,11 +30,17 @@ rem Define the path to the ANT binary directory
 rem (traling slash is mandatory!)
 rem set ANT_HOME=%PROGRAMFILES%\Apache Group\apache-ant-1.7.0\bin\
 
+rem Set this to the directory of your Helma installation if necessary
+set HELMA_HOME=""
+
 rem ==========================================================================
 rem No need to edit anything past here
 
 rem store path of this script as BUILD_HOME
 set BUILD_HOME=%~dp0
+
+rem Set this to the directory of your Helma installation
+if "%HELMA_HOME%"=="""" set HELMA_HOME="%BUILD_HOME%/../../../.."
 
 rem Slurp the command line arguments. This loop allows for an unlimited number
 rem of arguments (up to the command line limit, anyway).
@@ -58,6 +64,6 @@ if not exist ".\build.xml" (
 
 echo BUILD_HOME: %BUILD_HOME%
 
-ant -Dant.home=. -Dbasedir=. -lib "%BUILD_HOME%\lib" -propertyfile "%CD%\build.properties" %ANT_CMD_LINE_ARGS%
+ant -Dant.home=. -Dbasedir=. -lib "%BUILD_HOME%\lib;%HELMA_HOME%\lib" -propertyfile "%CD%\build.properties" %ANT_CMD_LINE_ARGS%
 
 :end
