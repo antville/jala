@@ -1016,8 +1016,7 @@ jala.Form.extend(jala.Form.Component.Fieldset, jala.Form.Component);
  */
 jala.Form.Component.Fieldset.prototype.render = function() {
 
-   var attr = {
-   };
+   var attr = {};
    var className = this.getClassName();
    if (className) {
       attr["class"] = className;
@@ -2366,7 +2365,7 @@ jala.Form.extend(jala.Form.Component.Button, jala.Form.Component.Input);
  *       passed only if the form is re-rendered after an error occured.
  */
 jala.Form.Component.Button.prototype.render = function(attr, value, reqData) {
-   var classStr = (this.getClassName()) ? this.getClassName() + " " : "";
+   var classStr = (this.getClassName()) ? " " + this.getClassName() : "";
    var attr = {
       id: this.createDomId(),
       "class": "component" + classStr
