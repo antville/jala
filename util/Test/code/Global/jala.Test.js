@@ -1236,6 +1236,10 @@ jala.Test.DatabaseMgr = function() {
    return this;
 };
 
+jala.Test.DatabaseMgr.prototype.toString = function() {
+   return "[jala.Test DatabaseMgr]";
+};
+
 /**
  * Switches the application datasource with the given name
  * to a newly created in-memory database. In addition this method
