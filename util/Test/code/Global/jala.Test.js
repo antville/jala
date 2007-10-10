@@ -462,11 +462,13 @@ jala.Test.EvaluatorException = function EvaluatorException(message, exception) {
          var e = exception.rhinoException;
          this.message += e.details();
          this.stackTrace = jala.Test.getStackTrace(e.getStackTrace());
+      } else if (exception instanceof Error) {
+         this.message = exception.message;
       }
       if (!this.stackTrace) {
          // got no stack trace, so add at least filename and line number
-         this.fileName = exception.fileName;
-         this.lineNumber = exception.lineNumber;
+         this.fileName = exception.fileName || null;
+         this.lineNumber = exception.lineNumber || null;
       }
    }
 
