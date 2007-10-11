@@ -1248,21 +1248,38 @@ jala.Test.DatabaseMgr.prototype.toString = function() {
  * also clears the application cache and invalidates the root
  * object to ensure that everything is re-retrieved from the
  * test database.
+ * This method can be called with a second boolean argument indicating
+ * that tables used by the application should be created in the in-memory
+ * database (excluding any data).
  * @param {String} dbSourceName The name of the application database
  * source as defined in db.properties
  * @param {Boolean} copyTables If true this method also copies all
  * tables in the source database to the test database (excluding
- * indexes). 
+ * indexes).
+ * @param {Array} tables An optional array containing table names that
+ * should be created in the test database. If not specified this method
+ * collects all tables that are mapped in the application.
  * @returns The test database
  * @type jala.db.RamDatabase
  */
-jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTables) {
+jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTables, tables) {
    try {
       var testDb = new jala.db.RamDatabase(dbSourceName);
       // switch the datasource to the test database
       var dbSource = app.getDbSource(dbSourceName);
       if (copyTables === true) {
-         testDb.copyTables(dbSource);
+         if (tables === null || tables === undefined) {
+            // collect the table names of all relational prototypes
+            tables = [];
+            var protos = app.getPrototypes();
+            for each (var proto in protos) {
+               var dbMap = proto.getDbMapping();
+               if (dbMap.isRelational()) {
+                  tables.push(dbMap.getTableName());
+               }
+            }
+         }
+         testDb.copyTables(dbSource, tables);
       }
       var oldProps = dbSource.switchProperties(testDb.getProperties());
       // store the test database in this manager for use in stopAll()
