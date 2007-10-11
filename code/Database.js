@@ -662,16 +662,25 @@ jala.db.RamDatabase.prototype.tableExists = function(name) {
  * re-created. Please mind that this method ignores any indexes in the source database,
  * but respects the primary key settings.
  * @param {helma.Database} database The database to copy the tables from
+ * @param {Array} tables An optional array containing the names of the tables to copy.
+ * If not given all tables are copied
  */
-jala.db.RamDatabase.prototype.copyTables = function(database) {
+jala.db.RamDatabase.prototype.copyTables = function(database, tables) {
    // retrieve the metadata for all tables in this schema
    try {
       var conn = database.getConnection();
       var meta = conn.getMetaData();
-      var t = meta.getTables(null, "%", "%", null);
-      var tableName, columns;
-      while (t.next()) {
-         tableName = t.getString(3).toUpperCase();
+      var t;
+      if (tables === null || tables === undefined) {
+         // no tables specified, so copy all available
+         tables = [];
+         var t = meta.getTables(null, "%", "%", null);
+         while (t.next()) {
+            tables.push(t.getString("TABLE_NAME").toUpperCase());
+         }
+      }
+
+      for each (var tableName in tables) {
          if (this.tableExists(tableName)) {
             this.dropTable(tableName);
          }
@@ -681,13 +690,13 @@ jala.db.RamDatabase.prototype.copyTables = function(database) {
          var columnName, columnType, columnTypeName, columnSize, columnNullable;
          while (c.next()) {
             columns[columns.length] = {
-               name: c.getString(4),
-               type: c.getInt(5),
-               length: c.getInt(7),
-               nullable: (c.getInt(11) == meta.typeNoNulls) ? false : true,
-               "default": c.getString(13),
-               precision: c.getInt(9),
-               scale: c.getInt(10)
+               name: c.getString("COLUMN_NAME"),
+               type: c.getInt("DATA_TYPE"),
+               length: c.getInt("COLUMN_SIZE"),
+               nullable: (c.getInt("NULLABLE") == meta.typeNoNulls) ? false : true,
+               "default": c.getString("COLUMN_DEF"),
+               precision: c.getInt("DECIMAL_DIGITS"),
+               scale: c.getInt("NUM_PREC_RADIX")
             }
          }
    
@@ -695,15 +704,12 @@ jala.db.RamDatabase.prototype.copyTables = function(database) {
          var pk = meta.getPrimaryKeys(null, "%", tableName);
          var keys = [];
          while (pk.next()) {
-            keys[keys.length] = pk.getString(4);
+            keys.push(pk.getString("COLUMN_NAME"));
          }
          // create the table in the embedded database
          this.createTable(tableName, columns, keys.length > 0 ? keys : null);
       }
    } finally {
-      if (t != null) {
-         t.close();
-      }
       if (conn != null) {
          conn.close();
       }
