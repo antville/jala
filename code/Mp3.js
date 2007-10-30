@@ -187,8 +187,12 @@ jala.Mp3 = function(file) {
     * @type Boolean
     */
    this.save = function(outFile) {
+      var tagOptions = Packages.org.farng.mp3.TagOptionSingleton.getInstance();
+      // (robert) this appearently fixes the problem that Windows Media Player cannot play files
+      // anymore if the size of an Id3v2 tag changed
+      tagOptions.setId3v2PaddingCopyTag(false);
       // turn off saving of backup-files:
-      Packages.org.farng.mp3.TagOptionSingleton.getInstance().setOriginalSavedAfterAdjustingID3v2Padding(false);
+      tagOptions.setOriginalSavedAfterAdjustingID3v2Padding(false);
   
       if (v2JavaTagToDelete) {
          // this is a workaround for a bug in JavaMusicTag:
@@ -1058,7 +1062,7 @@ jala.Mp3.Id3v2.prototype.getFrame = function(idStr) {
 jala.Mp3.Id3v2.prototype.encodeText = function(str, encoding) {
    if (!isNaN(encoding)) {
       // if encoding is the byte value -> get the correct encoding string from constant
-      encoding = jala.Mp3.TEXT_ENCODINGS[encoding]
+      encoding = jala.Mp3.TEXT_ENCODINGS[encoding];
    }
    return new java.lang.String(new java.lang.String(str).getBytes(encoding));
 };
