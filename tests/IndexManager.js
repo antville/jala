@@ -28,17 +28,21 @@
  * @final
  */
 var tests = [
-   "testAddForce",
-   "testRemoveForce",
-   "testOptimizeForce",
-   "testAsync",
+   "testAdd",
+   "testRemove",
+   "testOptimize",
 ];
 
 /**
- * A global variable containing the indexmanager to test
+ * Contains the index manager to test
  * @type jala.IndexManager
  */
 var index;
+
+/**
+ * Contains the queue of the index manager
+ */
+var queue;
 
 /**
  * A global id "counter"
@@ -52,6 +56,8 @@ var setup = function() {
    // create the index to test
    var dir = new java.io.File(java.lang.System.getProperty("java.io.tmpdir"));
    index = new jala.IndexManager("test", dir, "de");
+   queue = index.getQueue();
+   index.start();
    return;
 };
 
@@ -71,6 +77,7 @@ var cleanup = function() {
          } 
          dir["delete"]();
       }
+      index.stop();
    }
    return;
 };
@@ -78,47 +85,47 @@ var cleanup = function() {
 /**
  * Test adding a document object immediately
  */
-var testAddForce = function() {
-   index.add(createDocumentObject(), true);
+var testAdd = function() {
+   index.add(createDocumentObject());
+   // check queue and job
+   assertEqual(queue.size(), 1);
+   assertEqual(queue.get(0).type, jala.IndexManager.Job.ADD);
    // check if the document was added correctly
+   // but give the index manager time to process
+   java.lang.Thread.currentThread().sleep(300);
    assertEqual(1, index.getIndex().size());
+   assertEqual(queue.size(), 0);
    return;
 };
 
 /**
  * Test removing a document object immediately
  */
-var testRemoveForce = function() {
+var testRemove = function() {
    var id = idCounter -1;
-   index.remove(id, true);
+   index.remove(id);
+   // check queue and job
+   assertEqual(queue.size(), 1);
+   assertEqual(queue.get(0).type, jala.IndexManager.Job.REMOVE);
    // check if the document was added correctly
+   // but give the index manager time to process
+   java.lang.Thread.currentThread().sleep(300);
    assertEqual(0, index.getIndex().size());
+   assertEqual(queue.size(), 0);
    return;
 };
 
 /**
  * Test immediate index optimization
  */
-var testOptimizeForce = function() {
-   index.optimize(true);
+var testOptimize = function() {
+   index.optimize();
+   // check queue and job
+   assertEqual(queue.size(), 1);
+   assertEqual(queue.get(0).type, jala.IndexManager.Job.OPTIMIZE);
+   // give the index manager time to process
+   java.lang.Thread.currentThread().sleep(300);
    assertFalse(index.hasOptimizingJob());
-   assertFalse(index.needsOptimize());
-   return;
-};
-
-/**
- * Test adding, removing and optimizing asynchronously
- */
-var testAsync = function() {
-   index.add(createDocumentObject());
-   index.remove(idCounter -1);
-   // index.optimize();
-   while (index.hasWorker()) {
-      java.lang.Thread.sleep(10);
-   }
-   // check if the document was added correctly
-   assertEqual(0, index.getIndex().size());
-   assertFalse(index.needsOptimize());
    return;
 };
 
@@ -130,9 +137,9 @@ var testAsync = function() {
 var createDocumentObject = function() {
    var id = idCounter;
    var doc = new helma.Search.Document();
-   doc.addField("id", id, {store: true, index: true, tokenize: false});
-   doc.addField("name", "Document " + id, {store: true, index: true, tokenize: true});
-   doc.addField("createtime", (new Date()).format("yyyyMMddHHmm"), {store: true, index: true, tokenize: false});
+   doc.addField("id", id, {store: "yes", index: "unTokenized"});
+   doc.addField("name", "Document " + id, {store: "yes", index: "tokenized"});
+   doc.addField("createtime", (new Date()).format("yyyyMMddHHmm"), {store: "yes", index: "unTokenized"});
    idCounter += 1;
    return doc;
 };
