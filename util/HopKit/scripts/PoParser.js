@@ -271,7 +271,9 @@ Message.prototype.write = function(buf) {
       buf.append('   "');
       buf.append(key);
       buf.append('": "');
-      buf.append(value);
+      if (value !== null && value !== undefined) {
+         buf.append(value);
+      }
       buf.append('",\n');
    };
 
