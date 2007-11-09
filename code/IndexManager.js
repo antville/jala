@@ -214,27 +214,23 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
             while (interrupted === false) {
                if (this.getStatus() != jala.IndexManager.REBUILDING && !queue.isEmpty()) {
                   var job = queue.remove(0);
-                  this.log("debug", "remaining jobs " + queue.size());
-                  // special handling of optimize jobs: if there are other jobs
-                  // waiting behind it, delay the optimizing until all other
-                  // jobs are processed
-                  if (job.type == jala.IndexManager.Job.OPTIMIZE && !queue.isEmpty()) {
-                     this.log("debug", "delaying optimize job until other jobs are finished");
-                     queue.add(job);
-                  } else {
-                     var result = this.processJob(job);
-                     if (result == false) {
-                        // processing job failed, check if we should re-add
-                        if (job.errors < jala.IndexManager.MAXTRIES) {
-                           // increment error counter and put back into queue
-                           job.errors += 1;
-                           queue.add(job);
-                        } else {
-                           this.log("error", "error during queue flush: tried " +
-                                    jala.IndexManager.MAXTRIES + " times to handle " +
-                                    job.type + " job " + ", giving up.");
-                        }
+                  if (this.processJob(job) === false) {
+                     // processing job failed, check if we should re-add
+                     if (job.errors < jala.IndexManager.MAXTRIES) {
+                        // increment error counter and put back into queue
+                        job.errors += 1;
+                        queue.add(job);
+                     } else {
+                        this.log("error", "error during queue flush: tried " +
+                                 jala.IndexManager.MAXTRIES + " times to handle " +
+                                 job.type + " job " + ", giving up.");
                      }
+                  }
+                  this.log("debug", "remaining jobs " + queue.size());
+                  // put an optimizing job into the queue if there are no other
+                  // jobs left to process and the last job was not an optimizing job
+                  if (job.type != jala.IndexManager.Job.OPTIMIZE && queue.isEmpty()) {
+                     this.optimize();
                   }
                } else {
                   // wait for 100ms before checking again
@@ -380,9 +376,7 @@ jala.IndexManager.prototype.getDocumentId = function(doc) {
 /**
  * Queues the document object passed as argument for addition to the underlying
  * index. This includes that all existing documents with the same identifier will
- * be removed before the object passed as argument is added. In addition
- * this method queues an optimizer job too, which will be executed after the
- * adding of the document.
+ * be removed before the object passed as argument is added.
  * @param {helma.Search.Document} doc The document object that should be
  * added to the underlying index.
  * @returns True if the job was added successfully to the internal queue,
@@ -411,15 +405,12 @@ jala.IndexManager.prototype.add = function(doc) {
    var job = new jala.IndexManager.Job(jala.IndexManager.Job.ADD, callback);
    this.getQueue().add(job);
    this.log("debug", "queued adding document " + id + " to index");
-   // add an optimizing job too
-   this.optimize();
    return true;
 };
 
 /**
- * Queues all index documents whose identifier value ("id" by default) matches
- * the number passed as argument from the underlying index. In addition this
- * method queues an optimizing job too, which is executed after the removal.
+ * Queues the removal of all index documents whose identifier value ("id" by default)
+ * matches the number passed as argument.
  * @param {Number} id The identifier value
  * @returns True if the removal job was added successfully to the queue, false
  * otherwise.
@@ -441,20 +432,13 @@ jala.IndexManager.prototype.remove = function(id) {
    var job = new jala.IndexManager.Job(jala.IndexManager.Job.REMOVE, callback);
    this.getQueue().add(job);
    this.log("debug", "queued removal of document with Id " + id);
-   // add an optimizing job too
-   this.optimize();
    return true;
 };
 
 /**
- * Optimizes the underlying index. Optimizing jobs have lower priority than add
- * or remove jobs, so calling this method does not mean that the index will be
- * optimized immediately. Instead, this job will stay in the internal queue as
- * long as there are other jobs waiting. Calling this method multiple times
- * doesn not lead to multiple optimization, as the job cannot be
- * added to the queue if there is already one.
- * @returns True if the optimizing job was added, false otherwise (meaning that
- * there is already an optimizing job waiting in the queue)
+ * Queues the optimization of the underlying index.
+ * @returns True if the optimizing job was added, false otherwise, which means
+ * that there is already an optimizing job waiting in the queue.
  * @type Boolean
  */
 jala.IndexManager.prototype.optimize = function() {
