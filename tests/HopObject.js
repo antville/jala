@@ -38,26 +38,26 @@ var result = undefined;
  */
 var testGetAccessName = function() {
    var name = "foobar";
-   var collection = new HopObject;
+   var collection = new HopObject();
    
    assertEqual(collection.getAccessName(name), name);
    // Test alias with the same name as a default HopObject method
    assertNotEqual(collection.getAccessName("get"), "get");
-   assertEqual(collection.getAccessName("get"), "get1");
+   assertEqual(collection.getAccessName("get"), "get-1");
    // Set a custom property of the collection and test it
    collection[name] = true;
    assertNotEqual(collection.getAccessName(name), name);
-   assertEqual(collection.getAccessName(name), name + "1");
+   assertEqual(collection.getAccessName(name), name + "-1");
    
    // Set custom properties equally to the method's numbering
-   collection[name + "1"] = true;
-   collection[name + "12"] = true;
+   collection[name + "-1"] = true;
+   collection[name + "-12"] = true;
    assertNotEqual(collection.getAccessName(name), name + "1");
    assertNotEqual(collection.getAccessName(name), name + "12");
-   assertEqual(collection.getAccessName(name), name + "123");
+   assertEqual(collection.getAccessName(name), name + "-2");
 
    assertNotEqual(collection.getAccessName(name, name.length), name);
-   assertEqual(collection.getAccessName(name, name.length), "fooba1");
+   assertEqual(collection.getAccessName(name, name.length), "foob-1");
    return;
 };
 
