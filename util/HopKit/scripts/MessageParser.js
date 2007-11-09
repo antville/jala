@@ -71,6 +71,10 @@ Message.getKey = function(id, pluralId) {
  * @type String
  */
 Message.formatId = function(str, wrap) {
+   var escapeQuotes = function(s) {
+      return s.replaceAll('"', '\\\\"');
+   };
+
    var len = 80;
    var buf = new java.lang.StringBuffer();
    if (wrap == true && str.length > len) {
@@ -78,14 +82,14 @@ Message.formatId = function(str, wrap) {
       var offset = 0;
       while (offset < str.length) {
          buf.append('"');
-         buf.append(str.substring(offset, offset += len));
+         buf.append(escapeQuotes(str.substring(offset, offset += len)));
          buf.append('"');
          buf.append("\n");
       }
       return buf.toString();
    } else {
       buf.append('"');
-      buf.append(str);
+      buf.append(escapeQuotes(str));
       buf.append('"\n');
    }
    return buf.toString();
