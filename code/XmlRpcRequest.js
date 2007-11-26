@@ -273,8 +273,9 @@ jala.XmlRpcRequest.prototype.execute = function(/** [arg1][, arg2][, ...] */) {
       var start = new Date();
    }
 
-   var reqProcessor = new Packages.org.apache.xmlrpc.XmlRpcClientRequestProcessor();
-   var resProcessor = new Packages.org.apache.xmlrpc.XmlRpcClientResponseProcessor();
+   var tz = java.util.TimeZone.getDefault();
+   var reqProcessor = new Packages.org.apache.xmlrpc.XmlRpcClientRequestProcessor(tz);
+   var resProcessor = new Packages.org.apache.xmlrpc.XmlRpcClientResponseProcessor(tz);
    // create the result object
    var result = {
       error: null,
