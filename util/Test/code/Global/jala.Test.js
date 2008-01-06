@@ -32,9 +32,6 @@ if (!global.jala) {
    global.jala = {};
 }
 
-// Resolve Jala dependencies
-app.addRepository(getProperty("jala.dir", "modules/jala") + "/code/all.js");
-
 /**
  * HelmaLib dependencies
  */
