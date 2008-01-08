@@ -57,10 +57,10 @@ var testGetLinks = function() {
    }
    assertEqual(links[0].url, "http://localhost/1");
    assertEqual(links[0].text, "foo");
-   assertEqual(links[1].url, "http://localhost/3");
-   assertEqual(links[1].text, "foobar");
-   assertEqual(links[2].url, "http://localhost/2");
-   assertEqual(links[2].text, "bar");
+   assertEqual(links[1].url, "http://localhost/2");
+   assertEqual(links[1].text, "bar");
+   assertEqual(links[2].url, "http://localhost/3");
+   assertEqual(links[2].text, "foobar");
    return;
 };
 
@@ -71,18 +71,18 @@ var testGetLinks = function() {
  * evaluated and tested.
  */
 var testGetAll = function() {
-   var names = ["html", "head", "body", "title", "h1", "a", "div", "a", "a"];
+   var names = ["html", "head", "title", "body", "h1", "a", "div", "a", "a"];
    var html = new jala.HtmlDocument(source);
    var list = html.getAll("*");
    for (var i in list) {
      assertNotUndefined(list[i].name);
      assertEqual(list[i].name, names[i]);
    }
-   assertEqual(list[3].value, "Test");
+   assertEqual(list[2].value, "Test");
    assertEqual(list[4].value, "Hello, World!");
    assertEqual(list[5].value, "foo");
-   assertEqual(list[7].value, "foobar");
-   assertEqual(list[8].value, "bar");
+   assertEqual(list[7].value, "bar");
+   assertEqual(list[8].value, "foobar");
    assertEqual(html.getAll("h1")[0].value, "Hello, World!");
    return;
 };

@@ -329,6 +329,7 @@ jala.BitTorrent.bdecode = function(code) {
          case END:
          case null:
             //res.debug("*** end detected in getResult()");
+            result = null;
             break;
          default:
             result = bdecodeString();               
@@ -357,6 +358,8 @@ jala.BitTorrent.bdecode = function(code) {
       var dictionary = {}, key, value;
       while (current && !overflow()) {
          key = getResult();
+         if (key === null)
+            break;
          value = getResult();
          if (key && value)
             dictionary[key] = value;
