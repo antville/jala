@@ -72,6 +72,7 @@ Message.getKey = function(id, pluralId) {
  */
 Message.formatId = function(str, wrap) {
    var escapeQuotes = function(s) {
+      s = java.lang.String(s);
       return s.replaceAll('"', '\\\\"');
    };
 
@@ -186,7 +187,7 @@ MessageParser.REGEX_MACRO = /<%\s*(?:([\w]+)\.)?([\w]+)\s+([^%]+?)\s*%>/gm;
  * result[2] = attribute value
  * @type RegExp
  */
-MessageParser.REGEX_PARAM = /([\w]*)\s*=\s*["'](.*?)["']\s*(?=\w+=|$)/gm;
+MessageParser.REGEX_PARAM = /([\w]*)\s*=\s*["']?(.*?)["']?\s*(?=\w+=|$)/gm;
 
 /**
  * Calculates the line number in the string passed as argument
