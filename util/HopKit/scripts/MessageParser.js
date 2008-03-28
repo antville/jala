@@ -39,8 +39,8 @@
  * @constructor
  */
 var Message = function(id, pluralId) {
-   this.id = id;
-   this.pluralId = pluralId;
+   this.id = id && String(id);
+   this.pluralId = pluralId && String(pluralId);
    this.locations = [];
    return this;
 };
@@ -72,7 +72,7 @@ Message.getKey = function(id, pluralId) {
  */
 Message.formatId = function(str, wrap) {
    var escapeQuotes = function(s) {
-      return s.replaceAll('"', '\\\\"');
+      return s.replace(/([^\\]")/g, '$1\\"');
    };
 
    var len = 80;
@@ -245,7 +245,9 @@ MessageParser.prototype.toString = function() {
  * @param {java.io.File} file The function file to parse
  */
 MessageParser.prototype.parseFunctionFile = function(file) {
-   var reader = new java.io.BufferedReader(java.io.FileReader(file));
+   var fis = new java.io.FileInputStream(file);
+   var isr = new java.io.InputStreamReader(fis, "ISO-8859-15")
+   var reader = new java.io.BufferedReader(isr);
    var tokenizer = new java.io.StreamTokenizer(reader);
    var messages = [], stack = [];
    var c;
@@ -294,6 +296,9 @@ MessageParser.prototype.parseFunctionFile = function(file) {
          }
       }
    }
+   fis.close();
+   isr.close();
+   reader.close();
    return;
 };
 
@@ -305,7 +310,7 @@ MessageParser.prototype.parseFunctionFile = function(file) {
  * @param {java.io.File} file The skin file to parse
  */
 MessageParser.prototype.parseSkinFile = function(file) {
-   var content = readFile(file.getAbsolutePath());
+   var content = readFile(file.getAbsolutePath(), "ISO-8859-15");
    var macro, id, pluralId, params, key;
    while (macro = MessageParser.REGEX_MACRO.exec(content)) {
       while (params = MessageParser.REGEX_PARAM.exec(macro[3])) {
