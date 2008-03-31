@@ -72,7 +72,7 @@ Message.getKey = function(id, pluralId) {
  */
 Message.formatId = function(str, wrap) {
    var escapeQuotes = function(s) {
-      return s.replace(/([^\\]")/g, '$1\\"');
+      return s.replace(/(^|[^\\])"/g, '$1\\"');
    };
 
    var len = 80;
@@ -205,12 +205,13 @@ MessageParser.getLineNum = function(str, idx) {
  * is a directory, this method recurses down the directory
  * tree and parses all skin and function files.
  * @param {java.io.File} file The file or directory to start at.
+ * @param {String} encoding The encoding to use
  */
-MessageParser.prototype.parse = function(file) {
+MessageParser.prototype.parse = function(file, encoding) {
    if (file.isDirectory()) {
       var list = file.list();
       for (var i=0;i<list.length;i++) {
-         this.parse(new java.io.File(file, list[i]));
+         this.parse(new java.io.File(file, list[i]), encoding);
       }
    } else {
       var fName, dotIdx;
@@ -219,12 +220,12 @@ MessageParser.prototype.parse = function(file) {
          switch (String(fName.substring(dotIdx+1))) {
             case "skin":
                print("Parsing skin file " + file.getAbsolutePath() + "...");
-               this.parseSkinFile(file);
+               this.parseSkinFile(file, encoding);
                break;
             case "hac":
             case "js":
                print("Parsing function file " + file.getAbsolutePath() + "...");
-               this.parseFunctionFile(file);
+               this.parseFunctionFile(file, encoding);
                break;
             default:
                break;
@@ -243,10 +244,11 @@ MessageParser.prototype.toString = function() {
  * Parses a .js file and creates Message instances for all
  * calls of "gettext", "ngettext", "markgettext" and "_".
  * @param {java.io.File} file The function file to parse
+ * @param {String} encoding The encoding to use
  */
-MessageParser.prototype.parseFunctionFile = function(file) {
+MessageParser.prototype.parseFunctionFile = function(file, encoding) {
    var fis = new java.io.FileInputStream(file);
-   var isr = new java.io.InputStreamReader(fis, "ISO-8859-15")
+   var isr = new java.io.InputStreamReader(fis, encoding || "UTF-8");
    var reader = new java.io.BufferedReader(isr);
    var tokenizer = new java.io.StreamTokenizer(reader);
    var messages = [], stack = [];
@@ -308,9 +310,10 @@ MessageParser.prototype.parseFunctionFile = function(file) {
  * that have attributes named "message" and optional
  * "plural"
  * @param {java.io.File} file The skin file to parse
+ * @param {String} encoding The encoding to use
  */
-MessageParser.prototype.parseSkinFile = function(file) {
-   var content = readFile(file.getAbsolutePath(), "ISO-8859-15");
+MessageParser.prototype.parseSkinFile = function(file, encoding) {
+   var content = readFile(file.getAbsolutePath(), encoding || "UTF-8");
    var macro, id, pluralId, params, key;
    while (macro = MessageParser.REGEX_MACRO.exec(content)) {
       while (params = MessageParser.REGEX_PARAM.exec(macro[3])) {
@@ -399,21 +402,26 @@ MessageParser.prototype.writeToFile = function(file) {
  * Main script body
  */
 var toParse = [];
-var arg, outFile, file;
+var arg, outFile, file, fileEncoding;
 
 for (var i=0;i<arguments.length;i++) {
    arg = arguments[i];
-   if (arg.indexOf("-o") == 0 && i+1 < arguments.length) {
-      outFile = new java.io.File(arguments[i+=1]);
+   if (i + 1 < arguments.length) {
+      if (arg.indexOf("-o") === 0) {
+         outFile = new java.io.File(arguments[i += 1]);
+      } else if (arg.indexOf("-e") === 0) {
+         fileEncoding = arguments[i += 1];
+      }
    } else {
       // add argument to list of files and directories to parse
       toParse.push(new java.io.File(arg));
    }
 }
+
 // start parsing
 var parser = new MessageParser();
 for (var i=0;i<toParse.length;i++) {
-   parser.parse(toParse[i]);
+   parser.parse(toParse[i], fileEncoding);
 }
 if (outFile != null) {
    parser.writeToFile(outFile);

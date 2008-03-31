@@ -98,6 +98,8 @@
       <echo message="Using '${i18n.template}' as output" />
       <input message="Directories containing code/skins separated by spaces:"
              addproperty="i18n.scan" />
+      <input message="Encoding of code/skin files (default is UTF-8):"
+             addproperty="i18n.fileEncoding" />
    	<!-- convert inputs to absolute paths -->
    	<property name="dest" location="${i18n.template}" />
      	<property name="src" location="${i18n.scan}" />
@@ -105,6 +107,8 @@
          <arg value="${env.BUILD_HOME}/scripts/MessageParser.js" />
          <arg value="-o" />
          <arg value="${dest}" />
+         <arg value="-e" />
+         <arg value="${i18n.fileEncoding}" />
          <arg line="${src}" />
       </java>
    </target>
