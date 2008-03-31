@@ -406,12 +406,10 @@ var arg, outFile, file, fileEncoding;
 
 for (var i=0;i<arguments.length;i++) {
    arg = arguments[i];
-   if (i + 1 < arguments.length) {
-      if (arg.indexOf("-o") === 0) {
-         outFile = new java.io.File(arguments[i += 1]);
-      } else if (arg.indexOf("-e") === 0) {
-         fileEncoding = arguments[i += 1];
-      }
+   if (arg.indexOf("-o") === 0 && i < arguments.length -1) {
+      outFile = new java.io.File(arguments[i += 1]);
+   } else if (arg.indexOf("-e") === 0 && i < arguments.length -1) {
+      fileEncoding = arguments[i += 1];
    } else {
       // add argument to list of files and directories to parse
       toParse.push(new java.io.File(arg));
