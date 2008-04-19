@@ -55,7 +55,8 @@ app.addRepository("modules/helma/File.js");
  * @param {String} name The name of the index, which is the name of the directory
  * the index already resides or will be created in.
  * @param {helma.File} dir The base directory where this index's directory
- * is already existing or will be created in.
+ * is already existing or will be created in. If not specified a RAM directory
+ * is used.
  * @param {String} lang The language of the documents in this index. This leads
  * to the proper Lucene analyzer being used for indexing documents.
  * @constructor
@@ -105,6 +106,29 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
     * @private
     */
    var idFieldname = "id";
+
+   /**
+    * The index directory
+    * @type Packages.org.apache.lucene.store.Directory
+    * @private
+    */
+   var indexDirectory = null;
+   
+   /**
+    * The searcher utilized by {@link #search}
+    * @type jala.IndexManager.Searcher
+    * @private
+    */
+   var searcher = null;
+
+   /**
+    * Returns the directory of the underlying index
+    * @returns The directory of the underlying index
+    * @type Packages.org.apache.lucene.store.Directory
+    */
+   this.getDirectory = function() {
+      return indexDirectory;
+   };
 
    /**
     * Returns the underlying index.
@@ -227,10 +251,17 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
                      }
                   }
                   this.log("debug", "remaining jobs " + queue.size());
-                  // put an optimizing job into the queue if there are no other
-                  // jobs left to process and the last job was not an optimizing job
-                  if (job.type != jala.IndexManager.Job.OPTIMIZE && queue.isEmpty()) {
-                     this.optimize();
+                  // if no more jobs are waiting, optimize the index and re-open
+                  // the index searcher to make changes visible
+                  if (queue.isEmpty()) {
+                     var start = java.lang.System.currentTimeMillis();
+                     try {
+                        this.getIndex().optimize();
+                        this.log("optimized index in " + jala.IndexManager.getRuntime(start) + " ms");
+                        this.initSearcher();
+                     } catch (e) {
+                        this.log("error", "Unable to optimize index or re-open searcher, reason: " + e.toString());
+                     }
                   }
                } else {
                   // wait for 100ms before checking again
@@ -287,13 +318,40 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
    });
 
    /**
+    * Initializes the searcher
+    * @private
+    */
+   this.initSearcher = function() {
+      searcher = new Packages.org.apache.lucene.search.IndexSearcher(indexDirectory);
+      return;
+   };
+
+   /**
+    * Returns the searcher of this index manager
+    * @returns The searcher of this index manager
+    * @type org.apache.lucene.search.IndexSearcher
+    * @private
+    */
+   this.getSearcher = function() {
+      if (searcher === null) {
+         this.initSearcher();
+      }
+      return searcher;
+   };
+   
+   /**
     * Main constructor body. Initializes the underlying index.
     */
    var search = new helma.Search();
    var analyzer = helma.Search.getAnalyzer(lang);
-   var fsDir = search.getDirectory(new helma.File(dir, name));
-   index = search.createIndex(fsDir, analyzer);
-   this.log("created/mounted " + index);
+   if (dir != null) {
+      indexDirectory = search.getDirectory(new helma.File(dir, name));
+      this.log("created/mounted " + indexDirectory);
+   } else {
+      indexDirectory = search.getRAMDirectory();
+      this.log("created new RAM directory");
+   }
+   index = search.createIndex(indexDirectory, analyzer);
 
    return this;
 };
@@ -436,7 +494,9 @@ jala.IndexManager.prototype.remove = function(id) {
 };
 
 /**
- * Queues the optimization of the underlying index.
+ * Queues the optimization of the underlying index. Normally there is no need
+ * to call this method explicitly, as the index will be optimized after all
+ * queued jobs have been processed.
  * @returns True if the optimizing job was added, false otherwise, which means
  * that there is already an optimizing job waiting in the queue.
  * @type Boolean
@@ -449,6 +509,8 @@ jala.IndexManager.prototype.optimize = function() {
       var start = java.lang.System.currentTimeMillis();
       this.getIndex().optimize();
       this.log("optimized index in " + jala.IndexManager.getRuntime(start) + " ms");
+      // re-open index searcher, so that changes are seen
+      this.initSearcher();
       return;
    };
    var job = new jala.IndexManager.Job(jala.IndexManager.Job.OPTIMIZE, callback);
@@ -473,6 +535,136 @@ jala.IndexManager.prototype.processJob = function(job) {
       return false;
    }
    return true;
+};
+
+/**
+ * Searches the underlying index using the searcher of this index manager
+ * @param {helma.Search.Query|org.apache.lucene.search.Query} query The query
+ * to execute. Can be either an instance of helma.Search.Query, or an instance
+ * of org.apache.lucene.search.Query
+ * @param {helma.Search.QueryFilter|org.apache.lucene.search.Filter} filter
+ * An optional query filter
+ * @param {Array} sortFields An optional array containing
+ * org.apache.lucene.search.SortField instances to use for sorting the result
+ * @returns A HitCollection containing the search results
+ * @type helma.Search.HitCollection
+ */
+jala.IndexManager.prototype.search = function(query, filter, sortFields) {
+   var pkg = Packages.org.apache.lucene;
+   if (query == null || (!(query instanceof helma.Search.Query) &&
+            !(query instanceof pkg.search.Query))) {
+      throw "jala.IndexManager search(): missing or invalid query";
+   } else if (query instanceof helma.Search.Query) {
+      // unwrap query
+      query = query.getQuery();
+   }
+   if (filter != null && filter instanceof helma.Search.QueryFilter) {
+      // unwrap filter
+      filter = filter.getFilter();
+   }
+
+   var searcher = this.getSearcher();
+   var analyzer = this.getIndex().getAnalyzer();
+   var hits;
+   if (sortFields != null && sortFields.length > 0) {
+      // convert the array with sortfields to a java array
+      var arr = java.lang.reflect.Array.newInstance(pkg.search.SortField, sortFields.length);
+      sortFields.forEach(function(sortField, idx) {
+         arr[idx] = sortField;
+      });
+      var sort = pkg.search.Sort(arr);
+      if (filter) {
+         hits = searcher.search(query, filter, sort);
+      } else {
+         hits = searcher.search(query, sort);
+      }
+   } else if (filter) {
+      hits = searcher.search(query, filter);
+   } else {
+      hits = searcher.search(query);
+   }
+   this.log("debug", "Query: '" + query.toString());
+   return new helma.Search.HitCollection(hits);
+};
+
+/**
+ * Parses the query string passed as argument into a lucene Query instance
+ * @param {String} queryStr The query string to parse
+ * @param {Array} fields An array containing the names of the files to search in
+ * @param {Object} boostMap An optional object containing properties whose name denotes
+ * the name of the field to boost in the query, and the value the boost value.
+ * @returns The query
+ * @type org.apache.lucene.search.Query
+ */
+jala.IndexManager.prototype.parseQuery = function(queryStr, fields, boostMap) {
+   if (queryStr == null || typeof(queryStr) !== "string") {
+      throw "IndexManager.parseQuery(): missing or invalid query string";
+   }
+   if (fields == null || fields.constructor !== Array || fields.length < 1) {
+      throw "IndexManager.parseQuery(): missing fields argument";
+   }
+   var query = null;
+   var analyzer = this.getIndex().getAnalyzer();
+   var pkg = Packages.org.apache.lucene;
+   var map = null;
+   if (boostMap != null) {
+      // convert the javascript object into a HashMap
+      map = new java.util.HashMap();
+      for (var name in boostMap) {
+         map.put(name, new java.lang.Float(boostMap[name]));
+      }
+   }
+   var parser;
+   try {
+      if (fields.length > 1) {
+         parser = new pkg.queryParser.MultiFieldQueryParser(fields, analyzer, map);
+      } else {
+         parser = new pkg.queryParser.QueryParser(fields, analyzer);
+      }
+      query = parser.parse(queryStr);
+   } catch (e) {
+      // ignore, but write a message to debug log
+      app.logger.debug("Unable to construct search query '" + queryStr +
+                       "', reason: " + e);
+   }
+   return query;
+};
+
+/**
+ * Parses the query passed as argument and returns a caching filter. If an array
+ * with more than one query strings is passed as argument, this method constructs
+ * a boolean query filter where all queries in the array must match.
+ * @param {String|Array} query Either a query string, or an array containing
+ * one or more query strings
+ * @returns A caching query filter
+ * @type org.apache.lucene.search.CachingWrapperFilter
+ */
+jala.IndexManager.prototype.parseQueryFilter = function(query) {
+   var filter = null;
+   if (query != null) {
+      var pkg = Packages.org.apache.lucene;
+      var analyzer = this.getIndex().getAnalyzer();
+      var parser = new pkg.queryParser.QueryParser("", analyzer);
+      var filterQuery;
+      try {
+         if (query.constructor === Array) {
+            if (query.length > 1) {
+               filterQuery = new pkg.search.BooleanQuery();
+               query.forEach(function(queryStr){
+                  filterQuery.add(parser.parse(queryStr), pkg.search.BooleanClause.Occur.MUST);
+               }, this);
+            } else {
+               filterQuery = parser.parse(query[0]);
+            }
+         } else {
+            filterQuery = parser.parse(query);
+         }
+         filter = new pkg.search.CachingWrapperFilter(new pkg.search.QueryWrapperFilter(filterQuery));
+      } catch (e) {
+         app.logger.debug("Unable to parse query filter '" + query + "', reason: " + e);
+      }
+   }
+   return filter;
 };
 
 
