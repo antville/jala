@@ -50,13 +50,37 @@ var testCreatePassword = function() {
 
 var o1 = {a: 1, b: 2, d: 4, e: {f: 6, g: 7}, h: {i: 9}};
 var o2 = {a: 2, c: 3, d: 4, e: {f: 7, h: 8}, i: {j: 10}};
-
-var diff = jala.util.diffObjects(o1, o2);
+var diff;
 
 /**
  * Unit test for #jala.util.diffObjects.
  */
 var testDiffObjects = function() {
+   // diffing various simple objects
+   diff = jala.util.diffObjects({}, {a: 1});
+   assertNotNull(diff);
+   assertEqual(diff.a.status, jala.Utilities.VALUE_ADDED);
+
+   diff = jala.util.diffObjects({a: 1}, {});
+   assertNotNull(diff);
+   assertEqual(diff.a.status, jala.Utilities.VALUE_REMOVED);
+
+   diff = jala.util.diffObjects({a: {b: 1}}, {a: 1});
+   assertNotNull(diff);
+   assertEqual(diff.a.status, jala.Utilities.VALUE_MODIFIED);
+
+   diff = jala.util.diffObjects({a: {b: 1}}, {a: {b: 1, c: 1}});
+   assertNotNull(diff);
+   assertEqual(diff.a.c.status, jala.Utilities.VALUE_ADDED);
+
+   diff = jala.util.diffObjects({a: {b: 1}}, {a: {c: 1}});
+   assertNotNull(diff);
+   assertEqual(diff.a.b.status, jala.Utilities.VALUE_REMOVED);
+   assertEqual(diff.a.c.status, jala.Utilities.VALUE_ADDED);
+
+   // diffing pre-defined objects
+   diff = jala.util.diffObjects(o1, o2);
+
    assertNotNull(diff);
    assertNotUndefined(diff);
    assertEqual(diff.constructor, Object);
@@ -82,6 +106,7 @@ var testDiffObjects = function() {
    assertEqual(diff.e.h.status, jala.Utilities.VALUE_ADDED);
    assertEqual(diff.h.status, jala.Utilities.VALUE_REMOVED);
    assertEqual(diff.i.status, jala.Utilities.VALUE_ADDED);
+
    return;
 };
 
@@ -89,6 +114,7 @@ var testDiffObjects = function() {
  * Unit test for #jala.util.patchObject.
  */
 var testPatchObject = function() {
+   diff = jala.util.diffObjects(o1, o2);
    jala.util.patchObject(o1, diff);
    
    assertNotNull(o1);
