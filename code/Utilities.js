@@ -181,6 +181,7 @@ jala.Utilities.prototype.diffObjects = function(obj1, obj2) {
       if (value1 == null) {
          diff[propName] = {status: jala.Utilities.VALUE_ADDED,
                            value: value2};
+         foundDiff = true;
       } else {
          switch (value2.constructor) {
             case HopObject:
