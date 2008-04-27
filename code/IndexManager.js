@@ -268,7 +268,7 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
                   java.lang.Thread.sleep(100);
                }
             }
-            return;
+            return true;
          }, [], -1);
          this.log("started successfully");
       } else {
@@ -278,13 +278,26 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
    };
    
    /**
-    * Stops this IndexManager instance
+    * Stops this IndexManager instance. This function waits for 10 seconds
+    * maximum for the worker thread to stop.
+    * @returns True if the worker thread stopped successfully, false otherwise
+    * @type Boolean
     */
    this.stop = function() {
       interrupted = true;
-      thread = null;
-      this.log("stopped");
-      return;
+      var result;
+      if ((result = this.isRunning()) === true) {
+         if ((result = thread.waitForResult(10000)) === true) {
+            thread = null;
+            this.log("stopped successfully");
+         } else {
+            result = false;
+            this.log("error", "unable to stop");
+         }
+      } else {
+         this.log("info", "already stopped");
+      }
+      return result;
    };
 
    /**
@@ -310,7 +323,7 @@ jala.IndexManager = function IndexManager(name, dir, lang) {
 
    /**
     * Read only reference containing the number of pending jobs
-    * @type Boolean
+    * @type Number
     */
    this.pending; // for api documentation only, is overwritten by getter below
    this.__defineGetter__("pending", function() {
