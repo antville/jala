@@ -31,6 +31,9 @@ var tests = [
    "testAdd",
    "testRemove",
    "testOptimize",
+   "testParseQuery",
+   "testParseQueryFilter",
+   "testSearch",
 ];
 
 /**
@@ -95,6 +98,16 @@ var testAdd = function() {
    java.lang.Thread.currentThread().sleep(300);
    assertEqual(1, index.getIndex().size());
    assertEqual(queue.size(), 0);
+   // check if the index has been optimized
+   var reader = null;
+   try {
+      reader = index.getIndex().getReader();
+      assertTrue(reader.isOptimized());
+   } finally {
+      if (reader !== null) {
+         reader.close();
+      }
+   }
    return;
 };
 
@@ -112,6 +125,16 @@ var testRemove = function() {
    java.lang.Thread.currentThread().sleep(300);
    assertEqual(0, index.getIndex().size());
    assertEqual(queue.size(), 0);
+   // check if the index has been optimized
+   var reader = null;
+   try {
+      reader = index.getIndex().getReader();
+      assertTrue(reader.isOptimized());
+   } finally {
+      if (reader !== null) {
+         reader.close();
+      }
+   }
    return;
 };
 
@@ -126,6 +149,16 @@ var testOptimize = function() {
    // give the index manager time to process
    java.lang.Thread.currentThread().sleep(300);
    assertFalse(index.hasOptimizingJob());
+   // check if the index has been optimized
+   var reader = null;
+   try {
+      reader = index.getIndex().getReader();
+      assertTrue(reader.isOptimized());
+   } finally {
+      if (reader !== null) {
+         reader.close();
+      }
+   }
    return;
 };
 
@@ -142,4 +175,99 @@ var createDocumentObject = function() {
    doc.addField("createtime", (new Date()).format("yyyyMMddHHmm"), {store: "yes", index: "unTokenized"});
    idCounter += 1;
    return doc;
+};
+
+/**
+ * Test query parsing
+ */
+var testParseQuery = function() {
+   assertThrows(function() {
+      index.parseQuery();
+   });
+   assertThrows(function() {
+      index.parseQuery("test");
+   });
+   var query;
+   query = index.parseQuery("test", ["title"]);
+   assertTrue(query instanceof Packages.org.apache.lucene.search.TermQuery);
+   assertEqual(query.getTerm().field(), "title");
+   query = index.parseQuery("test again", ["title"]);
+   assertTrue(query instanceof Packages.org.apache.lucene.search.BooleanQuery);
+   assertEqual(query.getClauses().length, 2);
+
+   // test with more than one field
+   query = index.parseQuery("test", ["title", "body"]);
+   assertTrue(query instanceof Packages.org.apache.lucene.search.BooleanQuery);
+   assertEqual(query.getClauses().length, 2);
+   assertEqual(query.getClauses()[0].getQuery().getTerm().field(), "title");
+   assertEqual(query.getClauses()[1].getQuery().getTerm().field(), "body");
+
+   // test boostmap
+   query = index.parseQuery("test", ["title", "body", "creator"], {title: 10, body: 5});
+   assertEqual(query.getClauses()[0].getQuery().getBoost(), 10);
+   assertEqual(query.getClauses()[1].getQuery().getBoost(), 5);
+   // default boost factor is 1
+   assertEqual(query.getClauses()[2].getQuery().getBoost(), 1);
+   return;
+};
+
+/**
+ * Test query filter parsing
+ */
+var testParseQueryFilter = function() {
+   assertNull(index.parseQueryFilter());
+   var query;
+   query = index.parseQueryFilter("title:test");
+   assertTrue(query instanceof Packages.org.apache.lucene.search.CachingWrapperFilter);
+   // FIXME: can't reach the wrapped query filter, therefor this stupid assertion
+   assertEqual(query.toString(), "CachingWrapperFilter(QueryWrapperFilter(title:test))");
+   query = index.parseQueryFilter(["title:test", "body:test"]);
+   assertTrue(query instanceof Packages.org.apache.lucene.search.CachingWrapperFilter);
+   assertEqual(query.toString(), "CachingWrapperFilter(QueryWrapperFilter(+title:test +body:test))");
+   return;
+};
+
+/**
+ * Test searching the index
+ */
+var testSearch = function() {
+   for (var i = 0; i < 10; i += 1) {
+      index.add(createDocumentObject());
+   }
+   // check if the documents was added correctly
+   // but give the index manager time to process
+   java.lang.Thread.currentThread().sleep(300);
+   // check if the index has been optimized
+   var reader = null;
+   try {
+      reader = index.getIndex().getReader();
+      assertTrue(reader.isOptimized());
+   } finally {
+      if (reader !== null) {
+         reader.close();
+      }
+   }
+
+   var query = index.parseQuery("doc*", ["name"]);
+   var hits, filter, sortFields;
+   // test basic search
+   hits = index.search(query);
+   assertNotNull(hits);
+   assertEqual(hits.size(), 10);
+   // test (stupid) filtering
+   filter = index.parseQueryFilter("id:1");
+   hits = index.search(query, filter);
+   assertEqual(hits.size(), 1);
+   assertEqual(parseInt(hits.get(0).getField("id").value, 10), 1);
+   // test range filtering
+   filter = index.parseQueryFilter("id:[2 TO 6]");
+   hits = index.search(query, filter);
+   assertEqual(hits.size(), 5);
+   // test sorting
+   sortFields = [new Packages.org.apache.lucene.search.SortField("id", true)];
+   hits = index.search(query, null, sortFields);
+   assertEqual(hits.size(), 10);
+   assertEqual(parseInt(hits.get(0).getField("id").value, 10), 10);
+   assertEqual(parseInt(hits.get(9).getField("id").value, 10), 1);
+   return;
 };
