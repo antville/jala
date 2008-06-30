@@ -539,7 +539,7 @@ jala.Test.prototype.executeTest = function(testFile) {
    var testResult = new jala.Test.TestResult(testFileName);
    try {
       // instantiate a new test scope
-      var scope = jala.Test.getTestScope(scope);
+      var scope = jala.Test.getTestScope();
       // evaluate the test file in the per-thread which is garbage
       // collected at the end of the test run and prevents the application
       // scope from being polluted
@@ -1091,8 +1091,13 @@ jala.Test.prototype.assertThrows = function assertThrows(func, exception) {
       }
       return;
    }
-   throw new jala.Test.TestException(comment, "Expected exception " +
-                             jala.Test.valueToString(expected) + " being thrown");
+   var msg;
+   if (expected != null) {
+      msg = "Expected exception " + jala.Test.valueToString(expected) + " being thrown";
+   } else {
+      msg = "Expected an exception being thrown";
+   }
+   throw new jala.Test.TestException(comment, msg);
    return;
 };
 
