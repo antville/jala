@@ -596,7 +596,7 @@ jala.IndexManager.prototype.search = function(query, filter, sortFields) {
    } else {
       hits = searcher.search(query);
    }
-   this.log("debug", "Query: '" + query.toString());
+   this.log("debug", "Query: " + query.toString());
    return new helma.Search.HitCollection(hits);
 };
 
@@ -649,14 +649,19 @@ jala.IndexManager.prototype.parseQuery = function(queryStr, fields, boostMap) {
  * a boolean query filter where all queries in the array must match.
  * @param {String|Array} query Either a query string, or an array containing
  * one or more query strings
+ * @param {org.apache.lucene.analysis.Analyzer} analyzer Optional analyzer
+ * to use when parsing the filter query
  * @returns A caching query filter
  * @type org.apache.lucene.search.CachingWrapperFilter
  */
-jala.IndexManager.prototype.parseQueryFilter = function(query) {
+jala.IndexManager.prototype.parseQueryFilter = function(query, analyzer) {
    var filter = null;
    if (query != null) {
       var pkg = Packages.org.apache.lucene;
-      var analyzer = this.getIndex().getAnalyzer();
+      // use the index' analyzer if none has been specified
+      if (analyzer == null) {
+         analyzer = this.getIndex().getAnalyzer();
+      }
       var parser = new pkg.queryParser.QueryParser("", analyzer);
       var filterQuery;
       try {
