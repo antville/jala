@@ -45,6 +45,9 @@ Root.prototype.main_action = function() {
          xmlRpcCall.request.setEncoding(req.data.encoding);
          xmlRpcCall.request.setProxy(req.data.proxy);
          xmlRpcCall.request.setDebug(req.data.debug == 1);
+         if (app.properties.username != null && app.properties.password != null) {
+            xmlRpcCall.request.setCredentials(app.properties.username, app.properties.password);
+         }
          XmlRpcCall.prototype.execute.apply(xmlRpcCall, args);
          res.handlers.xmlrpc = xmlRpcCall;
       }
