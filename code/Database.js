@@ -133,7 +133,7 @@ jala.db.Server = function(baseDir, port) {
     * @type Boolean
     */
    this.start = function() {
-      if (server != null && server.isRunning()) {
+      if (server != null && server.isRunning(true)) {
          throw "jala.db.Server: already listening on port " + this.getPort();
       }
       // convert properties into an array
@@ -187,7 +187,7 @@ jala.db.Server.prototype.stop = function() {
  * @type Boolean
  */
 jala.db.Server.prototype.isRunning = function() {
-   return this.getServer().isRunning();
+   return this.getServer().isRunning(true);
 };
 
 /**
