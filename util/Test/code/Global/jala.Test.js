@@ -304,43 +304,29 @@ jala.Test.getStackTrace = function(trace) {
 };
 
 /**
- * Returns a custom JavaScript scope used for evaluating unit tests.
- * This method defines all assertion methods as global methods,
- * and creates a default instantiation of the Http client
- * for convenience.
- * @returns The newly created scope object
- * @type helma.scripting.rhino.GlobalObject
+ * Adds all assertion methods, the http client, test database manager and
+ * smpt server to the per-thread global object.
  * @private
  */
-jala.Test.getTestScope = function() {
-   // create a new vanilla global object
-   var engine = Packages.helma.scripting.rhino.RhinoEngine.getRhinoEngine();
-   var scope = new Packages.helma.scripting.rhino.GlobalObject(engine.getCore(),
-                         app.__app__, true);
-   // put the necessary global objects into the scope
-   scope.root = root;
-   scope.session = session;
-   scope.req = req;
-   scope.res = res;
-   scope.path = path;
+jala.Test.prepareTestScope = function() {
    // define global assertion functions
    for (var i in jala.Test.prototype) {
       if (i.indexOf("assert") == 0) {
-         scope[i] = jala.Test.prototype[i];
+         global[i] = jala.Test.prototype[i];
       }
    }
    // add global include method
-   scope.include = function(file) {
-      jala.Test.include(scope, file);
+   global.include = function(file) {
+      jala.Test.include(global, file);
       return;
    };
    // instantiate a global HttpClient
-   scope.httpClient = new jala.Test.HttpClient();
+   global.httpClient = new jala.Test.HttpClient();
    // instantiate the test database manager
-   scope.testDatabases = new jala.Test.DatabaseMgr();
+   global.testDatabases = new jala.Test.DatabaseMgr();
    // instantiate the smtp server
-   scope.smtpServer = new jala.Test.SmtpServer();
-   return scope;
+   global.smtpServer = new jala.Test.SmtpServer();
+   return;
 };
 
 /**
@@ -538,47 +524,39 @@ jala.Test.prototype.executeTest = function(testFile) {
    var code = new java.lang.String(testFile.readAll() || "");
    var testResult = new jala.Test.TestResult(testFileName);
    try {
-      // instantiate a new test scope
-      var scope = jala.Test.getTestScope();
+      // prepare the test scope
+      jala.Test.prepareTestScope();
       // evaluate the test file in the per-thread which is garbage
-      // collected at the end of the test run and prevents the application
-      // scope from being polluted
-      cx.evaluateString(scope, code, testFileName, 1, null);
-      if (!scope.tests || scope.tests.constructor != Array || scope.tests.length == 0) {
+      // collected at the end of the test run
+      cx.evaluateString(global, code, testFileName, 1, null);
+      if (!global.tests || global.tests.constructor != Array || global.tests.length == 0) {
          throw "Please define an Array named 'tests' containing the names of the test functions to run";
       }
       var start = new Date();
-      // run the test
-      try {
-         if (scope.setup != null && scope.setup instanceof Function) {
-            // setup function exists, so call it
-            testResult.log.push(this.executeTestFunction("setup", scope));
+      // run all test methods defined in the array "tests"
+      var functionName;
+      for (var i=0;i<global.tests.length;i++) {
+         // execute the setup function, if defined
+         if (global.setup != null && global.setup instanceof Function) {
+            testResult.log.push(this.executeTestFunction("setup", global));
          }
-         // run all test methods defined in the array "tests"
-         var functionName;
-         for (var i=0;i<scope.tests.length;i++) {
-            try {
-               functionName = scope.tests[i];
-               if (!scope[functionName] || scope[functionName].constructor != Function) {
-                  throw new jala.Test.EvaluatorException("Test function '" +
-                                            functionName + "' is not defined.");
-               }
-               testResult.log.push(this.executeTestFunction(functionName, scope));
-            } catch (e) {
-               this.testsFailed += 1;
-               testResult.status = jala.Test.FAILED;
-               e.functionName = functionName;
-               testResult.log.push(e);
+         try {
+            functionName = global.tests[i];
+            if (!global[functionName] || global[functionName].constructor != Function) {
+               throw new jala.Test.EvaluatorException("Test function '" +
+                                         functionName + "' is not defined.");
             }
-         }
-      } catch (e) {
-         this.testsFailed += 1;
-         testResult.status = jala.Test.FAILED;
-         testResult.log.push(e);
-      } finally {
-         // call any existing "cleanup" method
-         if (scope.cleanup != null && scope.cleanup instanceof Function) {
-            testResult.log.push(this.executeTestFunction("cleanup", scope));
+            testResult.log.push(this.executeTestFunction(functionName, global));
+         } catch (e) {
+            this.testsFailed += 1;
+            testResult.status = jala.Test.FAILED;
+            e.functionName = functionName;
+            testResult.log.push(e);
+         } finally {
+            // execute the cleanup function, if defined
+            if (global.cleanup != null && global.cleanup instanceof Function) {
+               testResult.log.push(this.executeTestFunction("cleanup", global));
+            }
          }
       }
    } catch (e) {
@@ -599,7 +577,7 @@ jala.Test.prototype.executeTest = function(testFile) {
 /**
  * Executes a single test function
  * @param {String} functionName The name of the test function to execute
- * @param {helma.scripting.rhino.GlobalObject} scope The scope to execute
+ * @param {helma.scripting.rhino.GlobalObject} global The scope to execute
  * the test method in
  */
 jala.Test.prototype.executeTestFunction = function(functionName, scope) {
@@ -1299,13 +1277,13 @@ jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTable
 /**
  * Stops all registered test databases and and reverts the application
  * to its original datasource(s) as defined in db.properties file.
- * In addition this method commits all pending changes within the request,
- * cleares the application cache and invalidates the root object
+ * In addition this method rolls back all pending changes within the request,
+ * clears the application cache and invalidates the root object
  * to ensure no traces of the test database are left behind.
  */
 jala.Test.DatabaseMgr.prototype.stopAll = function() {
-   // commit all pending changes
-   res.commit();
+   // throw away all pending transactions
+   res.rollback();
    try {
       // loop over all registered databases and revert the appropriate
       // datasource back to the original database
