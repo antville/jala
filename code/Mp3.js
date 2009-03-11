@@ -671,7 +671,7 @@ jala.Mp3.prototype.getMetadata = function() {
       "artist",
       "comment",
       "genre",
-      "copyRight",
+      "copyright",
    ];
    var fieldName;
    for (var i=0; i<fields.length; i++) {
