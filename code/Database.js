@@ -687,7 +687,6 @@ jala.db.RamDatabase.prototype.copyTables = function(database, tables) {
          // create an array containing the necessary column metadata
          var columns = [];
          var c = meta.getColumns(null, "%", tableName, "%");
-         var columnName, columnType, columnTypeName, columnSize, columnNullable;
          while (c.next()) {
             columns[columns.length] = {
                name: c.getString("COLUMN_NAME"),
