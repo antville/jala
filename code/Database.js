@@ -14,9 +14,11 @@ if (!global.jala) {
 app.addRepository("modules/helma/Database.js");
 
 /**
- * Namespace declaration
+ * Namespace declarations
  */
-jala.db = {};
+jala.db = {
+   "metadata": {}
+};
 
 /**
  * Static helper method that converts the object passed as argument
@@ -38,7 +40,170 @@ jala.db.getPropertyString = function(props) {
       return res.pop();
    }
    return null;
-}
+};
+
+/**
+ * Returns an array of table names. The optional patterns can contain
+ * "_" for matching a single character or "%" for any character sequence.
+ * @param {java.sql.DatabaseMetaData} dbMetadata The metadata to use for retrieval.
+ * @param {String} tablePattern An optional table name pattern (defaults to "%")
+ * @param {String} schemaPattern An optional schema name pattern (defaults to "%")
+ * @returns An array containing the table names
+ * @type Array
+ */
+jala.db.metadata.getTableNames = function(dbMetadata, tablePattern, schemaPattern) {
+   var result = [];
+   var tableMeta = null;
+   try {
+      tableMeta = dbMetadata.getTables(null, (schemaPattern || "%"), (tablePattern || "%"), null);
+      while (tableMeta.next()) {
+         result.push(tableMeta.getString("TABLE_NAME"));
+      }
+      return result;
+   } finally {
+      if (tableMeta !== null) {
+         tableMeta.close();
+      }
+   }
+   return null;
+};
+
+/**
+ * Returns an array containing table metadata.
+ * @param {java.sql.DatabaseMetaData} dbMetadata The metadata to use for retrieval
+ * @param {String} tablePattern Optional table name pattern
+ * @param {String} schemaPattern Optional schema name pattern
+ * @returns An array containing table metadata. Each one is represented by a
+ * javascript object containing the following properties:
+ * <ul>
+ * <li>name (String): The name of the table</li>
+ * <li>schema (String): The name of the schema the table belongs to</li>
+ * <li>columns (Array): An array of column metadata (see {@link #getColumns})</li>
+ * <li>keys (Array): An array containing primary key column names (see {@link #getPrimaryKeys}<li>
+ * </ul>
+ * @type Array
+ */
+jala.db.metadata.getTables = function(dbMetadata, tablePattern, schemaPattern) {
+   var result = [];
+   var tableMeta = null;
+   try {
+      tableMeta = dbMetadata.getTables(null, (schemaPattern || "%"),
+            (tablePattern || "%"), null);
+      while (tableMeta.next()) {
+         var tableName = tableMeta.getString("TABLE_NAME");
+         var schemaName = tableMeta.getString("TABLE_SCHEM") || null;
+         result.push({
+            "name": tableName,
+            "schema": schemaName,
+            "columns": jala.db.metadata.getColumns(dbMetadata, tableName, schemaName),
+            "keys": jala.db.metadata.getPrimaryKeys(dbMetadata, tableName, schemaName)
+         });
+      }
+      return result;
+   } finally {
+      if (tableMeta != null) {
+         tableMeta.close();
+      }
+   }
+   return null;
+};
+
+/**
+ * Returns the column metadata of a table (or multiple tables, if a tableName
+ * pattern matching several tables is specified).
+ * @param {java.sql.DatabaseMetaData} dbMetadata The metadata to use for retrieval
+ * @param {String} tablePattern Optional table name pattern
+ * @param {String} schemaPattern Optional schema name pattern
+ * @param {String} columnPattern Optional column name pattern
+ * @returns An array containing column metadata. Each one is represented by a
+ * javascript object containing the following properties:
+ * <ul>
+ * <li>name (String): The name of the column</li>
+ * <li>type (Number): The data type of the column</li>
+ * <li>length (Number): The maximum length of the column</li>
+ * <li>nullable (Boolean): True if the column may contain null values, false otherwise</li>
+ * <li>default (String): The default value of the column</li>
+ * <li>precision (Number): The precision of the column</li>
+ * <li>scale (Number): The radix of the column</li>
+ * </ul>
+ * @type Array
+ */
+jala.db.metadata.getColumns = function(dbMetadata, tablePattern, schemaPattern, columnPattern) {
+   var result = [];
+   var columnMeta = null;
+   try {
+      columnMeta = dbMetadata.getColumns(null, schemaPattern || null,
+            tablePattern || null, columnPattern || "%");
+      while (columnMeta.next()) {
+         result.push({
+            "name": columnMeta.getString("COLUMN_NAME"),
+            "type": columnMeta.getInt("DATA_TYPE"),
+            "length": columnMeta.getInt("COLUMN_SIZE"),
+            "nullable": (columnMeta.getInt("NULLABLE") == dbMetadata.typeNoNulls) ? false : true,
+            "default": columnMeta.getString("COLUMN_DEF"),
+            "precision": columnMeta.getInt("DECIMAL_DIGITS"),
+            "scale": columnMeta.getInt("NUM_PREC_RADIX")
+         });
+      }
+      return result;
+   } finally {
+      if (columnMeta != null) {
+         columnMeta.close();
+      }
+   }
+   return null;
+};
+
+/**
+ * Returns an array containing the primary key names of the specified table.
+ * @param {java.sql.DatabaseMetaData} dbMetadata The metadata to use for retrieval
+ * @param {String} tableName The name of the table
+ * @param {String} schemaName Optional name of the schema
+ * @returns An array containing the primary key column names
+ * @type Array
+ */
+jala.db.metadata.getPrimaryKeys = function(dbMetadata, tableName, schemaName) {
+   var result = [];
+   var keyMeta = null;
+   try {
+      // retrieve the primary keys of the table
+      var keyMeta = dbMetadata.getPrimaryKeys(null, schemaName || null, tableName);
+      while (keyMeta.next()) {
+         result.push(keyMeta.getString("COLUMN_NAME"));
+      }
+      return result;
+   } finally {
+      if (keyMeta != null) {
+         keyMeta.close();
+      }
+   }
+   return null;
+};
+
+
+/**
+ * Returns the table metadata of the given database. The optional patterns
+ * can contain "_" for matching a single character or "%" for any
+ * character sequence.
+ * @param {helma.Database} database The database to connect to
+ * @param {String} schemaPattern An optional schema name pattern
+ * @param {String} tablePattern An optional table name pattern
+ * @returns An array containing the metadata of all matching tables (see {@link #getTables})
+ * @type Array
+ */
+jala.db.getTableMetadata = function(database, tablePattern, schemaPattern) {
+   var conn = null;
+   try {
+      conn = database.getConnection();
+      return jala.db.metadata.getTables(conn.getMetaData(), tablePattern, schemaPattern);
+   } finally {
+      if (conn != null) {
+         conn.close();
+      }
+   }
+   return null;
+};
+
 
 
 
@@ -667,46 +832,25 @@ jala.db.RamDatabase.prototype.tableExists = function(name) {
  */
 jala.db.RamDatabase.prototype.copyTables = function(database, tables) {
    // retrieve the metadata for all tables in this schema
+   var conn = null;
    try {
-      var conn = database.getConnection();
-      var meta = conn.getMetaData();
-      var t;
+      conn = database.getConnection();
+      var dbMetadata = conn.getMetaData();
       if (tables === null || tables === undefined) {
          // no tables specified, so copy all available
-         tables = [];
-         var t = meta.getTables(null, "%", "%", null);
-         while (t.next()) {
-            tables.push(t.getString("TABLE_NAME").toUpperCase());
-         }
+         tables = jala.db.metadata.getTableNames(dbMetadata);
       }
 
       for each (var tableName in tables) {
+         // drop the table if it exists
          if (this.tableExists(tableName)) {
             this.dropTable(tableName);
          }
-         // create an array containing the necessary column metadata
-         var columns = [];
-         var c = meta.getColumns(null, "%", tableName, "%");
-         while (c.next()) {
-            columns[columns.length] = {
-               name: c.getString("COLUMN_NAME"),
-               type: c.getInt("DATA_TYPE"),
-               length: c.getInt("COLUMN_SIZE"),
-               nullable: (c.getInt("NULLABLE") == meta.typeNoNulls) ? false : true,
-               "default": c.getString("COLUMN_DEF"),
-               precision: c.getInt("DECIMAL_DIGITS"),
-               scale: c.getInt("NUM_PREC_RADIX")
-            }
+         // retrieve the table metadata and create the table
+         var metadata = jala.db.metadata.getTables(dbMetadata, tableName);
+         if (metadata !== null && metadata.length > 0) {
+            this.createTable(metadata[0].name, metadata[0].columns, metadata[0].keys);
          }
-   
-         // retrieve the primary keys of the table
-         var pk = meta.getPrimaryKeys(null, "%", tableName);
-         var keys = [];
-         while (pk.next()) {
-            keys.push(pk.getString("COLUMN_NAME"));
-         }
-         // create the table in the embedded database
-         this.createTable(tableName, columns, keys.length > 0 ? keys : null);
       }
    } finally {
       if (conn != null) {
