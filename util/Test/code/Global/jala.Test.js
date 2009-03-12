@@ -1223,6 +1223,38 @@ jala.Test.DatabaseMgr.prototype.toString = function() {
 };
 
 /**
+ * Returns a newly initialized in-memory test database with the given name
+ * @param {String} name The name of the test database
+ * @returns The newly initialized test database
+ * @type jala.db.RamDatabase
+ */
+jala.Test.DatabaseMgr.prototype.initDatabase = function(name) {
+   return new jala.db.RamDatabase(name);
+};
+
+/**
+ * Switches the application to the test database passed as argument.
+ * In addition this method clears the application cache and invalidates
+ * the root object.
+ * @param {jala.db.RamDatabase} testDb The test database to switch to.
+ * @param {String} dbSourceName Optional name of the application's database
+ * source that will be replaced by the test database.
+ */
+jala.Test.DatabaseMgr.prototype.switchToDatabase = function(testDb, dbSourceName) {
+   var dbName = dbSourceName || testDb.getName();
+   // switch the datasource to the test database
+   var dbSource = app.getDbSource(dbName);
+   var oldProps = dbSource.switchProperties(testDb.getProperties());
+   // store the old db properties in this manager for use in stopAll()
+   this.databases[dbName] = testDb;
+   this.dbSourceProperties[dbName] = oldProps;
+   // clear the application cache and invalidate root
+   app.clearCache();
+   root.invalidate();
+   return;
+};
+
+/**
  * Switches the application datasource with the given name
  * to a newly created in-memory database. In addition this method
  * also clears the application cache and invalidates the root
@@ -1244,7 +1276,7 @@ jala.Test.DatabaseMgr.prototype.toString = function() {
  */
 jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTables, tables) {
    try {
-      var testDb = new jala.db.RamDatabase(dbSourceName);
+      var testDb = this.initDatabase(dbSourceName);
       // switch the datasource to the test database
       var dbSource = app.getDbSource(dbSourceName);
       if (copyTables === true) {
@@ -1261,13 +1293,7 @@ jala.Test.DatabaseMgr.prototype.startDatabase = function(dbSourceName, copyTable
          }
          testDb.copyTables(dbSource, tables);
       }
-      var oldProps = dbSource.switchProperties(testDb.getProperties());
-      // store the test database in this manager for use in stopAll()
-      this.databases[dbSourceName] = testDb;
-      this.dbSourceProperties[dbSourceName] = oldProps;
-      // clear the application cache and invalidate root
-      app.clearCache();
-      root.invalidate();
+      this.switchToDatabase(testDb);
       return testDb;
    } catch (e) {
       throw new jala.Test.EvaluatorException("Unable to switch to test database because of ", e);
