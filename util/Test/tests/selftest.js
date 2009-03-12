@@ -93,6 +93,8 @@ var testBasicAssertionFunctions = function testAssertionFunctions() {
    assertTrue("just a comment", true);
    assertFalse("just a comment", false);
    assertEqual(1, 1);
+   assertEqualArrays("asserting arrays", [1,2,3], [1,2,3]);
+   assertEqualArrays(["1","2"], ["1","2"]);
    assertNotEqual(1, 2);
    assertNull(null);
    assertNotNull(true);

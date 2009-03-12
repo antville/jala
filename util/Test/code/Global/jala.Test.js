@@ -789,6 +789,38 @@ jala.Test.prototype.assertEqual = function assertEqual(val1, val2) {
 };
 
 /**
+ * Checks if the values passed as arguments are arrays and contain the same elements
+ * @param val1 the first array
+ * @param val2 the second array
+ * @throws jala.Test.ArgumentsException
+ * @throws jala.Test.TestException
+*/
+jala.Test.prototype.assertEqualArrays = function assertEqualArrays(val1, val2) {
+   var functionName = arguments.callee.name;
+   var argsExpected = arguments.callee.length;
+   jala.Test.evalArguments(arguments, argsExpected);
+   var comment = jala.Test.getComment(arguments, argsExpected);
+   var value1 = jala.Test.getValue(arguments, argsExpected, 0);
+   var value2 = jala.Test.getValue(arguments, argsExpected, 1);
+   if (!(value1 instanceof Array) || !(value2 instanceof Array)) {
+      throw new ArgumentsException("Invalid arguments to assertEqualArrays: " +
+               jala.Test.valueToString(value1) + ", " + jala.Test.valueToString(value2));
+   }
+   var equal = false;
+   if (value1.length == value2.length) {
+      equal = value1.every(function(element, index, array) {
+                                return (element === value2[index]);
+                          });
+   }
+   if (!equal) {
+      throw new jala.Test.TestException(comment,
+                      "Expected " + jala.Test.valueToString(value1) +
+                      " to be equal to " + jala.Test.valueToString(value2));
+   }
+   return;
+};
+
+/**
  * Checks if the value passed as argument equals the content of a file on disk.
  * @param {Object} val The value that should be compared with the content of
  * the file on disk.
