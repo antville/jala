@@ -803,7 +803,7 @@ jala.Test.prototype.assertEqualArrays = function assertEqualArrays(val1, val2) {
    var value1 = jala.Test.getValue(arguments, argsExpected, 0);
    var value2 = jala.Test.getValue(arguments, argsExpected, 1);
    if (!(value1 instanceof Array) || !(value2 instanceof Array)) {
-      throw new ArgumentsException("Invalid arguments to assertEqualArrays: " +
+      throw new jala.Test.ArgumentsException("Invalid arguments to assertEqualArrays: " +
                jala.Test.valueToString(value1) + ", " + jala.Test.valueToString(value2));
    }
    var equal = false;
