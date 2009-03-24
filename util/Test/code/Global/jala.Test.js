@@ -178,7 +178,7 @@ jala.Test.getTestsDirectory = function() {
 jala.Test.getTestFiles = function() {
    var dir;
    if ((dir = jala.Test.getTestsDirectory()) != null) {
-      return dir.list(/.*\.js/).sort();
+      return dir.list(/.*\.js$/).sort();
    }
    return null;
 };
