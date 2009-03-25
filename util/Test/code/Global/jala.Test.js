@@ -523,13 +523,13 @@ jala.Test.prototype.executeTest = function(testFile) {
    var cx = Packages.org.mozilla.javascript.Context.enter();
    var code = new java.lang.String(testFile.readAll() || "");
    var testResult = new jala.Test.TestResult(testFileName);
+   global.testFunctionIdents = [];
    try {
       // prepare the test scope
       jala.Test.prepareTestScope();
       // evaluate the test file in the per-thread which is garbage
       // collected at the end of the test run
       cx.evaluateString(global, code, testFileName, 1, null);
-      global.testFunctionIdents = [];
       for (var ident in global) {
          if (ident.startsWith("test") && (global[ident] instanceof Function)) {
             testFunctionIdents.push(ident);
@@ -575,7 +575,7 @@ jala.Test.prototype.executeTest = function(testFile) {
       cx.exit();
       // FIXME (sim) don't polute global in the first place or 
       //             get a fresh global for each testrun
-      testFunctionIdents.forEach(function(funcName) {
+      global.testFunctionIdents.forEach(function(funcName) {
          // NOTE won't work on var-defined props
          // delete global[funcName]] 
          global[funcName] = "ignoreMe";
