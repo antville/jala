@@ -21,16 +21,6 @@
 // $HeadURL$
 //
 
-
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testGetAccessName",
-];
-
 var result = undefined;
 
 /**

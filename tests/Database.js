@@ -1,15 +1,4 @@
 /**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testRamDatabase",
-   "testFileDatabase",
-   "testServer"
-];
-
-/**
  * Contains the system's temporary directory
  * @type helma.File
  * @private

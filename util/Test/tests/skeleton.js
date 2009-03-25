@@ -1,9 +1,6 @@
 /**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
+ * Prefix all test-functions with "test"
  */
-var tests = [];
 
 /**
  * Called before running the tests

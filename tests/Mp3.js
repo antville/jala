@@ -22,30 +22,46 @@
 //
 
 /**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testId3v1Write",
-   "testId3v1Read",
-   "testId3v2Write",
-   "testId3v2Read",
-   "testMp3Read"
-];
-
-
-/**
  * a global variable containing the mp3 file to write to and read from
  * @type helma.File
  */
-var mp3File;
-
+var mp3File, mp3Filev2, mp3FileNoTags;
 
 var setup = function() {
    var srcFile = jala.Test.getTestFile("Mp3.test.mp3");
    mp3File = new helma.File(java.lang.System.getProperty("java.io.tmpdir"), "test.mp3");
+   mp3Filev2 = new helma.File(java.lang.System.getProperty("java.io.tmpdir"), "testv2.mp3");
+   mp3FileNoTags = new helma.File(java.lang.System.getProperty("java.io.tmpdir"), "test_notags.mp3");
    srcFile.hardCopy(mp3File);
+   srcFile.hardCopy(mp3Filev2);
+   srcFile.hardCopy(mp3FileNoTags);
+   // create some mp3 v1 tags
+   var mp3 = new jala.Mp3(mp3File);
+   var tag = mp3.createV1Tag();
+   tag.setArtist("v1 - jala.Mp3");
+   tag.setTitle("v1 - Test");
+   tag.setAlbum("v1 - Jala JavaScript Library");
+   tag.setGenre("Electronic");
+   tag.setComment("v1 - Play it loud!");
+   tag.setTrackNumber("1");
+   tag.setYear("2006");
+   mp3.save();
+   // crate mp3 v2 tags
+   var mp3v2 = new jala.Mp3(mp3Filev2);
+   var tagv2 = mp3v2.createV2Tag();
+   tagv2.setArtist("v2 - jala.Mp3");
+   tagv2.setTitle("v2 - Test");
+   tagv2.setAlbum("v2 - Jala JavaScript Library");
+   tagv2.setGenre("Electronic");
+   tagv2.setComment("v2 - Play it loud!");
+   tagv2.setTrackNumber("2");
+   tagv2.setYear("2007");
+   tagv2.setAuthor("SP");
+   tagv2.setCopyright("ORF Online und Teletext GmbH");
+   tagv2.setUrl("http://www.orf.at/");
+   var imgFile = jala.Test.getTestFile("Mp3.test.jpg");
+   tagv2.setImage(3, "image/jpeg", imgFile.toByteArray());
+   mp3v2.save();
    return;
 };
 
@@ -54,7 +70,7 @@ var setup = function() {
  * Write a v1 tag to the file
  */
 var testId3v1Write = function() {
-   var mp3 = new jala.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3FileNoTags);
    assertFalse(mp3.hasV1Tag());
    var tag = mp3.createV1Tag();
    assertNotNull(tag);
@@ -65,7 +81,7 @@ var testId3v1Write = function() {
    tag.setComment("v1 - Play it loud!");
    tag.setTrackNumber("1");
    tag.setYear("2006");
-
+   assertTrue(mp3.hasV1Tag());
    var oldsize = mp3.getSize();
    mp3.save();
    assertNotEqual(mp3.getSize(), oldsize);
@@ -78,7 +94,7 @@ var testId3v1Write = function() {
  */
 var testId3v1Read = function() {
    var mp3 = new jala.Mp3(mp3File);
-   var tag = mp3.getV1Tag();
+   tag = mp3.getV1Tag();
    assertEqual(tag.getArtist(), "v1 - jala.Mp3");
    assertEqual(tag.getTitle(), "v1 - Test");
    assertEqual(tag.getAlbum(), "v1 - Jala JavaScript Library");
@@ -94,7 +110,7 @@ var testId3v1Read = function() {
  * Write a v2 tag to the file
  */
 var testId3v2Write = function() {
-   var mp3 = new jala.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3FileNoTags);
    assertFalse(mp3.hasV2Tag());
    var tag = mp3.createV2Tag();
    assertNotNull(tag);
@@ -124,7 +140,7 @@ var testId3v2Write = function() {
  * Read a v2 tag from the file
  */
 var testId3v2Read = function() {
-   var mp3 = new jala.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3Filev2);
    var tag = mp3.getV2Tag();
    assertEqual(tag.getArtist(), "v2 - jala.Mp3");
    assertEqual(tag.getTitle(), "v2 - Test");
@@ -149,7 +165,7 @@ var testId3v2Read = function() {
  * A test of jala.Mp3
  */
 var testMp3Read = function() {
-   var mp3 = new jala.Mp3(mp3File);
+   var mp3 = new jala.Mp3(mp3Filev2);
    assertEqual(mp3.artist, "v2 - jala.Mp3");
    assertEqual(mp3.title, "v2 - Test");
    assertEqual(mp3.album, "v2 - Jala JavaScript Library");
@@ -161,7 +177,7 @@ var testMp3Read = function() {
    assertEqual(mp3.getChannelMode(), "Stereo");
    assertEqual(mp3.getBitRate(), 192);
    assertEqual(mp3.getDuration(), 7);
-   assertEqual(mp3.getSize(), 173832);    // This is after writing tags!
+   assertEqual(mp3.getSize(), 173704);    // This is after writing tags!
    assertEqual(mp3.getFrequency(), 44.1);
    assertEqual(mp3.parseDuration(), 7);
    return;

@@ -21,17 +21,6 @@
 // $HeadURL$
 //
 
-
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testGetAll",
-   "testGetLinks"
-];
-
 var source = '<html><head><title>Test</title></head><body>' +
              '<h1>Hello, World!</h1>' +
              '<a href="http://localhost/1">foo</a>' +

@@ -21,18 +21,6 @@
 // $HeadURL$
 //
 
-
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testCreatePassword",
-   "testDiffObjects",
-   "testPatchObject"
-];
-
 /**
  * Unit test for #jala.util.createPassword.
  */

@@ -22,19 +22,6 @@
 //
 
 
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testAQuery",
-   "testSoaQuery",
-   "testMxQuery",
-   "testNsQuery",
-];
-
-
 var dnsClient = new jala.DnsClient("68.12.16.25");
 var result;
 

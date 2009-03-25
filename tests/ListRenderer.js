@@ -21,20 +21,6 @@
 // $HeadURL$
 //
 
-
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testConstructor",
-   "testPageCalculation",
-   "testIndexCalculation",
-   "testHrefs",
-   "testRenderer",
-];
-
 /**
  * Construct different collections as basis for the tests
  */

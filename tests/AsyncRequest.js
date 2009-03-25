@@ -22,15 +22,6 @@
 //
 
 
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testAsyncRequest",
-];
-
 var result = undefined;
 
 /**

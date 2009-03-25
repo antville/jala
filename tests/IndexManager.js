@@ -21,21 +21,6 @@
 // $HeadURL$
 //
 
-
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testAdd",
-   "testRemove",
-   "testOptimize",
-   "testParseQuery",
-   "testParseQueryFilter",
-   "testSearch",
-];
-
 /**
  * Contains the index manager to test
  * @type jala.IndexManager
@@ -50,7 +35,7 @@ var queue;
 /**
  * A global id "counter"
  */
-var idCounter = 0;
+var idCounter;
 
 /**
  * Called before running the tests
@@ -60,7 +45,9 @@ var setup = function() {
    var dir = new java.io.File(java.lang.System.getProperty("java.io.tmpdir"));
    index = new jala.IndexManager("test", dir, "de");
    queue = index.getQueue();
+   idCounter = 0;
    index.start();
+   index.add(createDocumentObject());
    return;
 };
 
@@ -91,13 +78,13 @@ var cleanup = function() {
 var testAdd = function() {
    index.add(createDocumentObject());
    // check queue and job
-   assertEqual(queue.size(), 1);
-   assertEqual(queue.get(0).type, jala.IndexManager.Job.ADD);
+   assertEqual("q size", queue.size(), 2);
+   assertEqual("q 0th type", queue.get(0).type, jala.IndexManager.Job.ADD);
    // check if the document was added correctly
    // but give the index manager time to process
-   java.lang.Thread.currentThread().sleep(300);
-   assertEqual(1, index.getIndex().size());
-   assertEqual(queue.size(), 0);
+   java.lang.Thread.currentThread().sleep(500);
+   assertEqual("index size", index.getIndex().size(), 2);
+   assertEqual("new q size", queue.size(), 0);
    // check if the index has been optimized
    var reader = null;
    try {
@@ -115,21 +102,21 @@ var testAdd = function() {
  * Test removing a document object immediately
  */
 var testRemove = function() {
-   var id = idCounter -1;
+   var id = 0;
    index.remove(id);
    // check queue and job
-   assertEqual(queue.size(), 1);
-   assertEqual(queue.get(0).type, jala.IndexManager.Job.REMOVE);
+   assertEqual("queue size", queue.size(), 2);
+   assertEqual("type is remove", queue.get(1).type, jala.IndexManager.Job.REMOVE);
    // check if the document was added correctly
    // but give the index manager time to process
-   java.lang.Thread.currentThread().sleep(300);
-   assertEqual(0, index.getIndex().size());
-   assertEqual(queue.size(), 0);
+   java.lang.Thread.currentThread().sleep(500);
+   assertEqual("empty index", index.getIndex().size(), 0);
+   assertEqual("empty queue", queue.size(), 0);
    // check if the index has been optimized
    var reader = null;
    try {
       reader = index.getIndex().getReader();
-      assertTrue(reader.isOptimized());
+      assertTrue("is optimized", reader.isOptimized());
    } finally {
       if (reader !== null) {
          reader.close();
@@ -144,8 +131,8 @@ var testRemove = function() {
 var testOptimize = function() {
    index.optimize();
    // check queue and job
-   assertEqual(queue.size(), 1);
-   assertEqual(queue.get(0).type, jala.IndexManager.Job.OPTIMIZE);
+   assertEqual(queue.size(), 2);
+   assertEqual(queue.get(1).type, jala.IndexManager.Job.OPTIMIZE);
    // give the index manager time to process
    java.lang.Thread.currentThread().sleep(300);
    assertFalse(index.hasOptimizingJob());
@@ -241,7 +228,7 @@ var testSearch = function() {
    var reader = null;
    try {
       reader = index.getIndex().getReader();
-      assertTrue(reader.isOptimized());
+      assertTrue("is optimized", reader.isOptimized());
    } finally {
       if (reader !== null) {
          reader.close();
@@ -252,22 +239,22 @@ var testSearch = function() {
    var hits, filter, sortFields;
    // test basic search
    hits = index.search(query);
-   assertNotNull(hits);
-   assertEqual(hits.size(), 10);
+   assertNotNull("non null hits", hits);
+   assertEqual("hit count", hits.size(), 11);
    // test (stupid) filtering
    filter = index.parseQueryFilter("id:1");
    hits = index.search(query, filter);
-   assertEqual(hits.size(), 1);
-   assertEqual(parseInt(hits.get(0).getField("id").value, 10), 1);
+   assertEqual("1 hit", hits.size(), 1);
+   assertEqual("first hit id", parseInt(hits.get(0).getField("id").value, 10), 1);
    // test range filtering
    filter = index.parseQueryFilter("id:[2 TO 6]");
    hits = index.search(query, filter);
-   assertEqual(hits.size(), 5);
+   assertEqual("5 hits", hits.size(), 5);
    // test sorting
    sortFields = [new Packages.org.apache.lucene.search.SortField("id", true)];
    hits = index.search(query, null, sortFields);
-   assertEqual(hits.size(), 10);
-   assertEqual(parseInt(hits.get(0).getField("id").value, 10), 10);
-   assertEqual(parseInt(hits.get(9).getField("id").value, 10), 1);
+   assertEqual("new hit count", hits.size(), 11);
+   assertEqual("first hit id", parseInt(hits.get(0).getField("id").value, 10), 10);
+   assertEqual("last hit id", parseInt(hits.get(9).getField("id").value, 10), 1);
    return;
 };

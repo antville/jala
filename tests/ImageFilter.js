@@ -22,17 +22,6 @@
 //
 
 /**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testSharpen",
-   "testUnsharpMask",
-   "testGaussianBlur"
-];
-
-/**
  * Called after tests have finished. This method will be called
  * regarless whether the test succeeded or failed.
  */
@@ -58,7 +47,7 @@ var cleanup = function() {
  * errors do not necessarily mean there are flaws in the Jala code  
  * but of course can hint changes in the underlying Java code.
  */
-var testImageFilter = function(methodName) {
+var doTestImageFilter = function(methodName) {
    var testsDir = jala.Test.getTestsDirectory() + "/";
    var tempDir = new helma.File(java.lang.System.getProperty("java.io.tmpdir"));
    var tempPath = tempDir + "/" + methodName + ".temp.jpg";
@@ -90,7 +79,7 @@ var testImageFilter = function(methodName) {
  * A simple test of the sharpen method of jala.ImageFilter.
  */
 var testSharpen = function() {
-   testImageFilter("sharpen");
+   doTestImageFilter("sharpen");
    return;
 };
 
@@ -98,7 +87,7 @@ var testSharpen = function() {
  * A simple test of the unsharpMask method of jala.ImageFilter.
  */
 var testUnsharpMask = function() {
-   testImageFilter("unsharpMask");
+   doTestImageFilter("unsharpMask");
    return;
 };
 
@@ -106,6 +95,6 @@ var testUnsharpMask = function() {
  * A simple test of the gaussianBlur method of jala.ImageFilter.
  */
 var testGaussianBlur = function() {
-   testImageFilter("gaussianBlur");
+   doTestImageFilter("gaussianBlur");
    return;
 };

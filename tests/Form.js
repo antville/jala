@@ -22,19 +22,6 @@
 //
 
 /**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testFormRender",
-   "testFormValidate",
-   "testFormRenderWithError",
-   "testFormSave"
-];
-
-
-/**
  * a global variable containing the form instance
  * @type jala.Form
  */

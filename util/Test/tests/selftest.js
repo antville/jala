@@ -27,16 +27,6 @@
  * @type Array
  * @final
  */
-var tests = [
-   "testEvalArguments",
-   "testArgsContainComment",
-   "testGetComment",
-   "testGetValue",
-   "testBasicAssertionFunctions",
-   "testAssertThrows",
-   "testAssertEqualFile",
-   "testInclude",
-];
 
 /**
  * Test for jala.Test.evalArguments

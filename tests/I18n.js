@@ -27,12 +27,6 @@
  * @type Array
  * @final
  */
-var tests = [
-   "testFormatMessage",
-   "testGettext",
-   "testNgettext",
-   "testMessageMacro"
-];
 
 var oldMessages;
 

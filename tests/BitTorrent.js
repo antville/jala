@@ -21,16 +21,6 @@
 // $HeadURL$
 //
 
-
-/**
- * Declare which test methods should be run in which order
- * @type Array
- * @final
- */
-var tests = [
-   "testBitTorrent",
-];
-
 /**
  * A simple test of jala.BitTorrent.
  * FIXME: Needs resolution of issue #33
