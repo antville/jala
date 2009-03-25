@@ -538,7 +538,7 @@ jala.Test.prototype.executeTest = function(testFile) {
       for (var i=0;i<global.tests.length;i++) {
          // execute the setup function, if defined
          if (global.setup != null && global.setup instanceof Function) {
-            testResult.log.push(this.executeTestFunction("setup", global));
+            global.setup();
          }
          try {
             functionName = global.tests[i];
@@ -555,7 +555,7 @@ jala.Test.prototype.executeTest = function(testFile) {
          } finally {
             // execute the cleanup function, if defined
             if (global.cleanup != null && global.cleanup instanceof Function) {
-               testResult.log.push(this.executeTestFunction("cleanup", global));
+               global.cleanup();
             }
          }
       }
@@ -563,6 +563,10 @@ jala.Test.prototype.executeTest = function(testFile) {
       this.testsFailed += 1;
       testResult.status = jala.Test.FAILED;
       testResult.log.push(new jala.Test.EvaluatorException(e));
+      // execute the cleanup function, if defined
+      if (global.cleanup != null && global.cleanup instanceof Function) {
+         global.cleanup();
+      }
    } finally {
       // exit the js context created above
       cx.exit();
