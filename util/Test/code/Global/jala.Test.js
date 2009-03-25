@@ -529,19 +529,22 @@ jala.Test.prototype.executeTest = function(testFile) {
       // evaluate the test file in the per-thread which is garbage
       // collected at the end of the test run
       cx.evaluateString(global, code, testFileName, 1, null);
-      if (!global.tests || global.tests.constructor != Array || global.tests.length == 0) {
-         throw "Please define an Array named 'tests' containing the names of the test functions to run";
+      global.testFunctionIdents = [];
+      for (var ident in global) {
+         if (ident.startsWith("test") && (global[ident] instanceof Function)) {
+            testFunctionIdents.push(ident);
+         }
       }
       var start = new Date();
       // run all test methods defined in the array "tests"
       var functionName;
-      for (var i=0;i<global.tests.length;i++) {
+      for (var i=0;i<global.testFunctionIdents.length;i++) {
          // execute the setup function, if defined
          if (global.setup != null && global.setup instanceof Function) {
             global.setup();
          }
          try {
-            functionName = global.tests[i];
+            functionName = global.testFunctionIdents[i];
             if (!global[functionName] || global[functionName].constructor != Function) {
                throw new jala.Test.EvaluatorException("Test function '" +
                                          functionName + "' is not defined.");
@@ -570,6 +573,15 @@ jala.Test.prototype.executeTest = function(testFile) {
    } finally {
       // exit the js context created above
       cx.exit();
+      // FIXME (sim) don't polute global in the first place or 
+      //             get a fresh global for each testrun
+      testFunctionIdents.forEach(function(funcName) {
+         // NOTE won't work on var-defined props
+         // delete global[funcName]] 
+         global[funcName] = "ignoreMe";
+      }, this);
+      global["setup"] = "ignoreMe";
+      global["cleanup"] = "ignoreMe";
       // clear res.meta.currentTest
       res.meta.currentTest = null;
    }
