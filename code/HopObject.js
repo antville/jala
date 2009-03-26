@@ -86,6 +86,8 @@ HopObject.prototype.getAccessName = function(obj, maxLength) {
 
    // remove all (back)slashes
    var accessName = name.replace(/[\\\/]/g, "");
+   // remove all plus signs
+   accessName = accessName.replace("+","");
    if (accessName.length > maxLength) {
       accessName = accessName.substring(0, maxLength);
    }
