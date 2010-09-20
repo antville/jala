@@ -72,6 +72,15 @@ jala.ListRenderer = function(coll, renderer) {
     */
    var maxPages = Number.MAX_VALUE;
 
+    /**
+    * Private variable containing the maximum number of days to display
+    * within this ListRenderer instance. If set to null this check
+    * is not used.
+    * @type Number
+    * @private
+    */
+   var maxDays = null;
+
    /**
     * Private variable containing the base href of this ListRenderer
     * @type String
@@ -111,6 +120,8 @@ jala.ListRenderer = function(coll, renderer) {
       pageNavigation: null,
       prevLink: null,
       nextLink: null,
+      maxDayDate: null,
+      nextItem: null
    };
    
    /**
@@ -192,6 +203,76 @@ jala.ListRenderer = function(coll, renderer) {
          maxPages = parseInt(pages, 10);
       }
       return;
+   };
+
+   /**
+    * Returns the maximum number of days handled by this ListRenderer instance
+    * @returns The maximum number of days
+    * @type Number
+    */
+   this.getMaxDays = function() {
+      return maxDays;
+   };
+
+   /**
+    * Sets the maximum number of days to display
+    * @param {Number} days The maximum number of days to display
+    */
+   this.setMaxDays = function(days) {
+      if (days != undefined && !isNaN(days)) {
+         maxDays = parseInt(days, 10);
+      }
+      return;
+   };
+
+   /**
+    * Gets the Date offset indicated by parameter maxDays as Number for runtime efficent comparison
+    * @type Number
+    */
+   this.getMaxDayDate = function() {
+      if (this.cache.maxDayDate != null) {
+         return this.cache.maxDayDate;
+      }
+      this.cache.maxDayDate = parseInt((new Date((new Date()).getTime() - (maxDays * Date.ONEDAY))).format("yyyyMMdd"), 10);
+      return this.cache.maxDayDate;
+   };
+
+   /**
+    * @returns {Object} the next Item
+    */
+   this.getNextItem = function() {
+      if (this.cache.nextItem !== null) {
+         return this.cache.nextItem;
+      }
+      var nextItemIndex = this.getEndIndex() + 1;
+      this.cache.nextItem = "none";
+      if (collection.size() > nextItemIndex) {
+         this.cache.nextItem = collection.get(nextItemIndex);
+      }
+      return this.cache.nextItem;
+   };
+
+   /**
+    * @returns {Boolean} wether there is a next item
+    */
+   this.hasNext = function() {
+      var nextItem = this.getNextItem();
+      var nextIsDisplayable = false;
+      var collection = this.getCollection();
+      if (maxDays != undefined) {
+         if (nextItem != "none" && nextItem.getDayDate() >= this.getMaxDayDate()) {
+            nextIsDisplayable = true;
+         }
+      } else {
+         if (nextItem != "none") {
+            nextIsDisplayable = true;
+         }
+      }
+      if (collection.size() &&
+            nextIsDisplayable === true) {
+         return true;
+      }
+      return false;
    };
 
    /**
@@ -329,6 +410,7 @@ jala.ListRenderer = function(coll, renderer) {
       this.setUrlParameterName(coll.urlParamName);
       this.setPageSize(coll.itemsPerPage);
       this.setMaxPages(coll.maxPages);
+      this.setMaxDays(coll.maxDays);
       this.setItemSkin(coll.itemSkin);
    } else {
       throw "jala.ListRenderer: invalid argument " + coll;
@@ -446,6 +528,7 @@ jala.ListRenderer.prototype.renderList = function(param) {
    var totalPages = this.getTotalPages();
    var currentPage = this.getCurrentPage();
    var pageSize = this.getPageSize();
+   var maxDays = this.getMaxDays();
    var itemSkin = this.getItemSkin();
 
    if (totalPages > 0) {
@@ -473,6 +556,10 @@ jala.ListRenderer.prototype.renderList = function(param) {
       var item, prevItem;
       while (idx <= stop) {
          item = collection.get(idx++);
+         if ((maxDays != undefined) && (item.getDayDate() < this.getMaxDayDate())) {
+            idx = stop;
+            break;
+         }
          renderFunc(item, prevItem, param);
          prevItem = item;
          param.counter += 1;
@@ -577,7 +664,18 @@ jala.ListRenderer.prototype.getNextLink = function(param) {
       var collection = this.getCollection();
       var currentPage = this.getCurrentPage();
       var totalPages = this.getTotalPages();
-      if (collection.size() && currentPage < totalPages) {
+      var nextItem = this.getNextItem();
+      var nextIsDisplayable = false;
+      if (this.getMaxDays() != undefined) {
+         if (nextItem != "none" && nextItem.getDayDate() >= this.getMaxDayDate()) {
+            nextIsDisplayable = true;
+         }
+      } else {
+         if (nextItem != "none") {
+            nextIsDisplayable = true;
+         }
+      }
+      if (collection.size() && currentPage < totalPages && nextIsDisplayable === true) {
          param.index = currentPage + 1;
          param.href = this.getPageHref(param.index);
          this.getRenderFunction("pageLink", param.type)("next", param);
