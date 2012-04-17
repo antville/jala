@@ -29,6 +29,7 @@
  * HelmaLib dependencies
  */
 app.addRepository("modules/core/String.js");
+app.addRepository("modules/helma/File.js");
 
 /**
  * Constructs a name from an object which

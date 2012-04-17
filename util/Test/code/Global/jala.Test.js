@@ -1191,7 +1191,11 @@ jala.Test.HttpClient.prototype.executeRequest = function(method, url, param) {
    client.setCookies(this.getCookies());
    // prevent any caching at the remote server or any intermediate proxy
    client.setHeader("Cache-control", "no-cache,max-age=0");
-   client.setContent(param);
+   if (method !== 'DELETE') {
+      client.setContent(param);
+   } else {
+      client.setContent(null);
+   }
    // disable following redirects, since cookies would get lost
    // instead, handle a resulting redirect manually
    client.setFollowRedirects(false);
@@ -1199,7 +1203,7 @@ jala.Test.HttpClient.prototype.executeRequest = function(method, url, param) {
    if (result.cookies != null) {
       this.setCookies(result.cookies);
    }
-   if (result.location != null) {
+   if (result.code >= 301 && result.code <= 303 && result.location != null) {
       // received a redirect location, so follow it
       result = this.executeRequest("GET", result.location);
    }

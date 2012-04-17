@@ -343,6 +343,7 @@ jala.Date.Calendar.prototype.render = function(today) {
    renderer.renderRow(res.pop());
 
    cal.set(java.util.Calendar.DATE, 1);
+
    // check whether there's a day in path
    // if so, use it to determine the month to render
    if (today) {
@@ -355,7 +356,7 @@ jala.Date.Calendar.prototype.render = function(today) {
    var weeks = Math.ceil((pre + days) / 7);
    var daycnt = 1;
 
-   var date = cal.getTime();
+   var date = new Date(cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), 1);
    // remember the index of the first and last days within this month.
    // this is needed to optimize previous and next month links.
    var lastDayIndex = Number.MAX_VALUE;
