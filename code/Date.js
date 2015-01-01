@@ -461,9 +461,9 @@ jala.Date.Calendar.Renderer.prototype.renderRow = function(row) {
  * as selected day.
  */
 jala.Date.Calendar.Renderer.prototype.renderDay = function(date, isExisting, isSelected) {
-   var attr = {"class": "day"};
+   var attr = {"class": "jala-calendar-day day"};
    if (isSelected === true) {
-      attr["class"] += " selected";
+      attr["class"] += " jala-calendar-selected selected";
    }
    this.html.openTag("td", attr);
    if (date != null) {
@@ -510,7 +510,7 @@ jala.Date.Calendar.Renderer.prototype.renderPrevNextLink = function(date) {
  */
 jala.Date.Calendar.Renderer.prototype.renderCalendar = function(date, body, prevMonth, nextMonth) {
    var locale = this.calendar.getLocale();
-   this.html.openTag("table", {"class": "calendar"});
+   this.html.openTag("table", {"class": "jala-calendar calendar"});
    this.html.openTag("thead");
    this.html.openTag("tr");
    this.html.openTag("th", {"colspan": 7});
@@ -523,12 +523,12 @@ jala.Date.Calendar.Renderer.prototype.renderCalendar = function(date, body, prev
    this.html.element("tbody", body);
    this.html.openTag("tfoot");
    this.html.openTag("tr");
-   this.html.openTag("td", {"class": "left", "colspan": 3});
+   this.html.openTag("td", {"class": "jala-calendar-left left", "colspan": 3});
    this.renderPrevNextLink(prevMonth);
    this.html.closeTag("td");
    this.html.openTag("td");
    this.html.closeTag("td");
-   this.html.openTag("td", {"class": "right", "colspan": 3});
+   this.html.openTag("td", {"class": "jala-calendar-right right", "colspan": 3});
    this.renderPrevNextLink(nextMonth);
    this.html.closeTag("td");
    this.html.closeTag("tr");
