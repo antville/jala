@@ -44,7 +44,7 @@ jala.I18n = function() {
     * @ignore
     */
    var messages = global.messages;
-   
+
    /**
     * The default method for retrieving the locale.
     * @ignore
@@ -52,7 +52,7 @@ jala.I18n = function() {
    var localeGetter = function() {
       return java.util.Locale.getDefault();
    };
-   
+
    /**
     * Overwrite the default object containing
     * the messages (ie. a vanilla EcmaScript object).
@@ -61,7 +61,7 @@ jala.I18n = function() {
    this.setMessages = function(msgObject) {
       messages = msgObject;
    };
-   
+
    /**
     * Get the message object.
     * @returns The object containing the messages
@@ -70,7 +70,7 @@ jala.I18n = function() {
    this.getMessages = function() {
       return messages;
    };
-   
+
    /**
     * Set the method for retrieving the locale.
     * @param {Function} func The getter method
@@ -83,7 +83,7 @@ jala.I18n = function() {
       }
       return;
    };
-   
+
    /**
     * Get the method for retrieving the locale.
     * @returns The getter method
@@ -92,7 +92,7 @@ jala.I18n = function() {
    this.getLocaleGetter = function() {
       return localeGetter;
    };
-   
+
    return this;
 };
 
@@ -167,8 +167,8 @@ jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
          }
          if (!(translation = catalog[key])) {
             translation = key;
-            app.logger.debug("jala.i18n.translate(): Can't find message '" + 
-                             key + "' for locale '" + locale + "'");          
+            app.logger.debug("jala.i18n.translate(): Can't find message '" +
+                             key + "' for locale '" + locale + "'");
          }
       } else {
          app.logger.debug("jala.i18n.translate(): Can't find message catalog for locale '" + locale + "'");
@@ -183,7 +183,7 @@ jala.I18n.prototype.translate = function(singularKey, pluralKey, amount) {
 };
 
 /**
- * Helper method to get the message catalog  
+ * Helper method to get the message catalog
  * corresponding to the actual locale.
  * @params {java.util.Locale} locale
  * @returns The message catalog.
@@ -192,16 +192,19 @@ jala.I18n.prototype.getCatalog = function(locale) {
    if (!jala.I18n.catalogs) {
       jala.I18n.catalogs = {};
    }
-   var cache = jala.I18n.catalogs;
-   var catalog, messages;
-   if (!cache[locale] && (messages = this.getMessages()) != null) {
-      var arr = [locale.getLanguage(), locale.getCountry(), locale.getVariant()];
-      while (arr.length > 0 && !(catalog = messages[arr.join("_")])) {
-         arr.pop();
-      }
-      cache[locale] = catalog;
+
+   var catalog = jala.I18n.catalogs[locale];
+
+   if (catalog) return catalog;
+
+   var messages = this.getMessages();
+
+   if (locale && messages) {
+      catalog = messages[locale.toLanguageTag()];
+      jala.I18n.catalogs[locale] = catalog;
    }
-   return cache[locale];
+
+   return catalog;
 };
 
 /**
